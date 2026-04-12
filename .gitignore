@@ -18,3 +18,7 @@ Package.resolved
 
 # macOS
 .DS_Store
+ChineseCalendar.xcodeproj/project.pbxproj
+ChineseCalendar.xcodeproj/project.xcworkspace/contents.xcworkspacedata
+ChineseCalendar.xcodeproj/xcshareddata/xcschemes/ChineseCalendar-iOS.xcscheme
+ChineseCalendar.xcodeproj/xcshareddata/xcschemes/ChineseCalendar-macOS.xcscheme

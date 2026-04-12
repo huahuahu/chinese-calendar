@@ -17,6 +17,7 @@ jobs:
     runs-on: macos-26
 
     env:
+      XCODEGEN_VERSION: "2.45.3"
       SWIFTFORMAT_VERSION: "0.61.0"
       SWIFTLINT_VERSION: "0.63.2"
 
@@ -33,6 +34,10 @@ jobs:
         run: |
           mkdir -p "$RUNNER_TEMP/bin"
 
+          curl -fsSL -o /tmp/xcodegen.zip "https://github.com/yonaskolb/XcodeGen/releases/download/${XCODEGEN_VERSION}/xcodegen.zip"
+          unzip -qo /tmp/xcodegen.zip -d /tmp/xcodegen
+          install -m 0755 /tmp/xcodegen/bin/xcodegen "$RUNNER_TEMP/bin/xcodegen"
+
           curl -fsSL -o /tmp/swiftformat.zip "https://github.com/nicklockwood/SwiftFormat/releases/download/${SWIFTFORMAT_VERSION}/swiftformat.zip"
           unzip -qo /tmp/swiftformat.zip -d /tmp/swiftformat
           install -m 0755 /tmp/swiftformat/swiftformat "$RUNNER_TEMP/bin/swiftformat"
@@ -43,6 +48,7 @@ jobs:
 
       - name: Show tool versions
         run: |
+          xcodegen --version
           swiftformat --version
           swiftlint version
 
@@ -56,6 +62,9 @@ jobs:
     name: Test
     runs-on: macos-26
 
+    env:
+      XCODEGEN_VERSION: "2.45.3"
+
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -65,5 +74,20 @@ jobs:
         with:
           xcode-version: '26.4'
 
+      - name: Install XcodeGen
+        run: |
+          mkdir -p "$RUNNER_TEMP/bin"
+
+          curl -fsSL -o /tmp/xcodegen.zip "https://github.com/yonaskolb/XcodeGen/releases/download/${XCODEGEN_VERSION}/xcodegen.zip"
+          unzip -qo /tmp/xcodegen.zip -d /tmp/xcodegen
+          install -m 0755 /tmp/xcodegen/bin/xcodegen "$RUNNER_TEMP/bin/xcodegen"
+          echo "$RUNNER_TEMP/bin" >> "$GITHUB_PATH"
+
       - name: Run tests
         run: ./Scripts/test.sh
+
+      - name: Generate Xcode project
+        run: ./Scripts/generate_xcodeproj.sh
+
+      - name: Build iOS and macOS apps
+        run: ./Scripts/build_apps.sh

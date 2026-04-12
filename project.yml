@@ -1,0 +1,71 @@
+name: ChineseCalendar
+
+options:
+  createIntermediateGroups: true
+  groupSortPosition: top
+
+configs:
+  Debug: debug
+  Release: release
+
+packages:
+  ChineseCalendarPackage:
+    path: .
+
+targets:
+  ChineseCalendar-iOS:
+    type: application
+    platform: iOS
+    deploymentTarget: "26.0"
+    sources:
+      - path: Apps/iOSApp/Sources
+    dependencies:
+      - package: ChineseCalendarPackage
+        product: ChineseCalendarUI
+    settings:
+      base:
+        PRODUCT_NAME: Chinese Calendar
+        PRODUCT_BUNDLE_IDENTIFIER: com.huahuahu.ChineseCalendar.iOS
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_CFBundleDisplayName: Chinese Calendar
+        SUPPORTS_MACCATALYST: NO
+        SWIFT_VERSION: 6.0
+        CODE_SIGN_STYLE: Automatic
+        MARKETING_VERSION: 1.0
+        CURRENT_PROJECT_VERSION: 1
+
+  ChineseCalendar-macOS:
+    type: application
+    platform: macOS
+    deploymentTarget: "26.0"
+    sources:
+      - path: Apps/macOSApp/Sources
+    dependencies:
+      - package: ChineseCalendarPackage
+        product: ChineseCalendarUI
+    settings:
+      base:
+        PRODUCT_NAME: Chinese Calendar
+        PRODUCT_BUNDLE_IDENTIFIER: com.huahuahu.ChineseCalendar.macOS
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_CFBundleDisplayName: Chinese Calendar
+        INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.reference
+        SWIFT_VERSION: 6.0
+        CODE_SIGN_STYLE: Automatic
+        MARKETING_VERSION: 1.0
+        CURRENT_PROJECT_VERSION: 1
+
+schemes:
+  ChineseCalendar-iOS:
+    build:
+      targets:
+        ChineseCalendar-iOS: all
+    run:
+      config: Debug
+
+  ChineseCalendar-macOS:
+    build:
+      targets:
+        ChineseCalendar-macOS: all
+    run:
+      config: Debug

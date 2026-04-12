@@ -1,3 +1,3 @@
 # Scripts
 
-Utility scripts for fetching, normalizing, and generating app-ready data.
+Utility scripts for fetching, normalizing, generating app-ready data, and validating local/CI builds.
