@@ -18,6 +18,10 @@ let package = Package(
             targets: ["ChineseCalendarData"]
         ),
         .library(
+            name: "ChineseCalendarPersistence",
+            targets: ["ChineseCalendarPersistence"]
+        ),
+        .library(
             name: "ChineseCalendarUI",
             targets: ["ChineseCalendarUI"]
         )
@@ -29,6 +33,10 @@ let package = Package(
         .target(
             name: "ChineseCalendarData",
             dependencies: ["ChineseCalendarCore"]
+        ),
+        .target(
+            name: "ChineseCalendarPersistence",
+            dependencies: ["ChineseCalendarCore", "ChineseCalendarData"]
         ),
         .target(
             name: "ChineseCalendarUI",

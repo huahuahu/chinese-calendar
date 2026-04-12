@@ -26,7 +26,7 @@ public struct CalendarHomeView: View {
             return "Calendar browsing UI will appear here once the imported data pipeline is connected."
         }
 
-        let leapPrefix = selectedDate.isLeapMonth ? "Leap " : ""
+        let leapPrefix = selectedDate.lunarMonth.isLeapMonth ? "Leap " : ""
         return "Lunar date: \(selectedDate.lunarYear)-\(leapPrefix)\(selectedDate.lunarMonthNumber)-"
             + "\(selectedDate.lunarDayNumber)"
     }

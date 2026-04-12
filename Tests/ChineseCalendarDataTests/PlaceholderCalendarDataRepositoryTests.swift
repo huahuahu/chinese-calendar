@@ -1,3 +1,4 @@
+@testable import ChineseCalendarCore
 @testable import ChineseCalendarData
 import Foundation
 import Testing
@@ -18,7 +19,7 @@ import Testing
     let result = try await repository.calendarDate(for: Date(timeIntervalSince1970: 0))
 
     #expect(result?.lunarYear == 2026)
-    #expect(result?.lunarMonth == .one)
+    #expect(result?.lunarMonth == LunarMonth(number: .one))
     #expect(result?.lunarDay == .one)
-    #expect(result?.isLeapMonth == false)
+    #expect(result?.lunarMonth.isLeapMonth == false)
 }

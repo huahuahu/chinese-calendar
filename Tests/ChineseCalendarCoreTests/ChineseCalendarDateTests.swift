@@ -6,13 +6,12 @@ import Testing
     let date = ChineseCalendarDate(
         gregorianDate: Date(timeIntervalSince1970: 0),
         lunarYear: 2025,
-        lunarMonth: .six,
-        lunarDay: .one,
-        isLeapMonth: true
+        lunarMonth: LunarMonth(number: .six, isLeapMonth: true),
+        lunarDay: .one
     )
 
-    #expect(date.isLeapMonth)
-    #expect(date.lunarMonth == .six)
+    #expect(date.lunarMonth.isLeapMonth)
+    #expect(date.lunarMonth.number == .six)
     #expect(date.lunarMonthNumber == 6)
 }
 
@@ -20,11 +19,11 @@ import Testing
     let date = ChineseCalendarDate(
         gregorianDate: Date(timeIntervalSince1970: 1),
         lunarYear: 2025,
-        lunarMonth: .one,
+        lunarMonth: LunarMonth(number: .one),
         lunarDay: .fifteen
     )
 
-    #expect(date.isLeapMonth == false)
+    #expect(date.lunarMonth.isLeapMonth == false)
     #expect(date.lunarDayNumber == 15)
 }
 
@@ -32,9 +31,8 @@ import Testing
     let original = ChineseCalendarDate(
         gregorianDate: Date(timeIntervalSince1970: 86400),
         lunarYear: 2024,
-        lunarMonth: .eight,
-        lunarDay: .twenty,
-        isLeapMonth: false
+        lunarMonth: LunarMonth(number: .eight),
+        lunarDay: .twenty
     )
     let encoder = JSONEncoder()
     let decoder = JSONDecoder()
