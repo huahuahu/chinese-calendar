@@ -1,0 +1,15 @@
+--swiftversion 6
+--indent 4
+--linebreaks lf
+--maxwidth 120
+--wraparguments before-first
+--wrapparameters before-first
+--wrapcollections before-first
+--closingparen balanced
+--stripunusedargs closure-only
+--self remove
+--extensionacl on-extension
+--guardelse auto
+--header ignore
+--commas inline
+--exclude .build,Packages,Data
