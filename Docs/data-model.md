@@ -1,74 +1,74 @@
-# Data Model
+# 数据模型
 
-## Purpose
+## 目的
 
-This document defines the first-release data model for the Chinese calendar app.
-It separates:
+本文档定义 Chinese calendar app 首个发布版本的数据模型。
+它将以下概念分离：
 
 - absolute day identity
 - civil-date presentation
 - Chinese calendar facts
 - political and reign-era attribution
 
-The goal is to support accurate day-level browsing from the Qin dynasty onward while keeping the import pipeline and app persistence loosely coupled.
+目标是在保持导入流水线与 app persistence 松耦合的前提下，支持从秦朝开始的、按日准确浏览。
 
-## Modeling Principles
+## 建模原则
 
 ### One Absolute Day, Many Representations
 
-The app should treat a day as a single absolute record even when that day has multiple display layers.
+即使同一天存在多层展示信息，app 也应将这一天视为一条唯一的 absolute record。
 
-Each day can have:
+每一天可以包含：
 
-- one civil-date presentation
-- one lunar-date record
-- one sexagenary record
-- multiple reign-era assignments
+- 一条 civil-date presentation
+- 一条 lunar-date record
+- 一条 sexagenary record
+- 多条 reign-era assignment
 
 ### Civil Date Is a Navigation Coordinate
 
-The app browses by civil date, but civil date is not the source of truth for identity.
+app 以 civil date 进行浏览，但 civil date 不是 identity 的 source of truth。
 
-- Internal identity should use a continuous day index.
-- Civil date exists for display and user navigation.
-- Civil date display should switch from Julian to Gregorian at the 1582 reform boundary.
+- 内部 identity 应使用连续的 day index。
+- civil date 用于显示和用户导航。
+- civil date 的显示应在 1582 reform boundary 处从 Julian 切换到 Gregorian。
 
 ### Political Attribution Is One-to-Many
 
-The same day may belong to multiple concurrent political timelines.
+同一天在特殊情况下可能同时属于多个并行的 political timeline。
 
-- A day may map to multiple dynasties or regimes in special cases.
-- A day may have multiple emperors or reign eras depending on the chosen source data.
-- One assignment should be marked as the primary record for summary UI.
+- 一天在特殊情况下可能映射到多个 dynasty 或 regime。
+- 根据所选 source data，一天可能对应多个 emperor 或 reign era。
+- 其中一条 assignment 应标记为 primary record，用于 summary UI。
 
-## Entity Overview
+## 实体概览
 
 ## CalendarDay
 
-Represents one absolute day in the dataset.
+表示数据集中的一个 absolute day。
 
-Suggested fields:
+建议字段：
 
 - `id: UUID`
 - `dayIndex: Int`
 - `julianDayNumber: Int`
 
-Responsibilities:
+职责：
 
-- Primary identity for a day in storage
-- Sorting and timeline traversal
-- Anchor point for related records
+- 作为存储层中一天的主 identity
+- 用于排序和 timeline traversal
+- 作为相关记录的 anchor point
 
-Notes:
+说明：
 
-- `dayIndex` should be continuous across the full supported range.
-- `julianDayNumber` is useful for cross-checking imported source data and external calculations.
+- `dayIndex` 应在整个支持范围内保持连续。
+- `julianDayNumber` 可用于与导入的 source data 以及外部计算进行交叉校验。
 
 ## CivilDateRecord
 
-Represents the civil-date display for a given day.
+表示某一天对应的 civil-date display。
 
-Suggested fields:
+建议字段：
 
 - `id: UUID`
 - `calendarDayID: UUID`
@@ -77,26 +77,26 @@ Suggested fields:
 - `day: Int`
 - `calendarStyle: CivilCalendarStyle`
 
-Suggested enum:
+建议 enum：
 
 - `julian`
 - `gregorian`
 
-Responsibilities:
+职责：
 
-- Drive timeline labels and date-jump UI
-- Make the 1582 reform rule explicit in the data layer
+- 驱动 timeline label 和 date-jump UI
+- 在数据层明确表达 1582 reform rule
 
-Notes:
+说明：
 
-- Only one civil-date record is expected per day in the first release.
-- The record should be generated after applying the chosen reform boundary.
+- 首个发布版本中，每天只预期存在一条 civil-date record。
+- 该 record 应在应用所选 reform boundary 后生成。
 
 ## LunarDateRecord
 
-Represents the Chinese lunar date attached to one absolute day.
+表示附着在某个 absolute day 上的 Chinese lunar date。
 
-Suggested fields:
+建议字段：
 
 - `id: UUID`
 - `calendarDayID: UUID`
@@ -105,26 +105,26 @@ Suggested fields:
 - `lunarDay: Int`
 - `isLeapMonth: Bool`
 
-Optional derived fields for convenience:
+为方便使用可选的派生字段：
 
 - `monthDisplayName: String`
 - `dayDisplayName: String`
 
-Responsibilities:
+职责：
 
-- Store normalized lunar date facts
-- Support detail display and future search features
+- 存储标准化后的 lunar date facts
+- 支持详情展示和未来的搜索能力
 
-Notes:
+说明：
 
-- Store normalized numeric fields even if display strings are also generated.
-- Keep formatting logic in shared domain or presentation helpers when practical.
+- 即使也生成 display string，仍应存储标准化 numeric field。
+- 在可行情况下，格式化逻辑应保留在共享 domain 或 presentation helper 中。
 
 ## GanzhiRecord
 
-Represents sexagenary labels for a day.
+表示某一天的 sexagenary label。
 
-Suggested fields:
+建议字段：
 
 - `id: UUID`
 - `calendarDayID: UUID`
@@ -135,46 +135,46 @@ Suggested fields:
 - `dayStem: String`
 - `dayBranch: String`
 
-Responsibilities:
+职责：
 
-- Support display of sexagenary year, month, and day
-- Keep imported cyclical labels normalized and queryable
+- 支持显示 sexagenary year、month、day
+- 让导入后的 cyclical label 保持标准化并可查询
 
-Notes:
+说明：
 
-- Storing stems and branches separately keeps the data flexible for future filtering.
-- Combined display strings such as `甲子` should be produced by formatting helpers.
+- 将 stems 和 branches 分开存储，可以为未来筛选保留灵活性。
+- 像 `甲子` 这样的组合显示字符串应由 formatting helper 生成。
 
 ## Dynasty
 
-Represents a dynasty or top-level historical regime grouping.
+表示一个 dynasty，或顶层 historical regime grouping。
 
-Suggested fields:
+建议字段：
 
 - `id: String`
 - `name: String`
 - `startDayIndex: Int?`
 - `endDayIndex: Int?`
 
-Optional fields:
+可选字段：
 
 - `sortName: String`
 - `notes: String?`
 
-Responsibilities:
+职责：
 
-- Group emperors and reign eras
-- Provide readable historical context in the UI
+- 对 emperor 和 reign era 进行分组
+- 在 UI 中提供易于理解的 historical context
 
-Notes:
+说明：
 
-- Start and end bounds can be left optional if the source material is uncertain.
+- 如果 source material 存在不确定性，开始和结束边界可以保留为 optional。
 
 ## Emperor
 
-Represents one emperor within a dynasty or regime context.
+表示某个 dynasty 或 regime context 中的一位 emperor。
 
-Suggested fields:
+建议字段：
 
 - `id: String`
 - `dynastyID: String`
@@ -183,21 +183,21 @@ Suggested fields:
 - `posthumousTitle: String?`
 - `personalName: String?`
 
-Responsibilities:
+职责：
 
-- Provide the ruler identity for reign-era display
-- Support richer historical detail later
+- 为 reign-era display 提供 ruler identity
+- 为后续更丰富的历史细节留出空间
 
-Notes:
+说明：
 
-- `templeName` and `posthumousTitle` should be optional in v1.
-- The primary display name should be whichever historical label is most recognizable for the chosen source.
+- 在 v1 中，`templeName` 和 `posthumousTitle` 应为 optional。
+- primary display name 应选择在当前 source 中最容易识别的历史称谓。
 
 ## ReignEra
 
-Represents one named reign era.
+表示一个具名的 reign era。
 
-Suggested fields:
+建议字段：
 
 - `id: String`
 - `emperorID: String`
@@ -205,25 +205,25 @@ Suggested fields:
 - `startDayIndex: Int?`
 - `endDayIndex: Int?`
 
-Optional fields:
+可选字段：
 
 - `eraSequence: Int?`
 
-Responsibilities:
+职责：
 
-- Model reign-era identity independently of any specific day assignment
-- Allow reuse across day-level assignment records
+- 独立建模 reign-era identity，而不是把它直接绑在某一天的 assignment 上
+- 允许在 day-level assignment record 之间复用
 
-Notes:
+说明：
 
-- A single emperor may have multiple reign eras.
-- Start and end bounds help validate imported assignment spans.
+- 同一位 emperor 可能拥有多个 reign era。
+- 起止边界有助于校验导入后的 assignment span。
 
 ## ReignEraAssignment
 
-Maps a day to a political record.
+将某一天映射到一条 political record。
 
-Suggested fields:
+建议字段：
 
 - `id: UUID`
 - `calendarDayID: UUID`
@@ -234,43 +234,43 @@ Suggested fields:
 - `displayOrder: Int`
 - `isPrimary: Bool`
 
-Optional fields:
+可选字段：
 
 - `sourceNote: String?`
 
-Responsibilities:
+职责：
 
-- Support multiple parallel regime records for the same day
-- Decide which record appears on summary cards
-- Preserve the exact political attribution imported from the source material
+- 支持同一天存在多条并行 regime record
+- 决定 summary card 中显示哪一条 record
+- 保留从 source material 导入的精确 political attribution
 
-Notes:
+说明：
 
-- `displayOrder` should make detail views deterministic.
-- The first release should allow multiple assignments per day without trying to collapse disagreements.
+- `displayOrder` 应让 detail view 的顺序具备确定性。
+- 首个发布版本应允许同一天存在多条 assignment，而不尝试强行合并争议记录。
 
 ## Relationships
 
-Suggested first-release relationships:
+建议首个发布版本采用以下 relationship：
 
-- `CalendarDay` to `CivilDateRecord`: one-to-one
-- `CalendarDay` to `LunarDateRecord`: one-to-one
-- `CalendarDay` to `GanzhiRecord`: one-to-one
-- `CalendarDay` to `ReignEraAssignment`: one-to-many
-- `Dynasty` to `Emperor`: one-to-many
-- `Emperor` to `ReignEra`: one-to-many
-- `Dynasty` to `ReignEraAssignment`: one-to-many through foreign key reference
-- `Emperor` to `ReignEraAssignment`: one-to-many through foreign key reference
-- `ReignEra` to `ReignEraAssignment`: one-to-many through foreign key reference
+- `CalendarDay` 到 `CivilDateRecord`：one-to-one
+- `CalendarDay` 到 `LunarDateRecord`：one-to-one
+- `CalendarDay` 到 `GanzhiRecord`：one-to-one
+- `CalendarDay` 到 `ReignEraAssignment`：one-to-many
+- `Dynasty` 到 `Emperor`：one-to-many
+- `Emperor` 到 `ReignEra`：one-to-many
+- `Dynasty` 到 `ReignEraAssignment`：通过 foreign key reference 建立 one-to-many
+- `Emperor` 到 `ReignEraAssignment`：通过 foreign key reference 建立 one-to-many
+- `ReignEra` 到 `ReignEraAssignment`：通过 foreign key reference 建立 one-to-many
 
 ## Formatting Rules
 
 ### Regnal Year Display
 
-Store regnal years as integers.
-Display them using Chinese historical conventions.
+regnal year 在存储时使用 integer。
+显示时按中国历史习惯进行格式化。
 
-Examples:
+示例：
 
 - `1` -> `元年`
 - `2` -> `二年`
@@ -278,36 +278,36 @@ Examples:
 
 ### Civil Calendar Label
 
-The UI should explicitly label whether a civil date is:
+UI 应明确标注某个 civil date 属于：
 
 - `Julian`
 - `Gregorian`
 
-This avoids ambiguity around the 1582 boundary.
+这样可以避免 1582 边界附近的歧义。
 
 ### Ganzhi Display
 
-Store stem and branch components separately.
-Format for display by concatenating the two values.
+stems 和 branches 分开存储。
+显示时通过拼接二者生成最终字符串。
 
-Examples:
+示例：
 
 - `甲` + `子` -> `甲子`
 - `丙` + `午` -> `丙午`
 
 ## Import Boundaries
 
-The app should not import raw source files directly into SwiftData.
+app 不应直接将 raw source file 导入到 SwiftData。
 
-Use a processed layer that:
+应使用一个 processed layer，负责：
 
-- normalizes day identity
-- applies the civil-calendar reform rule
-- resolves reign-era references to stable IDs
-- keeps one record per absolute day before persistence import
+- 标准化 day identity
+- 应用 civil-calendar reform rule
+- 将 reign-era reference 解析为稳定 ID
+- 在持久化导入前，先保证每个 absolute day 形成清晰记录
 
 ## Open Modeling Questions
 
-- Should future versions split dynasties and non-dynastic regimes into separate entity types?
-- Should sexagenary values be represented as enums in shared domain code and strings in persistence?
-- Do we want a dedicated search index model later for reign-era name lookup?
+- 未来版本是否应将 dynasty 与非王朝 regime 拆分成不同 entity type？
+- sexagenary value 是否应在 shared domain code 中使用 enum、在 persistence 中使用 string？
+- 后续是否需要为 reign-era 名称检索单独设计 search index model？

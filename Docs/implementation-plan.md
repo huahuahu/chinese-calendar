@@ -1,81 +1,81 @@
-# Implementation Plan
+# 实施计划
 
-## Product Goal
+## 产品目标
 
-Build a shared iOS and macOS app for browsing the historical Chinese calendar day by day.
-The first release focuses on dates from the Qin dynasty onward.
+构建一个共享 iOS 与 macOS 代码的 app，用于按日浏览中国历史历法。
+首个发布版本聚焦于秦朝及之后的日期。
 
-Users should be able to browse a continuous civil-date timeline and inspect a single day in detail.
-Each day should show:
+用户应能够沿着连续的 civil-date timeline 浏览，并查看单日详情。
+每一天应展示：
 
 - Civil date
-- Whether the civil date is Julian or Gregorian
-- Lunar year, month, day
-- Whether the lunar month is a leap month
-- Sexagenary year, month, day
+- 该 civil date 属于 Julian 还是 Gregorian
+- Lunar year、month、day
+- 该 lunar month 是否为 leap month
+- Sexagenary year、month、day
 - Dynasty
 - Emperor
 - Reign era
-- Regnal year in Chinese display form such as `元年`, `二年`, `三年`
+- 以中文历史格式显示的 regnal year，例如 `元年`、`二年`、`三年`
 
-The app must support multiple parallel regime records on the same day.
+app 必须支持同一天存在多条并行 regime record。
 
-## First-Release Decisions
+## 首个发布版本的决策
 
 ### Date Range
 
-- Start coverage from the Qin dynasty.
+- 支持范围从秦朝开始。
 
 ### Civil Calendar Rule
 
-- Use a continuous day index internally for ordering and lookup.
-- Display civil dates using the Julian calendar before the Gregorian reform.
-- Switch according to the 1582 reform boundary.
+- 内部使用连续的 day index 进行排序和查找。
+- 在 Gregorian reform 之前，civil date 使用 Julian calendar 显示。
+- 按 1582 reform boundary 进行切换。
 
 ### Navigation Model
 
-- The home screen should browse by continuous civil date.
-- Chinese calendar data remains the primary content.
-- Civil date acts as the navigation coordinate.
+- 首页应以连续的 civil date 进行浏览。
+- Chinese calendar data 仍然是 primary content。
+- civil date 作为 navigation coordinate。
 
 ### Data Sources
 
-- Calendar calculation and source data come from `ytliu0/ChineseCalendar`.
-- Reign-era data is maintained as a separate source.
-- Raw source files must stay outside the app targets.
+- calendar calculation 和 source data 来自 `ytliu0/ChineseCalendar`。
+- reign-era data 作为独立 source 维护。
+- raw source file 必须放在 app target 之外。
 
 ### Persistence Strategy
 
-- Store app query models in SwiftData.
-- Do not couple SwiftData models directly to the raw upstream file formats.
-- Import processed data artifacts into SwiftData.
+- app 的 query model 使用 SwiftData 存储。
+- 不要让 SwiftData model 直接耦合 raw upstream file format。
+- 先将 processed data artifact 导入 SwiftData。
 
 ## Repository Layout
 
-Keep source data and app code separate.
+保持 source data 与 app code 分离。
 
-- `Data/Raw/ChineseCalendar`: upstream raw calendar data
-- `Data/Raw/ReignEras`: raw reign-era source material
-- `Data/Processed/calendar_days`: normalized day-level calendar artifacts
-- `Data/Processed/reign_eras`: normalized reign-era artifacts
-- `Scripts/ImportChineseCalendar`: scripts for upstream calendar import
-- `Scripts/ImportReignEras`: scripts for reign-era import
-- `Scripts/BuildDataset`: scripts that merge processed artifacts into app import payloads
+- `Data/Raw/ChineseCalendar`：upstream raw calendar data
+- `Data/Raw/ReignEras`：raw reign-era source material
+- `Data/Processed/calendar_days`：标准化后的 day-level calendar artifact
+- `Data/Processed/reign_eras`：标准化后的 reign-era artifact
+- `Scripts/ImportChineseCalendar`：导入 upstream calendar 的脚本
+- `Scripts/ImportReignEras`：导入 reign-era 的脚本
+- `Scripts/BuildDataset`：将 processed artifact 合并为 app import payload 的脚本
 
-## Suggested Module Structure
+## 建议的模块结构
 
-- `ChineseCalendarCore`: domain types and formatting rules that do not depend on SwiftData
-- `ChineseCalendarData`: import pipeline, repositories, parsing, and query services
-- `ChineseCalendarPersistence`: SwiftData models and persistence services
-- `ChineseCalendarUI`: shared SwiftUI views and navigation
-- `Apps/iOSApp`: iOS-specific app setup
-- `Apps/macOSApp`: macOS-specific app setup
+- `ChineseCalendarCore`：不依赖 SwiftData 的 domain type 与 formatting rule
+- `ChineseCalendarData`：import pipeline、repository、parsing 与 query service
+- `ChineseCalendarPersistence`：SwiftData model 与 persistence service
+- `ChineseCalendarUI`：共享的 SwiftUI view 与 navigation
+- `Apps/iOSApp`：iOS 专用 app setup
+- `Apps/macOSApp`：macOS 专用 app setup
 
 ## SwiftData Model Outline
 
 ### CalendarDay
 
-One row per absolute day.
+每个 absolute day 一行。
 
 - `id`
 - `dayIndex`
@@ -83,13 +83,13 @@ One row per absolute day.
 
 ### CivilDateRecord
 
-Display-oriented civil date metadata.
+面向显示的 civil date metadata。
 
 - `calendarDayID`
 - `year`
 - `month`
 - `day`
-- `calendarStyle` (`julian` or `gregorian`)
+- `calendarStyle`（`julian` 或 `gregorian`）
 
 ### LunarDateRecord
 
@@ -134,7 +134,7 @@ Display-oriented civil date metadata.
 
 ### ReignEraAssignment
 
-Maps a day to one or more political records.
+将一天映射到一条或多条 political record。
 
 - `calendarDayID`
 - `dynastyID`
@@ -146,52 +146,52 @@ Maps a day to one or more political records.
 
 ## Processed Data Format
 
-Use normalized intermediate artifacts before importing into SwiftData.
+在导入 SwiftData 之前，先使用标准化的 intermediate artifact。
 
-Suggested files:
+建议文件：
 
 - `Data/Processed/calendar_days/calendar_days.jsonl`
 - `Data/Processed/reign_eras/reign_era_assignments.jsonl`
 
-The processed layer should:
+processed layer 应承担：
 
-- Decouple import scripts from app persistence
-- Make validation and snapshot testing easier
-- Allow swapping or improving reign-era sources later
+- 将 import script 与 app persistence 解耦
+- 让 validation 和 snapshot test 更容易落地
+- 便于后续替换或改进 reign-era source
 
 ## First UI Slice
 
 ### Home Timeline
 
-- Browse by continuous civil date
-- Show the current civil date with Julian or Gregorian labeling
-- Show lunar date summary
-- Show sexagenary summary
-- Show the primary reign-era record
-- Allow moving to previous and next day
-- Allow jumping to a civil date
+- 按连续 civil date 浏览
+- 显示当前 civil date，并标注 Julian 或 Gregorian
+- 显示 lunar date 摘要
+- 显示 sexagenary 摘要
+- 显示 primary reign-era record
+- 支持前一天和后一天切换
+- 支持跳转到指定 civil date
 
 ### Day Detail
 
-- Show the full civil date presentation
-- Show lunar date and leap-month flag
-- Show sexagenary year, month, day
-- Show all reign-era assignments for that day
+- 显示完整的 civil-date presentation
+- 显示 lunar date 与 leap-month flag
+- 显示 sexagenary year、month、day
+- 显示该日全部 reign-era assignment
 
-## Recommended Delivery Order
+## 建议的交付顺序
 
-1. Add a new `ChineseCalendarPersistence` target.
-2. Define the SwiftData entities.
-3. Build a small in-memory prototype for the timeline and day detail views.
-4. Define processed-data schemas.
-5. Implement import scripts for calendar data.
-6. Implement import scripts for reign-era data.
-7. Import processed artifacts into SwiftData.
-8. Replace placeholder repositories with real queries.
+1. 新增 `ChineseCalendarPersistence` target。
+2. 定义 SwiftData entity。
+3. 先做一个 in-memory prototype，用于 timeline 和 day detail view。
+4. 定义 processed-data schema。
+5. 实现 calendar data 的导入脚本。
+6. 实现 reign-era data 的导入脚本。
+7. 将 processed artifact 导入 SwiftData。
+8. 用真实 query 替换 placeholder repository。
 
 ## Open Questions
 
-- Which reign-era reference source should be treated as authoritative for the first release?
-- Should temple names and posthumous titles be required for every emperor or optional in v1?
-- Should the first release support searching by reign-era name, or only timeline browsing?
-- What is the initial lower and upper bound of the supported date dataset?
+- 首个发布版本中，哪份 reign-era reference source 应被视为 authoritative？
+- `templeName` 和 `posthumousTitle` 在 v1 中应对每位 emperor 强制要求，还是保持 optional？
+- 首个发布版本是否应支持按 reign-era 名称搜索，还是只支持 timeline browsing？
+- 当前数据集支持的最小和最大日期边界应如何定义？

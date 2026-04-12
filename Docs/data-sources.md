@@ -1,207 +1,207 @@
-# Data Sources
+# 数据来源
 
-## Purpose
+## 目的
 
-This document defines where the first-release dataset comes from and what each source is responsible for.
-The project uses separate sources for:
+本文档定义首个发布版本的数据集来源，以及每类 source 各自负责的内容。
+项目将以下两类 source 分开处理：
 
-- calendar and date-conversion facts
-- political and reign-era attribution
+- calendar 和 date-conversion facts
+- political 和 reign-era attribution
 
-This keeps historical calendar logic separate from reign-era curation.
+这样可以把历史 calendar logic 与 reign-era 的整理工作分离开来。
 
 ## Source Categories
 
 ### Calendar Source
 
-Primary source:
+Primary source：
 
 - `https://github.com/ytliu0/ChineseCalendar`
 
-Responsibilities:
+职责：
 
-- Chinese calendar calculations
-- Lunar date mapping
-- Leap-month information
-- Sexagenary values if available from the source or derivable from its outputs
-- Day-level calendar facts that can be normalized into processed artifacts
+- Chinese calendar calculation
+- lunar date mapping
+- leap-month information
+- 如果 source 中可直接获得，或能够从其输出推导，则包括 sexagenary value
+- 可被标准化为 processed artifact 的 day-level calendar facts
 
-This source should not be treated as the authority for emperor, dynasty, or reign-era information.
+这个 source 不应被视为 emperor、dynasty 或 reign-era 信息的 authority。
 
 ### Reign-Era Source
 
-Primary role:
+Primary role：
 
-- Provide dynasty, emperor, reign-era, and regnal-year attribution
+- 提供 dynasty、emperor、reign era 以及 regnal year attribution
 
-Responsibilities:
+职责：
 
-- Dynasty names
-- Emperor identities
-- Reign-era names
-- Reign-era start and end spans
-- Parallel regime coverage when multiple records apply on the same day
+- dynasty 名称
+- emperor identity
+- reign-era 名称
+- reign-era 的起止 span
+- 当同一天适用多条记录时，支持 parallel regime coverage
 
-This source may be composed from one or more curated historical references.
+这类 source 可以由一个或多个经过整理的 historical reference 组成。
 
 ## Source Boundary Rules
 
 ### Calendar Data Must Stay Focused
 
-Calendar ingestion should only produce:
+calendar ingestion 只应产出：
 
 - absolute day mapping
-- civil-date display values
-- lunar date values
-- sexagenary values
+- civil-date display value
+- lunar date value
+- sexagenary value
 
-It should not assign dynasties or emperors.
+它不应负责分配 dynasty 或 emperor。
 
 ### Reign-Era Data Must Stay Focused
 
-Reign-era ingestion should only produce:
+reign-era ingestion 只应产出：
 
-- dynasties
-- emperors
-- reign eras
-- day-to-era assignment spans
+- dynasty
+- emperor
+- reign era
+- day-to-era assignment span
 
-It should not recalculate lunar or civil dates.
+它不应重新计算 lunar date 或 civil date。
 
 ### Merge Only in the Processed Layer
 
-The app should merge the two source categories only after both have been normalized.
+只有在两类 source 都完成标准化后，app 才应进行 merge。
 
-This merge step should:
+这个 merge step 应：
 
-- align both sources on the same day index
-- preserve one-to-many reign-era assignments
-- avoid modifying original raw files
+- 让两类 source 对齐到同一套 day index
+- 保留 one-to-many 的 reign-era assignment
+- 避免修改原始 raw file
 
 ## Storage Layout
 
-Suggested repository layout:
+建议的 repository layout：
 
-- `Data/Raw/ChineseCalendar`: upstream clone or extracted raw source files
-- `Data/Raw/ReignEras`: manually curated reign-era source material
-- `Data/Processed/calendar_days`: normalized day-level calendar outputs
-- `Data/Processed/reign_eras`: normalized political outputs
+- `Data/Raw/ChineseCalendar`：upstream clone 或提取后的 raw source file
+- `Data/Raw/ReignEras`：手工整理的 reign-era source material
+- `Data/Processed/calendar_days`：标准化后的 day-level calendar output
+- `Data/Processed/reign_eras`：标准化后的 political output
 
-Guidelines:
+约束建议：
 
-- Do not place raw historical source files under app target directories.
-- Do not depend on `Data/Raw` directly from app runtime code.
-- Treat `Data/Processed` as the import boundary for persistence.
+- 不要把 raw historical source file 放到 app target 目录下。
+- app runtime code 不应直接依赖 `Data/Raw`。
+- 将 `Data/Processed` 视为进入 persistence 的 import boundary。
 
 ## Recommended Raw Formats
 
 ### Calendar Raw Data
 
-Acceptable forms:
+可接受形式：
 
-- cloned upstream repository content
-- extracted tables copied from the upstream project
-- intermediate files generated directly from the upstream source
+- clone 下来的 upstream repository 内容
+- 从 upstream project 中提取出的表格
+- 直接由 upstream source 生成的中间文件
 
-Requirements:
+要求：
 
-- preserve provenance
-- preserve the exact upstream version or commit when possible
+- 保留 provenance
+- 尽量保留精确的 upstream version 或 commit
 
 ### Reign-Era Raw Data
 
-Acceptable forms:
+可接受形式：
 
-- curated CSV files
-- curated JSON files
-- manually maintained reference tables with source notes
+- 人工整理的 CSV file
+- 人工整理的 JSON file
+- 带 source note 的手工维护 reference table
 
-Requirements:
+要求：
 
-- stable IDs for dynasties, emperors, and reign eras
-- clear source notes for ambiguous or contested spans
-- support for overlapping assignments when regimes coexist
+- dynasty、emperor、reign era 必须有稳定 ID
+- 对含糊或存在争议的 span 提供清晰的 source note
+- 支持 regime 并存时的 overlapping assignment
 
 ## Recommended Processed Outputs
 
 ### Calendar-Day Artifact
 
-Suggested file:
+建议文件：
 
 - `Data/Processed/calendar_days/calendar_days.jsonl`
 
-Each line should include:
+每一行应包含：
 
 - absolute day identity
-- Julian day number or equivalent anchor
-- civil-date display values
-- lunar date values
-- sexagenary values
+- Julian day number 或等价的 anchor
+- civil-date display value
+- lunar date value
+- sexagenary value
 
 ### Reign-Era Assignment Artifact
 
-Suggested file:
+建议文件：
 
 - `Data/Processed/reign_eras/reign_era_assignments.jsonl`
 
-Each line should include:
+每一行应包含：
 
-- absolute day identity or an assignment span resolvable to day identities
-- dynasty ID and name
-- emperor ID and name
-- reign-era ID and name
+- absolute day identity，或可解析到 day identity 的 assignment span
+- dynasty ID 和名称
+- emperor ID 和名称
+- reign-era ID 和名称
 - regnal year number
 - primary-display marker
-- ordering information for parallel records
+- 并行记录的排序信息
 
 ## Source Provenance
 
-Each processed artifact should be traceable back to its input source.
+每个 processed artifact 都应能追溯回其输入 source。
 
-Recommended metadata to track during import:
+导入时建议跟踪以下 metadata：
 
 - upstream repository URL
-- upstream commit hash or release tag
-- local source file path
-- importer version or script name
+- upstream commit hash 或 release tag
+- 本地 source file path
+- importer version 或 script name
 - generation timestamp
 
-This metadata can live in:
+这些 metadata 可以存放在：
 
-- sidecar metadata files in `Data/Processed`
-- import logs
-- future manifest files
+- `Data/Processed` 下的 sidecar metadata file
+- import log
+- 后续的 manifest file
 
 ## Validation Expectations
 
 ### Calendar Validation
 
-Validate that:
+应校验：
 
-- day indices are continuous
-- civil-date conversion follows the 1582 reform rule
-- lunar months and days are within valid bounds
-- leap-month markers match the source
+- day index 连续无断裂
+- civil-date conversion 符合 1582 reform rule
+- lunar month 和 day 落在合法范围内
+- leap-month marker 与 source 一致
 
 ### Reign-Era Validation
 
-Validate that:
+应校验：
 
-- all foreign IDs are stable and unique
-- assignment spans resolve to valid day indices
-- regnal year numbers are positive
-- overlapping records are intentional, not accidental duplicates
+- 所有 foreign ID 稳定且唯一
+- assignment span 能解析到合法的 day index
+- regnal year number 为正数
+- overlapping record 是有意为之，而不是意外重复
 
 ### Merge Validation
 
-Validate that:
+应校验：
 
-- every assignment points to a real calendar day
-- summary selection rules produce at most one primary assignment per day
-- days without reign-era records are handled intentionally rather than silently dropped
+- 每条 assignment 都指向真实存在的 calendar day
+- summary selection rule 在每天最多只产出一条 primary assignment
+- 没有 reign-era record 的日期是被有意处理，而不是被静默丢弃
 
 ## Open Questions
 
-- Which historical reference will be the first authoritative reign-era source?
-- Do we want one manually curated source, or a blend of references with conflict notes?
-- Should processed outputs include provenance fields inline or in a separate manifest?
+- 首个 authoritative 的 reign-era source 应选用哪份 historical reference？
+- 我们是只维护一个人工整理 source，还是融合多份 reference 并记录冲突？
+- processed output 中的 provenance 字段应内联存储，还是放在独立 manifest 中？

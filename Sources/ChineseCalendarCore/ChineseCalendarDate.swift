@@ -1,7 +1,7 @@
 import Foundation
 
-/// 农历月份，使用枚举避免出现非法月份值。
-public enum LunarMonth: Int, Codable, CaseIterable, Sendable {
+/// 农历基础月序，使用枚举避免出现非法月份值。
+public enum LunarMonthNumber: Int, Codable, CaseIterable, Sendable {
     case one = 1
     case two
     case three
@@ -18,6 +18,26 @@ public enum LunarMonth: Int, Codable, CaseIterable, Sendable {
     public var chineseName: String {
         let names = ["正月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"]
         return names[rawValue - 1]
+    }
+}
+
+/// 农历中的某个月，闰月与普通月共享同一月序。
+public struct LunarMonth: Codable, Equatable, Sendable {
+    public let number: LunarMonthNumber
+    public let isLeapMonth: Bool
+
+    public var rawValue: Int {
+        number.rawValue
+    }
+
+    public var chineseName: String {
+        let prefix = isLeapMonth ? "闰" : ""
+        return prefix + number.chineseName
+    }
+
+    public init(number: LunarMonthNumber, isLeapMonth: Bool = false) {
+        self.number = number
+        self.isLeapMonth = isLeapMonth
     }
 }
 
@@ -69,7 +89,6 @@ public struct ChineseCalendarDate: Codable, Equatable, Sendable {
     public let lunarYear: Int
     public let lunarMonth: LunarMonth
     public let lunarDay: LunarDay
-    public let isLeapMonth: Bool
 
     public var lunarMonthNumber: Int {
         lunarMonth.rawValue
@@ -83,13 +102,11 @@ public struct ChineseCalendarDate: Codable, Equatable, Sendable {
         gregorianDate: Date,
         lunarYear: Int,
         lunarMonth: LunarMonth,
-        lunarDay: LunarDay,
-        isLeapMonth: Bool = false
+        lunarDay: LunarDay
     ) {
         self.gregorianDate = gregorianDate
         self.lunarYear = lunarYear
         self.lunarMonth = lunarMonth
         self.lunarDay = lunarDay
-        self.isLeapMonth = isLeapMonth
     }
 }
