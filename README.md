@@ -23,3 +23,16 @@ Install the required formatter and linter with Homebrew:
 ```bash
 brew install swiftformat swiftlint
 ```
+
+## Agent Skills
+
+- Project-local SwiftUI skill: `./.codex/skills/swiftui-pro`
+- Project-local Swift Concurrency skill: `./.codex/skills/swift-concurrency-pro`
+- Project-local SwiftData skill: `./.codex/skills/swiftdata-pro`
+- Swift agent skill index mirror: `./Docs/AgentReferences/swift-agent-skills/README.md`
+- SwiftAgents upstream reference: `./Docs/AgentReferences/SwiftAgents/AGENTS.upstream.md`
+
+In Codex, you can invoke the installed SwiftUI skill with `$swiftui-pro`.
+In Codex, you can invoke the installed Swift Concurrency skill with `$swift-concurrency-pro`.
+In Codex, you can invoke the installed SwiftData skill with `$swiftdata-pro`.
+`swift-agent-skills` is a catalog repository, so it is mirrored into this project for reference rather than installed as a directly invokable skill.
