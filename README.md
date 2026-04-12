@@ -13,7 +13,7 @@ Swift project for exploring the traditional Chinese calendar on iOS and macOS.
 ## CI
 
 GitHub Actions runs on pushes to `main`, pull requests, and manual dispatch.
-The workflow runs on `macos-26` with Xcode 16.3, checks formatting, runs linting, and executes `swift test`.
+The workflow runs on `macos-26` with Xcode 26.4, checks formatting, runs linting, and executes `swift test`.
 `swiftformat` and `swiftlint` are installed from pinned GitHub Release versions declared in the workflow, so the CI toolchain stays reproducible.
 
 ## Local Tooling

@@ -27,7 +27,8 @@ public struct CalendarHomeView: View {
         }
 
         let leapPrefix = selectedDate.isLeapMonth ? "Leap " : ""
-        return "Lunar date: \(selectedDate.lunarYear)-\(leapPrefix)\(selectedDate.lunarMonth)-\(selectedDate.lunarDay)"
+        return "Lunar date: \(selectedDate.lunarYear)-\(leapPrefix)\(selectedDate.lunarMonthNumber)-"
+            + "\(selectedDate.lunarDayNumber)"
     }
 }
 

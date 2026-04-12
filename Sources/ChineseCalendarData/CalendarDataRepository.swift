@@ -12,8 +12,8 @@ public struct PlaceholderCalendarDataRepository: CalendarDataRepository {
         ChineseCalendarDate(
             gregorianDate: gregorianDate,
             lunarYear: 2026,
-            lunarMonth: 1,
-            lunarDay: 1,
+            lunarMonth: .one,
+            lunarDay: .one,
             isLeapMonth: false
         )
     }

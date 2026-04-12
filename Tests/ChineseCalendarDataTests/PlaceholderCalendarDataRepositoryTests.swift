@@ -18,7 +18,7 @@ import Testing
     let result = try await repository.calendarDate(for: Date(timeIntervalSince1970: 0))
 
     #expect(result?.lunarYear == 2026)
-    #expect(result?.lunarMonth == 1)
-    #expect(result?.lunarDay == 1)
+    #expect(result?.lunarMonth == .one)
+    #expect(result?.lunarDay == .one)
     #expect(result?.isLeapMonth == false)
 }

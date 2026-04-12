@@ -6,32 +6,34 @@ import Testing
     let date = ChineseCalendarDate(
         gregorianDate: Date(timeIntervalSince1970: 0),
         lunarYear: 2025,
-        lunarMonth: 6,
-        lunarDay: 1,
+        lunarMonth: .six,
+        lunarDay: .one,
         isLeapMonth: true
     )
 
     #expect(date.isLeapMonth)
-    #expect(date.lunarMonth == 6)
+    #expect(date.lunarMonth == .six)
+    #expect(date.lunarMonthNumber == 6)
 }
 
 @Test func defaultsLeapMonthFlagToFalse() {
     let date = ChineseCalendarDate(
         gregorianDate: Date(timeIntervalSince1970: 1),
         lunarYear: 2025,
-        lunarMonth: 1,
-        lunarDay: 15
+        lunarMonth: .one,
+        lunarDay: .fifteen
     )
 
     #expect(date.isLeapMonth == false)
+    #expect(date.lunarDayNumber == 15)
 }
 
 @Test func codableRoundTripPreservesValue() throws {
     let original = ChineseCalendarDate(
         gregorianDate: Date(timeIntervalSince1970: 86400),
         lunarYear: 2024,
-        lunarMonth: 8,
-        lunarDay: 20,
+        lunarMonth: .eight,
+        lunarDay: .twenty,
         isLeapMonth: false
     )
     let encoder = JSONEncoder()
