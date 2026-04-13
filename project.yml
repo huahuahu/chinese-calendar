@@ -15,7 +15,7 @@ packages:
 targets:
   ChineseCalendar-iOS:
     type: application
-    platform: iOS
+    supportedDestinations: [iOS]
     deploymentTarget: "26.0"
     sources:
       - path: Apps/iOSApp/Sources
