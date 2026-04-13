@@ -10,7 +10,11 @@ struct IconSpec {
     }
 }
 
-let outputDirectory = URL(fileURLWithPath: CommandLine.arguments.dropFirst().first ?? "./Apps/Shared/Resources/Assets.xcassets/AppIcon.appiconset", isDirectory: true)
+let outputDirectory = URL(
+    fileURLWithPath: CommandLine.arguments.dropFirst()
+        .first ?? "./Apps/Shared/Resources/Assets.xcassets/AppIcon.appiconset",
+    isDirectory: true
+)
 let fileManager = FileManager.default
 
 try fileManager.createDirectory(at: outputDirectory, withIntermediateDirectories: true)
@@ -47,9 +51,9 @@ let specs: [IconSpec] = [
 ]
 
 func makeColor(_ hex: UInt32, alpha: CGFloat = 1) -> NSColor {
-    let red = CGFloat((hex >> 16) & 0xff) / 255
-    let green = CGFloat((hex >> 8) & 0xff) / 255
-    let blue = CGFloat(hex & 0xff) / 255
+    let red = CGFloat((hex >> 16) & 0xFF) / 255
+    let green = CGFloat((hex >> 8) & 0xFF) / 255
+    let blue = CGFloat(hex & 0xFF) / 255
     return NSColor(red: red, green: green, blue: blue, alpha: alpha)
 }
 
@@ -61,7 +65,7 @@ extension NSBezierPath {
     var cgPath: CGPath {
         let path = CGMutablePath()
         var points = [NSPoint](repeating: .zero, count: 3)
-        for index in 0..<elementCount {
+        for index in 0 ..< elementCount {
             switch element(at: index, associatedPoints: &points) {
             case .moveTo:
                 path.move(to: points[0])
@@ -107,14 +111,15 @@ func drawIcon(size: CGFloat) -> NSBitmapImageRep {
     let pixelSize = Int(size.rounded())
     guard let colorSpace = CGColorSpace(name: CGColorSpace.sRGB),
           let cgContext = CGContext(
-            data: nil,
-            width: pixelSize,
-            height: pixelSize,
-            bitsPerComponent: 8,
-            bytesPerRow: 0,
-            space: colorSpace,
-            bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
-          ) else {
+              data: nil,
+              width: pixelSize,
+              height: pixelSize,
+              bitsPerComponent: 8,
+              bytesPerRow: 0,
+              space: colorSpace,
+              bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
+          )
+    else {
         fatalError("Unable to allocate bitmap for size \(size)")
     }
 
@@ -180,19 +185,30 @@ func drawIcon(size: CGFloat) -> NSBitmapImageRep {
     let paperGradient = NSGradient(colors: [makeColor(0xFFF9EB), makeColor(0xF3E1BE)])!
     paperGradient.draw(in: paperPath, angle: -90)
 
-    let headerRect = CGRect(x: paperRect.minX, y: paperRect.maxY - size * 0.145, width: paperRect.width, height: size * 0.145)
+    let headerRect = CGRect(
+        x: paperRect.minX,
+        y: paperRect.maxY - size * 0.145,
+        width: paperRect.width,
+        height: size * 0.145
+    )
     let headerPath = roundedRectPath(in: headerRect, radius: size * 0.12)
     let headerGradient = NSGradient(colors: [makeColor(0xC7392E), makeColor(0x9E1F1E)])!
     headerGradient.draw(in: headerPath, angle: -90)
 
     let ringY = headerRect.maxY - size * 0.03
-    fillCircle(CGRect(x: paperRect.minX + size * 0.10, y: ringY, width: size * 0.045, height: size * 0.045), color: makeColor(0xF5D575))
-    fillCircle(CGRect(x: paperRect.maxX - size * 0.145, y: ringY, width: size * 0.045, height: size * 0.045), color: makeColor(0xF5D575))
+    fillCircle(
+        CGRect(x: paperRect.minX + size * 0.10, y: ringY, width: size * 0.045, height: size * 0.045),
+        color: makeColor(0xF5D575)
+    )
+    fillCircle(
+        CGRect(x: paperRect.maxX - size * 0.145, y: ringY, width: size * 0.045, height: size * 0.045),
+        color: makeColor(0xF5D575)
+    )
 
     makeColor(0xD5BA87, alpha: 0.35).setStroke()
     let linePath = NSBezierPath()
     linePath.lineWidth = max(1, size * 0.012)
-    for row in 0..<3 {
+    for row in 0 ..< 3 {
         let y = paperRect.minY + size * (0.16 + CGFloat(row) * 0.10)
         linePath.move(to: CGPoint(x: paperRect.minX + size * 0.09, y: y))
         linePath.line(to: CGPoint(x: paperRect.maxX - size * 0.09, y: y))
@@ -204,14 +220,39 @@ func drawIcon(size: CGFloat) -> NSBitmapImageRep {
     let originX = paperRect.minX + size * 0.11
     let originY = paperRect.minY + size * 0.13
     let points: [[CGPoint]] = [
-        [CGPoint(x: originX + size * 0.01, y: originY + size * 0.26), CGPoint(x: originX + size * 0.23, y: originY + size * 0.26)],
-        [CGPoint(x: originX + size * 0.11, y: originY + size * 0.08), CGPoint(x: originX + size * 0.11, y: originY + size * 0.33)],
-        [CGPoint(x: originX + size * 0.04, y: originY + size * 0.16), CGPoint(x: originX + size * 0.16, y: originY + size * 0.16)],
-        [CGPoint(x: originX + size * 0.23, y: originY + size * 0.29), CGPoint(x: originX + size * 0.31, y: originY + size * 0.16), CGPoint(x: originX + size * 0.22, y: originY + size * 0.02)],
-        [CGPoint(x: originX + size * 0.25, y: originY + size * 0.19), CGPoint(x: originX + size * 0.39, y: originY + size * 0.19)],
-        [CGPoint(x: originX + size * 0.33, y: originY + size * 0.08), CGPoint(x: originX + size * 0.33, y: originY + size * 0.29)],
-        [CGPoint(x: originX + size * 0.20, y: originY + size * 0.08), CGPoint(x: originX + size * 0.43, y: originY + size * 0.08)],
-        [CGPoint(x: originX + size * 0.24, y: originY + size * 0.02), CGPoint(x: originX + size * 0.40, y: originY + size * 0.02)]
+        [
+            CGPoint(x: originX + size * 0.01, y: originY + size * 0.26),
+            CGPoint(x: originX + size * 0.23, y: originY + size * 0.26)
+        ],
+        [
+            CGPoint(x: originX + size * 0.11, y: originY + size * 0.08),
+            CGPoint(x: originX + size * 0.11, y: originY + size * 0.33)
+        ],
+        [
+            CGPoint(x: originX + size * 0.04, y: originY + size * 0.16),
+            CGPoint(x: originX + size * 0.16, y: originY + size * 0.16)
+        ],
+        [
+            CGPoint(x: originX + size * 0.23, y: originY + size * 0.29),
+            CGPoint(x: originX + size * 0.31, y: originY + size * 0.16),
+            CGPoint(x: originX + size * 0.22, y: originY + size * 0.02)
+        ],
+        [
+            CGPoint(x: originX + size * 0.25, y: originY + size * 0.19),
+            CGPoint(x: originX + size * 0.39, y: originY + size * 0.19)
+        ],
+        [
+            CGPoint(x: originX + size * 0.33, y: originY + size * 0.08),
+            CGPoint(x: originX + size * 0.33, y: originY + size * 0.29)
+        ],
+        [
+            CGPoint(x: originX + size * 0.20, y: originY + size * 0.08),
+            CGPoint(x: originX + size * 0.43, y: originY + size * 0.08)
+        ],
+        [
+            CGPoint(x: originX + size * 0.24, y: originY + size * 0.02),
+            CGPoint(x: originX + size * 0.40, y: originY + size * 0.02)
+        ]
     ]
     let strokeWidth = size * 0.038
     for segment in points {
@@ -244,7 +285,11 @@ func drawIcon(size: CGFloat) -> NSBitmapImageRep {
 
 func writePNG(_ bitmap: NSBitmapImageRep, to url: URL) throws {
     guard let pngData = bitmap.representation(using: .png, properties: [:]) else {
-        throw NSError(domain: "IconGenerator", code: 1, userInfo: [NSLocalizedDescriptionKey: "Unable to encode PNG at \(url.path)"])
+        throw NSError(
+            domain: "IconGenerator",
+            code: 1,
+            userInfo: [NSLocalizedDescriptionKey: "Unable to encode PNG at \(url.path)"]
+        )
     }
     try pngData.write(to: url)
 }
