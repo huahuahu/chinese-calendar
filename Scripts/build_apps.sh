@@ -112,7 +112,9 @@ xcodebuild \
     -project ChineseCalendar.xcodeproj \
     -scheme ChineseCalendar-macOS \
     -configuration Debug \
-    -destination 'platform=macOS' \
+    -destination 'platform=macOS,arch=arm64' \
+    ARCHS=arm64 \
+    ONLY_ACTIVE_ARCH=YES \
     CODE_SIGNING_ALLOWED=NO \
     CODE_SIGNING_REQUIRED=NO \
     build
