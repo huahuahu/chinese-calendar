@@ -1,3 +1,4 @@
+// swiftlint:disable identifier_name superfluous_disable_command
 import Foundation
 
 /// 干支纪年采用的年界规则。
@@ -256,3 +257,5 @@ public struct 干支历日期: Codable, Hashable, Sendable {
         self.儒略日数 = 儒略日数
     }
 }
+
+// swiftlint:enable identifier_name superfluous_disable_command

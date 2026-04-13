@@ -1,3 +1,4 @@
+// swiftlint:disable identifier_name superfluous_disable_command
 @testable import ChineseCalendarData
 import Testing
 
@@ -42,3 +43,5 @@ import Testing
     #expect(date.日 == .初一)
     #expect(date.年号 == "漢武帝太初元年")
 }
+
+// swiftlint:enable identifier_name superfluous_disable_command
