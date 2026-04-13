@@ -34,9 +34,11 @@ jobs:
         run: |
           mkdir -p "$RUNNER_TEMP/bin"
 
-          curl -fsSL -o /tmp/xcodegen.zip "https://github.com/yonaskolb/XcodeGen/releases/download/${XCODEGEN_VERSION}/xcodegen.zip"
-          unzip -qo /tmp/xcodegen.zip -d /tmp/xcodegen
-          install -m 0755 /tmp/xcodegen/bin/xcodegen "$RUNNER_TEMP/bin/xcodegen"
+          XCODEGEN_TEMP_DIR="$(mktemp -d)"
+          curl -fsSL -o "$XCODEGEN_TEMP_DIR/xcodegen.zip" "https://github.com/yonaskolb/XcodeGen/releases/download/${XCODEGEN_VERSION}/xcodegen.zip"
+          unzip -qo "$XCODEGEN_TEMP_DIR/xcodegen.zip" -d "$XCODEGEN_TEMP_DIR"
+          XCODEGEN_PATH="$(find "$XCODEGEN_TEMP_DIR" -type f -path '*/bin/xcodegen' -print -quit)"
+          install -m 0755 "$XCODEGEN_PATH" "$RUNNER_TEMP/bin/xcodegen"
 
           curl -fsSL -o /tmp/swiftformat.zip "https://github.com/nicklockwood/SwiftFormat/releases/download/${SWIFTFORMAT_VERSION}/swiftformat.zip"
           unzip -qo /tmp/swiftformat.zip -d /tmp/swiftformat
@@ -78,9 +80,11 @@ jobs:
         run: |
           mkdir -p "$RUNNER_TEMP/bin"
 
-          curl -fsSL -o /tmp/xcodegen.zip "https://github.com/yonaskolb/XcodeGen/releases/download/${XCODEGEN_VERSION}/xcodegen.zip"
-          unzip -qo /tmp/xcodegen.zip -d /tmp/xcodegen
-          install -m 0755 /tmp/xcodegen/bin/xcodegen "$RUNNER_TEMP/bin/xcodegen"
+          XCODEGEN_TEMP_DIR="$(mktemp -d)"
+          curl -fsSL -o "$XCODEGEN_TEMP_DIR/xcodegen.zip" "https://github.com/yonaskolb/XcodeGen/releases/download/${XCODEGEN_VERSION}/xcodegen.zip"
+          unzip -qo "$XCODEGEN_TEMP_DIR/xcodegen.zip" -d "$XCODEGEN_TEMP_DIR"
+          XCODEGEN_PATH="$(find "$XCODEGEN_TEMP_DIR" -type f -path '*/bin/xcodegen' -print -quit)"
+          install -m 0755 "$XCODEGEN_PATH" "$RUNNER_TEMP/bin/xcodegen"
           echo "$RUNNER_TEMP/bin" >> "$GITHUB_PATH"
 
       - name: Run tests
