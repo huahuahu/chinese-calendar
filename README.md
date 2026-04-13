@@ -24,6 +24,21 @@ Install the required formatter and linter with Homebrew:
 brew install swiftformat swiftlint
 ```
 
+For Visual Studio Code Swift navigation and symbol jump, also install:
+
+```bash
+brew install xcode-build-server
+```
+
+Then generate the Xcode project and build server config once:
+
+```bash
+./Scripts/generate_xcodeproj.sh
+./Scripts/generate_buildserver_config.sh
+```
+
+This repository contains both a Swift Package and Xcode app targets under `Apps/`, so VS Code navigation is most reliable when SourceKit-LSP uses the generated `buildServer.json`.
+
 ## Agent Skills
 
 - Project-local SwiftUI skill: `./.codex/skills/swiftui-pro`

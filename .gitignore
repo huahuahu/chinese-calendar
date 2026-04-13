@@ -15,6 +15,7 @@ xcuserdata/
 .build/
 Packages/
 Package.resolved
+buildServer.json
 
 # macOS
 .DS_Store
