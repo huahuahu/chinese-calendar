@@ -37,6 +37,7 @@ jobs:
           XCODEGEN_TEMP_DIR="$(mktemp -d)"
           curl -fsSL -o "$XCODEGEN_TEMP_DIR/xcodegen.zip" "https://github.com/yonaskolb/XcodeGen/releases/download/${XCODEGEN_VERSION}/xcodegen.zip"
           unzip -qo "$XCODEGEN_TEMP_DIR/xcodegen.zip" -d "$XCODEGEN_TEMP_DIR"
+          # The release zip may add a top-level directory, so resolve the binary dynamically.
           XCODEGEN_PATH="$(find "$XCODEGEN_TEMP_DIR" -type f -path '*/bin/xcodegen' -print -quit)"
           install -m 0755 "$XCODEGEN_PATH" "$RUNNER_TEMP/bin/xcodegen"
 
@@ -83,6 +84,7 @@ jobs:
           XCODEGEN_TEMP_DIR="$(mktemp -d)"
           curl -fsSL -o "$XCODEGEN_TEMP_DIR/xcodegen.zip" "https://github.com/yonaskolb/XcodeGen/releases/download/${XCODEGEN_VERSION}/xcodegen.zip"
           unzip -qo "$XCODEGEN_TEMP_DIR/xcodegen.zip" -d "$XCODEGEN_TEMP_DIR"
+          # The release zip may add a top-level directory, so resolve the binary dynamically.
           XCODEGEN_PATH="$(find "$XCODEGEN_TEMP_DIR" -type f -path '*/bin/xcodegen' -print -quit)"
           install -m 0755 "$XCODEGEN_PATH" "$RUNNER_TEMP/bin/xcodegen"
           echo "$RUNNER_TEMP/bin" >> "$GITHUB_PATH"
