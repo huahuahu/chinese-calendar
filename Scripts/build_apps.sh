@@ -40,7 +40,20 @@ show_ios_build_settings() {
         -scheme ChineseCalendar-iOS \
         -sdk iphonesimulator \
         -showBuildSettings | \
-        grep -E 'SUPPORTED_PLATFORMS|SDKROOT|TARGETED_DEVICE_FAMILY|IPHONEOS_DEPLOYMENT_TARGET|SUPPORTS_MACCATALYST|PLATFORM_NAME|EFFECTIVE_PLATFORM_NAME|TARGET_DEVICE_PLATFORM_NAME'
+        grep -E 'SUPPORTED_PLATFORMS|SDKROOT|TARGETED_DEVICE_FAMILY|IPHONEOS_DEPLOYMENT_TARGET|SUPPORTS_MACCATALYST|SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD|SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD|PLATFORM_NAME|EFFECTIVE_PLATFORM_NAME|TARGET_DEVICE_PLATFORM_NAME'
+}
+
+show_generated_ios_target_metadata() {
+    show_section "Generated ChineseCalendar-iOS target metadata"
+    sed -n '130,190p' ChineseCalendar.xcodeproj/project.pbxproj
+
+    show_section "Generated ChineseCalendar-iOS build configuration excerpt"
+    sed -n '245,290p' ChineseCalendar.xcodeproj/project.pbxproj
+}
+
+show_generated_ios_scheme() {
+    show_section "Generated ChineseCalendar-iOS shared scheme"
+    sed -n '1,220p' ChineseCalendar.xcodeproj/xcshareddata/xcschemes/ChineseCalendar-iOS.xcscheme
 }
 
 resolve_ios_simulator_destination() {
@@ -74,6 +87,8 @@ show_command "xcodebuild version" xcodebuild -version
 show_command "simctl runtimes" xcrun simctl list runtimes
 show_command "simctl devices available" xcrun simctl list devices available
 show_ios_build_settings
+show_generated_ios_target_metadata
+show_generated_ios_scheme
 show_destinations "ChineseCalendar-iOS" -sdk iphonesimulator
 show_destinations "ChineseCalendar-macOS"
 
