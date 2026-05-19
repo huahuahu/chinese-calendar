@@ -2,4 +2,4 @@
 
 set -euo pipefail
 
-swift test
+swift test --package-path Sources
