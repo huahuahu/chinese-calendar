@@ -10,7 +10,7 @@ This repository hosts a Swift project for browsing the traditional Chinese calen
 
 ## Current Structure
 
-- `Package.swift`: Shared Swift Package definition.
+- `Sources/Package.swift`: Shared Swift Package definition.
 - `Sources/ChineseCalendarCore`: Domain models and calendar logic.
 - `Sources/ChineseCalendarData`: Data loading and repository abstractions.
 - `Sources/ChineseCalendarUI`: Shared SwiftUI views.
@@ -30,8 +30,8 @@ This repository hosts a Swift project for browsing the traditional Chinese calen
 
 ## Common Commands
 
-- `swift build`
-- `swift test`
+- `swift build --package-path Sources`
+- `swift test --package-path Sources`
 - `git status --short`
 
 ## Near-Term Priorities

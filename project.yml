@@ -10,7 +10,8 @@ configs:
 
 packages:
   ChineseCalendarPackage:
-    path: .
+    path: Sources
+    group: Packages
 
 targets:
   ChineseCalendar-iOS:
