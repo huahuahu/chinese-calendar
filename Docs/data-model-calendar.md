@@ -2,47 +2,55 @@
 
 ## 目的
 
-本文档只定义 calendar facts 的数据模型：
+本文档只定义 calendar facts 的基础数据模型：
 
-- 农历日和公历日如何对应
+- 一个农历日和一个公历日如何对应到同一天
 - 农历年、月、日如何形成层级结构
-- 年、月、日各自如何保存干支等日历信息
+- 年、月、日各自如何保存干支
 
-年号、帝王、王朝、政权归属等 political attribution 暂不在本文档中建模。后续如果需要接入这些信息，应通过同一套 day identity 关联，而不是混入基础日历模型。
+年号、帝王、王朝、政权归属等 political attribution 暂不在本文档中建模。后续这些信息应通过同一套 `dayIndex` 关联到具体某一天，而不是混入基础日历模型。
 
 ## 核心原则
 
-### 同一天先有一个稳定锚点
+### 同一天先有稳定锚点
 
-农历日和公历日不是两条 timeline 中互相猜测出来的值，而是同一个 absolute day 的两种表达。
+农历日和公历日是同一个 absolute day 的两种表达。数据层应先定义一个稳定的 day anchor：
 
-因此数据层应先定义一个稳定的 day anchor：
+- `dayIndex`：应用内部使用的连续日序号，从数据集起点开始递增。
+- `julianDayNumber`：儒略日数，用于和外部历算资料交叉校验。
 
-- `dayIndex`：应用内部使用的连续日序号
-- `julianDayNumber`：可选但推荐保存，用于和外部历算资料交叉校验
+所有公历、农历、干支信息都通过 `dayIndex` 挂到同一天。
 
-所有公历、农历、干支信息都挂在这个 day anchor 上。
+### 公历日是 civil 表达
 
-### 公历日是同一天的 civil 表达
-
-公历日期用于用户导航和显示，但不作为日历事实的唯一身份。
+公历日期用于用户导航和显示，但不作为同一天的唯一身份。
 
 一条 day anchor 在当前数据集中应对应一条 civil date record：
 
+- `dayIndex`
 - `year`
 - `month`
-- `day`
+- `dayOfMonth`
 - `calendarStyle`
 
-`calendarStyle` 用于说明这条 civil date 是 Julian 还是 Gregorian。首个版本可以使用固定的历法切换规则生成它，后续如需支持不同地区的 reform rule，再扩展生成策略。
+`calendarStyle` 用于说明这条 civil date 是 Julian 还是 Gregorian。
+
+Julian calendar 是儒略历，由 Julius Caesar 推行，规则中每 4 年置闰一次。Gregorian calendar 是格里历，由 1582 年的历法改革引入，修正了闰年规则：世纪年必须能被 400 整除才是闰年。两者在历史日期上会逐渐产生偏移，而且各地区采用 Gregorian calendar 的时间并不完全相同。
+
+参考资料：
+
+- [Julian calendar, Encyclopaedia Britannica](https://www.britannica.com/science/Julian-calendar)
+- [Gregorian calendar, Encyclopaedia Britannica](https://www.britannica.com/topic/Gregorian-calendar)
+
+首个版本可以采用项目固定的 reform boundary 来生成 `calendarStyle`。如果以后要支持不同地区的历法切换规则，应把 reform rule 显式建模，而不是让 `year/month/day` 自己隐含这层语义。
 
 ### 农历年月日是树状层级
 
-农历结构应按真实从属关系建模：
+农历结构按真实从属关系建模：
 
-- `ChineseLunarYearInstance`
-- `ChineseLunarMonthInstance`
-- `ChineseLunarDayInstance`
+- `ChineseLunarYear`
+- `ChineseLunarMonth`
+- `ChineseLunarDay`
 
 日是最低层级。每个农历日属于一个农历月，每个农历月属于一个农历年。
 
@@ -52,55 +60,78 @@
 - 月有月干支
 - 日有日干支
 
+## 基础字段约定
+
+### dayIndex 与 dayNumberInMonth
+
+`dayIndex` 和 `dayNumberInMonth` 表达的是两件不同的事：
+
+- `dayIndex`：整个数据集中的绝对日序号，例如第 0 天、第 1 天、第 2 天。它用于表示同一天，并连接公历和农历。
+- `dayNumberInMonth`：农历月内的日序，例如初一是 `1`，十五是 `15`，三十是 `30`。
+
+所以 `dayIndex` 可以跨年跨月连续递增，`dayNumberInMonth` 每个农历月都会从 `1` 重新开始。
+
+### lunarMonthIndex 与 monthNumberInYear
+
+`lunarMonthIndex` 和 `monthNumberInYear` 也表达不同概念：
+
+- `lunarMonthIndex`：整个数据集中的连续农历月序号，用来把农历日关联到它所属的农历月。
+- `monthNumberInYear`：农历年内的月序，例如正月是 `1`，十二月是 `12`。
+
+闰月信息属于农历月本身，所以 `isLeapMonth` 放在 `ChineseLunarMonth` 上，不放在 `ChineseLunarDay` 上。
+
+### 干支字段
+
+基础数据中建议用整数保存天干、地支，而不是直接保存显示字符串：
+
+- `stemIndex: Int`：`0...9`，对应甲、乙、丙、丁、戊、己、庚、辛、壬、癸。
+- `branchIndex: Int`：`0...11`，对应子、丑、寅、卯、辰、巳、午、未、申、酉、戌、亥。
+
+显示层再把整数转换成中文名，例如 `0 + 0 -> 甲子`。这样可以让 raw data 更容易校验，也避免同一概念在数据里出现多种写法。
+
 ## 关系图
 
 ```mermaid
 erDiagram
-    CalendarDay ||--|| CivilDateRecord : "has civil date"
-    CalendarDay ||--|| ChineseLunarDayInstance : "has lunar day"
-    ChineseLunarYearInstance ||--o{ ChineseLunarMonthInstance : "contains"
-    ChineseLunarMonthInstance ||--o{ ChineseLunarDayInstance : "contains"
+    CalendarDay ||--|| CivilDate : "dayIndex"
+    CalendarDay ||--|| ChineseLunarDay : "dayIndex"
+    ChineseLunarYear ||--o{ ChineseLunarMonth : "lunarYearNumber"
+    ChineseLunarMonth ||--o{ ChineseLunarDay : "lunarMonthIndex"
 
     CalendarDay {
         int dayIndex
         int julianDayNumber
     }
 
-    CivilDateRecord {
+    CivilDate {
         int dayIndex
         int year
         int month
-        int day
+        int dayOfMonth
         string calendarStyle
     }
 
-    ChineseLunarYearInstance {
-        string id
+    ChineseLunarYear {
         int lunarYearNumber
-        string yearStem
-        string yearBranch
-        int startDayIndex
-        int endDayIndex
+        int yearStemIndex
+        int yearBranchIndex
     }
 
-    ChineseLunarMonthInstance {
-        string id
-        string lunarYearID
-        int monthNumber
+    ChineseLunarMonth {
+        int lunarMonthIndex
+        int lunarYearNumber
+        int monthNumberInYear
         bool isLeapMonth
-        string monthStem
-        string monthBranch
-        int startDayIndex
-        int endDayIndex
+        int monthStemIndex
+        int monthBranchIndex
     }
 
-    ChineseLunarDayInstance {
-        string id
+    ChineseLunarDay {
         int dayIndex
-        string lunarMonthID
-        int dayNumber
-        string dayStem
-        string dayBranch
+        int lunarMonthIndex
+        int dayNumberInMonth
+        int dayStemIndex
+        int dayBranchIndex
     }
 ```
 
@@ -110,7 +141,7 @@ erDiagram
 
 表示数据集中的一个 absolute day。
 
-建议字段：
+基础字段：
 
 - `dayIndex: Int`
 - `julianDayNumber: Int`
@@ -125,18 +156,18 @@ erDiagram
 
 - `dayIndex` 在数据集中必须连续且唯一。
 - `julianDayNumber` 在数据集中必须唯一。
-- 一条 `CalendarDay` 应只有一条 `CivilDateRecord` 和一条 `ChineseLunarDayInstance`。
+- 一条 `CalendarDay` 应只有一条 `CivilDate` 和一条 `ChineseLunarDay`。
 
-## CivilDateRecord
+## CivilDate
 
 表示某个 absolute day 的 civil date 表达。
 
-建议字段：
+基础字段：
 
 - `dayIndex: Int`
 - `year: Int`
 - `month: Int`
-- `day: Int`
+- `dayOfMonth: Int`
 - `calendarStyle: CivilCalendarStyle`
 
 建议 enum：
@@ -152,117 +183,117 @@ erDiagram
 
 说明：
 
-- `CivilDateRecord` 不应持有农历年月日字段。
-- 查找某个公历日期时，应先找到对应 `CalendarDay`，再读取其农历日节点。
+- `CivilDate` 不持有农历年月日字段。
+- 查找某个公历日期时，应先找到对应 `dayIndex`，再读取同一天的农历日。
 
-## ChineseLunarDayInstance
+## ChineseLunarDay
 
 表示一个具体农历日，也是农历层级中的最低节点。
 
-建议字段：
+基础字段：
 
-- `id: String`
 - `dayIndex: Int`
-- `lunarMonthID: String`
-- `dayNumber: Int`
-- `dayStem: String`
-- `dayBranch: String`
-
-可选派生属性：
-
-- `dayStemBranchDisplayName`
-- `dayDisplayName`
+- `lunarMonthIndex: Int`
+- `dayNumberInMonth: Int`
+- `dayStemIndex: Int`
+- `dayBranchIndex: Int`
 
 职责：
 
 - 表达“某个农历月里的第几日”
 - 保存日干支
 - 通过 `dayIndex` 和 `CalendarDay` 建立与公历日的一对一对应
+- 通过 `lunarMonthIndex` 关联到所属农历月
 
 约束：
 
-- `dayNumber` 只能是 `1...30`。
-- 同一个 `lunarMonthID` 下的 `dayNumber` 必须唯一。
-- 每个 `ChineseLunarDayInstance` 必须对应且只对应一个 `CalendarDay`。
-- 日干支应拆成 `dayStem` 和 `dayBranch` 保存，显示时再拼接。
+- `dayNumberInMonth` 只能是 `1...30`。
+- 同一个 `lunarMonthIndex` 下的 `dayNumberInMonth` 必须唯一。
+- `lunarMonthIndex` 必须指向一条真实存在的 `ChineseLunarMonth`。
+- 每个 `ChineseLunarDay` 必须对应且只对应一个 `CalendarDay`。
+- 日干支使用 `dayStemIndex` 和 `dayBranchIndex` 保存，显示时再转换成中文。
 
-## ChineseLunarMonthInstance
+## ChineseLunarMonth
 
 表示一个具体农历月。这里的“具体”指它已经属于某个农历年，而不是抽象的正月、二月。
 
-建议字段：
+基础字段：
 
-- `id: String`
-- `lunarYearID: String`
-- `monthNumber: Int`
+- `lunarYearNumber: Int`
+- `lunarMonthIndex: Int`
+- `monthNumberInYear: Int`
 - `isLeapMonth: Bool`
-- `monthStem: String`
-- `monthBranch: String`
-- `startDayIndex: Int`
-- `endDayIndex: Int`
-
-可选派生属性：
-
-- `monthStemBranchDisplayName`
-- `monthDisplayName`
-- `dayCount`
+- `monthStemIndex: Int`
+- `monthBranchIndex: Int`
 
 职责：
 
 - 作为农历日的 parent
 - 表达闰月信息
 - 保存月干支
-- 保存该月覆盖的 absolute day range
+- 通过 `lunarYearNumber` 关联到所属农历年
 
 约束：
 
-- `monthNumber` 只能是 `1...12`。
-- 同一个 `lunarYearID` 下，普通月的 `monthNumber` 必须唯一。
-- 如果存在闰月，则同一年中同一个 `monthNumber` 可以同时有普通月和闰月，但二者必须通过 `isLeapMonth` 区分。
-- `startDayIndex...endDayIndex` 必须覆盖该月所有日节点，且不应和同一年相邻月份产生重叠。
+- `lunarMonthIndex` 在数据集中必须连续且唯一。
+- `lunarYearNumber` 必须指向一条真实存在的 `ChineseLunarYear`。
+- `monthNumberInYear` 只能是 `1...12`。
+- 同一个 `lunarYearNumber` 下，普通月的 `monthNumberInYear` 必须唯一。
+- 如果存在闰月，则同一年中同一个 `monthNumberInYear` 可以同时有普通月和闰月，但二者必须通过 `isLeapMonth` 区分。
 
-## ChineseLunarYearInstance
+说明：
+
+- 月份的起止 `dayIndex`、天数等信息可以从该月下所有 `ChineseLunarDay` 派生，不属于最基本的 raw data。
+
+## ChineseLunarYear
 
 表示一个具体农历年。
 
-建议字段：
+基础字段：
 
-- `id: String`
 - `lunarYearNumber: Int`
-- `yearStem: String`
-- `yearBranch: String`
-- `startDayIndex: Int`
-- `endDayIndex: Int`
-
-可选派生属性：
-
-- `yearStemBranchDisplayName`
-- `monthCount`
-- `dayCount`
+- `yearStemIndex: Int`
+- `yearBranchIndex: Int`
 
 职责：
 
 - 作为农历月的 parent
 - 保存年干支
-- 保存该年覆盖的 absolute day range
 
 说明：
 
 - `lunarYearNumber` 只是连续编号或导入后的年份标识，不等同于年号纪年。
 - 年界首个版本按正月初一处理；如果未来要支持立春换年等干支年界规则，应作为明确的 calendar rule 扩展，而不是隐含在字段里。
+- 年份的起止 `dayIndex`、月数、天数等信息可以从下属月份和日期派生，不属于最基本的 raw data。
 
-## 推荐 ID 规则
+## 关系键
 
-ID 应稳定、可从导入结果重复生成，避免依赖 SwiftData 临时 persistent identifier。
+基础模型不需要额外的 `id` 字段来表达日历事实本身。
 
-建议格式：
+推荐使用以下关系键：
 
-- 年：`lunar-year-{lunarYearNumber}`
-- 月：`lunar-year-{lunarYearNumber}-month-{monthNumber}`
-- 闰月：`lunar-year-{lunarYearNumber}-leap-month-{monthNumber}`
-- 日：`day-{dayIndex}` 或 `lunar-year-{lunarYearNumber}-month-{monthNumber}-day-{dayNumber}`
+- `CalendarDay`：`dayIndex`
+- `CivilDate`：`dayIndex`
+- `ChineseLunarDay`：`dayIndex`
+- `ChineseLunarDay -> ChineseLunarMonth`：`lunarMonthIndex`
+- `ChineseLunarMonth`：`lunarMonthIndex`
+- `ChineseLunarMonth -> ChineseLunarYear`：`lunarYearNumber`
+- `ChineseLunarYear`：`lunarYearNumber`
 
-如果采用后一种日 ID，闰月必须出现在 ID 中，避免普通月和闰月的同日重名。
+如果某个存储层需要稳定字符串 ID，可以在导入时派生，而不要把它当作 raw data。日记录统一使用 `day-{dayIndex}`，例如 `day-0`、`day-1`。
+
+## 显示层派生值
+
+以下内容不建议存为基础 raw data，可以在 domain 或 UI formatting helper 中生成：
+
+- `dayDisplayName`：例如 `1 -> 初一`，`15 -> 十五`，`30 -> 三十`。
+- `monthDisplayName`：例如 `1 -> 正月`，`2 + isLeapMonth -> 闰二月`。
+- `stemBranchDisplayName`：例如 `stemIndex = 0` 且 `branchIndex = 0` 时显示 `甲子`。
+- `monthDayCount`：从同一个农历月下的 `ChineseLunarDay` 数量计算。
+- `yearMonthCount` 和 `yearDayCount`：从同一个农历年下的月份和日期计算。
+- `startDayIndex` 和 `endDayIndex`：从子节点的最小和最大 `dayIndex` 计算。
+
+这样 raw data 保持小而稳定，显示规则也可以集中管理。
 
 ## 查询方式
 
@@ -270,10 +301,11 @@ ID 应稳定、可从导入结果重复生成，避免依赖 SwiftData 临时 pe
 
 步骤：
 
-1. 使用 `CivilDateRecord(year, month, day, calendarStyle)` 找到 `dayIndex`。
+1. 使用 `CivilDate(year, month, dayOfMonth, calendarStyle)` 找到 `dayIndex`。
 2. 使用 `dayIndex` 找到 `CalendarDay`。
-3. 读取对应的 `ChineseLunarDayInstance`。
-4. 沿 `lunarMonthID` 读取所属月，再沿 `lunarYearID` 读取所属年。
+3. 使用同一个 `dayIndex` 找到 `ChineseLunarDay`。
+4. 使用 `ChineseLunarDay.lunarMonthIndex` 找到所属农历月。
+5. 使用 `ChineseLunarMonth.lunarYearNumber` 找到所属农历年。
 
 返回结果可以组合出：
 
@@ -286,14 +318,31 @@ ID 应稳定、可从导入结果重复生成，避免依赖 SwiftData 临时 pe
 
 步骤：
 
-1. 使用 `lunarYearID` 找到农历年。
-2. 在该年下按 `monthNumber` 和 `isLeapMonth` 找到农历月。
-3. 在该月下按 `dayNumber` 找到农历日。
-4. 使用该日的 `dayIndex` 找到 `CalendarDay` 和 `CivilDateRecord`。
+1. 使用 `lunarYearNumber + monthNumberInYear + isLeapMonth` 找到 `ChineseLunarMonth`。
+2. 使用 `lunarMonthIndex + dayNumberInMonth` 找到 `ChineseLunarDay`。
+3. 使用该日的 `dayIndex` 找到 `CalendarDay`。
+4. 使用同一个 `dayIndex` 找到 `CivilDate`。
+
+## Foundation Date 与 Calendar
+
+`Date` 和 `NSDate` 表示的是一个绝对时间点，不包含“这是哪一种历法下的年月日”这层语义。`Calendar` 负责把绝对时间点解释成某个历法下的 components。
+
+参考资料：
+
+- [Date, Apple Developer Documentation](https://developer.apple.com/documentation/foundation/date)
+- [Calendar, Apple Developer Documentation](https://developer.apple.com/documentation/foundation/calendar)
+
+对本项目来说，可以这样使用 Foundation：
+
+- Gregorian 日期的现代格式化和基本校验可以使用 `Calendar(identifier: .gregorian)`。
+- `Date` 适合作为 UI 或系统 API 的桥接类型，但不适合作为本项目的 day identity。
+- 历史 Julian/Gregorian 混合规则、1582 reform boundary、不同地区采用 Gregorian 的差异，不应隐含依赖 Foundation 自动处理。
+
+因此 processed calendar data 仍应以 `dayIndex` 和 `julianDayNumber` 为主锚点，civil date 由明确的导入算法或 source data 生成。Foundation 可以用于交叉校验和展示，但不应替代项目自己的历史 calendar rule。
 
 ## Processed Artifact 建议
 
-导入流水线可以先产出扁平 artifact，再导入 SwiftData 时组装层级。
+导入流水线可以先产出扁平 artifact，再导入 SwiftData 或其他存储层时组装层级。
 
 建议文件：
 
@@ -308,20 +357,27 @@ ID 应稳定、可从导入结果重复生成，避免依赖 SwiftData 临时 pe
   "civil": {
     "year": 1,
     "month": 1,
-    "day": 1,
+    "dayOfMonth": 1,
     "calendarStyle": "julian"
   },
-  "lunar": {
+  "lunarYear": {
     "yearNumber": 1,
-    "yearStem": "辛",
-    "yearBranch": "酉",
-    "monthNumber": 11,
+    "yearStemIndex": 7,
+    "yearBranchIndex": 9
+  },
+  "lunarMonth": {
+    "lunarMonthIndex": 0,
+    "yearNumber": 1,
+    "monthNumberInYear": 11,
     "isLeapMonth": false,
-    "monthStem": "庚",
-    "monthBranch": "子",
-    "dayNumber": 1,
-    "dayStem": "甲",
-    "dayBranch": "子"
+    "monthStemIndex": 6,
+    "monthBranchIndex": 0
+  },
+  "lunarDay": {
+    "lunarMonthIndex": 0,
+    "dayNumberInMonth": 1,
+    "dayStemIndex": 0,
+    "dayBranchIndex": 0
   }
 }
 ```
@@ -329,37 +385,38 @@ ID 应稳定、可从导入结果重复生成，避免依赖 SwiftData 临时 pe
 导入时由这份扁平数据生成：
 
 - 一组 `CalendarDay`
-- 一组 `CivilDateRecord`
-- 去重后的 `ChineseLunarYearInstance`
-- 去重后的 `ChineseLunarMonthInstance`
-- 一组 `ChineseLunarDayInstance`
+- 一组 `CivilDate`
+- 去重后的 `ChineseLunarYear`
+- 去重后的 `ChineseLunarMonth`
+- 一组 `ChineseLunarDay`
 
 ## 校验规则
 
 导入或测试时至少应校验：
 
 - `dayIndex` 连续无断裂。
+- `lunarMonthIndex` 连续无断裂。
 - 每个 `CalendarDay` 恰好有一条 civil date 和一条 lunar day。
-- 每个 `ChineseLunarDayInstance` 都能向上找到 month 和 year。
-- 每个 month 的 day count 只能是 29 或 30。
-- 每个 year 的 month count 通常是 12 或 13。
+- 每个 `ChineseLunarDay` 都能向上找到 month 和 year。
+- 每个农历月的 day count 只能是 29 或 30。
+- 每个农历年的 month count 通常是 12 或 13。
 - 同一年中闰月不能超过一个，除非 source data 明确支持特殊情况并记录原因。
-- 年、月、日干支字段都必须是合法天干和地支。
-- 月和年的 `startDayIndex...endDayIndex` 必须与子节点范围一致。
+- `stemIndex` 必须在 `0...9`。
+- `branchIndex` 必须在 `0...11`。
 
 ## 与现有代码的映射
 
-当前 persistence model 已经接近这个结构：
+当前 persistence model 已经接近这个结构，但命名还带有 `Instance`：
 
 - `ChineseCalendarDay` 同时承担 absolute day anchor 和 lunar day node 的职责。
 - `CivilDateRecord` 保存 civil date 表达。
-- `ChineseLunarMonthInstance` 保存农历月节点和月干支。
-- `ChineseLunarYearInstance` 保存农历年节点和年干支。
+- `ChineseLunarMonthInstance` 对应本文档中的 `ChineseLunarMonth`。
+- `ChineseLunarYearInstance` 对应本文档中的 `ChineseLunarYear`。
 
-后续可以选择两条路线之一：
+后续实现可以选择两条路线之一：
 
 - 保持现状：继续让 `ChineseCalendarDay` 同时保存 `dayIndex`、`julianDayNumber`、`lunarDayRawValue` 和日干支。
-- 拆分模型：新增 `CalendarDay` 作为纯 absolute anchor，再新增 `ChineseLunarDayInstance` 作为农历日节点。
+- 拆分模型：新增 `CalendarDay` 作为纯 absolute anchor，再新增 `ChineseLunarDay` 作为农历日节点。
 
 如果短期目标是尽快导入和浏览数据，保持现状更简单。如果后续需要在同一个 absolute day 上挂载更多非农历事实，拆分模型会让边界更清晰。
 
