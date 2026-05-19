@@ -2,7 +2,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "ChineseCalendar",
+    name: "ChineseCalendarSources",
     defaultLocalization: "en",
     platforms: [
         .iOS(.v26),
@@ -28,27 +28,35 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "ChineseCalendarCore"
+            name: "ChineseCalendarCore",
+            path: "ChineseCalendarCore",
+            exclude: ["Tests"]
         ),
         .target(
             name: "ChineseCalendarData",
-            dependencies: ["ChineseCalendarCore"]
+            dependencies: ["ChineseCalendarCore"],
+            path: "ChineseCalendarData",
+            exclude: ["Tests"]
         ),
         .target(
             name: "ChineseCalendarPersistence",
-            dependencies: ["ChineseCalendarCore", "ChineseCalendarData"]
+            dependencies: ["ChineseCalendarCore", "ChineseCalendarData"],
+            path: "ChineseCalendarPersistence"
         ),
         .target(
             name: "ChineseCalendarUI",
-            dependencies: ["ChineseCalendarCore", "ChineseCalendarData"]
+            dependencies: ["ChineseCalendarCore", "ChineseCalendarData"],
+            path: "ChineseCalendarUI"
         ),
         .testTarget(
             name: "ChineseCalendarCoreTests",
-            dependencies: ["ChineseCalendarCore"]
+            dependencies: ["ChineseCalendarCore"],
+            path: "ChineseCalendarCore/Tests"
         ),
         .testTarget(
             name: "ChineseCalendarDataTests",
-            dependencies: ["ChineseCalendarData"]
+            dependencies: ["ChineseCalendarCore", "ChineseCalendarData"],
+            path: "ChineseCalendarData/Tests"
         )
     ]
 )
