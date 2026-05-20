@@ -2,30 +2,31 @@ import Foundation
 import SwiftData
 
 @Model
-public final class CivilDateRecord {
-    #Unique<CivilDateRecord>([\.dayIndex])
+public final class CivilDate {
+    #Unique<CivilDate>([\.dayIndex], [\.year, \.month, \.dayOfMonth, \.calendarStyle])
 
     public var dayIndex: Int
     public var year: Int
     public var month: Int
-    public var day: Int
+    public var dayOfMonth: Int
     public var calendarStyle: CivilCalendarStyle
 
-    public var chineseCalendarDay: ChineseCalendarDay?
+    // Inverse side of CalendarDay.civilDate.
+    public var calendarDay: CalendarDay?
 
     public init(
         dayIndex: Int,
         year: Int,
         month: Int,
-        day: Int,
+        dayOfMonth: Int,
         calendarStyle: CivilCalendarStyle,
-        chineseCalendarDay: ChineseCalendarDay? = nil
+        calendarDay: CalendarDay? = nil
     ) {
         self.dayIndex = dayIndex
         self.year = year
         self.month = month
-        self.day = day
+        self.dayOfMonth = dayOfMonth
         self.calendarStyle = calendarStyle
-        self.chineseCalendarDay = chineseCalendarDay
+        self.calendarDay = calendarDay
     }
 }
