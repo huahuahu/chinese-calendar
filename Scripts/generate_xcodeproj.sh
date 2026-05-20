@@ -8,3 +8,6 @@ if ! command -v xcodegen >/dev/null 2>&1; then
 fi
 
 xcodegen generate
+
+echo "⚙️  Resolving Swift package dependencies..."
+xcodebuild -resolvePackageDependencies -project ChineseCalendar.xcodeproj
