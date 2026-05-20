@@ -1,7 +1,7 @@
 {
   "artifact": "calendar_days",
   "layout": "Data/Processed/calendar_days/<year>/calendar_days.jsonl",
-  "generatedAt": "2026-05-19T14:55:15.607Z",
+  "generatedAt": "2026-05-20T12:43:07.270Z",
   "generator": "Scripts/ImportChineseCalendar/generate_calendar_days.swift",
   "upstreamRepository": "https://github.com/ytliu0/ChineseCalendar",
   "upstreamCommit": "d6aae82b63b79a6f8659ea3e064024b7d8ac3077",

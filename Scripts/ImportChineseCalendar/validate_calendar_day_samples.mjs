@@ -231,6 +231,7 @@ function recordFromUpstream(upstream, civil) {
   const startJulianDayNumber = calVars.jd0 + calVars.cmonthDate[monthPosition] + 1;
   const rawMonthNumber = calVars.cmonthNum[monthPosition];
   const rawJian = calVars.cmonthJian[monthPosition];
+  const dayCount = calVars.cmonthLong[monthPosition] === 1 ? 30 : 29;
   const lunarYearNumber = civil.year + calVars.cmonthYear[monthPosition] - 1;
   const jian = Math.abs(rawJian);
   const monthStemIndex = positiveModulo(
@@ -255,6 +256,7 @@ function recordFromUpstream(upstream, civil) {
       yearNumber: lunarYearNumber,
       monthNumberInYear: Math.abs(rawMonthNumber),
       isLeapMonth: rawMonthNumber < 0,
+      dayCount,
       monthStemIndex,
       monthBranchIndex: positiveModulo(jian + 1, 12)
     },
@@ -299,6 +301,7 @@ function assertComparableRecords(sample, generatedRecord, upstreamRecord, label)
       yearNumber: generatedRecord.lunarMonth.yearNumber,
       monthNumberInYear: generatedRecord.lunarMonth.monthNumberInYear,
       isLeapMonth: generatedRecord.lunarMonth.isLeapMonth,
+      dayCount: generatedRecord.lunarMonth.dayCount,
       monthStemIndex: generatedRecord.lunarMonth.monthStemIndex,
       monthBranchIndex: generatedRecord.lunarMonth.monthBranchIndex
     },
@@ -312,14 +315,32 @@ function assertComparableRecords(sample, generatedRecord, upstreamRecord, label)
 }
 
 function assertDeepEqual(sample, label, actual, expected) {
-  const actualJSON = JSON.stringify(actual);
-  const expectedJSON = JSON.stringify(expected);
+  const actualJSON = stableJSONString(actual);
+  const expectedJSON = stableJSONString(expected);
   if (actualJSON !== expectedJSON) {
     throw new Error(
       `${sample.id} (${formatCivil(sample.civil)}) does not match ${label}.\n` +
         `Expected: ${expectedJSON}\nActual:   ${actualJSON}`
     );
   }
+}
+
+function stableJSONString(value) {
+  return JSON.stringify(sortObjectKeys(value));
+}
+
+function sortObjectKeys(value) {
+  if (Array.isArray(value)) {
+    return value.map(sortObjectKeys);
+  }
+  if (value !== null && typeof value === "object") {
+    return Object.fromEntries(
+      Object.entries(value)
+        .sort(([left], [right]) => left.localeCompare(right))
+        .map(([key, nestedValue]) => [key, sortObjectKeys(nestedValue)])
+    );
+  }
+  return value;
 }
 
 function civilCalendarStyle(year, month, dayOfMonth) {
