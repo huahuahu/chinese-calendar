@@ -49,6 +49,7 @@ This repository hosts a Swift project for browsing the traditional Chinese calen
 
 ## Installed Agent Resources
 
+- Sosumi MCP: configured in `./.codex/config.toml` at `http://127.0.0.1:8787/mcp`; use it to search and fetch Apple Developer documentation and WWDC pages when checking Swift, SwiftUI, SwiftData, Xcode, or platform API behavior.
 - Project-local Codex skill: `./.codex/skills/swiftui-pro`
 - Project-local Codex skill: `./.codex/skills/swift-concurrency-pro`
 - Project-local Codex skill: `./.codex/skills/swiftdata-pro`
@@ -63,6 +64,7 @@ The project keeps its own repository-specific rules above, but also adopts the s
 - Favor Swift concurrency and safe state management patterns.
 - Avoid third-party dependencies unless there is a clear project need.
 - Keep SwiftUI code accessible, testable, and structurally simple.
+- When current Apple API behavior matters, prefer Sosumi MCP or the `sosumi search` / `sosumi fetch` commands over memory alone; use fetched Apple documentation as the reference for implementation and reviews.
 
 When a task is primarily about SwiftUI review or generation, prefer using the local `$swiftui-pro` skill.
 When a task is primarily about async/await, actor isolation, cancellation, or task structure, prefer `$swift-concurrency-pro`.
