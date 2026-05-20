@@ -3,6 +3,9 @@ name: ChineseCalendar
 options:
   createIntermediateGroups: true
   groupSortPosition: top
+  # Work around XcodeGen 2.45.x omitting local package backlinks:
+  # https://github.com/yonaskolb/XcodeGen/issues/1549
+  postGenCommand: ./Scripts/fix_xcodegen_local_package_backlinks.py
 
 configs:
   Debug: debug
