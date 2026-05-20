@@ -1,0 +1,771 @@
+{
+  "schemaVersion": 1,
+  "calendarSource": {
+    "title": "ytliu0/ChineseCalendar GitHub Pages",
+    "url": "https://ytliu0.github.io/ChineseCalendar/",
+    "upstreamCommit": "d6aae82b63b79a6f8659ea3e064024b7d8ac3077"
+  },
+  "yearNumbering": "Astronomical year numbering: 0 = 1 BCE, -1 = 2 BCE.",
+  "samples": [
+    {
+      "id": "dataset-start",
+      "title": "数据集起点",
+      "civil": {
+        "year": -220,
+        "month": 1,
+        "dayOfMonth": 1
+      },
+      "note": "覆盖 v1 支持范围的第一个 civil day。",
+      "dateSource": {
+        "title": "项目生成范围",
+        "url": "https://ytliu0.github.io/ChineseCalendar/index.html?y=-220"
+      },
+      "expected": {
+        "dayIndex": 0,
+        "julianDayNumber": 1640703,
+        "calendarStyle": "julian",
+        "lunarYear": {
+          "yearNumber": -220,
+          "yearStemIndex": 6,
+          "yearBranchIndex": 4
+        },
+        "lunarMonth": {
+          "lunarMonthIndex": 0,
+          "yearNumber": -220,
+          "monthNumberInYear": 12,
+          "isLeapMonth": false,
+          "monthStemIndex": 3,
+          "monthBranchIndex": 1
+        },
+        "lunarDay": {
+          "lunarMonthIndex": 0,
+          "dayNumberInMonth": 4,
+          "dayStemIndex": 2,
+          "dayBranchIndex": 4
+        }
+      }
+    },
+    {
+      "id": "han-wudi-accession",
+      "title": "汉武帝登基",
+      "civil": {
+        "year": -140,
+        "month": 3,
+        "dayOfMonth": 9
+      },
+      "note": "公元前 141 年按 astronomical year numbering 记为 -140。",
+      "dateSource": {
+        "title": "汉武帝 - Wikipedia",
+        "url": "https://zh.wikipedia.org/wiki/%E6%B1%89%E6%AD%A6%E5%B8%9D"
+      },
+      "expected": {
+        "dayIndex": 29288,
+        "julianDayNumber": 1669991,
+        "calendarStyle": "julian",
+        "lunarYear": {
+          "yearNumber": -140,
+          "yearStemIndex": 6,
+          "yearBranchIndex": 0
+        },
+        "lunarMonth": {
+          "lunarMonthIndex": 991,
+          "yearNumber": -140,
+          "monthNumberInYear": 1,
+          "isLeapMonth": false,
+          "monthStemIndex": 4,
+          "monthBranchIndex": 2
+        },
+        "lunarDay": {
+          "lunarMonthIndex": 991,
+          "dayNumberInMonth": 27,
+          "dayStemIndex": 0,
+          "dayBranchIndex": 0
+        }
+      }
+    },
+    {
+      "id": "an-lushan-rebellion",
+      "title": "安史之乱爆发",
+      "civil": {
+        "year": 755,
+        "month": 12,
+        "dayOfMonth": 16
+      },
+      "note": "用于覆盖唐代历史日期。",
+      "dateSource": {
+        "title": "安史之乱 - Wikipedia",
+        "url": "https://zh.wikipedia.org/wiki/%E5%AE%89%E5%8F%B2%E4%B9%8B%E4%B9%B1"
+      },
+      "expected": {
+        "dayIndex": 356468,
+        "julianDayNumber": 1997171,
+        "calendarStyle": "julian",
+        "lunarYear": {
+          "yearNumber": 755,
+          "yearStemIndex": 1,
+          "yearBranchIndex": 7
+        },
+        "lunarMonth": {
+          "lunarMonthIndex": 12071,
+          "yearNumber": 755,
+          "monthNumberInYear": 11,
+          "isLeapMonth": false,
+          "monthStemIndex": 4,
+          "monthBranchIndex": 0
+        },
+        "lunarDay": {
+          "lunarMonthIndex": 12071,
+          "dayNumberInMonth": 9,
+          "dayStemIndex": 0,
+          "dayBranchIndex": 0
+        }
+      }
+    },
+    {
+      "id": "song-founded",
+      "title": "北宋建立",
+      "civil": {
+        "year": 960,
+        "month": 2,
+        "dayOfMonth": 4
+      },
+      "note": "用于覆盖五代至宋初日期。",
+      "dateSource": {
+        "title": "宋朝 - Wikipedia",
+        "url": "https://zh.wikipedia.org/wiki/%E5%AE%8B%E6%9C%9D"
+      },
+      "expected": {
+        "dayIndex": 431029,
+        "julianDayNumber": 2071732,
+        "calendarStyle": "julian",
+        "lunarYear": {
+          "yearNumber": 960,
+          "yearStemIndex": 6,
+          "yearBranchIndex": 8
+        },
+        "lunarMonth": {
+          "lunarMonthIndex": 14596,
+          "yearNumber": 960,
+          "monthNumberInYear": 1,
+          "isLeapMonth": false,
+          "monthStemIndex": 4,
+          "monthBranchIndex": 2
+        },
+        "lunarDay": {
+          "lunarMonthIndex": 14596,
+          "dayNumberInMonth": 5,
+          "dayStemIndex": 1,
+          "dayBranchIndex": 5
+        }
+      }
+    },
+    {
+      "id": "ming-founded",
+      "title": "明朝建立",
+      "civil": {
+        "year": 1368,
+        "month": 1,
+        "dayOfMonth": 23
+      },
+      "note": "用于覆盖明初日期。",
+      "dateSource": {
+        "title": "明朝 - Wikipedia",
+        "url": "https://zh.wikipedia.org/wiki/%E6%98%8E%E6%9C%9D"
+      },
+      "expected": {
+        "dayIndex": 580039,
+        "julianDayNumber": 2220742,
+        "calendarStyle": "julian",
+        "lunarYear": {
+          "yearNumber": 1368,
+          "yearStemIndex": 4,
+          "yearBranchIndex": 8
+        },
+        "lunarMonth": {
+          "lunarMonthIndex": 19642,
+          "yearNumber": 1368,
+          "monthNumberInYear": 1,
+          "isLeapMonth": false,
+          "monthStemIndex": 0,
+          "monthBranchIndex": 2
+        },
+        "lunarDay": {
+          "lunarMonthIndex": 19642,
+          "dayNumberInMonth": 4,
+          "dayStemIndex": 1,
+          "dayBranchIndex": 11
+        }
+      }
+    },
+    {
+      "id": "gregorian-reform-last-julian",
+      "title": "Gregorian reform 前最后一天",
+      "civil": {
+        "year": 1582,
+        "month": 10,
+        "dayOfMonth": 4
+      },
+      "note": "确认 1582-10-04 仍标记为 Julian。",
+      "dateSource": {
+        "title": "Gregorian calendar - Wikipedia",
+        "url": "https://en.wikipedia.org/wiki/Gregorian_calendar"
+      },
+      "expected": {
+        "dayIndex": 658457,
+        "julianDayNumber": 2299160,
+        "calendarStyle": "julian",
+        "lunarYear": {
+          "yearNumber": 1582,
+          "yearStemIndex": 8,
+          "yearBranchIndex": 6
+        },
+        "lunarMonth": {
+          "lunarMonthIndex": 22297,
+          "yearNumber": 1582,
+          "monthNumberInYear": 9,
+          "isLeapMonth": false,
+          "monthStemIndex": 6,
+          "monthBranchIndex": 10
+        },
+        "lunarDay": {
+          "lunarMonthIndex": 22297,
+          "dayNumberInMonth": 18,
+          "dayStemIndex": 9,
+          "dayBranchIndex": 9
+        }
+      }
+    },
+    {
+      "id": "gregorian-reform-first-gregorian",
+      "title": "Gregorian reform 后第一天",
+      "civil": {
+        "year": 1582,
+        "month": 10,
+        "dayOfMonth": 15
+      },
+      "note": "确认 1582-10-05...14 被跳过，下一天是 10-15。",
+      "dateSource": {
+        "title": "Gregorian calendar - Wikipedia",
+        "url": "https://en.wikipedia.org/wiki/Gregorian_calendar"
+      },
+      "expected": {
+        "dayIndex": 658458,
+        "julianDayNumber": 2299161,
+        "calendarStyle": "gregorian",
+        "lunarYear": {
+          "yearNumber": 1582,
+          "yearStemIndex": 8,
+          "yearBranchIndex": 6
+        },
+        "lunarMonth": {
+          "lunarMonthIndex": 22297,
+          "yearNumber": 1582,
+          "monthNumberInYear": 9,
+          "isLeapMonth": false,
+          "monthStemIndex": 6,
+          "monthBranchIndex": 10
+        },
+        "lunarDay": {
+          "lunarMonthIndex": 22297,
+          "dayNumberInMonth": 19,
+          "dayStemIndex": 0,
+          "dayBranchIndex": 10
+        }
+      }
+    },
+    {
+      "id": "li-zicheng-enters-beijing",
+      "title": "李自成进入北京",
+      "civil": {
+        "year": 1644,
+        "month": 4,
+        "dayOfMonth": 25
+      },
+      "note": "用于覆盖明清鼎革附近日期。",
+      "dateSource": {
+        "title": "李自成 - Wikipedia",
+        "url": "https://zh.wikipedia.org/wiki/%E6%9D%8E%E8%87%AA%E6%88%90"
+      },
+      "expected": {
+        "dayIndex": 680931,
+        "julianDayNumber": 2321634,
+        "calendarStyle": "gregorian",
+        "lunarYear": {
+          "yearNumber": 1644,
+          "yearStemIndex": 0,
+          "yearBranchIndex": 8
+        },
+        "lunarMonth": {
+          "lunarMonthIndex": 23058,
+          "yearNumber": 1644,
+          "monthNumberInYear": 3,
+          "isLeapMonth": false,
+          "monthStemIndex": 4,
+          "monthBranchIndex": 4
+        },
+        "lunarDay": {
+          "lunarMonthIndex": 23058,
+          "dayNumberInMonth": 19,
+          "dayStemIndex": 3,
+          "dayBranchIndex": 7
+        }
+      }
+    },
+    {
+      "id": "kangxi-accession",
+      "title": "康熙帝即位",
+      "civil": {
+        "year": 1661,
+        "month": 2,
+        "dayOfMonth": 5
+      },
+      "note": "用于覆盖清初日期。",
+      "dateSource": {
+        "title": "康熙帝 - Wikipedia",
+        "url": "https://zh.wikipedia.org/wiki/%E5%BA%B7%E7%86%99%E5%B8%9D"
+      },
+      "expected": {
+        "dayIndex": 687061,
+        "julianDayNumber": 2327764,
+        "calendarStyle": "gregorian",
+        "lunarYear": {
+          "yearNumber": 1661,
+          "yearStemIndex": 7,
+          "yearBranchIndex": 1
+        },
+        "lunarMonth": {
+          "lunarMonthIndex": 23266,
+          "yearNumber": 1661,
+          "monthNumberInYear": 1,
+          "isLeapMonth": false,
+          "monthStemIndex": 6,
+          "monthBranchIndex": 2
+        },
+        "lunarDay": {
+          "lunarMonthIndex": 23266,
+          "dayNumberInMonth": 7,
+          "dayStemIndex": 3,
+          "dayBranchIndex": 5
+        }
+      }
+    },
+    {
+      "id": "first-opium-war-start",
+      "title": "第一次鸦片战争开始",
+      "civil": {
+        "year": 1839,
+        "month": 9,
+        "dayOfMonth": 4
+      },
+      "note": "用于覆盖近代史日期。",
+      "dateSource": {
+        "title": "第一次鸦片战争 - Wikipedia",
+        "url": "https://zh.wikipedia.org/wiki/%E7%AC%AC%E4%B8%80%E6%AC%A1%E9%B8%A6%E7%89%87%E6%88%98%E4%BA%89"
+      },
+      "expected": {
+        "dayIndex": 752284,
+        "julianDayNumber": 2392987,
+        "calendarStyle": "gregorian",
+        "lunarYear": {
+          "yearNumber": 1839,
+          "yearStemIndex": 5,
+          "yearBranchIndex": 11
+        },
+        "lunarMonth": {
+          "lunarMonthIndex": 25474,
+          "yearNumber": 1839,
+          "monthNumberInYear": 7,
+          "isLeapMonth": false,
+          "monthStemIndex": 8,
+          "monthBranchIndex": 8
+        },
+        "lunarDay": {
+          "lunarMonthIndex": 25474,
+          "dayNumberInMonth": 27,
+          "dayStemIndex": 6,
+          "dayBranchIndex": 8
+        }
+      }
+    },
+    {
+      "id": "wuchang-uprising",
+      "title": "武昌起义",
+      "civil": {
+        "year": 1911,
+        "month": 10,
+        "dayOfMonth": 10
+      },
+      "note": "用于覆盖辛亥革命日期。",
+      "dateSource": {
+        "title": "武昌起义 - Wikipedia",
+        "url": "https://zh.wikipedia.org/wiki/%E6%AD%A6%E6%98%8C%E8%B5%B7%E4%B9%89"
+      },
+      "expected": {
+        "dayIndex": 778617,
+        "julianDayNumber": 2419320,
+        "calendarStyle": "gregorian",
+        "lunarYear": {
+          "yearNumber": 1911,
+          "yearStemIndex": 7,
+          "yearBranchIndex": 11
+        },
+        "lunarMonth": {
+          "lunarMonthIndex": 26366,
+          "yearNumber": 1911,
+          "monthNumberInYear": 8,
+          "isLeapMonth": false,
+          "monthStemIndex": 3,
+          "monthBranchIndex": 9
+        },
+        "lunarDay": {
+          "lunarMonthIndex": 26366,
+          "dayNumberInMonth": 19,
+          "dayStemIndex": 9,
+          "dayBranchIndex": 1
+        }
+      }
+    },
+    {
+      "id": "roc-founded",
+      "title": "中华民国成立",
+      "civil": {
+        "year": 1912,
+        "month": 1,
+        "dayOfMonth": 1
+      },
+      "note": "用于覆盖民国元年日期。",
+      "dateSource": {
+        "title": "中华民国 - Wikipedia",
+        "url": "https://zh.wikipedia.org/wiki/%E4%B8%AD%E8%8F%AF%E6%B0%91%E5%9C%8B"
+      },
+      "expected": {
+        "dayIndex": 778700,
+        "julianDayNumber": 2419403,
+        "calendarStyle": "gregorian",
+        "lunarYear": {
+          "yearNumber": 1911,
+          "yearStemIndex": 7,
+          "yearBranchIndex": 11
+        },
+        "lunarMonth": {
+          "lunarMonthIndex": 26369,
+          "yearNumber": 1911,
+          "monthNumberInYear": 11,
+          "isLeapMonth": false,
+          "monthStemIndex": 6,
+          "monthBranchIndex": 0
+        },
+        "lunarDay": {
+          "lunarMonthIndex": 26369,
+          "dayNumberInMonth": 13,
+          "dayStemIndex": 2,
+          "dayBranchIndex": 0
+        }
+      }
+    },
+    {
+      "id": "prc-founded",
+      "title": "中华人民共和国成立",
+      "civil": {
+        "year": 1949,
+        "month": 10,
+        "dayOfMonth": 1
+      },
+      "note": "用于覆盖现代中国日期。",
+      "dateSource": {
+        "title": "中华人民共和国 - Wikipedia",
+        "url": "https://zh.wikipedia.org/wiki/%E4%B8%AD%E5%8D%8E%E4%BA%BA%E6%B0%91%E5%85%B1%E5%92%8C%E5%9B%BD"
+      },
+      "expected": {
+        "dayIndex": 792488,
+        "julianDayNumber": 2433191,
+        "calendarStyle": "gregorian",
+        "lunarYear": {
+          "yearNumber": 1949,
+          "yearStemIndex": 5,
+          "yearBranchIndex": 1
+        },
+        "lunarMonth": {
+          "lunarMonthIndex": 26836,
+          "yearNumber": 1949,
+          "monthNumberInYear": 8,
+          "isLeapMonth": false,
+          "monthStemIndex": 9,
+          "monthBranchIndex": 9
+        },
+        "lunarDay": {
+          "lunarMonthIndex": 26836,
+          "dayNumberInMonth": 10,
+          "dayStemIndex": 0,
+          "dayBranchIndex": 0
+        }
+      }
+    },
+    {
+      "id": "apollo-11-moon-landing",
+      "title": "Apollo 11 登月",
+      "civil": {
+        "year": 1969,
+        "month": 7,
+        "dayOfMonth": 20
+      },
+      "note": "用于覆盖 20 世纪国际事件日期。",
+      "dateSource": {
+        "title": "Apollo 11 - Wikipedia",
+        "url": "https://en.wikipedia.org/wiki/Apollo_11"
+      },
+      "expected": {
+        "dayIndex": 799720,
+        "julianDayNumber": 2440423,
+        "calendarStyle": "gregorian",
+        "lunarYear": {
+          "yearNumber": 1969,
+          "yearStemIndex": 5,
+          "yearBranchIndex": 9
+        },
+        "lunarMonth": {
+          "lunarMonthIndex": 27081,
+          "yearNumber": 1969,
+          "monthNumberInYear": 6,
+          "isLeapMonth": false,
+          "monthStemIndex": 7,
+          "monthBranchIndex": 7
+        },
+        "lunarDay": {
+          "lunarMonthIndex": 27081,
+          "dayNumberInMonth": 7,
+          "dayStemIndex": 2,
+          "dayBranchIndex": 8
+        }
+      }
+    },
+    {
+      "id": "unix-epoch",
+      "title": "Unix epoch",
+      "civil": {
+        "year": 1970,
+        "month": 1,
+        "dayOfMonth": 1
+      },
+      "note": "用于覆盖常见计算机时间锚点。",
+      "dateSource": {
+        "title": "Unix time - Wikipedia",
+        "url": "https://en.wikipedia.org/wiki/Unix_time"
+      },
+      "expected": {
+        "dayIndex": 799885,
+        "julianDayNumber": 2440588,
+        "calendarStyle": "gregorian",
+        "lunarYear": {
+          "yearNumber": 1969,
+          "yearStemIndex": 5,
+          "yearBranchIndex": 9
+        },
+        "lunarMonth": {
+          "lunarMonthIndex": 27086,
+          "yearNumber": 1969,
+          "monthNumberInYear": 11,
+          "isLeapMonth": false,
+          "monthStemIndex": 2,
+          "monthBranchIndex": 0
+        },
+        "lunarDay": {
+          "lunarMonthIndex": 27086,
+          "dayNumberInMonth": 24,
+          "dayStemIndex": 7,
+          "dayBranchIndex": 5
+        }
+      }
+    },
+    {
+      "id": "gregorian-2000-leap-day",
+      "title": "2000 年闰日",
+      "civil": {
+        "year": 2000,
+        "month": 2,
+        "dayOfMonth": 29
+      },
+      "note": "确认 Gregorian 世纪年可被 400 整除时为闰年。",
+      "dateSource": {
+        "title": "Leap year - Wikipedia",
+        "url": "https://en.wikipedia.org/wiki/Leap_year"
+      },
+      "expected": {
+        "dayIndex": 810901,
+        "julianDayNumber": 2451604,
+        "calendarStyle": "gregorian",
+        "lunarYear": {
+          "yearNumber": 2000,
+          "yearStemIndex": 6,
+          "yearBranchIndex": 4
+        },
+        "lunarMonth": {
+          "lunarMonthIndex": 27459,
+          "yearNumber": 2000,
+          "monthNumberInYear": 1,
+          "isLeapMonth": false,
+          "monthStemIndex": 4,
+          "monthBranchIndex": 2
+        },
+        "lunarDay": {
+          "lunarMonthIndex": 27459,
+          "dayNumberInMonth": 25,
+          "dayStemIndex": 3,
+          "dayBranchIndex": 5
+        }
+      }
+    },
+    {
+      "id": "beijing-olympics-opening",
+      "title": "北京奥运会开幕",
+      "civil": {
+        "year": 2008,
+        "month": 8,
+        "dayOfMonth": 8
+      },
+      "note": "用于覆盖 21 世纪事件日期。",
+      "dateSource": {
+        "title": "2008 Summer Olympics opening ceremony - Wikipedia",
+        "url": "https://en.wikipedia.org/wiki/2008_Summer_Olympics_opening_ceremony"
+      },
+      "expected": {
+        "dayIndex": 813984,
+        "julianDayNumber": 2454687,
+        "calendarStyle": "gregorian",
+        "lunarYear": {
+          "yearNumber": 2008,
+          "yearStemIndex": 4,
+          "yearBranchIndex": 0
+        },
+        "lunarMonth": {
+          "lunarMonthIndex": 27564,
+          "yearNumber": 2008,
+          "monthNumberInYear": 7,
+          "isLeapMonth": false,
+          "monthStemIndex": 6,
+          "monthBranchIndex": 8
+        },
+        "lunarDay": {
+          "lunarMonthIndex": 27564,
+          "dayNumberInMonth": 8,
+          "dayStemIndex": 6,
+          "dayBranchIndex": 4
+        }
+      }
+    },
+    {
+      "id": "leap-month-2017-start",
+      "title": "2017 闰六月开始",
+      "civil": {
+        "year": 2017,
+        "month": 7,
+        "dayOfMonth": 23
+      },
+      "note": "确认闰月字段和初一字段。",
+      "dateSource": {
+        "title": "ChineseCalendar GitHub Pages",
+        "url": "https://ytliu0.github.io/ChineseCalendar/index.html?y=2017"
+      },
+      "expected": {
+        "dayIndex": 817255,
+        "julianDayNumber": 2457958,
+        "calendarStyle": "gregorian",
+        "lunarYear": {
+          "yearNumber": 2017,
+          "yearStemIndex": 3,
+          "yearBranchIndex": 9
+        },
+        "lunarMonth": {
+          "lunarMonthIndex": 27675,
+          "yearNumber": 2017,
+          "monthNumberInYear": 6,
+          "isLeapMonth": true,
+          "monthStemIndex": 3,
+          "monthBranchIndex": 7
+        },
+        "lunarDay": {
+          "lunarMonthIndex": 27675,
+          "dayNumberInMonth": 1,
+          "dayStemIndex": 7,
+          "dayBranchIndex": 11
+        }
+      }
+    },
+    {
+      "id": "gregorian-2100-non-leap-check",
+      "title": "2100 非闰年边界",
+      "civil": {
+        "year": 2100,
+        "month": 3,
+        "dayOfMonth": 1
+      },
+      "note": "确认 Gregorian 世纪年不能被 400 整除时不是闰年。",
+      "dateSource": {
+        "title": "Leap year - Wikipedia",
+        "url": "https://en.wikipedia.org/wiki/Leap_year"
+      },
+      "expected": {
+        "dayIndex": 847426,
+        "julianDayNumber": 2488129,
+        "calendarStyle": "gregorian",
+        "lunarYear": {
+          "yearNumber": 2100,
+          "yearStemIndex": 6,
+          "yearBranchIndex": 8
+        },
+        "lunarMonth": {
+          "lunarMonthIndex": 28696,
+          "yearNumber": 2100,
+          "monthNumberInYear": 1,
+          "isLeapMonth": false,
+          "monthStemIndex": 4,
+          "monthBranchIndex": 2
+        },
+        "lunarDay": {
+          "lunarMonthIndex": 28696,
+          "dayNumberInMonth": 21,
+          "dayStemIndex": 8,
+          "dayBranchIndex": 2
+        }
+      }
+    },
+    {
+      "id": "dataset-end",
+      "title": "数据集终点",
+      "civil": {
+        "year": 2200,
+        "month": 12,
+        "dayOfMonth": 31
+      },
+      "note": "覆盖 v1 支持范围的最后一个 civil day。",
+      "dateSource": {
+        "title": "项目生成范围",
+        "url": "https://ytliu0.github.io/ChineseCalendar/index.html?y=2200"
+      },
+      "expected": {
+        "dayIndex": 884255,
+        "julianDayNumber": 2524958,
+        "calendarStyle": "gregorian",
+        "lunarYear": {
+          "yearNumber": 2200,
+          "yearStemIndex": 6,
+          "yearBranchIndex": 0
+        },
+        "lunarMonth": {
+          "lunarMonthIndex": 29943,
+          "yearNumber": 2200,
+          "monthNumberInYear": 11,
+          "isLeapMonth": false,
+          "monthStemIndex": 4,
+          "monthBranchIndex": 0
+        },
+        "lunarDay": {
+          "lunarMonthIndex": 29943,
+          "dayNumberInMonth": 25,
+          "dayStemIndex": 7,
+          "dayBranchIndex": 3
+        }
+      }
+    }
+  ]
+}

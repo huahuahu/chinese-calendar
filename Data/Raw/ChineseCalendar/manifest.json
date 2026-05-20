@@ -1,0 +1,13 @@
+{
+  "upstreamRepository": "https://github.com/ytliu0/ChineseCalendar",
+  "upstreamCommit": "d6aae82b63b79a6f8659ea3e064024b7d8ac3077",
+  "files": [
+    "utilities.js",
+    "decompressSunMoonData.js",
+    "calendarData.js",
+    "eclipse_linksM722-2202.js",
+    "ancientCalendars.js",
+    "calendar.js"
+  ],
+  "fetchedAt": "2026-05-19T14:55:11.279Z"
+}
