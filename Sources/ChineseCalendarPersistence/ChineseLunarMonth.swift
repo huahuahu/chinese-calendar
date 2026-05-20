@@ -12,10 +12,10 @@ public final class ChineseLunarMonth {
     public var monthStemIndex: Int
     public var monthBranchIndex: Int
 
-    // Inverse side of ChineseLunarYear.months.
+    /// Inverse side of ChineseLunarYear.months.
     public var chineseLunarYear: ChineseLunarYear?
 
-    // One-to-many owner side for all lunar days in this lunar month.
+    /// One-to-many owner side for all lunar days in this lunar month.
     @Relationship(deleteRule: .cascade, inverse: \ChineseLunarDay.chineseLunarMonth)
     public var days: [ChineseLunarDay]
 

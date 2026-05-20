@@ -11,7 +11,7 @@ public final class CivilDate {
     public var dayOfMonth: Int
     public var calendarStyle: CivilCalendarStyle
 
-    // Inverse side of CalendarDay.civilDate.
+    /// Inverse side of CalendarDay.civilDate.
     public var calendarDay: CalendarDay?
 
     public init(

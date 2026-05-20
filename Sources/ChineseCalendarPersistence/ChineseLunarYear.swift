@@ -9,7 +9,7 @@ public final class ChineseLunarYear {
     public var yearStemIndex: Int
     public var yearBranchIndex: Int
 
-    // One-to-many owner side for all lunar months in this lunar year.
+    /// One-to-many owner side for all lunar months in this lunar year.
     @Relationship(deleteRule: .cascade, inverse: \ChineseLunarMonth.chineseLunarYear)
     public var months: [ChineseLunarMonth]
 

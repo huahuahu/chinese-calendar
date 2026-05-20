@@ -11,10 +11,10 @@ public final class ChineseLunarDay {
     public var dayStemIndex: Int
     public var dayBranchIndex: Int
 
-    // Inverse side of CalendarDay.chineseLunarDay.
+    /// Inverse side of CalendarDay.chineseLunarDay.
     public var calendarDay: CalendarDay?
 
-    // Inverse side of ChineseLunarMonth.days.
+    /// Inverse side of ChineseLunarMonth.days.
     public var chineseLunarMonth: ChineseLunarMonth?
 
     public init(
