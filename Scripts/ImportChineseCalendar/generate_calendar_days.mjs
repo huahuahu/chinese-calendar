@@ -157,12 +157,19 @@ async function ensureUpstreamSources(rawSource, forceRefresh) {
   await mkdir(rawSource, { recursive: true });
 
   // 固定读取上游 commit 的源码文件，保证重新生成时不会被 upstream main 分支漂移影响。
+  let refreshedAnyFile = false;
   for (const fileName of REQUIRED_UPSTREAM_FILES) {
     const targetPath = path.join(rawSource, fileName);
     if (!forceRefresh && (await pathExists(targetPath))) {
       continue;
     }
     await writeFile(targetPath, await fetchUpstreamFile(fileName), "utf8");
+    refreshedAnyFile = true;
+  }
+
+  const manifestPath = path.join(rawSource, "manifest.json");
+  if (!refreshedAnyFile && !forceRefresh && (await pathExists(manifestPath))) {
+    return;
   }
 
   const manifest = {
@@ -171,7 +178,7 @@ async function ensureUpstreamSources(rawSource, forceRefresh) {
     files: REQUIRED_UPSTREAM_FILES,
     fetchedAt: new Date().toISOString()
   };
-  await writeFile(path.join(rawSource, "manifest.json"), `${JSON.stringify(manifest, null, 2)}\n`, "utf8");
+  await writeFile(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`, "utf8");
 }
 
 async function fetchUpstreamFile(fileName) {
@@ -289,6 +296,7 @@ async function generateCalendarDays(upstream, options) {
             yearNumber: lunarYearNumber,
             monthNumberInYear: lunarMonth.monthNumberInYear,
             isLeapMonth: lunarMonth.isLeapMonth,
+            dayCount: lunarMonth.dayCount,
             monthStemIndex: lunarMonth.monthStemIndex,
             monthBranchIndex: lunarMonth.monthBranchIndex
           },
@@ -348,6 +356,7 @@ function resolveLunarMonth(calVars, civilYear, dayOffset, julianDayNumber, state
       lunarMonthIndex: state.nextLunarMonthIndex,
       startJulianDayNumber,
       sourceMonthLength,
+      dayCount: sourceMonthLength,
       yearNumber,
       monthNumberInYear,
       isLeapMonth,
@@ -361,6 +370,7 @@ function resolveLunarMonth(calVars, civilYear, dayOffset, julianDayNumber, state
   } else {
     assertSameLunarMonth(lunarMonth, {
       sourceMonthLength,
+      dayCount: sourceMonthLength,
       yearNumber,
       monthNumberInYear,
       isLeapMonth,
@@ -394,6 +404,7 @@ function findLunarMonthPosition(calVars, dayOffset) {
 function assertSameLunarMonth(existing, incoming) {
   for (const key of [
     "sourceMonthLength",
+    "dayCount",
     "yearNumber",
     "monthNumberInYear",
     "isLeapMonth",
@@ -437,6 +448,12 @@ function validateRecord(record) {
   }
   if (record.lunarDay.dayNumberInMonth < 1 || record.lunarDay.dayNumberInMonth > 30) {
     throw new Error(`Invalid lunar day number at dayIndex ${record.dayIndex}.`);
+  }
+  if (record.lunarMonth.dayCount !== 29 && record.lunarMonth.dayCount !== 30) {
+    throw new Error(`Invalid lunar month dayCount at dayIndex ${record.dayIndex}.`);
+  }
+  if (record.lunarDay.dayNumberInMonth > record.lunarMonth.dayCount) {
+    throw new Error(`Lunar day exceeds month dayCount at dayIndex ${record.dayIndex}.`);
   }
   for (const [name, value] of [
     ["yearStemIndex", record.lunarYear.yearStemIndex],
@@ -585,7 +602,8 @@ async function validateExistingOutput(output, options) {
         month = {
           lunarMonthIndex: record.lunarMonth.lunarMonthIndex,
           startJulianDayNumber: record.julianDayNumber - record.lunarDay.dayNumberInMonth + 1,
-          sourceMonthLength: undefined,
+          sourceMonthLength: record.lunarMonth.dayCount,
+          dayCount: record.lunarMonth.dayCount,
           yearNumber: record.lunarMonth.yearNumber,
           monthNumberInYear: record.lunarMonth.monthNumberInYear,
           isLeapMonth: record.lunarMonth.isLeapMonth,
@@ -597,7 +615,8 @@ async function validateExistingOutput(output, options) {
         state.nextLunarMonthIndex += 1;
       } else {
         assertSameLunarMonth(month, {
-          sourceMonthLength: month.sourceMonthLength,
+          sourceMonthLength: record.lunarMonth.dayCount,
+          dayCount: record.lunarMonth.dayCount,
           yearNumber: record.lunarMonth.yearNumber,
           monthNumberInYear: record.lunarMonth.monthNumberInYear,
           isLeapMonth: record.lunarMonth.isLeapMonth,

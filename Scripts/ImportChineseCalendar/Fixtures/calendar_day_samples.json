@@ -35,7 +35,8 @@
           "monthNumberInYear": 12,
           "isLeapMonth": false,
           "monthStemIndex": 3,
-          "monthBranchIndex": 1
+          "monthBranchIndex": 1,
+          "dayCount": 30
         },
         "lunarDay": {
           "lunarMonthIndex": 0,
@@ -73,7 +74,8 @@
           "monthNumberInYear": 1,
           "isLeapMonth": false,
           "monthStemIndex": 4,
-          "monthBranchIndex": 2
+          "monthBranchIndex": 2,
+          "dayCount": 30
         },
         "lunarDay": {
           "lunarMonthIndex": 991,
@@ -111,7 +113,8 @@
           "monthNumberInYear": 11,
           "isLeapMonth": false,
           "monthStemIndex": 4,
-          "monthBranchIndex": 0
+          "monthBranchIndex": 0,
+          "dayCount": 30
         },
         "lunarDay": {
           "lunarMonthIndex": 12071,
@@ -149,7 +152,8 @@
           "monthNumberInYear": 1,
           "isLeapMonth": false,
           "monthStemIndex": 4,
-          "monthBranchIndex": 2
+          "monthBranchIndex": 2,
+          "dayCount": 30
         },
         "lunarDay": {
           "lunarMonthIndex": 14596,
@@ -187,7 +191,8 @@
           "monthNumberInYear": 1,
           "isLeapMonth": false,
           "monthStemIndex": 0,
-          "monthBranchIndex": 2
+          "monthBranchIndex": 2,
+          "dayCount": 30
         },
         "lunarDay": {
           "lunarMonthIndex": 19642,
@@ -225,7 +230,8 @@
           "monthNumberInYear": 9,
           "isLeapMonth": false,
           "monthStemIndex": 6,
-          "monthBranchIndex": 10
+          "monthBranchIndex": 10,
+          "dayCount": 29
         },
         "lunarDay": {
           "lunarMonthIndex": 22297,
@@ -263,7 +269,8 @@
           "monthNumberInYear": 9,
           "isLeapMonth": false,
           "monthStemIndex": 6,
-          "monthBranchIndex": 10
+          "monthBranchIndex": 10,
+          "dayCount": 29
         },
         "lunarDay": {
           "lunarMonthIndex": 22297,
@@ -301,7 +308,8 @@
           "monthNumberInYear": 3,
           "isLeapMonth": false,
           "monthStemIndex": 4,
-          "monthBranchIndex": 4
+          "monthBranchIndex": 4,
+          "dayCount": 29
         },
         "lunarDay": {
           "lunarMonthIndex": 23058,
@@ -339,7 +347,8 @@
           "monthNumberInYear": 1,
           "isLeapMonth": false,
           "monthStemIndex": 6,
-          "monthBranchIndex": 2
+          "monthBranchIndex": 2,
+          "dayCount": 30
         },
         "lunarDay": {
           "lunarMonthIndex": 23266,
@@ -377,7 +386,8 @@
           "monthNumberInYear": 7,
           "isLeapMonth": false,
           "monthStemIndex": 8,
-          "monthBranchIndex": 8
+          "monthBranchIndex": 8,
+          "dayCount": 30
         },
         "lunarDay": {
           "lunarMonthIndex": 25474,
@@ -415,7 +425,8 @@
           "monthNumberInYear": 8,
           "isLeapMonth": false,
           "monthStemIndex": 3,
-          "monthBranchIndex": 9
+          "monthBranchIndex": 9,
+          "dayCount": 30
         },
         "lunarDay": {
           "lunarMonthIndex": 26366,
@@ -453,7 +464,8 @@
           "monthNumberInYear": 11,
           "isLeapMonth": false,
           "monthStemIndex": 6,
-          "monthBranchIndex": 0
+          "monthBranchIndex": 0,
+          "dayCount": 30
         },
         "lunarDay": {
           "lunarMonthIndex": 26369,
@@ -491,7 +503,8 @@
           "monthNumberInYear": 8,
           "isLeapMonth": false,
           "monthStemIndex": 9,
-          "monthBranchIndex": 9
+          "monthBranchIndex": 9,
+          "dayCount": 30
         },
         "lunarDay": {
           "lunarMonthIndex": 26836,
@@ -529,7 +542,8 @@
           "monthNumberInYear": 6,
           "isLeapMonth": false,
           "monthStemIndex": 7,
-          "monthBranchIndex": 7
+          "monthBranchIndex": 7,
+          "dayCount": 30
         },
         "lunarDay": {
           "lunarMonthIndex": 27081,
@@ -567,7 +581,8 @@
           "monthNumberInYear": 11,
           "isLeapMonth": false,
           "monthStemIndex": 2,
-          "monthBranchIndex": 0
+          "monthBranchIndex": 0,
+          "dayCount": 30
         },
         "lunarDay": {
           "lunarMonthIndex": 27086,
@@ -605,7 +620,8 @@
           "monthNumberInYear": 1,
           "isLeapMonth": false,
           "monthStemIndex": 4,
-          "monthBranchIndex": 2
+          "monthBranchIndex": 2,
+          "dayCount": 30
         },
         "lunarDay": {
           "lunarMonthIndex": 27459,
@@ -643,7 +659,8 @@
           "monthNumberInYear": 7,
           "isLeapMonth": false,
           "monthStemIndex": 6,
-          "monthBranchIndex": 8
+          "monthBranchIndex": 8,
+          "dayCount": 30
         },
         "lunarDay": {
           "lunarMonthIndex": 27564,
@@ -681,7 +698,8 @@
           "monthNumberInYear": 6,
           "isLeapMonth": true,
           "monthStemIndex": 3,
-          "monthBranchIndex": 7
+          "monthBranchIndex": 7,
+          "dayCount": 30
         },
         "lunarDay": {
           "lunarMonthIndex": 27675,
@@ -719,7 +737,8 @@
           "monthNumberInYear": 1,
           "isLeapMonth": false,
           "monthStemIndex": 4,
-          "monthBranchIndex": 2
+          "monthBranchIndex": 2,
+          "dayCount": 30
         },
         "lunarDay": {
           "lunarMonthIndex": 28696,
@@ -757,7 +776,8 @@
           "monthNumberInYear": 11,
           "isLeapMonth": false,
           "monthStemIndex": 4,
-          "monthBranchIndex": 0
+          "monthBranchIndex": 0,
+          "dayCount": 30
         },
         "lunarDay": {
           "lunarMonthIndex": 29943,
