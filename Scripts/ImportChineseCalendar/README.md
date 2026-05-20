@@ -54,6 +54,66 @@ Scripts/ImportChineseCalendar/generate_calendar_days.swift --validate-only --sta
 - 农历月实际日记录数与 `dayCount` 一致，已知例外写入 manifest
 - 农历年月份数量在 v1 预期范围内
 
+## 生成 SwiftData 导入文件
+
+如果已经有 `calendar_days` JSONL，可以把它转换成和 `ChineseCalendarPersistence` 中 SwiftData
+model 一一对应的导入文件：
+
+```bash
+Scripts/ImportChineseCalendar/generate_swiftdata_import.swift \
+  --input Data/Processed/calendar_days \
+  --output Data/Processed/swiftdata_import
+```
+
+也可以直接指向另一份工作区里的已生成数据：
+
+```bash
+Scripts/ImportChineseCalendar/generate_swiftdata_import.swift \
+  --input /Users/tigerguo/git/Chinese-date/Data/Processed/calendar_days
+```
+
+输出布局：
+
+```text
+Data/Processed/swiftdata_import/chinese_lunar_years.jsonl
+Data/Processed/swiftdata_import/chinese_lunar_months.jsonl
+Data/Processed/swiftdata_import/calendar_days/<year>/calendar_days.jsonl
+Data/Processed/swiftdata_import/manifest.json
+```
+
+这些文件是面向导入器的中间格式，不是 SwiftData store 文件。农历年和农历月是全局去重表；
+每天的数据按 civil year 分片，每一行同时包含 `CalendarDay`、`CivilDate`、`ChineseLunarDay`
+三个 model 的字段，方便导入器按年批处理并在同一行内建立日级关系。
+
+建议导入顺序遵循 `manifest.json` 里的 `importOrder`：
+
+1. `ChineseLunarYear`
+2. `ChineseLunarMonth`
+3. `CalendarDayBundleByCivilYear`
+
+单条日记录形状：
+
+```json
+{
+  "calendarDay": { "dayIndex": 819608, "julianDayNumber": 2460311 },
+  "civilDate": { "dayIndex": 819608, "year": 2024, "month": 1, "dayOfMonth": 1, "calendarStyle": "gregorian" },
+  "chineseLunarDay": { "dayIndex": 819608, "lunarMonthIndex": 27754, "dayNumberInMonth": 20, "dayStemIndex": 0, "dayBranchIndex": 0 }
+}
+```
+
+关系通过稳定键回填：
+
+- `ChineseLunarMonth.lunarYearNumber -> ChineseLunarYear.lunarYearNumber`
+- `calendarDay.dayIndex -> civilDate.dayIndex`
+- `calendarDay.dayIndex -> chineseLunarDay.dayIndex`
+- `chineseLunarDay.lunarMonthIndex -> ChineseLunarMonth.lunarMonthIndex`
+
+校验现有 SwiftData 导入文件：
+
+```bash
+Scripts/ImportChineseCalendar/generate_swiftdata_import.swift --validate-only
+```
+
 ## 历史样本校验
 
 样本文件：
