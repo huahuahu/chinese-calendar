@@ -1,0 +1,40 @@
+{
+  "artifact": "swiftdata_import",
+  "generatedAt": "2026-05-20T14:00:56.011Z",
+  "generator": "Scripts/ImportChineseCalendar/generate_swiftdata_import.swift",
+  "sourceArtifact": "calendar_days",
+  "sourceInput": "/Users/tigerguo/git/Chinese-date/Data/Processed/calendar_days",
+  "sourceGenerator": "Scripts/ImportChineseCalendar/generate_calendar_days.swift",
+  "sourceUpstreamRepository": "https://github.com/ytliu0/ChineseCalendar",
+  "sourceUpstreamCommit": "d6aae82b63b79a6f8659ea3e064024b7d8ac3077",
+  "startYear": -220,
+  "endYear": 2200,
+  "startDayIndex": 0,
+  "endDayIndex": 884255,
+  "totalCalendarDays": 884256,
+  "totalCivilDates": 884256,
+  "totalChineseLunarYears": 2421,
+  "totalChineseLunarMonths": 29944,
+  "totalChineseLunarDays": 884256,
+  "files": {
+    "ChineseLunarYear": "chinese_lunar_years.jsonl",
+    "ChineseLunarMonth": "chinese_lunar_months.jsonl",
+    "CalendarDayBundleByCivilYear": "calendar_days/<year>/calendar_days.jsonl"
+  },
+  "importOrder": [
+    "ChineseLunarYear",
+    "ChineseLunarMonth",
+    "CalendarDayBundleByCivilYear"
+  ],
+  "dayBundleModels": [
+    "CalendarDay",
+    "CivilDate",
+    "ChineseLunarDay"
+  ],
+  "relationshipKeys": {
+    "ChineseLunarMonth.chineseLunarYear": "ChineseLunarMonth.lunarYearNumber -> ChineseLunarYear.lunarYearNumber",
+    "CivilDate.calendarDay": "calendarDay.dayIndex -> civilDate.dayIndex",
+    "ChineseLunarDay.calendarDay": "calendarDay.dayIndex -> chineseLunarDay.dayIndex",
+    "ChineseLunarDay.chineseLunarMonth": "chineseLunarDay.lunarMonthIndex -> ChineseLunarMonth.lunarMonthIndex"
+  }
+}

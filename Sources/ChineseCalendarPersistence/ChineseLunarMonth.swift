@@ -9,6 +9,7 @@ public final class ChineseLunarMonth {
     public var lunarYearNumber: Int
     public var monthNumberInYear: Int
     public var isLeapMonth: Bool
+    public var dayCount: Int
     public var monthStemIndex: Int
     public var monthBranchIndex: Int
 
@@ -24,6 +25,7 @@ public final class ChineseLunarMonth {
         lunarYearNumber: Int,
         monthNumberInYear: Int,
         isLeapMonth: Bool,
+        dayCount: Int,
         monthStemIndex: Int,
         monthBranchIndex: Int,
         chineseLunarYear: ChineseLunarYear? = nil,
@@ -33,6 +35,7 @@ public final class ChineseLunarMonth {
         self.lunarYearNumber = lunarYearNumber
         self.monthNumberInYear = monthNumberInYear
         self.isLeapMonth = isLeapMonth
+        self.dayCount = dayCount
         self.monthStemIndex = monthStemIndex
         self.monthBranchIndex = monthBranchIndex
         self.chineseLunarYear = chineseLunarYear
