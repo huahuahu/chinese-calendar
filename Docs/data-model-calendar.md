@@ -75,10 +75,10 @@ Julian calendar 是儒略历，由 Julius Caesar 推行，规则中每 4 年置�
 
 `lunarMonthIndex` 和 `monthNumberInYear` 也表达不同概念：
 
-- `lunarMonthIndex`：整个数据集中的连续农历月序号，用来把农历日关联到它所属的农历月。
-- `monthNumberInYear`：农历年内的月序，例如正月是 `1`，十二月是 `12`。
+- `lunarMonthIndex`：整个数据集中的连续农历月序号，用来把农历日关联到它所属的农历月，也是 `ChineseLunarMonth` 的稳定唯一身份。
+- `monthNumberInYear`：农历月名序号，例如正月是 `1`，十二月是 `12`。它用于显示和历法语义，不是农历年内的唯一键。
 
-闰月信息属于农历月本身，所以 `isLeapMonth` 放在 `ChineseLunarMonth` 上，不放在 `ChineseLunarDay` 上。
+闰月信息属于农历月本身，所以 `isLeapMonth` 放在 `ChineseLunarMonth` 上，不放在 `ChineseLunarDay` 上。`isLeapMonth` 可以区分同名的普通月和闰月，但历史改正朔会让同一个农历年中出现重复的非闰同名月；因此 `lunarYearNumber + monthNumberInYear + isLeapMonth` 不能当作唯一键。
 
 ### dayCount 与大月/小月
 
@@ -252,14 +252,15 @@ erDiagram
 - `lunarYearNumber` 必须指向一条真实存在的 `ChineseLunarYear`。
 - `monthNumberInYear` 只能是 `1...12`。
 - `dayCount` 只能是 `29` 或 `30`，其中 `29` 表示小月，`30` 表示大月。
-- 同一个 `lunarYearNumber` 下，普通月的 `monthNumberInYear` 必须唯一。
-- 如果存在闰月，则同一年中同一个 `monthNumberInYear` 可以同时有普通月和闰月，但二者必须通过 `isLeapMonth` 区分。
+- `monthNumberInYear` 是月名序号，不保证在同一个 `lunarYearNumber` 下唯一。
+- 同一个 `lunarYearNumber + monthNumberInYear + isLeapMonth` 组合在历史特殊年份中可能对应多个真实月份。
 - 同一个 `lunarMonthIndex` 下的 `ChineseLunarDay.dayNumberInMonth` 不能超过该月的 `dayCount`。
 
 说明：
 
 - 月份的起止 `dayIndex` 可以从该月下所有 `ChineseLunarDay` 派生，不属于最基本的 raw data。
 - `dayCount` 是上游历算数据给出的月大小事实，应随月份保存；导入校验时再确认实际日记录数与 `dayCount` 一致。
+- 历史改正朔会造成重复同名月，例如 `lunarYearNumber = -103` 中有两个十月、两个十一月、两个十二月，`lunarYearNumber = 762` 中有两个四月、两个五月。更多核对结论见 [干支与生肖循环结论](./sexagenary-cycle-and-zodiac.md) 的“历史特殊年与数据库建模”章节。
 
 ## ChineseLunarYear
 
@@ -298,6 +299,8 @@ erDiagram
 
 如果某个存储层需要稳定字符串 ID，可以在导入时派生，而不要把它当作 raw data。日记录统一使用 `day-{dayIndex}`，例如 `day-0`、`day-1`。
 
+`ChineseLunarMonth` 的唯一关系键是 `lunarMonthIndex`。不要把 `lunarYearNumber + monthNumberInYear + isLeapMonth` 建成唯一约束；这个组合只能用于筛选候选月份，不能保证定位到唯一月份。
+
 ## 显示层派生值
 
 以下内容不建议存为基础 raw data，可以在 domain 或 UI formatting helper 中生成：
@@ -335,10 +338,14 @@ erDiagram
 
 步骤：
 
-1. 使用 `lunarYearNumber + monthNumberInYear + isLeapMonth` 找到 `ChineseLunarMonth`。
-2. 使用 `lunarMonthIndex + dayNumberInMonth` 找到 `ChineseLunarDay`。
-3. 使用该日的 `dayIndex` 找到 `CalendarDay`。
-4. 使用同一个 `dayIndex` 找到 `CivilDate`。
+1. 如果调用方已经持有 `lunarMonthIndex`，直接使用 `lunarMonthIndex + dayNumberInMonth` 找到 `ChineseLunarDay`。
+2. 如果调用方只有 `lunarYearNumber + monthNumberInYear + isLeapMonth + dayNumberInMonth`，先筛选候选 `ChineseLunarMonth`，再用额外条件消歧。
+3. 消歧条件可以是 `lunarMonthIndex`、该农历年内的实际月份顺序、月份起始 `dayIndex`，或明确的历史 rule。
+4. 候选月份唯一后，使用 `lunarMonthIndex + dayNumberInMonth` 找到 `ChineseLunarDay`。
+5. 使用该日的 `dayIndex` 找到 `CalendarDay`。
+6. 使用同一个 `dayIndex` 找到 `CivilDate`。
+
+如果没有足够条件消歧，查询层应返回多个候选结果或要求用户进一步选择，而不是默认其中一个同名月。
 
 ## Foundation Date 与 Calendar
 
@@ -418,8 +425,9 @@ erDiagram
 - 每个 `ChineseLunarDay` 都能向上找到 month 和 year。
 - 每个农历月的 `dayCount` 只能是 29 或 30。
 - 每个农历月实际拥有的日记录数应与 `dayCount` 一致；数据集首尾的跨界月份和 source data 明确记录的特殊例外除外。
-- 每个农历年的 month count 通常是 12 或 13。
+- 每个农历年的 month count 通常是 12 或 13；历史改正朔造成的 10、11、14、15 个月年份应由 source data 或核对文档说明。
 - 同一年中闰月不能超过一个，除非 source data 明确支持特殊情况并记录原因。
+- `ChineseLunarMonth` 只能用 `lunarMonthIndex` 校验唯一性，不能要求 `lunarYearNumber + monthNumberInYear + isLeapMonth` 唯一。
 - `stemIndex` 必须在 `0...9`。
 - `branchIndex` 必须在 `0...11`。
 

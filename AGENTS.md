@@ -27,6 +27,7 @@ This repository hosts a Swift project for browsing the traditional Chinese calen
 - Keep platform-specific UI behavior in `Apps/iOSApp` and `Apps/macOSApp` only when sharing is not practical.
 - Store fetched upstream files in `Data/Raw` and generated artifacts in `Data/Processed`.
 - Make small, reviewable commits.
+- Do not use `git commit --amend` when changing or committing work; create a new commit instead.
 
 ## Common Commands
 

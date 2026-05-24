@@ -1,8 +1,13 @@
 import ChineseCalendarCore
 import ChineseCalendarData
+import ChineseCalendarPersistence
+import SwiftData
 import SwiftUI
 
 public struct CalendarHomeView: View {
+    @Environment(\.modelContext) private var modelContext
+    @State private var calendarDayCount: Int?
+
     private let selectedDate: ChineseCalendarDate?
 
     public init(selectedDate: ChineseCalendarDate? = nil) {
@@ -18,12 +23,19 @@ public struct CalendarHomeView: View {
             }
             .navigationTitle("Calendar")
             .padding()
+            .task {
+                calendarDayCount = try? modelContext.fetchCount(FetchDescriptor<CalendarDay>())
+            }
         }
     }
 
     private var descriptionText: String {
         guard let selectedDate else {
-            return "Calendar browsing UI will appear here once the imported data pipeline is connected."
+            guard let calendarDayCount else {
+                return "Loading calendar data from SwiftData."
+            }
+
+            return "Loaded \(calendarDayCount) calendar days from SwiftData."
         }
 
         let leapPrefix = selectedDate.lunarMonth.isLeapMonth ? "Leap " : ""
