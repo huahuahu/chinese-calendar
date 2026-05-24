@@ -1,59 +1,134 @@
 import ChineseCalendarCore
-import ChineseCalendarData
 import ChineseCalendarLogging
 import ChineseCalendarPersistence
 import SwiftData
 import SwiftUI
 
 public struct CalendarHomeView: View {
-    @Environment(\.modelContext) private var modelContext
-    @State private var calendarDayCount: Int?
+    @Query(sort: \ChineseLunarYear.lunarYearNumber) private var years: [ChineseLunarYear]
+    @State private var selectedYearNumber: Int?
+    @State private var selectedMonthIndex: Int?
 
-    private let selectedDate: ChineseCalendarDate?
+    public init() {}
 
-    public init(selectedDate: ChineseCalendarDate? = nil) {
-        self.selectedDate = selectedDate
-    }
+    @available(*, deprecated, message: "CalendarHomeView now selects the current lunar year automatically.")
+    public init(selectedDate _: ChineseCalendarDate?) {}
 
     public var body: some View {
-        NavigationStack {
-            ContentUnavailableView {
-                Label("Chinese Calendar", systemImage: "calendar")
-            } description: {
-                Text(descriptionText)
+        NavigationSplitView {
+            List(selection: $selectedYearNumber) {
+                Section("农历年") {
+                    ForEach(years, id: \.lunarYearNumber) { year in
+                        LunarYearRow(year: year)
+                            .tag(year.lunarYearNumber)
+                    }
+                }
             }
-            .navigationTitle("Calendar")
-            .padding()
-            .task {
-                await loadCalendarDayCount()
+            .navigationTitle("年份")
+        } detail: {
+            Group {
+                if let selectedYear {
+                    LunarYearDetailView(
+                        year: selectedYear,
+                        selectedMonthIndex: $selectedMonthIndex,
+                        canSelectPreviousYear: canSelectPreviousYear,
+                        canSelectNextYear: canSelectNextYear,
+                        selectPreviousYear: selectPreviousYear,
+                        selectNextYear: selectNextYear
+                    )
+                } else {
+                    ContentUnavailableView {
+                        Label("Chinese Calendar", systemImage: "calendar")
+                    } description: {
+                        Text(emptyStateDescription)
+                    }
+                }
             }
+        }
+        .task {
+            selectDefaultYearIfNeeded()
+        }
+        .onChange(of: years.map(\.lunarYearNumber)) {
+            selectDefaultYearIfNeeded()
+        }
+        .onChange(of: selectedYearNumber) {
+            selectedMonthIndex = nil
         }
     }
 
-    @MainActor
-    private func loadCalendarDayCount() async {
-        do {
-            calendarDayCount = try modelContext.fetchCount(FetchDescriptor<CalendarDay>())
-            ChineseCalendarLog.ui.info("Loaded \(calendarDayCount ?? 0) calendar days for home view")
-        } catch {
-            ChineseCalendarLog.ui.error(
-                "Failed to load calendar day count: \(error.localizedDescription, privacy: .private)"
-            )
+    private var selectedYear: ChineseLunarYear? {
+        guard let selectedYearNumber else {
+            return nil
+        }
+
+        return years.first { $0.lunarYearNumber == selectedYearNumber }
+    }
+
+    private var selectedYearIndex: Int? {
+        guard let selectedYearNumber else {
+            return nil
+        }
+
+        return years.firstIndex { $0.lunarYearNumber == selectedYearNumber }
+    }
+
+    private var canSelectPreviousYear: Bool {
+        guard let selectedYearIndex else {
+            return false
+        }
+
+        return selectedYearIndex > years.startIndex
+    }
+
+    private var canSelectNextYear: Bool {
+        guard let selectedYearIndex else {
+            return false
+        }
+
+        return selectedYearIndex < years.index(before: years.endIndex)
+    }
+
+    private var emptyStateDescription: String {
+        if years.isEmpty {
+            return "正在加载 SwiftData 日历数据。"
+        }
+
+        return "请选择一个农历年。"
+    }
+
+    private func selectDefaultYearIfNeeded() {
+        guard !years.isEmpty else {
+            ChineseCalendarLog.ui.debug("CalendarHomeView is waiting for SwiftData years")
+            return
+        }
+
+        guard selectedYear == nil else {
+            return
+        }
+
+        let fallbackYearNumber = ChineseLunarCalendar.yearNumber()
+        selectedYearNumber = years.first { $0.lunarYearNumber == fallbackYearNumber }?.lunarYearNumber
+            ?? years.last?.lunarYearNumber
+
+        if let selectedYearNumber {
+            ChineseCalendarLog.ui.info("Selected default lunar year \(selectedYearNumber)")
         }
     }
 
-    private var descriptionText: String {
-        guard let selectedDate else {
-            guard let calendarDayCount else {
-                return "Loading calendar data from SwiftData."
-            }
-
-            return "Loaded \(calendarDayCount) calendar days from SwiftData."
+    private func selectPreviousYear() {
+        guard let selectedYearIndex, selectedYearIndex > years.startIndex else {
+            return
         }
 
-        let leapPrefix = selectedDate.lunarMonth.isLeapMonth ? "Leap " : ""
-        return "Lunar date: \(selectedDate.lunarYear)-\(leapPrefix)\(selectedDate.lunarMonthNumber)-"
-            + "\(selectedDate.lunarDayNumber)"
+        selectedYearNumber = years[years.index(before: selectedYearIndex)].lunarYearNumber
+    }
+
+    private func selectNextYear() {
+        guard let selectedYearIndex, selectedYearIndex < years.index(before: years.endIndex) else {
+            return
+        }
+
+        selectedYearNumber = years[years.index(after: selectedYearIndex)].lunarYearNumber
     }
 }
 

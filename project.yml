@@ -37,12 +37,25 @@ targets:
         script: |
           set -euo pipefail
           "$SRCROOT/Scripts/BuildChineseCalendarSeedStore/generate_seed_store_if_needed.sh"
+        inputFiles:
+          - "$(SRCROOT)/Scripts/BuildChineseCalendarSeedStore/generate_seed_store_if_needed.sh"
+          - "$(SRCROOT)/Scripts/BuildChineseCalendarSeedStore/Package.swift"
+          - "$(SRCROOT)/Scripts/BuildChineseCalendarSeedStore/Sources/ChineseCalendarSeedStoreBuilder/main.swift"
+          - "$(SRCROOT)/Data/Processed/swiftdata_import/manifest.json"
+          - "$(SRCROOT)/Data/Processed/swiftdata_import/chinese_lunar_years.jsonl"
+          - "$(SRCROOT)/Data/Processed/swiftdata_import/chinese_lunar_months.jsonl"
+        inputFileLists:
+          - "$(SRCROOT)/Scripts/BuildChineseCalendarSeedStore/calendar_days_inputs.xcfilelist"
+        outputFiles:
+          - "$(SRCROOT)/Apps/Shared/Resources/ChineseCalendarSeedStore.bundle/ChineseCalendar.sqlite"
+          - "$(SRCROOT)/Apps/Shared/Resources/ChineseCalendarSeedStore.bundle/manifest.json"
     settings:
       base:
         PRODUCT_NAME: Chinese Calendar
         PRODUCT_BUNDLE_IDENTIFIER: com.tiger.suzhou.ChineseCalendar
         GENERATE_INFOPLIST_FILE: YES
         INFOPLIST_KEY_CFBundleDisplayName: Chinese Calendar
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
         SUPPORTED_PLATFORMS: iphoneos iphonesimulator
         TARGETED_DEVICE_FAMILY: 1,2
         SUPPORTS_MACCATALYST: NO
@@ -73,6 +86,18 @@ targets:
         script: |
           set -euo pipefail
           "$SRCROOT/Scripts/BuildChineseCalendarSeedStore/generate_seed_store_if_needed.sh"
+        inputFiles:
+          - "$(SRCROOT)/Scripts/BuildChineseCalendarSeedStore/generate_seed_store_if_needed.sh"
+          - "$(SRCROOT)/Scripts/BuildChineseCalendarSeedStore/Package.swift"
+          - "$(SRCROOT)/Scripts/BuildChineseCalendarSeedStore/Sources/ChineseCalendarSeedStoreBuilder/main.swift"
+          - "$(SRCROOT)/Data/Processed/swiftdata_import/manifest.json"
+          - "$(SRCROOT)/Data/Processed/swiftdata_import/chinese_lunar_years.jsonl"
+          - "$(SRCROOT)/Data/Processed/swiftdata_import/chinese_lunar_months.jsonl"
+        inputFileLists:
+          - "$(SRCROOT)/Scripts/BuildChineseCalendarSeedStore/calendar_days_inputs.xcfilelist"
+        outputFiles:
+          - "$(SRCROOT)/Apps/Shared/Resources/ChineseCalendarSeedStore.bundle/ChineseCalendar.sqlite"
+          - "$(SRCROOT)/Apps/Shared/Resources/ChineseCalendarSeedStore.bundle/manifest.json"
     settings:
       base:
         PRODUCT_NAME: Chinese Calendar

@@ -81,6 +81,8 @@ private struct SeedStoreBuilderOptions {
 }
 
 private struct SeedStoreBuilder {
+    private static let seedStoreFormatVersion = 2
+
     private let options: SeedStoreBuilderOptions
     private let decoder = JSONDecoder()
     private let fileManager = FileManager.default
@@ -141,13 +143,17 @@ private struct SeedStoreBuilder {
     }
 
     private func importLunarMonths(into container: ModelContainer) throws {
-        var context = makeContext(for: container)
+        let context = makeContext(for: container)
+        let yearsByNumber = try lunarYearsByNumber(in: context)
         var importedCount = 0
 
         try readJSONLines(
             at: options.inputURL.appendingPathComponent("chinese_lunar_months.jsonl"),
             as: LunarMonthRecord.self
         ) { record in
+            guard let year = yearsByNumber[record.lunarYearNumber] else {
+                throw SeedStoreBuilderError.missingLunarYear(record.lunarYearNumber)
+            }
             let month = ChineseLunarMonth(
                 lunarMonthIndex: record.lunarMonthIndex,
                 lunarYearNumber: record.lunarYearNumber,
@@ -155,13 +161,14 @@ private struct SeedStoreBuilder {
                 isLeapMonth: record.isLeapMonth,
                 dayCount: record.dayCount,
                 monthStemIndex: record.monthStemIndex,
-                monthBranchIndex: record.monthBranchIndex
+                monthBranchIndex: record.monthBranchIndex,
+                chineseLunarYear: year
             )
             context.insert(month)
             importedCount += 1
 
             if importedCount.isMultiple(of: options.saveInterval) {
-                try saveAndReset(&context, container: container)
+                try context.save()
             }
         }
 
@@ -182,11 +189,19 @@ private struct SeedStoreBuilder {
             (Int(lhs.lastPathComponent) ?? .min) < (Int(rhs.lastPathComponent) ?? .min)
         }
 
+        var context = makeContext(for: container)
+        let monthIdentifiersByIndex = try lunarMonthIdentifiersByIndex(in: context)
+        var monthCache: [Int: ChineseLunarMonth] = [:]
         var importedDayCount = 0
         for yearDirectory in yearDirectories {
-            var context = makeContext(for: container)
             let fileURL = yearDirectory.appendingPathComponent("calendar_days.jsonl")
             try readJSONLines(at: fileURL, as: CalendarDayBundleRecord.self) { record in
+                let lunarMonth = try lunarMonth(
+                    index: record.chineseLunarDay.lunarMonthIndex,
+                    identifiersByIndex: monthIdentifiersByIndex,
+                    in: context,
+                    cache: &monthCache
+                )
                 let calendarDay = CalendarDay(
                     dayIndex: record.calendarDay.dayIndex,
                     julianDayNumber: record.calendarDay.julianDayNumber
@@ -203,7 +218,8 @@ private struct SeedStoreBuilder {
                     lunarMonthIndex: record.chineseLunarDay.lunarMonthIndex,
                     dayNumberInMonth: record.chineseLunarDay.dayNumberInMonth,
                     dayStemIndex: record.chineseLunarDay.dayStemIndex,
-                    dayBranchIndex: record.chineseLunarDay.dayBranchIndex
+                    dayBranchIndex: record.chineseLunarDay.dayBranchIndex,
+                    chineseLunarMonth: lunarMonth
                 )
 
                 calendarDay.civilDate = civilDate
@@ -213,12 +229,50 @@ private struct SeedStoreBuilder {
                 importedDayCount += 1
                 if importedDayCount.isMultiple(of: options.saveInterval) {
                     try saveAndReset(&context, container: container)
+                    monthCache.removeAll(keepingCapacity: true)
                 }
             }
 
-            try context.save()
             log("  imported civil year \(yearDirectory.lastPathComponent)")
         }
+
+        try context.save()
+    }
+
+    private func lunarYearsByNumber(in context: ModelContext) throws -> [Int: ChineseLunarYear] {
+        let descriptor = FetchDescriptor<ChineseLunarYear>(
+            sortBy: [SortDescriptor(\ChineseLunarYear.lunarYearNumber)]
+        )
+        let years = try context.fetch(descriptor)
+        return Dictionary(uniqueKeysWithValues: years.map { ($0.lunarYearNumber, $0) })
+    }
+
+    private func lunarMonthIdentifiersByIndex(in context: ModelContext) throws -> [Int: PersistentIdentifier] {
+        let descriptor = FetchDescriptor<ChineseLunarMonth>(
+            sortBy: [SortDescriptor(\ChineseLunarMonth.lunarMonthIndex)]
+        )
+        let months = try context.fetch(descriptor)
+        return Dictionary(uniqueKeysWithValues: months.map { ($0.lunarMonthIndex, $0.persistentModelID) })
+    }
+
+    private func lunarMonth(
+        index lunarMonthIndex: Int,
+        identifiersByIndex: [Int: PersistentIdentifier],
+        in context: ModelContext,
+        cache: inout [Int: ChineseLunarMonth]
+    ) throws -> ChineseLunarMonth {
+        if let cachedMonth = cache[lunarMonthIndex] {
+            return cachedMonth
+        }
+
+        guard let identifier = identifiersByIndex[lunarMonthIndex],
+              let lunarMonth = context.model(for: identifier) as? ChineseLunarMonth
+        else {
+            throw SeedStoreBuilderError.missingLunarMonth(lunarMonthIndex)
+        }
+
+        cache[lunarMonthIndex] = lunarMonth
+        return lunarMonth
     }
 
     private func makeContext(for container: ModelContainer) -> ModelContext {
@@ -292,10 +346,25 @@ private struct SeedStoreBuilder {
             return
         }
 
+        let sourceData = try Data(contentsOf: sourceURL)
+        guard var manifest = try JSONSerialization.jsonObject(with: sourceData) as? [String: Any] else {
+            throw SeedStoreBuilderError.invalidManifest(sourceURL)
+        }
+
+        manifest["seedStoreBuilder"] = "Scripts/BuildChineseCalendarSeedStore"
+        manifest["seedStoreFormatVersion"] = Self.seedStoreFormatVersion
+        manifest["seedStoreRelationshipsLinked"] = true
+
+        var destinationData = try JSONSerialization.data(
+            withJSONObject: manifest,
+            options: [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]
+        )
+        destinationData.append(Data("\n".utf8))
+
         if fileManager.fileExists(atPath: destinationURL.path) {
             try fileManager.removeItem(at: destinationURL)
         }
-        try fileManager.copyItem(at: sourceURL, to: destinationURL)
+        try destinationData.write(to: destinationURL, options: .atomic)
     }
 
     private func readJSONLines<Record: Decodable>(
@@ -356,12 +425,21 @@ private struct LunarDayRecord: Decodable {
 
 private enum SeedStoreBuilderError: Error, LocalizedError {
     case invalidArgument(String)
+    case invalidManifest(URL)
+    case missingLunarYear(Int)
+    case missingLunarMonth(Int)
     case sqliteCommandFailed(String)
 
     var errorDescription: String? {
         switch self {
         case let .invalidArgument(message):
             message
+        case let .invalidManifest(url):
+            "Seed store manifest is not a JSON object: \(url.path)."
+        case let .missingLunarYear(lunarYearNumber):
+            "Missing lunar year while linking seed data: \(lunarYearNumber)."
+        case let .missingLunarMonth(lunarMonthIndex):
+            "Missing lunar month while linking seed data: \(lunarMonthIndex)."
         case let .sqliteCommandFailed(message):
             "Failed to finalize SQLite seed store. \(message)"
         }

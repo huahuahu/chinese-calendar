@@ -1,4 +1,52 @@
+#if canImport(OSLog)
 import OSLog
+#else
+public enum LogPrivacy: Sendable {
+    case `private`
+    case `public`
+}
+
+public struct LogMessage: ExpressibleByStringInterpolation, ExpressibleByStringLiteral, Sendable {
+    public let description: String
+
+    public init(stringLiteral value: String) {
+        description = value
+    }
+
+    public init(stringInterpolation: StringInterpolation) {
+        description = stringInterpolation.output
+    }
+
+    public struct StringInterpolation: StringInterpolationProtocol {
+        fileprivate var output = ""
+
+        public init(literalCapacity: Int, interpolationCount: Int) {
+            output.reserveCapacity(literalCapacity + interpolationCount * 8)
+        }
+
+        public mutating func appendLiteral(_ literal: String) {
+            output += literal
+        }
+
+        public mutating func appendInterpolation<T>(_ value: T) {
+            output += String(describing: value)
+        }
+
+        public mutating func appendInterpolation<T>(_ value: T, privacy _: LogPrivacy) {
+            output += String(describing: value)
+        }
+    }
+}
+
+public struct Logger: Sendable {
+    public init(subsystem _: String, category _: String) {}
+
+    public func debug(_ message: LogMessage) {}
+    public func info(_ message: LogMessage) {}
+    public func notice(_ message: LogMessage) {}
+    public func error(_ message: LogMessage) {}
+}
+#endif
 
 public enum ChineseCalendarLog {
     public static let subsystem = "com.tiger.suzhou.ChineseCalendar"
