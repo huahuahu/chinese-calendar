@@ -53,7 +53,9 @@ struct LunarYearDetailView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
-                yearHeader
+                Text(yearSubtitle)
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
 
                 if monthsInYearStartOrder.isEmpty {
                     ContentUnavailableView("没有月份数据", systemImage: "calendar.badge.exclamationmark")
@@ -74,30 +76,17 @@ struct LunarYearDetailView: View {
         .onChange(of: year.lunarYearNumber) {
             selectDefaultMonthIfNeeded()
         }
-    }
+        .navigationTitle(LunarCalendarFormatting.yearTitle(lunarYearNumber: year.lunarYearNumber))
+        .toolbar {
+            ToolbarItemGroup(placement: .primaryAction) {
+                Button("上一年", systemImage: "chevron.left", action: selectPreviousYear)
+                    .disabled(!canSelectPreviousYear)
+                    .help("切换到上一年")
 
-    private var yearHeader: some View {
-        HStack(alignment: .center, spacing: 12) {
-            Button("上一年", systemImage: "chevron.left", action: selectPreviousYear)
-                .labelStyle(.iconOnly)
-                .disabled(!canSelectPreviousYear)
-                .help("切换到上一年")
-
-            VStack(alignment: .leading, spacing: 8) {
-                Text(LunarCalendarFormatting.yearTitle(lunarYearNumber: year.lunarYearNumber))
-                    .font(.largeTitle)
-                    .bold()
-                Text(yearSubtitle)
-                    .font(.title3)
-                    .foregroundStyle(.secondary)
+                Button("下一年", systemImage: "chevron.right", action: selectNextYear)
+                    .disabled(!canSelectNextYear)
+                    .help("切换到下一年")
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .accessibilityElement(children: .combine)
-
-            Button("下一年", systemImage: "chevron.right", action: selectNextYear)
-                .labelStyle(.iconOnly)
-                .disabled(!canSelectNextYear)
-                .help("切换到下一年")
         }
     }
 
