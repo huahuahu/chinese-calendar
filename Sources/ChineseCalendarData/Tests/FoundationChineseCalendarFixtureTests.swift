@@ -62,7 +62,7 @@ import Testing
 
     let largestFoundationYear = try #require(foundationMonthStartsByYear.values.max { $0.count < $1.count })
     #expect(
-        largestFoundationYear.map(\.month) == Array(1...12),
+        largestFoundationYear.map(\.month) == Array(1 ... 12),
         "Foundation 在太初元年前后的核心跨度中只给出普通正月至十二月。"
     )
 }
@@ -232,7 +232,7 @@ private func foundationChineseMonthStarts(
 ) throws -> [FoundationChineseFullDate] {
     var monthStarts: [FoundationChineseFullDate] = []
 
-    for julianDayNumber in startJulianDayNumber..<endJulianDayNumber {
+    for julianDayNumber in startJulianDayNumber ..< endJulianDayNumber {
         let foundationDate = try foundationChineseFullDate(julianDayNumber: julianDayNumber)
         if foundationDate.day == 1 {
             monthStarts.append(foundationDate)
