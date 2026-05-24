@@ -3,7 +3,9 @@ import SwiftData
 
 @Model
 public final class ChineseLunarMonth {
-    #Unique<ChineseLunarMonth>([\.lunarMonthIndex], [\.lunarYearNumber, \.monthNumberInYear, \.isLeapMonth])
+    // Some historical records have repeated month numbers within the same lunar year, so the import-stable month index
+    // is the only unique key.
+    #Unique<ChineseLunarMonth>([\.lunarMonthIndex])
 
     public var lunarMonthIndex: Int
     public var lunarYearNumber: Int

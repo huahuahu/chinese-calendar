@@ -45,7 +45,7 @@ let package = Package(
         ),
         .target(
             name: "ChineseCalendarUI",
-            dependencies: ["ChineseCalendarCore", "ChineseCalendarData"],
+            dependencies: ["ChineseCalendarCore", "ChineseCalendarData", "ChineseCalendarPersistence"],
             path: "ChineseCalendarUI"
         ),
         .testTarget(

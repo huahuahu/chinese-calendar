@@ -3,13 +3,18 @@ import SwiftData
 
 @Model
 public final class CivilDate {
-    #Unique<CivilDate>([\.dayIndex], [\.year, \.month, \.dayOfMonth, \.calendarStyle])
+    #Unique<CivilDate>([\.dayIndex], [\.year, \.month, \.dayOfMonth, \.calendarStyleRawValue])
 
     public var dayIndex: Int
     public var year: Int
     public var month: Int
     public var dayOfMonth: Int
-    public var calendarStyle: CivilCalendarStyle
+    public var calendarStyleRawValue: String
+
+    public var calendarStyle: CivilCalendarStyle {
+        get { CivilCalendarStyle(rawValue: calendarStyleRawValue) ?? .gregorian }
+        set { calendarStyleRawValue = newValue.rawValue }
+    }
 
     /// Inverse side of CalendarDay.civilDate.
     public var calendarDay: CalendarDay?
@@ -26,7 +31,7 @@ public final class CivilDate {
         self.year = year
         self.month = month
         self.dayOfMonth = dayOfMonth
-        self.calendarStyle = calendarStyle
+        calendarStyleRawValue = calendarStyle.rawValue
         self.calendarDay = calendarDay
     }
 }

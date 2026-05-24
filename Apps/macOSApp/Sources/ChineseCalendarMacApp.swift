@@ -1,3 +1,4 @@
+import ChineseCalendarPersistence
 import ChineseCalendarUI
 import SwiftUI
 
@@ -8,5 +9,6 @@ struct ChineseCalendarMacApp: App {
             CalendarHomeView()
                 .frame(minWidth: 960, minHeight: 640)
         }
+        .modelContainer(ChineseCalendarModelContainerFactory.sharedContainer)
     }
 }
