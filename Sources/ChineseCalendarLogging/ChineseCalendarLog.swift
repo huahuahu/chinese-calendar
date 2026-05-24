@@ -1,61 +1,72 @@
 #if canImport(OSLog)
-import OSLog
+    import OSLog
 #else
-public enum LogPrivacy: Sendable {
-    case `private`
-    case `public`
-}
-
-public struct LogMessage: ExpressibleByStringInterpolation, ExpressibleByStringLiteral, Sendable {
-    public let description: String
-
-    public init(stringLiteral value: String) {
-        description = value
+    public enum LogPrivacy: Sendable {
+        case `private`
+        case `public`
     }
 
-    public init(stringInterpolation: StringInterpolation) {
-        description = stringInterpolation.output
-    }
+    public struct LogMessage: ExpressibleByStringInterpolation, ExpressibleByStringLiteral, Sendable {
+        public let description: String
 
-    public struct StringInterpolation: StringInterpolationProtocol {
-        fileprivate var output = ""
-
-        public init(literalCapacity: Int, interpolationCount: Int) {
-            output.reserveCapacity(literalCapacity + interpolationCount * 8)
+        public init(stringLiteral value: String) {
+            description = value
         }
 
-        public mutating func appendLiteral(_ literal: String) {
-            output += literal
+        public init(stringInterpolation: StringInterpolation) {
+            description = stringInterpolation.output
         }
 
-        public mutating func appendInterpolation<T>(_ value: T) {
-            output += String(describing: value)
+        public struct StringInterpolation: StringInterpolationProtocol {
+            fileprivate var output = ""
+
+            public init(literalCapacity: Int, interpolationCount: Int) {
+                output.reserveCapacity(literalCapacity + interpolationCount * 8)
+            }
+
+            public mutating func appendLiteral(_ literal: String) {
+                output += literal
+            }
+
+            public mutating func appendInterpolation(_ value: some Any) {
+                output += String(describing: value)
+            }
+
+            public mutating func appendInterpolation(_ value: some Any, privacy _: LogPrivacy) {
+                output += String(describing: value)
+            }
+        }
+    }
+
+    public struct Logger: Sendable {
+        private let subsystem: String
+        private let category: String
+
+        public init(subsystem: String, category: String) {
+            self.subsystem = subsystem
+            self.category = category
         }
 
-        public mutating func appendInterpolation<T>(_ value: T, privacy _: LogPrivacy) {
-            output += String(describing: value)
+        public func debug(_ message: LogMessage) {
+            log(level: "DEBUG", message)
+        }
+
+        public func info(_ message: LogMessage) {
+            log(level: "INFO", message)
+        }
+
+        public func notice(_ message: LogMessage) {
+            log(level: "NOTICE", message)
+        }
+
+        public func error(_ message: LogMessage) {
+            log(level: "ERROR", message)
+        }
+
+        private func log(level: String, _ message: LogMessage) {
+            Swift.print("[\(level)] [\(subsystem):\(category)] \(message.description)")
         }
     }
-}
-
-public struct Logger: Sendable {
-    private let subsystem: String
-    private let category: String
-
-    public init(subsystem: String, category: String) {
-        self.subsystem = subsystem
-        self.category = category
-    }
-
-    public func debug(_ message: LogMessage) { log(level: "DEBUG", message) }
-    public func info(_ message: LogMessage) { log(level: "INFO", message) }
-    public func notice(_ message: LogMessage) { log(level: "NOTICE", message) }
-    public func error(_ message: LogMessage) { log(level: "ERROR", message) }
-
-    private func log(level: String, _ message: LogMessage) {
-        Swift.print("[\(level)] [\(subsystem):\(category)] \(message.description)")
-    }
-}
 #endif
 
 public enum ChineseCalendarLog {
