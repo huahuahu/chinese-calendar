@@ -22,22 +22,72 @@ public enum LunarMonthNumber: Int, Codable, CaseIterable, Sendable {
 }
 
 /// 农历中的某个月，闰月与普通月共享同一月序。
+public enum LunarIntercalaryMonthNameStyle: String, Codable, CaseIterable, Sendable {
+    /// 后世/现代常见的“闰 X 月”。
+    case leap
+
+    /// 秦至汉初颛顼历语境下岁末置闰的“后 X 月”。
+    case post
+
+    public var chinesePrefix: String {
+        switch self {
+        case .leap:
+            "闰"
+        case .post:
+            "后"
+        }
+    }
+}
+
+/// 农历中的某个月，闰月与普通月共享同一月序。
 public struct LunarMonth: Codable, Equatable, Sendable {
     public let number: LunarMonthNumber
     public let isLeapMonth: Bool
+    public let intercalaryMonthNameStyle: LunarIntercalaryMonthNameStyle
 
     public var rawValue: Int {
         number.rawValue
     }
 
     public var chineseName: String {
-        let prefix = isLeapMonth ? "闰" : ""
-        return prefix + number.chineseName
+        guard isLeapMonth else {
+            return number.chineseName
+        }
+
+        return intercalaryMonthNameStyle.chinesePrefix + number.chineseName
     }
 
-    public init(number: LunarMonthNumber, isLeapMonth: Bool = false) {
+    public init(
+        number: LunarMonthNumber,
+        isLeapMonth: Bool = false,
+        intercalaryMonthNameStyle: LunarIntercalaryMonthNameStyle = .leap
+    ) {
         self.number = number
         self.isLeapMonth = isLeapMonth
+        self.intercalaryMonthNameStyle = intercalaryMonthNameStyle
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        number = try container.decode(LunarMonthNumber.self, forKey: .number)
+        isLeapMonth = try container.decode(Bool.self, forKey: .isLeapMonth)
+        intercalaryMonthNameStyle = try container.decodeIfPresent(
+            LunarIntercalaryMonthNameStyle.self,
+            forKey: .intercalaryMonthNameStyle
+        ) ?? .leap
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(number, forKey: .number)
+        try container.encode(isLeapMonth, forKey: .isLeapMonth)
+        try container.encode(intercalaryMonthNameStyle, forKey: .intercalaryMonthNameStyle)
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case number
+        case isLeapMonth
+        case intercalaryMonthNameStyle
     }
 }
 

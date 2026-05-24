@@ -1,3 +1,4 @@
+import ChineseCalendarCore
 import ChineseCalendarPersistence
 import Foundation
 import SwiftData
@@ -81,7 +82,7 @@ private struct SeedStoreBuilderOptions {
 }
 
 private struct SeedStoreBuilder {
-    private static let seedStoreFormatVersion = 2
+    private static let seedStoreFormatVersion = 3
 
     private let options: SeedStoreBuilderOptions
     private let decoder = JSONDecoder()
@@ -159,6 +160,7 @@ private struct SeedStoreBuilder {
                 lunarYearNumber: record.lunarYearNumber,
                 monthNumberInYear: record.monthNumberInYear,
                 isLeapMonth: record.isLeapMonth,
+                intercalaryMonthNameStyle: record.intercalaryMonthNameStyle,
                 dayCount: record.dayCount,
                 monthStemIndex: record.monthStemIndex,
                 monthBranchIndex: record.monthBranchIndex,
@@ -391,6 +393,7 @@ private struct LunarMonthRecord: Decodable {
     let lunarYearNumber: Int
     let monthNumberInYear: Int
     let isLeapMonth: Bool
+    let intercalaryMonthNameStyle: LunarIntercalaryMonthNameStyle
     let dayCount: Int
     let monthStemIndex: Int
     let monthBranchIndex: Int

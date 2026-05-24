@@ -340,10 +340,21 @@ function validateSourceRecord(record, filePath, state) {
   if (typeof record.lunarMonth.isLeapMonth !== "boolean") {
     throw new Error(`lunarMonth.isLeapMonth must be boolean at dayIndex ${record.dayIndex}.`);
   }
+  validateIntercalaryMonthNameStyle(record.lunarMonth, record.dayIndex);
 
   validateStemBranch("year", record.lunarYear.yearStemIndex, record.lunarYear.yearBranchIndex, record.dayIndex);
   validateStemBranch("month", record.lunarMonth.monthStemIndex, record.lunarMonth.monthBranchIndex, record.dayIndex);
   validateStemBranch("day", record.lunarDay.dayStemIndex, record.lunarDay.dayBranchIndex, record.dayIndex);
+}
+
+function validateIntercalaryMonthNameStyle(lunarMonth, dayIndex) {
+  const style = lunarMonth.intercalaryMonthNameStyle ?? "leap";
+  if (!["leap", "post"].includes(style)) {
+    throw new Error(`Invalid lunarMonth.intercalaryMonthNameStyle at dayIndex ${dayIndex}.`);
+  }
+  if (!lunarMonth.isLeapMonth && style !== "leap") {
+    throw new Error(`Regular month cannot use post intercalary style at dayIndex ${dayIndex}.`);
+  }
 }
 
 function validateStemBranch(kind, stemIndex, branchIndex, dayIndex) {
@@ -387,6 +398,7 @@ function collectChineseLunarMonth(record, state) {
     lunarYearNumber: record.lunarMonth.yearNumber,
     monthNumberInYear: record.lunarMonth.monthNumberInYear,
     isLeapMonth: record.lunarMonth.isLeapMonth,
+    intercalaryMonthNameStyle: intercalaryMonthNameStyle(record),
     dayCount: record.lunarMonth.dayCount,
     monthStemIndex: record.lunarMonth.monthStemIndex,
     monthBranchIndex: record.lunarMonth.monthBranchIndex
@@ -397,6 +409,23 @@ function collectChineseLunarMonth(record, state) {
     return;
   }
   assertSameRecord(existing, monthRecord, "ChineseLunarMonth", monthRecord.lunarMonthIndex);
+}
+
+function intercalaryMonthNameStyle(record) {
+  if (record.lunarMonth.intercalaryMonthNameStyle !== undefined) {
+    return record.lunarMonth.intercalaryMonthNameStyle;
+  }
+
+  if (
+    record.lunarMonth.isLeapMonth &&
+    record.lunarMonth.monthNumberInYear === 9 &&
+    record.lunarMonth.yearNumber >= -220 &&
+    record.lunarMonth.yearNumber <= -104
+  ) {
+    return "post";
+  }
+
+  return "leap";
 }
 
 function assertSameRecord(existing, incoming, modelName, key) {
@@ -459,7 +488,7 @@ async function writeSwiftDataManifest(options, result) {
     generatedAt: new Date().toISOString(),
     generator: "Scripts/ImportChineseCalendar/generate_swiftdata_import.swift",
     sourceArtifact: options.inputManifest?.artifact ?? "calendar_days",
-    sourceInput: options.input,
+    sourceInput: repositoryRelativePath(options.input),
     sourceGenerator: options.inputManifest?.generator,
     sourceUpstreamRepository: options.inputManifest?.upstreamRepository,
     sourceUpstreamCommit: options.inputManifest?.upstreamCommit,
@@ -491,6 +520,17 @@ async function writeSwiftDataManifest(options, result) {
     }
   };
   await writeFile(path.join(options.output, "manifest.json"), `${JSON.stringify(manifest, null, 2)}\n`, "utf8");
+}
+
+function repositoryRelativePath(targetPath) {
+  const relativePath = path.relative(repositoryRoot, targetPath);
+  if (relativePath === "") {
+    return ".";
+  }
+  if (relativePath.startsWith("..") || path.isAbsolute(relativePath)) {
+    return targetPath;
+  }
+  return relativePath;
 }
 
 async function validateSwiftDataImport(output) {
@@ -525,6 +565,7 @@ async function validateSwiftDataImport(output) {
     if (!years.has(record.lunarYearNumber)) {
       throw new Error(`Missing ChineseLunarYear ${record.lunarYearNumber}.`);
     }
+    validateChineseLunarMonthImportRecord(record);
     months.add(record.lunarMonthIndex);
     result.totalChineseLunarMonths += 1;
   });
@@ -577,6 +618,18 @@ async function validateSwiftDataImport(output) {
   }
 
   return result;
+}
+
+function validateChineseLunarMonthImportRecord(record) {
+  if (typeof record.isLeapMonth !== "boolean") {
+    throw new Error(`ChineseLunarMonth.isLeapMonth must be boolean at ${record.lunarMonthIndex}.`);
+  }
+  if (!["leap", "post"].includes(record.intercalaryMonthNameStyle)) {
+    throw new Error(`Invalid ChineseLunarMonth.intercalaryMonthNameStyle at ${record.lunarMonthIndex}.`);
+  }
+  if (!record.isLeapMonth && record.intercalaryMonthNameStyle !== "leap") {
+    throw new Error(`Regular ChineseLunarMonth cannot use post intercalary style at ${record.lunarMonthIndex}.`);
+  }
 }
 
 function validateDayBundleRecord(record, filePath, civilYear) {

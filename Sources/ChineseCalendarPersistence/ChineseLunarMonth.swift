@@ -1,3 +1,4 @@
+import ChineseCalendarCore
 import Foundation
 import SwiftData
 
@@ -11,9 +12,15 @@ public final class ChineseLunarMonth {
     public var lunarYearNumber: Int
     public var monthNumberInYear: Int
     public var isLeapMonth: Bool
+    public var intercalaryMonthNameStyleRawValue: String
     public var dayCount: Int
     public var monthStemIndex: Int
     public var monthBranchIndex: Int
+
+    public var intercalaryMonthNameStyle: LunarIntercalaryMonthNameStyle {
+        get { LunarIntercalaryMonthNameStyle(rawValue: intercalaryMonthNameStyleRawValue) ?? .leap }
+        set { intercalaryMonthNameStyleRawValue = newValue.rawValue }
+    }
 
     /// Inverse side of ChineseLunarYear.months.
     public var chineseLunarYear: ChineseLunarYear?
@@ -27,6 +34,7 @@ public final class ChineseLunarMonth {
         lunarYearNumber: Int,
         monthNumberInYear: Int,
         isLeapMonth: Bool,
+        intercalaryMonthNameStyle: LunarIntercalaryMonthNameStyle = .leap,
         dayCount: Int,
         monthStemIndex: Int,
         monthBranchIndex: Int,
@@ -37,6 +45,7 @@ public final class ChineseLunarMonth {
         self.lunarYearNumber = lunarYearNumber
         self.monthNumberInYear = monthNumberInYear
         self.isLeapMonth = isLeapMonth
+        intercalaryMonthNameStyleRawValue = intercalaryMonthNameStyle.rawValue
         self.dayCount = dayCount
         self.monthStemIndex = monthStemIndex
         self.monthBranchIndex = monthBranchIndex

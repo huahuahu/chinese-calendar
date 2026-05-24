@@ -1,9 +1,9 @@
 {
   "artifact": "swiftdata_import",
-  "generatedAt": "2026-05-20T14:00:56.011Z",
+  "generatedAt": "2026-05-24T13:12:23.111Z",
   "generator": "Scripts/ImportChineseCalendar/generate_swiftdata_import.swift",
   "sourceArtifact": "calendar_days",
-  "sourceInput": "/Users/tigerguo/git/Chinese-date/Data/Processed/calendar_days",
+  "sourceInput": "Data/Processed/calendar_days",
   "sourceGenerator": "Scripts/ImportChineseCalendar/generate_calendar_days.swift",
   "sourceUpstreamRepository": "https://github.com/ytliu0/ChineseCalendar",
   "sourceUpstreamCommit": "d6aae82b63b79a6f8659ea3e064024b7d8ac3077",

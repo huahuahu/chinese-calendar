@@ -8,7 +8,7 @@ INPUT_DIR="$REPO_ROOT/Data/Processed/swiftdata_import"
 OUTPUT_DIR="$REPO_ROOT/Apps/Shared/Resources/ChineseCalendarSeedStore.bundle"
 SEED_STORE="$OUTPUT_DIR/ChineseCalendar.sqlite"
 SEED_MANIFEST="$OUTPUT_DIR/manifest.json"
-REQUIRED_SEED_STORE_FORMAT_VERSION="2"
+REQUIRED_SEED_STORE_FORMAT_VERSION="3"
 
 seed_store_format_version() {
     if [[ ! -f "$SEED_MANIFEST" ]]; then

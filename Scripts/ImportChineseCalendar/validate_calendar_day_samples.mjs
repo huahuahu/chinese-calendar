@@ -289,29 +289,52 @@ function assertRecordMatchesFixture(sample, record) {
     lunarMonth: sample.expected.lunarMonth,
     lunarDay: sample.expected.lunarDay
   };
-  assertDeepEqual(sample, "fixture", record, expected);
+  assertDeepEqual(sample, "fixture", fixtureComparableRecord(record), expected);
 }
 
 function assertComparableRecords(sample, generatedRecord, upstreamRecord, label) {
-  const comparableGenerated = {
-    julianDayNumber: generatedRecord.julianDayNumber,
-    civil: generatedRecord.civil,
-    lunarYear: generatedRecord.lunarYear,
-    lunarMonth: {
-      yearNumber: generatedRecord.lunarMonth.yearNumber,
-      monthNumberInYear: generatedRecord.lunarMonth.monthNumberInYear,
-      isLeapMonth: generatedRecord.lunarMonth.isLeapMonth,
-      dayCount: generatedRecord.lunarMonth.dayCount,
-      monthStemIndex: generatedRecord.lunarMonth.monthStemIndex,
-      monthBranchIndex: generatedRecord.lunarMonth.monthBranchIndex
-    },
+  assertDeepEqual(sample, label, upstreamComparableRecord(generatedRecord), upstreamRecord);
+}
+
+function fixtureComparableRecord(record) {
+  return {
+    dayIndex: record.dayIndex,
+    julianDayNumber: record.julianDayNumber,
+    civil: record.civil,
+    lunarYear: record.lunarYear,
+    lunarMonth: fixtureComparableLunarMonth(record.lunarMonth),
+    lunarDay: record.lunarDay
+  };
+}
+
+function fixtureComparableLunarMonth(lunarMonth) {
+  const { intercalaryMonthNameStyle, ...comparableLunarMonth } = lunarMonth;
+  return comparableLunarMonth;
+}
+
+function upstreamComparableRecord(record) {
+  return {
+    julianDayNumber: record.julianDayNumber,
+    civil: record.civil,
+    lunarYear: record.lunarYear,
+    lunarMonth: upstreamComparableLunarMonth(record.lunarMonth),
     lunarDay: {
-      dayNumberInMonth: generatedRecord.lunarDay.dayNumberInMonth,
-      dayStemIndex: generatedRecord.lunarDay.dayStemIndex,
-      dayBranchIndex: generatedRecord.lunarDay.dayBranchIndex
+      dayNumberInMonth: record.lunarDay.dayNumberInMonth,
+      dayStemIndex: record.lunarDay.dayStemIndex,
+      dayBranchIndex: record.lunarDay.dayBranchIndex
     }
   };
-  assertDeepEqual(sample, label, comparableGenerated, upstreamRecord);
+}
+
+function upstreamComparableLunarMonth(lunarMonth) {
+  return {
+    yearNumber: lunarMonth.yearNumber,
+    monthNumberInYear: lunarMonth.monthNumberInYear,
+    isLeapMonth: lunarMonth.isLeapMonth,
+    dayCount: lunarMonth.dayCount,
+    monthStemIndex: lunarMonth.monthStemIndex,
+    monthBranchIndex: lunarMonth.monthBranchIndex
+  };
 }
 
 function assertDeepEqual(sample, label, actual, expected) {

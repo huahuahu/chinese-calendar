@@ -1,5 +1,6 @@
 // swiftlint:disable identifier_name superfluous_disable_command
 @testable import ChineseCalendarData
+import Foundation
 import Testing
 
 @Test func 干支年暴露标准名称() {
@@ -24,9 +25,11 @@ import Testing
 @Test func 农历月保留闰月显示() {
     let regularMonth = 农历月(月序: .六月)
     let leapMonth = 农历月(月序: .六月, 是闰月: true)
+    let postMonth = 农历月(月序: .九月, 是闰月: true, 闰月名称样式: .后)
 
     #expect(regularMonth.中文名 == "六月")
     #expect(leapMonth.中文名 == "闰六月")
+    #expect(postMonth.中文名 == "后九月")
 }
 
 @Test func 干支历日期默认使用正月初一年界() {
@@ -42,6 +45,16 @@ import Testing
     #expect(date.月.中文名 == "正月")
     #expect(date.日 == .初一)
     #expect(date.年号 == "漢武帝太初元年")
+}
+
+@Test func 农历月解码旧数据时默认使用闰月名称样式() throws {
+    let data = Data(#"{"月序":6,"是闰月":true}"#.utf8)
+
+    let decoded = try JSONDecoder().decode(农历月.self, from: data)
+
+    #expect(decoded.是闰月)
+    #expect(decoded.闰月名称样式 == .闰)
+    #expect(decoded.中文名 == "闰六月")
 }
 
 // swiftlint:enable identifier_name superfluous_disable_command
