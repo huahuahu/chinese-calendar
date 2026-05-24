@@ -50,6 +50,17 @@ const SECTION_ID_MAP = new Map([
   ["qing", "manchu_later_jin_qing"]
 ]);
 
+const DIRECT_DYNASTY_SOURCE_SECTION_IDS = new Set([
+  "qin",
+  "han2",
+  "jin",
+  "sui",
+  "tang",
+  "song",
+  "khitan",
+  "jurchen"
+]);
+
 const SUPPLEMENTAL_DYNASTIES = [
   dynastySpec("western_han", "西汉", "西汉", -205, 8, "西汉 (公元前206-公元8)"),
   dynastySpec("xin", "新", "新", 8, 23, "新 (8-23)"),
@@ -66,15 +77,15 @@ const SUPPLEMENTAL_DYNASTIES = [
   dynastySpec("western_wei", "西魏", "西魏", 535, 557, "西魏 (535-557)"),
   dynastySpec("northern_qi", "北齐", "北齐", 550, 577, "北齐 (550-577)"),
   dynastySpec("northern_zhou", "北周", "北周", 557, 581, "北周 (557-581)"),
-  dynastySpec("liu_song", "宋", "宋", 420, 479, "宋 (420-479)"),
+  dynastySpec("liu_song", "刘宋", "刘宋", 420, 479, "宋 (420-479)"),
   dynastySpec("southern_qi", "齐", "齐", 479, 502, "齐 (479-502)"),
   dynastySpec("southern_liang", "梁", "梁", 502, 557, "梁 (502-557)"),
   dynastySpec("chen", "陈", "陈", 557, 589, "陈 (557-589)"),
-  dynastySpec("later_liang", "梁", "梁", 907, 923, "五代梁 (907 — 923)"),
-  dynastySpec("later_tang", "唐", "唐", 923, 936, "五代唐 (923 — 936)"),
-  dynastySpec("later_jin", "晋", "晋", 936, 947, "五代晋 (936 — 946)"),
-  dynastySpec("later_han", "汉", "汉", 947, 951, "五代汉 (947 — 950)"),
-  dynastySpec("later_zhou", "周", "周", 951, 960, "五代周 (951 — 960)"),
+  dynastySpec("later_liang", "后梁", "后梁", 907, 923, "五代梁 (907 — 923)"),
+  dynastySpec("later_tang", "后唐", "后唐", 923, 936, "五代唐 (923 — 936)"),
+  dynastySpec("later_jin", "后晋", "后晋", 936, 947, "五代晋 (936 — 946)"),
+  dynastySpec("later_han", "后汉", "后汉", 947, 951, "五代汉 (947 — 950)"),
+  dynastySpec("later_zhou", "后周", "后周", 951, 960, "五代周 (951 — 960)"),
   dynastySpec("northern_song", "北宋", "北宋", 960, 1127, "北宋 (960 — 1127)"),
   dynastySpec("southern_song", "南宋", "南宋", 1127, 1279, "南宋 (1127 — 1279)"),
   dynastySpec("yuan", "元", "元", 1271, 1368, "至元八年建国号大元; 正统期从宋亡后的 1279 年起算"),
@@ -347,6 +358,9 @@ async function buildArtifact(rawSource, baseManifest, options) {
 
   for (const section of parsedSource.sections) {
     const dynastyID = SECTION_ID_MAP.get(section.sourceID) ?? slugify(section.sourceID);
+    if (!DIRECT_DYNASTY_SOURCE_SECTION_IDS.has(section.sourceID)) {
+      continue;
+    }
     const name = section.name;
     const startExpressionID = `${dynastyID}_claimed_start`;
     const endExpressionID = `${dynastyID}_claimed_end`;
@@ -595,15 +609,23 @@ function buildSourceAudit(parsedSource, records, rawSource, baseManifest) {
       startYear: section.startYear,
       endYear: section.endYear
     })),
+    nonEmittedH2Sections: parsedSource.sections
+      .filter((section) => !DIRECT_DYNASTY_SOURCE_SECTION_IDS.has(section.sourceID))
+      .map((section) => ({
+        sourceID: section.sourceID,
+        heading: section.heading,
+        reason: "Source h2 is a period label, composite section, or lineage grouping rather than one concrete Dynasty record."
+      })),
     auditedH3Headings: parsedSource.h3Headings,
     conclusion: [
       "era_names_simp.html is the priority source for first-version dynasty civil-year ranges.",
       "Automatically parsed h2 boundaries are civil-year ranges; boundaries inside imported calendar coverage resolve to ChineseDateExpression.precision = year.",
+      "Period labels and composite h2 source sections such as 春秋时期、战国时期、西汉/新/更始、魏/蜀/吴、南北朝、五代 are audited but not emitted as Dynasty records.",
       "Automatically parsed h2 boundaries outside imported calendar coverage are kept as precision = unknown with sourceText preserved.",
       "No month-precision or day-precision dynasty boundary is automatically extracted in this version; sourceText is preserved for later refinement.",
       "OrthodoxPeriod records are concrete orthodox dynasty periods; segmentIndex and segmentName preserve the required narrative groups.",
-      "Supplemental dynasties split compound h2 sections into specific h3/table polities such as 西汉、新、更始、五代梁唐晋汉周、北宋、南宋、元、明、清.",
-      "Non-orthodox polities such as 蜀汉、孙吴、北凉 remain Dynasty records but are not included in OrthodoxPeriod."
+      "Supplemental dynasties split compound h2 sections into specific h3/table polities such as 西汉、新、更始、魏、蜀汉、孙吴、刘宋、五代后梁后唐后晋后汉后周、北宋、南宋、元、明、清.",
+      "Non-orthodox polities such as 蜀汉、孙吴、北凉 remain Dynasty records but are not included in OrthodoxPeriod. 魏 is the Three Kingdoms orthodox period."
     ],
     automaticPrecisionCounts: countPrecisions(h2Expressions),
     manualPrecisionCounts: countPrecisions(nonH2Expressions),
