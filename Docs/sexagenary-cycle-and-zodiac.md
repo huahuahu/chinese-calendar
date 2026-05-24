@@ -168,4 +168,3 @@ dayBranchIndex = positiveModulo(julianDayNumber + 1, 12)
 | 762 | 5 | false | 两个五月。 |
 
 因此 `ChineseLunarMonth` 的稳定身份应优先使用全局 `lunarMonthIndex`。如果需要年内唯一定位，还应加入年内实际顺序、月起始日或其他能区分重复同名月的字段，而不能只用“农历年 + 月号 + 是否闰月”。
-
