@@ -138,7 +138,9 @@ classDiagram
 
 这里的范围只用于“不确定落点”的情况。普通的“宣统三年十二月廿五日”已经能落到一个 `dayIndex`，不需要范围；“某一年”已经能落到一个 `lunarYearNumber`，也不需要范围。
 
-`ChineseDateRange` 必须有两个 `ChineseDateBound`：`lowerBound` 和 `upperBound`。如果史料表达的是“某一年内，大约在某几个月之间”，这不是 `precision = year`，而是 `precision = range`，并且上下界都用月精度的 `ChineseDateBound`。例如“某事约在顺治二年三月至五月之间”，下界可以是三月的 `lunarMonthIndex`，上界可以是五月后的边界月。
+`ChineseDateRange` 必须有两个 `ChineseDateBound`：`lowerBound` 和 `upperBound`。范围使用半开区间 `[lowerBound, upperBound)`：下界包含，上界不包含。`ChineseDateBound.precision` 只使用 `year`、`month`、`day`，不使用 `range` 或 `unknown`。
+
+如果史料表达的是“某一年内，大约在某几个月之间”，这不是 `precision = year`，而是 `precision = range`，并且上下界都用月精度的 `ChineseDateBound`。例如“某事约在顺治二年三月至五月之间”，如果五月也包含在可能范围内，下界可以是三月的 `lunarMonthIndex`，上界应是五月之后第一个月的 `lunarMonthIndex`。
 
 `ChineseDateRange` 单向持有 `ChineseDateBound`。`lowerBound` 和 `upperBound` 是 ownership 字段，不表示 `ChineseDateBound` 有反向引用。`ChineseDateBound` 也不作为独立可查询实体；它只是 range 内部的边界值。
 
@@ -275,9 +277,19 @@ Dynasty {
 - `precision = month` 时，`index` 是 `ChineseLunarMonth.lunarMonthIndex`。
 - `precision = day` 时，`index` 是 `CalendarDay.dayIndex`。
 
+字段组合约束：
+
+- `precision = year`、`month` 或 `day` 时，`index` 必填，`uncertainRange = null`。
+- `precision = range` 时，`index = null`，`uncertainRange` 必填。
+- `precision = unknown` 时，`index = null`，`uncertainRange = null`，但 `sourceText` 必填。
+
 范围规则：
 
-- `precision = range` 时，`index = null`，`uncertainRange` 必填。
+- `uncertainRange.lowerBound` 是包含边界，`uncertainRange.upperBound` 是不包含边界。
+- 如果 `upperBound.precision = year`，且上界原文包含某一年，`upperBound.index` 应取下一农历年的 `lunarYearNumber`。
+- 如果 `upperBound.precision = month`，且上界原文包含某一月，`upperBound.index` 应取下一农历月的 `lunarMonthIndex`。
+- 如果 `upperBound.precision = day`，且上界原文包含某一日，`upperBound.index` 应取次日的 `dayIndex`。
+- `lowerBound` 和 `upperBound` 换算成 `dayIndex` 后，必须满足 `lower < upper`。
 
 `uncertainRange` 包含 `lowerBound` 和 `upperBound`，二者都使用 `ChineseDateBound`，字段为 `precision` 和 `index`。例如上界、下界可以都是月，用来表达“某一年内的某几个月之间”；也可以都是年，用来表达跨年的不确定范围。只要能换算成半开的 dayIndex 查询边界即可。
 
