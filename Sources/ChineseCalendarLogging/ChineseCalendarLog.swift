@@ -39,12 +39,22 @@ public struct LogMessage: ExpressibleByStringInterpolation, ExpressibleByStringL
 }
 
 public struct Logger: Sendable {
-    public init(subsystem _: String, category _: String) {}
+    private let subsystem: String
+    private let category: String
 
-    public func debug(_ message: LogMessage) {}
-    public func info(_ message: LogMessage) {}
-    public func notice(_ message: LogMessage) {}
-    public func error(_ message: LogMessage) {}
+    public init(subsystem: String, category: String) {
+        self.subsystem = subsystem
+        self.category = category
+    }
+
+    public func debug(_ message: LogMessage) { log(level: "DEBUG", message) }
+    public func info(_ message: LogMessage) { log(level: "INFO", message) }
+    public func notice(_ message: LogMessage) { log(level: "NOTICE", message) }
+    public func error(_ message: LogMessage) { log(level: "ERROR", message) }
+
+    private func log(level: String, _ message: LogMessage) {
+        Swift.print("[\(level)] [\(subsystem):\(category)] \(message.description)")
+    }
 }
 #endif
 
