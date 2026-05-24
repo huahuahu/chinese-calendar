@@ -110,6 +110,9 @@ private struct SeedStoreBuilder {
 
             log("Importing calendar days...")
             try importCalendarDayBundles(into: container)
+
+            log("Importing dynasty and orthodox-period data...")
+            try importDynastyArtifact(into: container)
         }
 
         try finalizeSQLiteStore(at: storeURL)
@@ -221,6 +224,162 @@ private struct SeedStoreBuilder {
         }
     }
 
+    private func importDynastyArtifact(into container: ModelContainer) throws {
+        let dateExpressionRecords = try readJSONLines(
+            at: options.inputURL.appendingPathComponent("chinese_date_expressions.jsonl"),
+            as: ChineseDateExpressionRecord.self
+        )
+        let dynastyRecords = try readJSONLines(
+            at: options.inputURL.appendingPathComponent("dynasties.jsonl"),
+            as: DynastyRecord.self
+        )
+        let traditionRecords = try readJSONLines(
+            at: options.inputURL.appendingPathComponent("orthodox_traditions.jsonl"),
+            as: OrthodoxTraditionRecord.self
+        )
+        let boundaryRecords = try readJSONLines(
+            at: options.inputURL.appendingPathComponent("orthodox_boundaries.jsonl"),
+            as: OrthodoxBoundaryRecord.self
+        )
+        let periodRecords = try readJSONLines(
+            at: options.inputURL.appendingPathComponent("orthodox_periods.jsonl"),
+            as: OrthodoxPeriodRecord.self
+        )
+
+        let context = makeContext(for: container)
+        var availableDateExpressions = Dictionary(
+            uniqueKeysWithValues: dateExpressionRecords.map { ($0.id, $0) }
+        )
+        var traditions: [String: OrthodoxTradition] = [:]
+        var dynasties: [String: Dynasty] = [:]
+        var boundaries: [String: OrthodoxBoundary] = [:]
+
+        for record in dynastyRecords {
+            let dynasty = Dynasty(
+                id: record.id,
+                name: record.name,
+                shortName: record.shortName,
+                claimedStartDate: try takeDateExpression(record.claimedStartDateID, from: &availableDateExpressions),
+                claimedEndDate: try takeDateExpression(record.claimedEndDateID, from: &availableDateExpressions),
+                note: record.note
+            )
+            context.insert(dynasty)
+            dynasties[record.id] = dynasty
+        }
+
+        for record in traditionRecords {
+            let tradition = OrthodoxTradition(
+                id: record.id,
+                name: record.name,
+                note: record.note
+            )
+            context.insert(tradition)
+            traditions[record.id] = tradition
+        }
+
+        for record in boundaryRecords {
+            guard let tradition = traditions[record.traditionID] else {
+                throw SeedStoreBuilderError.missingReference(
+                    "OrthodoxBoundary \(record.id) references missing OrthodoxTradition \(record.traditionID)."
+                )
+            }
+
+            let boundary = OrthodoxBoundary(
+                id: record.id,
+                traditionID: record.traditionID,
+                dateExpressionID: record.dateExpressionID,
+                tradition: tradition,
+                date: try takeDateExpression(record.dateExpressionID, from: &availableDateExpressions),
+                note: record.note
+            )
+            context.insert(boundary)
+            boundaries[record.id] = boundary
+        }
+
+        if !availableDateExpressions.isEmpty {
+            let ids = availableDateExpressions.keys.sorted().joined(separator: ", ")
+            throw SeedStoreBuilderError.unusedDateExpressions(ids)
+        }
+
+        for record in periodRecords.sorted(by: { $0.sequenceIndex < $1.sequenceIndex }) {
+            guard let tradition = traditions[record.traditionID] else {
+                throw SeedStoreBuilderError.missingReference(
+                    "OrthodoxPeriod \(record.id) references missing OrthodoxTradition \(record.traditionID)."
+                )
+            }
+            guard let dynasty = dynasties[record.dynastyID] else {
+                throw SeedStoreBuilderError.missingReference(
+                    "OrthodoxPeriod \(record.id) references missing Dynasty \(record.dynastyID)."
+                )
+            }
+            guard let startBoundary = boundaries[record.startBoundaryID] else {
+                throw SeedStoreBuilderError.missingReference(
+                    "OrthodoxPeriod \(record.id) references missing start OrthodoxBoundary \(record.startBoundaryID)."
+                )
+            }
+            guard let endBoundary = boundaries[record.endBoundaryID] else {
+                throw SeedStoreBuilderError.missingReference(
+                    "OrthodoxPeriod \(record.id) references missing end OrthodoxBoundary \(record.endBoundaryID)."
+                )
+            }
+
+            context.insert(OrthodoxPeriod(
+                id: record.id,
+                traditionID: record.traditionID,
+                dynastyID: record.dynastyID,
+                startBoundaryID: record.startBoundaryID,
+                endBoundaryID: record.endBoundaryID,
+                sequenceIndex: record.sequenceIndex,
+                segmentIndex: record.segmentIndex,
+                segmentName: record.segmentName,
+                tradition: tradition,
+                dynasty: dynasty,
+                startBoundary: startBoundary,
+                endBoundary: endBoundary,
+                note: record.note
+            ))
+        }
+
+        try context.save()
+    }
+
+    private func takeDateExpression(
+        _ id: String,
+        from records: inout [String: ChineseDateExpressionRecord]
+    ) throws -> ChineseDateExpression {
+        guard let record = records.removeValue(forKey: id) else {
+            throw SeedStoreBuilderError.missingReference("Missing ChineseDateExpression \(id).")
+        }
+        return makeDateExpression(from: record)
+    }
+
+    private func makeDateExpression(from record: ChineseDateExpressionRecord) -> ChineseDateExpression {
+        ChineseDateExpression(
+            id: record.id,
+            precision: record.precision,
+            index: record.index,
+            uncertainRange: record.uncertainRange.map(makeDateRange),
+            sourceText: record.sourceText,
+            note: record.note
+        )
+    }
+
+    private func makeDateRange(from record: ChineseDateRangeRecord) -> ChineseDateRange {
+        ChineseDateRange(
+            id: record.id,
+            lowerBound: makeDateBound(from: record.lowerBound),
+            upperBound: makeDateBound(from: record.upperBound)
+        )
+    }
+
+    private func makeDateBound(from record: ChineseDateBoundRecord) -> ChineseDateBound {
+        ChineseDateBound(
+            id: record.id,
+            precision: record.precision,
+            index: record.index
+        )
+    }
+
     private func makeContext(for container: ModelContainer) -> ModelContext {
         let context = ModelContext(container)
         context.autosaveEnabled = false
@@ -309,6 +468,17 @@ private struct SeedStoreBuilder {
             try body(decoder.decode(Record.self, from: data))
         }
     }
+
+    private func readJSONLines<Record: Decodable>(
+        at fileURL: URL,
+        as type: Record.Type
+    ) throws -> [Record] {
+        var records: [Record] = []
+        try readJSONLines(at: fileURL, as: type) { record in
+            records.append(record)
+        }
+        return records
+    }
 }
 
 private struct LunarYearRecord: Decodable {
@@ -354,9 +524,66 @@ private struct LunarDayRecord: Decodable {
     let dayBranchIndex: Int
 }
 
+private struct DynastyRecord: Decodable {
+    let id: String
+    let name: String
+    let shortName: String?
+    let claimedStartDateID: String
+    let claimedEndDateID: String
+    let note: String?
+}
+
+private struct ChineseDateExpressionRecord: Decodable {
+    let id: String
+    let precision: ChineseDatePrecision
+    let index: Int?
+    let uncertainRange: ChineseDateRangeRecord?
+    let sourceText: String
+    let note: String?
+}
+
+private struct ChineseDateRangeRecord: Decodable {
+    let id: String
+    let lowerBound: ChineseDateBoundRecord
+    let upperBound: ChineseDateBoundRecord
+}
+
+private struct ChineseDateBoundRecord: Decodable {
+    let id: String
+    let precision: ChineseDatePrecision
+    let index: Int
+}
+
+private struct OrthodoxTraditionRecord: Decodable {
+    let id: String
+    let name: String
+    let note: String?
+}
+
+private struct OrthodoxBoundaryRecord: Decodable {
+    let id: String
+    let traditionID: String
+    let dateExpressionID: String
+    let note: String?
+}
+
+private struct OrthodoxPeriodRecord: Decodable {
+    let id: String
+    let traditionID: String
+    let dynastyID: String
+    let startBoundaryID: String
+    let endBoundaryID: String
+    let sequenceIndex: Int
+    let segmentIndex: Int
+    let segmentName: String
+    let note: String?
+}
+
 private enum SeedStoreBuilderError: Error, LocalizedError {
     case invalidArgument(String)
     case sqliteCommandFailed(String)
+    case missingReference(String)
+    case unusedDateExpressions(String)
 
     var errorDescription: String? {
         switch self {
@@ -364,6 +591,10 @@ private enum SeedStoreBuilderError: Error, LocalizedError {
             message
         case let .sqliteCommandFailed(message):
             "Failed to finalize SQLite seed store. \(message)"
+        case let .missingReference(message):
+            message
+        case let .unusedDateExpressions(ids):
+            "Unused ChineseDateExpression records: \(ids)."
         }
     }
 }

@@ -114,6 +114,58 @@ Data/Processed/swiftdata_import/manifest.json
 Scripts/ImportChineseCalendar/generate_swiftdata_import.swift --validate-only
 ```
 
+## 生成朝代和正统时期导入文件
+
+`Docs/data-model-dynasty.md` 对应的朝代、日期表达和正统时期数据也输出到
+`Data/Processed/swiftdata_import`，供 seed-store builder 与基础 calendar facts 一起导入：
+
+```bash
+Scripts/ImportChineseCalendar/generate_dynasty_periods.swift
+```
+
+常用参数：
+
+```bash
+--raw-source Data/Raw/ChineseCalendar
+--output Data/Processed/swiftdata_import
+--force-refresh
+--validate-only
+```
+
+生成器以 `era_names_simp.html` 为朝代边界来源，并把网页缓存到
+`Data/Raw/ChineseCalendar/era_names_simp.html`。如果 GitHub Pages 临时连接失败，脚本会回退到
+manifest 中固定 commit 的 raw GitHub 文件；raw-data manifest 会记录实际抓取来源、时间和 SHA-256。
+
+输出文件：
+
+```text
+Data/Processed/swiftdata_import/dynasties.jsonl
+Data/Processed/swiftdata_import/chinese_date_expressions.jsonl
+Data/Processed/swiftdata_import/orthodox_traditions.jsonl
+Data/Processed/swiftdata_import/orthodox_boundaries.jsonl
+Data/Processed/swiftdata_import/orthodox_periods.jsonl
+```
+
+`manifest.json` 的 `dynastyArtifact.sourceAudit` 记录 source audit 结论、解析精度统计和首版正统叙事分组：
+
+```text
+秦汉 -> 魏晋南朝 -> 唐五代两宋 -> 元明清
+```
+
+`Dynasty` 记录网页中有历日资料的政权/王朝，以及从网页 h3/table 拆出的具体政权。
+`OrthodoxPeriod` 只记录正统链中的具体时期，例如秦、西汉、新、更始、东汉、魏、西晋、东晋、宋、齐、梁、陈、隋、唐、五代梁唐晋汉周、北宋、南宋、元、明、清。
+蜀汉、孙吴、北凉等会保留为 `Dynasty`，但不进入首版 `OrthodoxPeriod`。
+
+校验现有朝代导入文件：
+
+```bash
+Scripts/ImportChineseCalendar/generate_dynasty_periods.swift --validate-only
+```
+
+校验内容包括日期精度字段组合、range 半开区间、基础日历索引存在性、引用完整性，以及正统时期
+`sequenceIndex` 是否连续、`segmentIndex` 是否按上述分组递增。当前首版只自动解析网页中的公历年范围；超出基础日历覆盖的
+边界保留为 `precision = unknown`，不会伪造成可查询的农历年索引。
+
 ## 历史样本校验
 
 样本文件：
