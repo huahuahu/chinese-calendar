@@ -53,10 +53,8 @@ const SECTION_ID_MAP = new Map([
 const DIRECT_DYNASTY_SOURCE_SECTION_IDS = new Set([
   "qin",
   "han2",
-  "jin",
   "sui",
   "tang",
-  "song",
   "khitan",
   "jurchen"
 ]);
@@ -415,6 +413,8 @@ async function buildArtifact(rawSource, baseManifest, options) {
     });
   }
 
+  sortDynastiesByClaimedStart(records);
+
   const tradition = {
     id: "orthodox_sequence_qin_han_to_qing",
     name: ORTHODOX_SEGMENT_NAMES.join(" -> "),
@@ -466,6 +466,28 @@ async function buildArtifact(rawSource, baseManifest, options) {
   };
   validateRecords(artifact, availableIndexes);
   return artifact;
+}
+
+function sortDynastiesByClaimedStart(records) {
+  const dateExpressionsByID = new Map(records.dateExpressions.map((expression) => [expression.id, expression]));
+  records.dynasties.sort((left, right) => {
+    const leftStart = sortableDateExpressionIndex(dateExpressionsByID.get(left.claimedStartDateID));
+    const rightStart = sortableDateExpressionIndex(dateExpressionsByID.get(right.claimedStartDateID));
+    return leftStart - rightStart || left.id.localeCompare(right.id);
+  });
+}
+
+function sortableDateExpressionIndex(expression) {
+  if (expression === undefined) {
+    return Number.MAX_SAFE_INTEGER;
+  }
+  if (Number.isInteger(expression.index)) {
+    return expression.index;
+  }
+  if (expression.uncertainRange?.lowerBound !== undefined) {
+    return expression.uncertainRange.lowerBound.index;
+  }
+  return Number.MAX_SAFE_INTEGER;
 }
 
 function parseEraPage(html) {
@@ -620,7 +642,7 @@ function buildSourceAudit(parsedSource, records, rawSource, baseManifest) {
     conclusion: [
       "era_names_simp.html is the priority source for first-version dynasty civil-year ranges.",
       "Automatically parsed h2 boundaries are civil-year ranges; boundaries inside imported calendar coverage resolve to ChineseDateExpression.precision = year.",
-      "Period labels and composite h2 source sections such as 春秋时期、战国时期、西汉/新/更始、魏/蜀/吴、南北朝、五代 are audited but not emitted as Dynasty records.",
+      "Period labels and composite h2 source sections such as 春秋时期、战国时期、西汉/新/更始、魏/蜀/吴、晋、南北朝、五代、宋 are audited but not emitted as Dynasty records.",
       "Automatically parsed h2 boundaries outside imported calendar coverage are kept as precision = unknown with sourceText preserved.",
       "No month-precision or day-precision dynasty boundary is automatically extracted in this version; sourceText is preserved for later refinement.",
       "OrthodoxPeriod records are concrete orthodox dynasty periods; segmentIndex and segmentName preserve the required narrative groups.",
@@ -790,11 +812,18 @@ function validateRecords(artifact, availableIndexes) {
   }
 
   const dynastyIDs = new Set();
+  let previousDynastyStartIndex = Number.NEGATIVE_INFINITY;
   for (const dynasty of artifact.dynasties) {
     requireStableID(dynasty.id, "Dynasty.id");
     requireNonEmptyString(dynasty.name, `Dynasty ${dynasty.id} name`);
     requireExpressionReference(expressionIDs, dynasty.claimedStartDateID, `Dynasty ${dynasty.id} claimedStartDateID`);
     requireExpressionReference(expressionIDs, dynasty.claimedEndDateID, `Dynasty ${dynasty.id} claimedEndDateID`);
+    const startExpression = artifact.dateExpressions.find((expression) => expression.id === dynasty.claimedStartDateID);
+    const startIndex = sortableDateExpressionIndex(startExpression);
+    if (startIndex < previousDynastyStartIndex) {
+      throw new Error("Dynasty records must be sorted by claimed start date.");
+    }
+    previousDynastyStartIndex = startIndex;
     if (dynastyIDs.has(dynasty.id)) {
       throw new Error(`Duplicate Dynasty ${dynasty.id}.`);
     }
