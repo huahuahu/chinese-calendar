@@ -14,6 +14,13 @@ public enum ChineseCalendarModelSchema {
         CivilDate.self,
         ChineseLunarYear.self,
         ChineseLunarMonth.self,
-        ChineseLunarDay.self
+        ChineseLunarDay.self,
+        Dynasty.self,
+        ChineseDateExpression.self,
+        ChineseDateRange.self,
+        ChineseDateBound.self,
+        OrthodoxTradition.self,
+        OrthodoxBoundary.self,
+        OrthodoxPeriod.self
     ]
 }

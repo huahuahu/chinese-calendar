@@ -1,0 +1,101 @@
+{"id":"qin_claimed_start","precision":"year","index":-220,"uncertainRange":null,"sourceText":"秦 (公元前221 — 前207)","note":"Claimed start parsed from era_names_simp.html h2 civil-year range. BCE civil years use astronomical numbering, so 前221 maps to -220."}
+{"id":"qin_claimed_end","precision":"year","index":-206,"uncertainRange":null,"sourceText":"秦 (公元前221 — 前207)","note":"Claimed end parsed from era_names_simp.html h2 civil-year range. BCE civil years use astronomical numbering, so 前207 maps to -206."}
+{"id":"eastern_han_claimed_start","precision":"year","index":25,"uncertainRange":null,"sourceText":"东 汉 (25 — 220)","note":"Claimed start parsed from era_names_simp.html h2 civil-year range."}
+{"id":"eastern_han_claimed_end","precision":"year","index":220,"uncertainRange":null,"sourceText":"东 汉 (25 — 220)","note":"Claimed end parsed from era_names_simp.html h2 civil-year range."}
+{"id":"sui_claimed_start","precision":"year","index":581,"uncertainRange":null,"sourceText":"隋 (581 — 618)","note":"Claimed start parsed from era_names_simp.html h2 civil-year range."}
+{"id":"sui_claimed_end","precision":"year","index":618,"uncertainRange":null,"sourceText":"隋 (581 — 618)","note":"Claimed end parsed from era_names_simp.html h2 civil-year range."}
+{"id":"tang_claimed_start","precision":"year","index":618,"uncertainRange":null,"sourceText":"唐 (618 — 907)","note":"Claimed start parsed from era_names_simp.html h2 civil-year range."}
+{"id":"tang_claimed_end","precision":"year","index":907,"uncertainRange":null,"sourceText":"唐 (618 — 907)","note":"Claimed end parsed from era_names_simp.html h2 civil-year range."}
+{"id":"khitan_liao_claimed_start","precision":"year","index":907,"uncertainRange":null,"sourceText":"契 丹、辽 (907 — 1125)","note":"Claimed start parsed from era_names_simp.html h2 civil-year range."}
+{"id":"khitan_liao_claimed_end","precision":"year","index":1125,"uncertainRange":null,"sourceText":"契 丹、辽 (907 — 1125)","note":"Claimed end parsed from era_names_simp.html h2 civil-year range."}
+{"id":"jin_jurchen_claimed_start","precision":"year","index":1115,"uncertainRange":null,"sourceText":"金 (1115 — 1234)","note":"Claimed start parsed from era_names_simp.html h2 civil-year range."}
+{"id":"jin_jurchen_claimed_end","precision":"year","index":1234,"uncertainRange":null,"sourceText":"金 (1115 — 1234)","note":"Claimed end parsed from era_names_simp.html h2 civil-year range."}
+{"id":"western_han_claimed_start","precision":"year","index":-205,"uncertainRange":null,"sourceText":"西汉 (公元前206-公元8)","note":"Supplemental polity claimed start boundary. BCE civil years use astronomical numbering, so 前206 maps to -205."}
+{"id":"western_han_claimed_end","precision":"year","index":8,"uncertainRange":null,"sourceText":"西汉 (公元前206-公元8)","note":"Supplemental polity claimed end boundary."}
+{"id":"xin_claimed_start","precision":"year","index":8,"uncertainRange":null,"sourceText":"新 (8-23)","note":"Supplemental polity claimed start boundary."}
+{"id":"xin_claimed_end","precision":"year","index":23,"uncertainRange":null,"sourceText":"新 (8-23)","note":"Supplemental polity claimed end boundary."}
+{"id":"gengshi_claimed_start","precision":"year","index":23,"uncertainRange":null,"sourceText":"更始 (23-25)","note":"Supplemental polity claimed start boundary."}
+{"id":"gengshi_claimed_end","precision":"year","index":25,"uncertainRange":null,"sourceText":"更始 (23-25)","note":"Supplemental polity claimed end boundary."}
+{"id":"cao_wei_claimed_start","precision":"year","index":220,"uncertainRange":null,"sourceText":"曹魏 (220 — 265)","note":"Supplemental polity claimed start boundary."}
+{"id":"cao_wei_claimed_end","precision":"year","index":265,"uncertainRange":null,"sourceText":"曹魏 (220 — 265)","note":"Supplemental polity claimed end boundary."}
+{"id":"shu_han_claimed_start","precision":"year","index":221,"uncertainRange":null,"sourceText":"蜀汉 (221 — 263)","note":"Supplemental polity claimed start boundary."}
+{"id":"shu_han_claimed_end","precision":"year","index":263,"uncertainRange":null,"sourceText":"蜀汉 (221 — 263)","note":"Supplemental polity claimed end boundary."}
+{"id":"sun_wu_claimed_start","precision":"year","index":222,"uncertainRange":null,"sourceText":"孙吴 (222 — 280)","note":"Supplemental polity claimed start boundary."}
+{"id":"sun_wu_claimed_end","precision":"year","index":280,"uncertainRange":null,"sourceText":"孙吴 (222 — 280)","note":"Supplemental polity claimed end boundary."}
+{"id":"western_jin_claimed_start","precision":"year","index":265,"uncertainRange":null,"sourceText":"西晋 (265-317)","note":"Supplemental polity claimed start boundary."}
+{"id":"western_jin_claimed_end","precision":"year","index":317,"uncertainRange":null,"sourceText":"西晋 (265-317)","note":"Supplemental polity claimed end boundary."}
+{"id":"eastern_jin_claimed_start","precision":"year","index":317,"uncertainRange":null,"sourceText":"东晋 (317-420)","note":"Supplemental polity claimed start boundary."}
+{"id":"eastern_jin_claimed_end","precision":"year","index":420,"uncertainRange":null,"sourceText":"东晋 (317-420)","note":"Supplemental polity claimed end boundary."}
+{"id":"later_qin_claimed_start","precision":"year","index":384,"uncertainRange":null,"sourceText":"后秦 (384-417)","note":"Supplemental polity claimed start boundary."}
+{"id":"later_qin_claimed_end","precision":"year","index":417,"uncertainRange":null,"sourceText":"后秦 (384-417)","note":"Supplemental polity claimed end boundary."}
+{"id":"northern_liang_claimed_start","precision":"year","index":397,"uncertainRange":null,"sourceText":"北凉 (397-439)","note":"Supplemental polity claimed start boundary."}
+{"id":"northern_liang_claimed_end","precision":"year","index":439,"uncertainRange":null,"sourceText":"北凉 (397-439)","note":"Supplemental polity claimed end boundary."}
+{"id":"northern_wei_claimed_start","precision":"year","index":386,"uncertainRange":null,"sourceText":"北魏 (386-534)","note":"Supplemental polity claimed start boundary."}
+{"id":"northern_wei_claimed_end","precision":"year","index":534,"uncertainRange":null,"sourceText":"北魏 (386-534)","note":"Supplemental polity claimed end boundary."}
+{"id":"eastern_wei_claimed_start","precision":"year","index":534,"uncertainRange":null,"sourceText":"东魏 (534-550)","note":"Supplemental polity claimed start boundary."}
+{"id":"eastern_wei_claimed_end","precision":"year","index":550,"uncertainRange":null,"sourceText":"东魏 (534-550)","note":"Supplemental polity claimed end boundary."}
+{"id":"western_wei_claimed_start","precision":"year","index":535,"uncertainRange":null,"sourceText":"西魏 (535-557)","note":"Supplemental polity claimed start boundary."}
+{"id":"western_wei_claimed_end","precision":"year","index":557,"uncertainRange":null,"sourceText":"西魏 (535-557)","note":"Supplemental polity claimed end boundary."}
+{"id":"northern_qi_claimed_start","precision":"year","index":550,"uncertainRange":null,"sourceText":"北齐 (550-577)","note":"Supplemental polity claimed start boundary."}
+{"id":"northern_qi_claimed_end","precision":"year","index":577,"uncertainRange":null,"sourceText":"北齐 (550-577)","note":"Supplemental polity claimed end boundary."}
+{"id":"northern_zhou_claimed_start","precision":"year","index":557,"uncertainRange":null,"sourceText":"北周 (557-581)","note":"Supplemental polity claimed start boundary."}
+{"id":"northern_zhou_claimed_end","precision":"year","index":581,"uncertainRange":null,"sourceText":"北周 (557-581)","note":"Supplemental polity claimed end boundary."}
+{"id":"liu_song_claimed_start","precision":"year","index":420,"uncertainRange":null,"sourceText":"宋 (420-479)","note":"Supplemental polity claimed start boundary."}
+{"id":"liu_song_claimed_end","precision":"year","index":479,"uncertainRange":null,"sourceText":"宋 (420-479)","note":"Supplemental polity claimed end boundary."}
+{"id":"southern_qi_claimed_start","precision":"year","index":479,"uncertainRange":null,"sourceText":"齐 (479-502)","note":"Supplemental polity claimed start boundary."}
+{"id":"southern_qi_claimed_end","precision":"year","index":502,"uncertainRange":null,"sourceText":"齐 (479-502)","note":"Supplemental polity claimed end boundary."}
+{"id":"southern_liang_claimed_start","precision":"year","index":502,"uncertainRange":null,"sourceText":"梁 (502-557)","note":"Supplemental polity claimed start boundary."}
+{"id":"southern_liang_claimed_end","precision":"year","index":557,"uncertainRange":null,"sourceText":"梁 (502-557)","note":"Supplemental polity claimed end boundary."}
+{"id":"chen_claimed_start","precision":"year","index":557,"uncertainRange":null,"sourceText":"陈 (557-589)","note":"Supplemental polity claimed start boundary."}
+{"id":"chen_claimed_end","precision":"year","index":589,"uncertainRange":null,"sourceText":"陈 (557-589)","note":"Supplemental polity claimed end boundary."}
+{"id":"later_liang_claimed_start","precision":"year","index":907,"uncertainRange":null,"sourceText":"五代梁 (907 — 923)","note":"Supplemental polity claimed start boundary."}
+{"id":"later_liang_claimed_end","precision":"year","index":923,"uncertainRange":null,"sourceText":"五代梁 (907 — 923)","note":"Supplemental polity claimed end boundary."}
+{"id":"later_tang_claimed_start","precision":"year","index":923,"uncertainRange":null,"sourceText":"五代唐 (923 — 936)","note":"Supplemental polity claimed start boundary."}
+{"id":"later_tang_claimed_end","precision":"year","index":936,"uncertainRange":null,"sourceText":"五代唐 (923 — 936)","note":"Supplemental polity claimed end boundary."}
+{"id":"later_jin_claimed_start","precision":"year","index":936,"uncertainRange":null,"sourceText":"五代晋 (936 — 946)","note":"Supplemental polity claimed start boundary."}
+{"id":"later_jin_claimed_end","precision":"year","index":946,"uncertainRange":null,"sourceText":"五代晋 (936 — 946)","note":"Supplemental polity claimed end boundary."}
+{"id":"later_han_claimed_start","precision":"year","index":947,"uncertainRange":null,"sourceText":"五代汉 (947 — 950)","note":"Supplemental polity claimed start boundary."}
+{"id":"later_han_claimed_end","precision":"year","index":950,"uncertainRange":null,"sourceText":"五代汉 (947 — 950)","note":"Supplemental polity claimed end boundary."}
+{"id":"later_zhou_claimed_start","precision":"year","index":951,"uncertainRange":null,"sourceText":"五代周 (951 — 960)","note":"Supplemental polity claimed start boundary."}
+{"id":"later_zhou_claimed_end","precision":"year","index":960,"uncertainRange":null,"sourceText":"五代周 (951 — 960)","note":"Supplemental polity claimed end boundary."}
+{"id":"northern_song_claimed_start","precision":"year","index":960,"uncertainRange":null,"sourceText":"北宋 (960 — 1127)","note":"Supplemental polity claimed start boundary."}
+{"id":"northern_song_claimed_end","precision":"year","index":1127,"uncertainRange":null,"sourceText":"北宋 (960 — 1127)","note":"Supplemental polity claimed end boundary."}
+{"id":"southern_song_claimed_start","precision":"year","index":1127,"uncertainRange":null,"sourceText":"南宋 (1127 — 1279)","note":"Supplemental polity claimed start boundary."}
+{"id":"southern_song_claimed_end","precision":"year","index":1279,"uncertainRange":null,"sourceText":"南宋 (1127 — 1279)","note":"Supplemental polity claimed end boundary."}
+{"id":"yuan_claimed_start","precision":"year","index":1271,"uncertainRange":null,"sourceText":"至元八年建国号大元; 正统期从宋亡后的 1279 年起算","note":"Supplemental polity claimed start boundary."}
+{"id":"yuan_claimed_end","precision":"year","index":1368,"uncertainRange":null,"sourceText":"至元八年建国号大元; 正统期从宋亡后的 1279 年起算","note":"Supplemental polity claimed end boundary."}
+{"id":"ming_claimed_start","precision":"year","index":1368,"uncertainRange":null,"sourceText":"明 (1368 — 1644)","note":"Supplemental polity claimed start boundary."}
+{"id":"ming_claimed_end","precision":"year","index":1644,"uncertainRange":null,"sourceText":"明 (1368 — 1644)","note":"Supplemental polity claimed end boundary."}
+{"id":"qing_claimed_start","precision":"year","index":1636,"uncertainRange":null,"sourceText":"1636 年改国号大清; 正统期从 1644 年起算","note":"Supplemental polity claimed start boundary."}
+{"id":"qing_claimed_end","precision":"year","index":1912,"uncertainRange":null,"sourceText":"1636 年改国号大清; 正统期从 1644 年起算","note":"Supplemental polity claimed end boundary."}
+{"id":"republic_of_china_claimed_start","precision":"year","index":1912,"uncertainRange":null,"sourceText":"中华民国 (1912 — 1949); 首版正统期按大陆历史时期口径","note":"Supplemental polity claimed start boundary."}
+{"id":"republic_of_china_claimed_end","precision":"year","index":1949,"uncertainRange":null,"sourceText":"中华民国 (1912 — 1949); 首版正统期按大陆历史时期口径","note":"Supplemental polity claimed end boundary."}
+{"id":"peoples_republic_of_china_claimed_start","precision":"year","index":1949,"uncertainRange":null,"sourceText":"中华人民共和国 (1949 — present); 2200 为当前 seed 覆盖终点","note":"Supplemental polity claimed start boundary."}
+{"id":"peoples_republic_of_china_claimed_end","precision":"year","index":2200,"uncertainRange":null,"sourceText":"中华人民共和国 (1949 — present); 2200 为当前 seed 覆盖终点","note":"Supplemental polity claimed end boundary."}
+{"id":"orthodox_boundary_bce_220_date","precision":"year","index":-220,"uncertainRange":null,"sourceText":"秦 (公元前221 — 前207)","note":"Boundary derived from era_names_simp.html h2 year ranges. BCE civil years use astronomical numbering, so 前221 maps to -220."}
+{"id":"orthodox_boundary_bce_205_date","precision":"year","index":-205,"uncertainRange":null,"sourceText":"西汉 (公元前206-公元8)","note":"Boundary derived from era_names_simp.html h2 year ranges. BCE civil years use astronomical numbering, so 前206 maps to -205."}
+{"id":"orthodox_boundary_8_date","precision":"year","index":8,"uncertainRange":null,"sourceText":"新 (8-23)","note":"Boundary derived from era_names_simp.html h2 year ranges."}
+{"id":"orthodox_boundary_23_date","precision":"year","index":23,"uncertainRange":null,"sourceText":"更始 (23-25)","note":"Boundary derived from era_names_simp.html h2 year ranges."}
+{"id":"orthodox_boundary_25_date","precision":"year","index":25,"uncertainRange":null,"sourceText":"东汉 (25 — 220)","note":"Boundary derived from era_names_simp.html h2 year ranges."}
+{"id":"orthodox_boundary_220_date","precision":"year","index":220,"uncertainRange":null,"sourceText":"曹魏 (220 — 265)","note":"Boundary derived from era_names_simp.html h2 year ranges."}
+{"id":"orthodox_boundary_265_date","precision":"year","index":265,"uncertainRange":null,"sourceText":"西晋 (265-317)","note":"Boundary derived from era_names_simp.html h2 year ranges."}
+{"id":"orthodox_boundary_317_date","precision":"year","index":317,"uncertainRange":null,"sourceText":"东晋 (317-420)","note":"Boundary derived from era_names_simp.html h2 year ranges."}
+{"id":"orthodox_boundary_420_date","precision":"year","index":420,"uncertainRange":null,"sourceText":"宋 (420-479)","note":"Boundary derived from era_names_simp.html h2 year ranges."}
+{"id":"orthodox_boundary_479_date","precision":"year","index":479,"uncertainRange":null,"sourceText":"齐 (479-502)","note":"Boundary derived from era_names_simp.html h2 year ranges."}
+{"id":"orthodox_boundary_502_date","precision":"year","index":502,"uncertainRange":null,"sourceText":"梁 (502-557)","note":"Boundary derived from era_names_simp.html h2 year ranges."}
+{"id":"orthodox_boundary_557_date","precision":"year","index":557,"uncertainRange":null,"sourceText":"陈 (557-589)","note":"Boundary derived from era_names_simp.html h2 year ranges."}
+{"id":"orthodox_boundary_589_date","precision":"year","index":589,"uncertainRange":null,"sourceText":"隋 (581 — 618); 正统期接陈亡后的 589 年","note":"Boundary derived from era_names_simp.html h2 year ranges."}
+{"id":"orthodox_boundary_618_date","precision":"year","index":618,"uncertainRange":null,"sourceText":"唐 (618 — 907)","note":"Boundary derived from era_names_simp.html h2 year ranges."}
+{"id":"orthodox_boundary_907_date","precision":"year","index":907,"uncertainRange":null,"sourceText":"五代梁 (907 — 923)","note":"Boundary derived from era_names_simp.html h2 year ranges."}
+{"id":"orthodox_boundary_923_date","precision":"year","index":923,"uncertainRange":null,"sourceText":"五代唐 (923 — 936)","note":"Boundary derived from era_names_simp.html h2 year ranges."}
+{"id":"orthodox_boundary_936_date","precision":"year","index":936,"uncertainRange":null,"sourceText":"五代晋 (936 — 946); 正统边界使用半开区间 [936, 947)","note":"Boundary derived from era_names_simp.html h2 year ranges."}
+{"id":"orthodox_boundary_947_date","precision":"year","index":947,"uncertainRange":null,"sourceText":"五代汉 (947 — 950); 正统边界使用半开区间 [947, 951)","note":"Boundary derived from era_names_simp.html h2 year ranges."}
+{"id":"orthodox_boundary_951_date","precision":"year","index":951,"uncertainRange":null,"sourceText":"五代周 (951 — 960)","note":"Boundary derived from era_names_simp.html h2 year ranges."}
+{"id":"orthodox_boundary_960_date","precision":"year","index":960,"uncertainRange":null,"sourceText":"北宋 (960 — 1127)","note":"Boundary derived from era_names_simp.html h2 year ranges."}
+{"id":"orthodox_boundary_1127_date","precision":"year","index":1127,"uncertainRange":null,"sourceText":"南宋 (1127 — 1279)","note":"Boundary derived from era_names_simp.html h2 year ranges."}
+{"id":"orthodox_boundary_1279_date","precision":"year","index":1279,"uncertainRange":null,"sourceText":"元; 正统期从南宋亡后的 1279 年起算","note":"Boundary derived from era_names_simp.html h2 year ranges."}
+{"id":"orthodox_boundary_1368_date","precision":"year","index":1368,"uncertainRange":null,"sourceText":"明 (1368 — 1644)","note":"Boundary derived from era_names_simp.html h2 year ranges."}
+{"id":"orthodox_boundary_1644_date","precision":"year","index":1644,"uncertainRange":null,"sourceText":"清; 正统期从 1644 年起算","note":"Boundary derived from era_names_simp.html h2 year ranges."}
+{"id":"orthodox_boundary_1912_date","precision":"year","index":1912,"uncertainRange":null,"sourceText":"中华民国; 首版正统期按 1912 — 1949","note":"Manual supplement boundary required by issue 18 or current seed coverage."}
+{"id":"orthodox_boundary_1949_date","precision":"year","index":1949,"uncertainRange":null,"sourceText":"中华人民共和国; 2200 为当前 seed 覆盖终点，不是历史结束","note":"Manual supplement boundary required by issue 18 or current seed coverage."}
+{"id":"orthodox_boundary_2200_date","precision":"year","index":2200,"uncertainRange":null,"sourceText":"中华人民共和国; 2200 为当前 seed 覆盖终点，不是历史结束","note":"Manual supplement boundary required by issue 18 or current seed coverage."}

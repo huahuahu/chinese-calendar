@@ -7,7 +7,18 @@
     "calendarData.js",
     "eclipse_linksM722-2202.js",
     "ancientCalendars.js",
-    "calendar.js"
+    "calendar.js",
+    "era_names_simp.html"
   ],
-  "fetchedAt": "2026-05-19T14:55:11.279Z"
+  "fetchedAt": "2026-05-19T14:55:11.279Z",
+  "webSources": [
+    {
+      "file": "era_names_simp.html",
+      "url": "https://ytliu0.github.io/ChineseCalendar/era_names_simp.html",
+      "fetchedFrom": "https://raw.githubusercontent.com/ytliu0/ChineseCalendar/d6aae82b63b79a6f8659ea3e064024b7d8ac3077/era_names_simp.html",
+      "fetchedAt": "2026-05-24T10:47:01.840Z",
+      "sha256": "2f1dfca96a48bb90602f0ee28ba0afaece51e24bac64e770b1b1a2200f0b2775",
+      "versionNote": "GitHub Pages HTML has no explicit version; sha256 records the fetched page body."
+    }
+  ]
 }
