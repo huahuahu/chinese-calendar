@@ -1,3 +1,4 @@
+import ChineseCalendarPersistence
 import ChineseCalendarUI
 import SwiftUI
 
@@ -7,5 +8,6 @@ struct ChineseCalendariOSApp: App {
         WindowGroup {
             CalendarHomeView()
         }
+        .modelContainer(ChineseCalendarModelContainerFactory.sharedContainer)
     }
 }

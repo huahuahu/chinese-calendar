@@ -23,13 +23,22 @@ targets:
     deploymentTarget: "26.0"
     sources:
       - path: Apps/iOSApp/Sources
+      - path: Apps/Shared/Resources/ChineseCalendarSeedStore.bundle
+        buildPhase: resources
     dependencies:
       - package: ChineseCalendarPackage
         product: ChineseCalendarUI
+      - package: ChineseCalendarPackage
+        product: ChineseCalendarPersistence
+    preBuildScripts:
+      - name: Generate SwiftData Seed Store
+        script: |
+          set -euo pipefail
+          "$SRCROOT/Scripts/BuildChineseCalendarSeedStore/generate_seed_store_if_needed.sh"
     settings:
       base:
         PRODUCT_NAME: Chinese Calendar
-        PRODUCT_BUNDLE_IDENTIFIER: com.huahuahu.ChineseCalendar.iOS
+        PRODUCT_BUNDLE_IDENTIFIER: com.tiger.suzhou.ChineseCalendar
         GENERATE_INFOPLIST_FILE: YES
         INFOPLIST_KEY_CFBundleDisplayName: Chinese Calendar
         SUPPORTED_PLATFORMS: iphoneos iphonesimulator
@@ -38,6 +47,7 @@ targets:
         SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD: NO
         SWIFT_VERSION: 6.0
         CODE_SIGN_STYLE: Automatic
+        CODE_SIGN_ENTITLEMENTS: Apps/iOSApp/ChineseCalendar-iOS.entitlements
         MARKETING_VERSION: 1.0
         CURRENT_PROJECT_VERSION: 1
 
@@ -47,18 +57,28 @@ targets:
     deploymentTarget: "26.0"
     sources:
       - path: Apps/macOSApp/Sources
+      - path: Apps/Shared/Resources/ChineseCalendarSeedStore.bundle
+        buildPhase: resources
     dependencies:
       - package: ChineseCalendarPackage
         product: ChineseCalendarUI
+      - package: ChineseCalendarPackage
+        product: ChineseCalendarPersistence
+    preBuildScripts:
+      - name: Generate SwiftData Seed Store
+        script: |
+          set -euo pipefail
+          "$SRCROOT/Scripts/BuildChineseCalendarSeedStore/generate_seed_store_if_needed.sh"
     settings:
       base:
         PRODUCT_NAME: Chinese Calendar
-        PRODUCT_BUNDLE_IDENTIFIER: com.huahuahu.ChineseCalendar.macOS
+        PRODUCT_BUNDLE_IDENTIFIER: com.tiger.suzhou.ChineseCalendar
         GENERATE_INFOPLIST_FILE: YES
         INFOPLIST_KEY_CFBundleDisplayName: Chinese Calendar
         INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.reference
         SWIFT_VERSION: 6.0
         CODE_SIGN_STYLE: Automatic
+        CODE_SIGN_ENTITLEMENTS: Apps/macOSApp/ChineseCalendar-macOS.entitlements
         MARKETING_VERSION: 1.0
         CURRENT_PROJECT_VERSION: 1
 
