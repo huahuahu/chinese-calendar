@@ -38,6 +38,35 @@ import Testing
     }
 }
 
+@Test func 苹果农历没有表达太初改历十五个月农历年() throws {
+    // Upstream uses astronomical year numbering: -103 is 104 BCE, the year of the Taichu reform.
+    #expect(taichuReformUpstreamMonthStarts.count == 15)
+    #expect(
+        taichuReformUpstreamMonthStarts.map(\.monthNumberInYear) == [
+            10, 11, 12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12
+        ],
+        "上游数据明确保留太初改历造成的十五个月农历年。"
+    )
+
+    let foundationMonthStarts = try foundationChineseMonthStarts(
+        fromJulianDayNumber: taichuReformUpstreamMonthStarts[0].julianDayNumber,
+        upToJulianDayNumber: taichuReformNextLunarYearStartJulianDayNumber
+    )
+    let foundationMonthStartsByYear = Dictionary(grouping: foundationMonthStarts, by: \.yearKey)
+    let foundationYearMonthCounts = foundationMonthStartsByYear.values.map(\.count).sorted()
+
+    #expect(
+        foundationYearMonthCounts == [1, 2, 12],
+        "Foundation 把同一段绝对日期拆进三个中国农历年，而不是表达为同一个十五个月农历年。"
+    )
+
+    let largestFoundationYear = try #require(foundationMonthStartsByYear.values.max { $0.count < $1.count })
+    #expect(
+        largestFoundationYear.map(\.month) == Array(1...12),
+        "Foundation 在太初元年前后的核心跨度中只给出普通正月至十二月。"
+    )
+}
+
 private struct CalendarDaySample {
     let id: CalendarDaySampleID
     let expected: ExpectedCalendarDay
@@ -140,6 +169,29 @@ private struct FoundationChineseDate: Equatable {
     let day: Int
 }
 
+private struct FoundationChineseFullDate {
+    let era: Int
+    let year: Int
+    let month: Int
+    let isLeapMonth: Bool
+    let day: Int
+
+    var yearKey: FoundationChineseYearKey {
+        FoundationChineseYearKey(era: era, year: year)
+    }
+}
+
+private struct FoundationChineseYearKey: Hashable {
+    let era: Int
+    let year: Int
+}
+
+private struct UpstreamLunarMonthStart {
+    let julianDayNumber: Int
+    let monthNumberInYear: Int
+    let isLeapMonth: Bool
+}
+
 private func foundationChineseDate(for sample: CalendarDaySample) throws -> FoundationChineseDate {
     var calendar = Calendar(identifier: .chinese)
     calendar.timeZone = try #require(TimeZone(secondsFromGMT: 8 * 60 * 60))
@@ -154,6 +206,40 @@ private func foundationChineseDate(for sample: CalendarDaySample) throws -> Foun
         isLeapMonth: components.isLeapMonth ?? false,
         day: #require(components.day)
     )
+}
+
+private func foundationChineseFullDate(julianDayNumber: Int) throws -> FoundationChineseFullDate {
+    var calendar = Calendar(identifier: .chinese)
+    calendar.timeZone = try #require(TimeZone(secondsFromGMT: 8 * 60 * 60))
+
+    let components = calendar.dateComponents(
+        [.era, .year, .month, .day, .isLeapMonth],
+        from: dateAtNoonUTC(julianDayNumber: julianDayNumber)
+    )
+
+    return try FoundationChineseFullDate(
+        era: #require(components.era),
+        year: #require(components.year),
+        month: #require(components.month),
+        isLeapMonth: components.isLeapMonth ?? false,
+        day: #require(components.day)
+    )
+}
+
+private func foundationChineseMonthStarts(
+    fromJulianDayNumber startJulianDayNumber: Int,
+    upToJulianDayNumber endJulianDayNumber: Int
+) throws -> [FoundationChineseFullDate] {
+    var monthStarts: [FoundationChineseFullDate] = []
+
+    for julianDayNumber in startJulianDayNumber..<endJulianDayNumber {
+        let foundationDate = try foundationChineseFullDate(julianDayNumber: julianDayNumber)
+        if foundationDate.day == 1 {
+            monthStarts.append(foundationDate)
+        }
+    }
+
+    return monthStarts
 }
 
 private func dateAtNoonUTC(julianDayNumber: Int) -> Date {
@@ -326,5 +412,25 @@ private let calendarDaySamples = [
         )
     )
 ]
+
+private let taichuReformUpstreamMonthStarts = [
+    UpstreamLunarMonthStart(julianDayNumber: 1_683_402, monthNumberInYear: 10, isLeapMonth: false),
+    UpstreamLunarMonthStart(julianDayNumber: 1_683_431, monthNumberInYear: 11, isLeapMonth: false),
+    UpstreamLunarMonthStart(julianDayNumber: 1_683_461, monthNumberInYear: 12, isLeapMonth: false),
+    UpstreamLunarMonthStart(julianDayNumber: 1_683_490, monthNumberInYear: 1, isLeapMonth: false),
+    UpstreamLunarMonthStart(julianDayNumber: 1_683_520, monthNumberInYear: 2, isLeapMonth: false),
+    UpstreamLunarMonthStart(julianDayNumber: 1_683_550, monthNumberInYear: 3, isLeapMonth: false),
+    UpstreamLunarMonthStart(julianDayNumber: 1_683_579, monthNumberInYear: 4, isLeapMonth: false),
+    UpstreamLunarMonthStart(julianDayNumber: 1_683_608, monthNumberInYear: 5, isLeapMonth: false),
+    UpstreamLunarMonthStart(julianDayNumber: 1_683_637, monthNumberInYear: 6, isLeapMonth: false),
+    UpstreamLunarMonthStart(julianDayNumber: 1_683_667, monthNumberInYear: 7, isLeapMonth: false),
+    UpstreamLunarMonthStart(julianDayNumber: 1_683_696, monthNumberInYear: 8, isLeapMonth: false),
+    UpstreamLunarMonthStart(julianDayNumber: 1_683_726, monthNumberInYear: 9, isLeapMonth: false),
+    UpstreamLunarMonthStart(julianDayNumber: 1_683_755, monthNumberInYear: 10, isLeapMonth: false),
+    UpstreamLunarMonthStart(julianDayNumber: 1_683_785, monthNumberInYear: 11, isLeapMonth: false),
+    UpstreamLunarMonthStart(julianDayNumber: 1_683_814, monthNumberInYear: 12, isLeapMonth: false)
+]
+
+private let taichuReformNextLunarYearStartJulianDayNumber = 1_683_844
 
 // swiftlint:enable identifier_name superfluous_disable_command
