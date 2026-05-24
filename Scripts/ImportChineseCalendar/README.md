@@ -149,7 +149,7 @@ Data/Processed/swiftdata_import/orthodox_periods.jsonl
 `manifest.json` 的 `dynastyArtifact.sourceAudit` 记录 source audit 结论、解析精度统计和首版正统叙事分组：
 
 ```text
-秦汉 -> 魏晋南朝 -> 唐五代两宋 -> 元明清民国 -> 中华人民共和国
+正统史观
 ```
 
 `Dynasty` 记录网页中有历日资料的政权/王朝，以及从网页 h3/table 拆出的具体政权。
