@@ -10,6 +10,9 @@ public struct CalendarHomeView: View {
 
     public init() {}
 
+    @available(*, deprecated, message: "CalendarHomeView now selects the current lunar year automatically.")
+    public init(selectedDate _: ChineseCalendarDate?) {}
+
     public var body: some View {
         NavigationSplitView {
             List(selection: $selectedYearNumber) {

@@ -190,14 +190,18 @@ private struct SeedStoreBuilder {
         }
 
         var context = makeContext(for: container)
-        var monthsByIndex = try lunarMonthsByIndex(in: context)
+        let monthIdentifiersByIndex = try lunarMonthIdentifiersByIndex(in: context)
+        var monthCache: [Int: ChineseLunarMonth] = [:]
         var importedDayCount = 0
         for yearDirectory in yearDirectories {
             let fileURL = yearDirectory.appendingPathComponent("calendar_days.jsonl")
             try readJSONLines(at: fileURL, as: CalendarDayBundleRecord.self) { record in
-                guard let lunarMonth = monthsByIndex[record.chineseLunarDay.lunarMonthIndex] else {
-                    throw SeedStoreBuilderError.missingLunarMonth(record.chineseLunarDay.lunarMonthIndex)
-                }
+                let lunarMonth = try lunarMonth(
+                    index: record.chineseLunarDay.lunarMonthIndex,
+                    identifiersByIndex: monthIdentifiersByIndex,
+                    in: context,
+                    cache: &monthCache
+                )
                 let calendarDay = CalendarDay(
                     dayIndex: record.calendarDay.dayIndex,
                     julianDayNumber: record.calendarDay.julianDayNumber
@@ -225,7 +229,7 @@ private struct SeedStoreBuilder {
                 importedDayCount += 1
                 if importedDayCount.isMultiple(of: options.saveInterval) {
                     try saveAndReset(&context, container: container)
-                    monthsByIndex = try lunarMonthsByIndex(in: context)
+                    monthCache.removeAll(keepingCapacity: true)
                 }
             }
 
@@ -243,12 +247,32 @@ private struct SeedStoreBuilder {
         return Dictionary(uniqueKeysWithValues: years.map { ($0.lunarYearNumber, $0) })
     }
 
-    private func lunarMonthsByIndex(in context: ModelContext) throws -> [Int: ChineseLunarMonth] {
+    private func lunarMonthIdentifiersByIndex(in context: ModelContext) throws -> [Int: PersistentIdentifier] {
         let descriptor = FetchDescriptor<ChineseLunarMonth>(
             sortBy: [SortDescriptor(\ChineseLunarMonth.lunarMonthIndex)]
         )
         let months = try context.fetch(descriptor)
-        return Dictionary(uniqueKeysWithValues: months.map { ($0.lunarMonthIndex, $0) })
+        return Dictionary(uniqueKeysWithValues: months.map { ($0.lunarMonthIndex, $0.persistentModelID) })
+    }
+
+    private func lunarMonth(
+        index lunarMonthIndex: Int,
+        identifiersByIndex: [Int: PersistentIdentifier],
+        in context: ModelContext,
+        cache: inout [Int: ChineseLunarMonth]
+    ) throws -> ChineseLunarMonth {
+        if let cachedMonth = cache[lunarMonthIndex] {
+            return cachedMonth
+        }
+
+        guard let identifier = identifiersByIndex[lunarMonthIndex],
+              let lunarMonth = context.model(for: identifier) as? ChineseLunarMonth
+        else {
+            throw SeedStoreBuilderError.missingLunarMonth(lunarMonthIndex)
+        }
+
+        cache[lunarMonthIndex] = lunarMonth
+        return lunarMonth
     }
 
     private func makeContext(for container: ModelContainer) -> ModelContext {

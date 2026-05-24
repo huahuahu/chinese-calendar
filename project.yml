@@ -40,6 +40,10 @@ targets:
           - "$(SRCROOT)/Scripts/BuildChineseCalendarSeedStore/Package.swift"
           - "$(SRCROOT)/Scripts/BuildChineseCalendarSeedStore/Sources/ChineseCalendarSeedStoreBuilder/main.swift"
           - "$(SRCROOT)/Data/Processed/swiftdata_import/manifest.json"
+          - "$(SRCROOT)/Data/Processed/swiftdata_import/chinese_lunar_years.jsonl"
+          - "$(SRCROOT)/Data/Processed/swiftdata_import/chinese_lunar_months.jsonl"
+        inputFileLists:
+          - "$(SRCROOT)/Scripts/BuildChineseCalendarSeedStore/calendar_days_inputs.xcfilelist"
         outputFiles:
           - "$(SRCROOT)/Apps/Shared/Resources/ChineseCalendarSeedStore.bundle/ChineseCalendar.sqlite"
           - "$(SRCROOT)/Apps/Shared/Resources/ChineseCalendarSeedStore.bundle/manifest.json"
@@ -83,6 +87,10 @@ targets:
           - "$(SRCROOT)/Scripts/BuildChineseCalendarSeedStore/Package.swift"
           - "$(SRCROOT)/Scripts/BuildChineseCalendarSeedStore/Sources/ChineseCalendarSeedStoreBuilder/main.swift"
           - "$(SRCROOT)/Data/Processed/swiftdata_import/manifest.json"
+          - "$(SRCROOT)/Data/Processed/swiftdata_import/chinese_lunar_years.jsonl"
+          - "$(SRCROOT)/Data/Processed/swiftdata_import/chinese_lunar_months.jsonl"
+        inputFileLists:
+          - "$(SRCROOT)/Scripts/BuildChineseCalendarSeedStore/calendar_days_inputs.xcfilelist"
         outputFiles:
           - "$(SRCROOT)/Apps/Shared/Resources/ChineseCalendarSeedStore.bundle/ChineseCalendar.sqlite"
           - "$(SRCROOT)/Apps/Shared/Resources/ChineseCalendarSeedStore.bundle/manifest.json"
