@@ -1,3 +1,4 @@
+import ChineseCalendarLogging
 import Foundation
 import SwiftData
 
@@ -46,6 +47,8 @@ public enum ChineseCalendarModelContainerFactory {
         allowsSave: Bool = false,
         fileManager: FileManager = .default
     ) throws -> ModelContainer {
+        ChineseCalendarLog.persistence.info("Opening shared SwiftData container")
+
         let storeDirectory = try sharedStoreDirectory(
             appGroupIdentifier: appGroupIdentifier,
             fileManager: fileManager
@@ -63,6 +66,10 @@ public enum ChineseCalendarModelContainerFactory {
         at storeURL: URL,
         allowsSave: Bool = true
     ) throws -> ModelContainer {
+        ChineseCalendarLog.persistence.info(
+            "Creating model container at \(storeURL.path, privacy: .private), allowsSave: \(allowsSave)"
+        )
+
         let configuration = ModelConfiguration(
             "ChineseCalendar",
             schema: schema,
@@ -80,6 +87,9 @@ public enum ChineseCalendarModelContainerFactory {
         guard let containerURL = fileManager.containerURL(
             forSecurityApplicationGroupIdentifier: appGroupIdentifier
         ) else {
+            ChineseCalendarLog.persistence.error(
+                "Missing app group container for \(appGroupIdentifier, privacy: .public)"
+            )
             throw ChineseCalendarStoreError.missingAppGroupContainer(appGroupIdentifier)
         }
 
@@ -103,9 +113,11 @@ public enum ChineseCalendarModelContainerFactory {
 
         guard let seedDirectory else {
             if fileManager.fileExists(atPath: storeURL.path) {
+                ChineseCalendarLog.persistence.info("Using existing installed seed store")
                 return storeURL
             }
 
+            ChineseCalendarLog.persistence.error("Missing bundled seed store resource")
             throw ChineseCalendarStoreError.missingSeedResource(
                 "\(ChineseCalendarSeedStore.resourceBundleName).\(ChineseCalendarSeedStore.resourceBundleExtension)"
             )
@@ -116,6 +128,8 @@ public enum ChineseCalendarModelContainerFactory {
             storeDirectory: storeDirectory,
             fileManager: fileManager
         ) {
+            ChineseCalendarLog.persistence.notice("Installing bundled seed store")
+
             try ChineseCalendarSeedStoreFiles.removeStoreFiles(
                 in: storeDirectory,
                 fileManager: fileManager
@@ -130,6 +144,8 @@ public enum ChineseCalendarModelContainerFactory {
                 to: storeDirectory,
                 fileManager: fileManager
             )
+        } else {
+            ChineseCalendarLog.persistence.info("Bundled seed store is already installed")
         }
 
         return storeURL
@@ -211,6 +227,9 @@ private enum ChineseCalendarSeedStoreFiles {
 
         let sourceStoreURL = sourceDirectoryURL.appendingPathComponent(storeFileName)
         guard fileManager.fileExists(atPath: sourceStoreURL.path) else {
+            ChineseCalendarLog.persistence.error(
+                "Missing seed store file in \(sourceDirectoryURL.path, privacy: .private)"
+            )
             throw ChineseCalendarStoreError.missingSeedStore(sourceDirectoryURL)
         }
 

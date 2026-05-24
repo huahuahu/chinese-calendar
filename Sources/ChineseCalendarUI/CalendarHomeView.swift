@@ -1,5 +1,6 @@
 import ChineseCalendarCore
 import ChineseCalendarData
+import ChineseCalendarLogging
 import ChineseCalendarPersistence
 import SwiftData
 import SwiftUI
@@ -24,8 +25,20 @@ public struct CalendarHomeView: View {
             .navigationTitle("Calendar")
             .padding()
             .task {
-                calendarDayCount = try? modelContext.fetchCount(FetchDescriptor<CalendarDay>())
+                await loadCalendarDayCount()
             }
+        }
+    }
+
+    @MainActor
+    private func loadCalendarDayCount() async {
+        do {
+            calendarDayCount = try modelContext.fetchCount(FetchDescriptor<CalendarDay>())
+            ChineseCalendarLog.ui.info("Loaded \(calendarDayCount ?? 0) calendar days for home view")
+        } catch {
+            ChineseCalendarLog.ui.error(
+                "Failed to load calendar day count: \(error.localizedDescription, privacy: .private)"
+            )
         }
     }
 
