@@ -6,6 +6,10 @@ if [[ ! -d "ChineseCalendar.xcodeproj" ]]; then
     ./Scripts/generate_xcodeproj.sh
 fi
 
+if [[ "${GITHUB_ACTIONS:-}" == "true" && -z "${CHINESE_CALENDAR_BUILD_SEED_STORE_IN_CI:-}" ]]; then
+    export CHINESE_CALENDAR_SKIP_SEED_STORE_BUILD=1
+fi
+
 show_section() {
     local title="$1"
 
