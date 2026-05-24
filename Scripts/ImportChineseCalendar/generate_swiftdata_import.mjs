@@ -9,6 +9,9 @@ import { fileURLToPath } from "node:url";
 
 const DEFAULT_START_YEAR = -220;
 const DEFAULT_END_YEAR = 2200;
+const LEGACY_POST_MONTH_NUMBER = 9;
+const LEGACY_POST_MONTH_START_YEAR = DEFAULT_START_YEAR;
+const LEGACY_POST_MONTH_END_YEAR = -104;
 const OUTPUT_FILES = {
   chineseLunarYears: "chinese_lunar_years.jsonl",
   chineseLunarMonths: "chinese_lunar_months.jsonl",
@@ -416,11 +419,14 @@ function intercalaryMonthNameStyle(record) {
     return record.lunarMonth.intercalaryMonthNameStyle;
   }
 
+  // Older calendar-day JSONL files did not persist the display style. They were generated from the
+  // pinned upstream range where Zhuanxu-context post months are exactly leap ninth months through
+  // the Taichu transition year, so derive the missing value only for that legacy artifact shape.
   if (
     record.lunarMonth.isLeapMonth &&
-    record.lunarMonth.monthNumberInYear === 9 &&
-    record.lunarMonth.yearNumber >= -220 &&
-    record.lunarMonth.yearNumber <= -104
+    record.lunarMonth.monthNumberInYear === LEGACY_POST_MONTH_NUMBER &&
+    record.lunarMonth.yearNumber >= LEGACY_POST_MONTH_START_YEAR &&
+    record.lunarMonth.yearNumber <= LEGACY_POST_MONTH_END_YEAR
   ) {
     return "post";
   }

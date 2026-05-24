@@ -33,6 +33,7 @@ const REQUIRED_UPSTREAM_FILES = [
   "ancientCalendars.js",
   "calendar.js"
 ];
+const TAICHU_TRANSITION_CIVIL_YEAR = -104;
 
 const scriptPath = fileURLToPath(import.meta.url);
 const scriptDirectory = path.dirname(scriptPath);
@@ -402,7 +403,9 @@ function intercalaryMonthNameStyleFor(calVars, civilYear, isLeapMonth) {
   }
 
   // Upstream labels Qin and early-Han Zhuanxu-calendar end-of-year intercalary months as “post 9”.
-  if (calVars.leap === "post 9" || civilYear === -104) {
+  // The Taichu transition year is also displayed as a post-month case upstream, but its generated
+  // year data does not consistently carry that `calVars.leap` marker, so keep the boundary explicit.
+  if (calVars.leap === "post 9" || civilYear === TAICHU_TRANSITION_CIVIL_YEAR) {
     return "post";
   }
 

@@ -21,7 +21,7 @@ public enum LunarMonthNumber: Int, Codable, CaseIterable, Sendable {
     }
 }
 
-/// 农历中的某个月，闰月与普通月共享同一月序。
+/// 闰月显示名采用的历史命名样式。
 public enum LunarIntercalaryMonthNameStyle: String, Codable, CaseIterable, Sendable {
     /// 后世/现代常见的“闰 X 月”。
     case leap
