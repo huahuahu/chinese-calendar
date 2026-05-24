@@ -18,7 +18,7 @@ if [[ -f "$SEED_STORE" && -f "$SEED_MANIFEST" ]]; then
     exit 0
 fi
 
-swift run -c release --package-path "$REPO_ROOT/Scripts/BuildChineseCalendarSeedStore" ChineseCalendarSeedStoreBuilder \
+env -u SDKROOT -u TOOLCHAINS swift run -c release --package-path "$REPO_ROOT/Scripts/BuildChineseCalendarSeedStore" ChineseCalendarSeedStoreBuilder \
     --input "$INPUT_DIR" \
     --output "$OUTPUT_DIR" \
     --keep-output \
