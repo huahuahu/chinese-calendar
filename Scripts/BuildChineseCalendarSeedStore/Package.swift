@@ -19,6 +19,7 @@ let package = Package(
         .executableTarget(
             name: "ChineseCalendarSeedStoreBuilder",
             dependencies: [
+                .product(name: "ChineseCalendarCore", package: "Sources"),
                 .product(name: "ChineseCalendarPersistence", package: "Sources")
             ]
         )

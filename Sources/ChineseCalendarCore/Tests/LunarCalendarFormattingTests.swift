@@ -6,6 +6,15 @@ import Testing
     #expect(LunarCalendarFormatting.monthTitle(monthNumberInYear: 8, isLeapMonth: false, dayCount: 29) == "八月小")
 }
 
+@Test func monthTitleUsesPostMonthStyleForZhuanxuIntercalaryMonth() {
+    #expect(LunarCalendarFormatting.monthTitle(
+        monthNumberInYear: 9,
+        isLeapMonth: true,
+        intercalaryMonthNameStyle: .post,
+        dayCount: 30
+    ) == "后九月大")
+}
+
 @Test func dayTitleUsesLunarDayNameOnly() {
     #expect(LunarCalendarFormatting.dayTitle(dayNumberInMonth: 1) == "初一")
     #expect(LunarCalendarFormatting.dayTitle(dayNumberInMonth: 31) == "31日")

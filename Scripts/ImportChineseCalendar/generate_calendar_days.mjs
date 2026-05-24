@@ -33,6 +33,7 @@ const REQUIRED_UPSTREAM_FILES = [
   "ancientCalendars.js",
   "calendar.js"
 ];
+const TAICHU_TRANSITION_CIVIL_YEAR = -104;
 
 const scriptPath = fileURLToPath(import.meta.url);
 const scriptDirectory = path.dirname(scriptPath);
@@ -296,6 +297,7 @@ async function generateCalendarDays(upstream, options) {
             yearNumber: lunarYearNumber,
             monthNumberInYear: lunarMonth.monthNumberInYear,
             isLeapMonth: lunarMonth.isLeapMonth,
+            intercalaryMonthNameStyle: lunarMonth.intercalaryMonthNameStyle,
             dayCount: lunarMonth.dayCount,
             monthStemIndex: lunarMonth.monthStemIndex,
             monthBranchIndex: lunarMonth.monthBranchIndex
@@ -342,6 +344,7 @@ function resolveLunarMonth(calVars, civilYear, dayOffset, julianDayNumber, state
   const yearNumber = civilYear + calVars.cmonthYear[monthPosition] - 1;
   const monthNumberInYear = Math.abs(rawMonthNumber);
   const isLeapMonth = rawMonthNumber < 0;
+  const intercalaryMonthNameStyle = intercalaryMonthNameStyleFor(calVars, civilYear, isLeapMonth);
   const jian = Math.abs(rawJian);
   const monthStemIndex = positiveModulo(
     12 * (positiveModulo(civilYear + 725, 10) + calVars.cmonthXiaYear[monthPosition]) + jian + 1,
@@ -360,6 +363,7 @@ function resolveLunarMonth(calVars, civilYear, dayOffset, julianDayNumber, state
       yearNumber,
       monthNumberInYear,
       isLeapMonth,
+      intercalaryMonthNameStyle,
       monthStemIndex,
       monthBranchIndex,
       generatedDayCount: 0
@@ -374,6 +378,7 @@ function resolveLunarMonth(calVars, civilYear, dayOffset, julianDayNumber, state
       yearNumber,
       monthNumberInYear,
       isLeapMonth,
+      intercalaryMonthNameStyle,
       monthStemIndex,
       monthBranchIndex
     });
@@ -392,6 +397,21 @@ function resolveLunarMonth(calVars, civilYear, dayOffset, julianDayNumber, state
   return lunarMonth;
 }
 
+function intercalaryMonthNameStyleFor(calVars, civilYear, isLeapMonth) {
+  if (!isLeapMonth) {
+    return "leap";
+  }
+
+  // Upstream labels Qin and early-Han Zhuanxu-calendar end-of-year intercalary months as “post 9”.
+  // The Taichu transition year is also displayed as a post-month case upstream, but its generated
+  // year data does not consistently carry that `calVars.leap` marker, so keep the boundary explicit.
+  if (calVars.leap === "post 9" || civilYear === TAICHU_TRANSITION_CIVIL_YEAR) {
+    return "post";
+  }
+
+  return "leap";
+}
+
 function findLunarMonthPosition(calVars, dayOffset) {
   for (let index = 0; index < calVars.cmonthDate.length - 1; index += 1) {
     if (dayOffset >= calVars.cmonthDate[index] && dayOffset < calVars.cmonthDate[index + 1]) {
@@ -408,6 +428,7 @@ function assertSameLunarMonth(existing, incoming) {
     "yearNumber",
     "monthNumberInYear",
     "isLeapMonth",
+    "intercalaryMonthNameStyle",
     "monthStemIndex",
     "monthBranchIndex"
   ]) {
@@ -475,6 +496,18 @@ function validateRecord(record) {
   }
   if (record.lunarMonth.lunarMonthIndex !== record.lunarDay.lunarMonthIndex) {
     throw new Error(`Mismatched lunarMonthIndex at dayIndex ${record.dayIndex}.`);
+  }
+  if (record.lunarMonth.intercalaryMonthNameStyle !== undefined) {
+    validateIntercalaryMonthNameStyle(record.lunarMonth, record.dayIndex);
+  }
+}
+
+function validateIntercalaryMonthNameStyle(lunarMonth, dayIndex) {
+  if (!["leap", "post"].includes(lunarMonth.intercalaryMonthNameStyle)) {
+    throw new Error(`Invalid lunarMonth.intercalaryMonthNameStyle at dayIndex ${dayIndex}.`);
+  }
+  if (!lunarMonth.isLeapMonth && lunarMonth.intercalaryMonthNameStyle !== "leap") {
+    throw new Error(`Regular month cannot use post intercalary style at dayIndex ${dayIndex}.`);
   }
 }
 
@@ -607,6 +640,7 @@ async function validateExistingOutput(output, options) {
           yearNumber: record.lunarMonth.yearNumber,
           monthNumberInYear: record.lunarMonth.monthNumberInYear,
           isLeapMonth: record.lunarMonth.isLeapMonth,
+          intercalaryMonthNameStyle: record.lunarMonth.intercalaryMonthNameStyle ?? "leap",
           monthStemIndex: record.lunarMonth.monthStemIndex,
           monthBranchIndex: record.lunarMonth.monthBranchIndex,
           generatedDayCount: 0
@@ -620,6 +654,7 @@ async function validateExistingOutput(output, options) {
           yearNumber: record.lunarMonth.yearNumber,
           monthNumberInYear: record.lunarMonth.monthNumberInYear,
           isLeapMonth: record.lunarMonth.isLeapMonth,
+          intercalaryMonthNameStyle: record.lunarMonth.intercalaryMonthNameStyle ?? "leap",
           monthStemIndex: record.lunarMonth.monthStemIndex,
           monthBranchIndex: record.lunarMonth.monthBranchIndex
         });

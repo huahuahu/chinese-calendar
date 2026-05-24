@@ -101,6 +101,7 @@ struct MonthSwitcher: View {
         LunarCalendarFormatting.monthTitle(
             monthNumberInYear: month.monthNumberInYear,
             isLeapMonth: month.isLeapMonth,
+            intercalaryMonthNameStyle: month.intercalaryMonthNameStyle,
             dayCount: month.dayCount
         )
     }

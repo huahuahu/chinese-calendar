@@ -15,6 +15,17 @@ import Testing
     #expect(date.lunarMonthNumber == 6)
 }
 
+@Test func supportsHistoricalPostMonthDisplayName() {
+    let month = LunarMonth(
+        number: .nine,
+        isLeapMonth: true,
+        intercalaryMonthNameStyle: .post
+    )
+
+    #expect(month.isLeapMonth)
+    #expect(month.chineseName == "后九月")
+}
+
 @Test func defaultsLeapMonthFlagToFalse() {
     let date = ChineseCalendarDate(
         gregorianDate: Date(timeIntervalSince1970: 1),
@@ -41,4 +52,14 @@ import Testing
     let decoded = try decoder.decode(ChineseCalendarDate.self, from: data)
 
     #expect(decoded == original)
+}
+
+@Test func lunarMonthDecodesOldPayloadWithoutNameStyle() throws {
+    let data = Data(#"{"number":6,"isLeapMonth":true}"#.utf8)
+
+    let decoded = try JSONDecoder().decode(LunarMonth.self, from: data)
+
+    #expect(decoded.isLeapMonth)
+    #expect(decoded.intercalaryMonthNameStyle == .leap)
+    #expect(decoded.chineseName == "闰六月")
 }

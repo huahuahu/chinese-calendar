@@ -34,6 +34,7 @@ Data/Processed/calendar_days/manifest.json
 
 每行是一条 absolute day record，字段遵循 `Docs/data-model-calendar.md` 的 Processed Artifact 建议。
 其中 `lunarMonth.dayCount` 保存农历月大小：`29` 为小月，`30` 为大月。
+重新生成时，`lunarMonth.intercalaryMonthNameStyle` 保存闰月显示名规则：`leap` 表示“闰 X 月”，`post` 表示秦至汉初颛顼历语境下的“后 X 月”。
 
 ## 校验已生成数据
 
@@ -51,6 +52,7 @@ Scripts/ImportChineseCalendar/generate_calendar_days.swift --validate-only --sta
 - 干支 index 范围合法
 - 农历日为 `1...30`
 - `lunarMonth.dayCount` 为 29 或 30，且农历日不超过该月 `dayCount`
+- `lunarMonth.intercalaryMonthNameStyle` 为 `leap` 或 `post`，普通月份只能使用 `leap`
 - 农历月实际日记录数与 `dayCount` 一致，已知例外写入 manifest
 - 农历年月份数量在 v1 预期范围内
 
@@ -84,6 +86,7 @@ Data/Processed/swiftdata_import/manifest.json
 这些文件是面向导入器的中间格式，不是 SwiftData store 文件。农历年和农历月是全局去重表；
 每天的数据按 civil year 分片，每一行同时包含 `CalendarDay`、`CivilDate`、`ChineseLunarDay`
 三个 model 的字段，方便导入器按年批处理并在同一行内建立日级关系。
+`ChineseLunarMonth.intercalaryMonthNameStyle` 会随月表导出，供共享模型和 UI 统一生成“后九月”或“闰九月”。
 
 建议导入顺序遵循 `manifest.json` 里的 `importOrder`：
 

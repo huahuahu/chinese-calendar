@@ -80,6 +80,13 @@ Julian calendar 是儒略历，由 Julius Caesar 推行，规则中每 4 年置�
 
 闰月信息属于农历月本身，所以 `isLeapMonth` 放在 `ChineseLunarMonth` 上，不放在 `ChineseLunarDay` 上。`isLeapMonth` 可以区分同名的普通月和闰月，但历史改正朔会让同一个农历年中出现重复的非闰同名月；因此 `lunarYearNumber + monthNumberInYear + isLeapMonth` 不能当作唯一键。
 
+闰月的显示名称还需要记录命名样式。秦至汉初颛顼历语境下，岁末置闰称为“后九月”；太初改历后，闰月使用“闰 X 月”。因此 `ChineseLunarMonth` 保存 `intercalaryMonthNameStyle`：
+
+- `leap`：显示为“闰 X 月”。
+- `post`：显示为“后 X 月”。
+
+`isLeapMonth` 仍然只表达是否为闰月这个事实；`intercalaryMonthNameStyle` 只影响闰月显示名。普通月份必须使用默认的 `leap` 样式。
+
 ### dayCount 与大月/小月
 
 农历的大月、小月也是农历月本身的事实，应放在 `ChineseLunarMonth` 上：
@@ -132,6 +139,7 @@ erDiagram
         int lunarYearNumber
         int monthNumberInYear
         bool isLeapMonth
+        string intercalaryMonthNameStyle
         int dayCount
         int monthStemIndex
         int monthBranchIndex
@@ -234,6 +242,7 @@ erDiagram
 - `lunarMonthIndex: Int`
 - `monthNumberInYear: Int`
 - `isLeapMonth: Bool`
+- `intercalaryMonthNameStyle: String`
 - `dayCount: Int`
 - `monthStemIndex: Int`
 - `monthBranchIndex: Int`
@@ -242,6 +251,7 @@ erDiagram
 
 - 作为农历日的 parent
 - 表达闰月信息
+- 表达闰月展示命名样式
 - 表达大月、小月信息
 - 保存月干支
 - 通过 `lunarYearNumber` 关联到所属农历年
@@ -251,6 +261,7 @@ erDiagram
 - `lunarMonthIndex` 在数据集中必须连续且唯一。
 - `lunarYearNumber` 必须指向一条真实存在的 `ChineseLunarYear`。
 - `monthNumberInYear` 只能是 `1...12`。
+- `intercalaryMonthNameStyle` 只能是 `leap` 或 `post`；普通月份必须为 `leap`。
 - `dayCount` 只能是 `29` 或 `30`，其中 `29` 表示小月，`30` 表示大月。
 - `monthNumberInYear` 是月名序号，不保证在同一个 `lunarYearNumber` 下唯一。
 - 同一个 `lunarYearNumber + monthNumberInYear + isLeapMonth` 组合在历史特殊年份中可能对应多个真实月份。
@@ -306,7 +317,7 @@ erDiagram
 以下内容不建议存为基础 raw data，可以在 domain 或 UI formatting helper 中生成：
 
 - `dayDisplayName`：例如 `1 -> 初一`，`15 -> 十五`，`30 -> 三十`。
-- `monthDisplayName`：例如 `1 -> 正月`，`2 + isLeapMonth -> 闰二月`。
+- `monthDisplayName`：由 `monthNumberInYear`、`isLeapMonth`、`intercalaryMonthNameStyle` 生成，例如 `1 -> 正月`，`2 + isLeapMonth + leap -> 闰二月`，`9 + isLeapMonth + post -> 后九月`。
 - `monthSizeDisplayName`：例如 `dayCount = 30 -> 大月`，`dayCount = 29 -> 小月`。
 - `stemBranchDisplayName`：例如 `stemIndex = 0` 且 `branchIndex = 0` 时显示 `甲子`。
 - `yearMonthCount` 和 `yearDayCount`：从同一个农历年下的月份和日期计算。
@@ -389,11 +400,12 @@ erDiagram
     "yearStemIndex": 7,
     "yearBranchIndex": 9
   },
-  "lunarMonth": {
+    "lunarMonth": {
     "lunarMonthIndex": 0,
     "yearNumber": 1,
     "monthNumberInYear": 11,
     "isLeapMonth": false,
+    "intercalaryMonthNameStyle": "leap",
     "dayCount": 30,
     "monthStemIndex": 6,
     "monthBranchIndex": 0
@@ -428,6 +440,7 @@ erDiagram
 - 每个农历年的 month count 通常是 12 或 13；历史改正朔造成的 10、11、14、15 个月年份应由 source data 或核对文档说明。
 - 同一年中闰月不能超过一个，除非 source data 明确支持特殊情况并记录原因。
 - `ChineseLunarMonth` 只能用 `lunarMonthIndex` 校验唯一性，不能要求 `lunarYearNumber + monthNumberInYear + isLeapMonth` 唯一。
+- `intercalaryMonthNameStyle` 必须为 `leap` 或 `post`，且普通月份不能使用 `post`。
 - `stemIndex` 必须在 `0...9`。
 - `branchIndex` 必须在 `0...11`。
 

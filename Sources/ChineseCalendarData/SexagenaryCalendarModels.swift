@@ -159,6 +159,24 @@ public enum 农历月序: Int, Codable, CaseIterable, Sendable {
     }
 }
 
+/// 闰月显示名采用的历史命名样式。
+public enum 农历闰月名称样式: String, Codable, CaseIterable, Sendable {
+    /// 后世/现代常见的“闰 X 月”。
+    case 闰
+
+    /// 秦至汉初颛顼历语境下岁末置闰的“后 X 月”。
+    case 后
+
+    public var 前缀: String {
+        switch self {
+        case .闰:
+            "闰"
+        case .后:
+            "后"
+        }
+    }
+}
+
 /// 农历中的某个月，闰月与普通月共享同一月序。
 public struct 农历月: Codable, Hashable, Sendable {
     /// 基础月序，例如正月、二月、三月。
@@ -167,14 +185,41 @@ public struct 农历月: Codable, Hashable, Sendable {
     /// 是否为闰月。
     public let 是闰月: Bool
 
-    public init(月序: 农历月序, 是闰月: Bool = false) {
+    /// 闰月展示名采用的历史命名样式。
+    public let 闰月名称样式: 农历闰月名称样式
+
+    public init(月序: 农历月序, 是闰月: Bool = false, 闰月名称样式: 农历闰月名称样式 = .闰) {
         self.月序 = 月序
         self.是闰月 = 是闰月
+        self.闰月名称样式 = 闰月名称样式
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        月序 = try container.decode(农历月序.self, forKey: .月序)
+        是闰月 = try container.decode(Bool.self, forKey: .是闰月)
+        闰月名称样式 = try container.decodeIfPresent(农历闰月名称样式.self, forKey: .闰月名称样式) ?? .闰
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(月序, forKey: .月序)
+        try container.encode(是闰月, forKey: .是闰月)
+        try container.encode(闰月名称样式, forKey: .闰月名称样式)
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case 月序
+        case 是闰月
+        case 闰月名称样式
     }
 
     public var 中文名: String {
-        let prefix = 是闰月 ? "闰" : ""
-        return prefix + 月序.中文名
+        guard 是闰月 else {
+            return 月序.中文名
+        }
+
+        return 闰月名称样式.前缀 + 月序.中文名
     }
 }
 
