@@ -17,7 +17,8 @@ const ORTHODOX_SEGMENT_NAMES = [
   "秦汉",
   "魏晋南朝",
   "唐五代两宋",
-  "元明清"
+  "元明清民国",
+  "中华人民共和国"
 ];
 
 const OUTPUT_FILES = {
@@ -88,7 +89,9 @@ const SUPPLEMENTAL_DYNASTIES = [
   dynastySpec("southern_song", "南宋", "南宋", 1127, 1279, "南宋 (1127 — 1279)"),
   dynastySpec("yuan", "元", "元", 1271, 1368, "至元八年建国号大元; 正统期从宋亡后的 1279 年起算"),
   dynastySpec("ming", "明", "明", 1368, 1644, "明 (1368 — 1644)"),
-  dynastySpec("qing", "清", "清", 1636, 1912, "1636 年改国号大清; 正统期从 1644 年起算")
+  dynastySpec("qing", "清", "清", 1636, 1912, "1636 年改国号大清; 正统期从 1644 年起算"),
+  dynastySpec("republic_of_china", "中华民国", "民国", 1912, 1949, "中华民国 (1912 — 1949); 首版正统期按大陆历史时期口径"),
+  dynastySpec("peoples_republic_of_china", "中华人民共和国", "中华人民共和国", 1949, 2200, "中华人民共和国 (1949 — present); 2200 为当前 seed 覆盖终点", "Supplemental modern polity; claimed end uses the current seed coverage end and is not a historical end.")
 ];
 
 const ORTHODOX_PERIOD_SPECS = [
@@ -113,9 +116,11 @@ const ORTHODOX_PERIOD_SPECS = [
   periodSpec("later_zhou", "唐五代两宋", 951, 960, "五代周 (951 — 960)"),
   periodSpec("northern_song", "唐五代两宋", 960, 1127, "北宋 (960 — 1127)"),
   periodSpec("southern_song", "唐五代两宋", 1127, 1279, "南宋 (1127 — 1279)"),
-  periodSpec("yuan", "元明清", 1279, 1368, "元; 正统期从南宋亡后的 1279 年起算"),
-  periodSpec("ming", "元明清", 1368, 1644, "明 (1368 — 1644)"),
-  periodSpec("qing", "元明清", 1644, 1912, "清; 正统期从 1644 年起算")
+  periodSpec("yuan", "元明清民国", 1279, 1368, "元; 正统期从南宋亡后的 1279 年起算"),
+  periodSpec("ming", "元明清民国", 1368, 1644, "明 (1368 — 1644)"),
+  periodSpec("qing", "元明清民国", 1644, 1912, "清; 正统期从 1644 年起算"),
+  periodSpec("republic_of_china", "元明清民国", 1912, 1949, "中华民国; 首版正统期按 1912 — 1949"),
+  periodSpec("peoples_republic_of_china", "中华人民共和国", 1949, 2200, "中华人民共和国; 2200 为当前 seed 覆盖终点，不是历史结束")
 ];
 
 function dynastySpec(id, name, shortName, startYear, endYear, sourceText, note) {
@@ -416,7 +421,7 @@ async function buildArtifact(rawSource, baseManifest, options) {
   sortDynastiesByClaimedStart(records);
 
   const tradition = {
-    id: "orthodox_sequence_qin_han_to_qing",
+    id: "orthodox_sequence_qin_han_to_prc",
     name: ORTHODOX_SEGMENT_NAMES.join(" -> "),
     note: "Issue 18 first-version orthodox narrative sequence; ordered by OrthodoxPeriod.sequenceIndex."
   };
@@ -646,7 +651,7 @@ function buildSourceAudit(parsedSource, records, rawSource, baseManifest) {
       "Automatically parsed h2 boundaries outside imported calendar coverage are kept as precision = unknown with sourceText preserved.",
       "No month-precision or day-precision dynasty boundary is automatically extracted in this version; sourceText is preserved for later refinement.",
       "OrthodoxPeriod records are concrete orthodox dynasty periods; segmentIndex and segmentName preserve the required narrative groups.",
-      "Supplemental dynasties split compound h2 sections into specific h3/table polities such as 西汉、新、更始、魏、蜀汉、孙吴、刘宋、五代后梁后唐后晋后汉后周、北宋、南宋、元、明、清.",
+      "Supplemental dynasties split compound h2 sections into specific h3/table polities such as 西汉、新、更始、魏、蜀汉、孙吴、刘宋、五代后梁后唐后晋后汉后周、北宋、南宋、元、明、清、中华民国、中华人民共和国.",
       "Non-orthodox polities such as 蜀汉、孙吴、北凉 remain Dynasty records but are not included in OrthodoxPeriod. 魏 is the Three Kingdoms orthodox period."
     ],
     automaticPrecisionCounts: countPrecisions(h2Expressions),

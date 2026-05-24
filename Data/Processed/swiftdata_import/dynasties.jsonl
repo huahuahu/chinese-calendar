@@ -33,3 +33,5 @@
 {"id":"yuan","name":"元","shortName":"元","claimedStartDateID":"yuan_claimed_start","claimedEndDateID":"yuan_claimed_end","note":"Supplemental polity split from era_names_simp.html h3/table text."}
 {"id":"ming","name":"明","shortName":"明","claimedStartDateID":"ming_claimed_start","claimedEndDateID":"ming_claimed_end","note":"Supplemental polity split from era_names_simp.html h3/table text."}
 {"id":"qing","name":"清","shortName":"清","claimedStartDateID":"qing_claimed_start","claimedEndDateID":"qing_claimed_end","note":"Supplemental polity split from era_names_simp.html h3/table text."}
+{"id":"republic_of_china","name":"中华民国","shortName":"民国","claimedStartDateID":"republic_of_china_claimed_start","claimedEndDateID":"republic_of_china_claimed_end","note":"Supplemental polity split from era_names_simp.html h3/table text."}
+{"id":"peoples_republic_of_china","name":"中华人民共和国","shortName":"中华人民共和国","claimedStartDateID":"peoples_republic_of_china_claimed_start","claimedEndDateID":"peoples_republic_of_china_claimed_end","note":"Supplemental modern polity; claimed end uses the current seed coverage end and is not a historical end."}

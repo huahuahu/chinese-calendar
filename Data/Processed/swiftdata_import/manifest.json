@@ -49,7 +49,7 @@
   },
   "dynastyArtifact": {
     "artifact": "dynasty_periods",
-    "generatedAt": "2026-05-24T13:21:10.958Z",
+    "generatedAt": "2026-05-24T13:32:09.718Z",
     "generator": "Scripts/ImportChineseCalendar/generate_dynasty_periods.swift",
     "sourceURL": "https://ytliu0.github.io/ChineseCalendar/era_names_simp.html",
     "rawFile": "Data/Raw/ChineseCalendar/era_names_simp.html",
@@ -57,11 +57,11 @@
     "rawFetchedAt": "2026-05-24T10:47:01.840Z",
     "sourceUpstreamRepository": "https://github.com/ytliu0/ChineseCalendar",
     "sourceUpstreamCommit": "d6aae82b63b79a6f8659ea3e064024b7d8ac3077",
-    "totalDynasties": 35,
-    "totalChineseDateExpressions": 95,
+    "totalDynasties": 37,
+    "totalChineseDateExpressions": 101,
     "totalOrthodoxTraditions": 1,
-    "totalOrthodoxBoundaries": 25,
-    "totalOrthodoxPeriods": 24,
+    "totalOrthodoxBoundaries": 27,
+    "totalOrthodoxPeriods": 26,
     "files": {
       "Dynasty": "dynasties.jsonl",
       "ChineseDateExpression": "chinese_date_expressions.jsonl",
@@ -322,7 +322,7 @@
         "Automatically parsed h2 boundaries outside imported calendar coverage are kept as precision = unknown with sourceText preserved.",
         "No month-precision or day-precision dynasty boundary is automatically extracted in this version; sourceText is preserved for later refinement.",
         "OrthodoxPeriod records are concrete orthodox dynasty periods; segmentIndex and segmentName preserve the required narrative groups.",
-        "Supplemental dynasties split compound h2 sections into specific h3/table polities such as 西汉、新、更始、魏、蜀汉、孙吴、刘宋、五代后梁后唐后晋后汉后周、北宋、南宋、元、明、清.",
+        "Supplemental dynasties split compound h2 sections into specific h3/table polities such as 西汉、新、更始、魏、蜀汉、孙吴、刘宋、五代后梁后唐后晋后汉后周、北宋、南宋、元、明、清、中华民国、中华人民共和国.",
         "Non-orthodox polities such as 蜀汉、孙吴、北凉 remain Dynasty records but are not included in OrthodoxPeriod. 魏 is the Three Kingdoms orthodox period."
       ],
       "automaticPrecisionCounts": {
@@ -333,7 +333,7 @@
         "unknown": 0
       },
       "manualPrecisionCounts": {
-        "year": 83,
+        "year": 89,
         "month": 0,
         "day": 0,
         "range": 0,
@@ -350,7 +350,8 @@
         "秦汉",
         "魏晋南朝",
         "唐五代两宋",
-        "元明清"
+        "元明清民国",
+        "中华人民共和国"
       ],
       "orthodoxPeriodsBySegment": {
         "秦汉": [
@@ -464,7 +465,7 @@
             "endYear": 1279
           }
         ],
-        "元明清": [
+        "元明清民国": [
           {
             "dynastyID": "yuan",
             "startYear": 1279,
@@ -479,6 +480,18 @@
             "dynastyID": "qing",
             "startYear": 1644,
             "endYear": 1912
+          },
+          {
+            "dynastyID": "republic_of_china",
+            "startYear": 1912,
+            "endYear": 1949
+          }
+        ],
+        "中华人民共和国": [
+          {
+            "dynastyID": "peoples_republic_of_china",
+            "startYear": 1949,
+            "endYear": 2200
           }
         ]
       }
