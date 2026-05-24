@@ -27,6 +27,8 @@ targets:
         buildPhase: resources
     dependencies:
       - package: ChineseCalendarPackage
+        product: ChineseCalendarLogging
+      - package: ChineseCalendarPackage
         product: ChineseCalendarUI
       - package: ChineseCalendarPackage
         product: ChineseCalendarPersistence
@@ -73,6 +75,8 @@ targets:
       - path: Apps/Shared/Resources/ChineseCalendarSeedStore.bundle
         buildPhase: resources
     dependencies:
+      - package: ChineseCalendarPackage
+        product: ChineseCalendarLogging
       - package: ChineseCalendarPackage
         product: ChineseCalendarUI
       - package: ChineseCalendarPackage

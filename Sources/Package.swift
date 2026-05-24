@@ -22,30 +22,52 @@ let package = Package(
             targets: ["ChineseCalendarPersistence"]
         ),
         .library(
+            name: "ChineseCalendarLogging",
+            targets: ["ChineseCalendarLogging"]
+        ),
+        .library(
             name: "ChineseCalendarUI",
             targets: ["ChineseCalendarUI"]
         )
     ],
     targets: [
         .target(
+            name: "ChineseCalendarLogging",
+            path: "ChineseCalendarLogging",
+            exclude: ["README.md", "Tests"]
+        ),
+        .target(
             name: "ChineseCalendarCore",
+            dependencies: ["ChineseCalendarLogging"],
             path: "ChineseCalendarCore",
             exclude: ["Tests"]
         ),
         .target(
             name: "ChineseCalendarData",
-            dependencies: ["ChineseCalendarCore"],
+            dependencies: [
+                "ChineseCalendarCore",
+                "ChineseCalendarLogging"
+            ],
             path: "ChineseCalendarData",
             exclude: ["Tests"]
         ),
         .target(
             name: "ChineseCalendarPersistence",
-            dependencies: ["ChineseCalendarCore", "ChineseCalendarData"],
+            dependencies: [
+                "ChineseCalendarCore",
+                "ChineseCalendarData",
+                "ChineseCalendarLogging"
+            ],
             path: "ChineseCalendarPersistence"
         ),
         .target(
             name: "ChineseCalendarUI",
-            dependencies: ["ChineseCalendarCore", "ChineseCalendarData", "ChineseCalendarPersistence"],
+            dependencies: [
+                "ChineseCalendarCore",
+                "ChineseCalendarData",
+                "ChineseCalendarPersistence",
+                "ChineseCalendarLogging"
+            ],
             path: "ChineseCalendarUI"
         ),
         .testTarget(
@@ -57,6 +79,11 @@ let package = Package(
             name: "ChineseCalendarDataTests",
             dependencies: ["ChineseCalendarCore", "ChineseCalendarData"],
             path: "ChineseCalendarData/Tests"
+        ),
+        .testTarget(
+            name: "ChineseCalendarLoggingTests",
+            dependencies: ["ChineseCalendarLogging"],
+            path: "ChineseCalendarLogging/Tests"
         )
     ]
 )

@@ -1,4 +1,5 @@
 import ChineseCalendarCore
+import ChineseCalendarLogging
 import ChineseCalendarPersistence
 import SwiftData
 import SwiftUI
@@ -96,6 +97,11 @@ public struct CalendarHomeView: View {
     }
 
     private func selectDefaultYearIfNeeded() {
+        guard !years.isEmpty else {
+            ChineseCalendarLog.ui.debug("CalendarHomeView is waiting for SwiftData years")
+            return
+        }
+
         guard selectedYear == nil else {
             return
         }
@@ -103,6 +109,10 @@ public struct CalendarHomeView: View {
         let fallbackYearNumber = ChineseLunarCalendar.yearNumber()
         selectedYearNumber = years.first { $0.lunarYearNumber == fallbackYearNumber }?.lunarYearNumber
             ?? years.last?.lunarYearNumber
+
+        if let selectedYearNumber {
+            ChineseCalendarLog.ui.info("Selected default lunar year \(selectedYearNumber)")
+        }
     }
 
     private func selectPreviousYear() {

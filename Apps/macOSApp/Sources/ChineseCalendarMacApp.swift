@@ -1,9 +1,14 @@
+import ChineseCalendarLogging
 import ChineseCalendarPersistence
 import ChineseCalendarUI
 import SwiftUI
 
 @main
 struct ChineseCalendarMacApp: App {
+    init() {
+        ChineseCalendarLog.app.notice("Launching macOS app")
+    }
+
     var body: some Scene {
         WindowGroup {
             CalendarHomeView()
