@@ -247,20 +247,18 @@ private struct SeedStoreBuilder {
         )
 
         let context = makeContext(for: container)
-        var availableDateExpressions = Dictionary(
-            uniqueKeysWithValues: dateExpressionRecords.map { ($0.id, $0) }
-        )
+        var availableDateExpressions = try keyedDateExpressions(from: dateExpressionRecords)
         var traditions: [String: OrthodoxTradition] = [:]
         var dynasties: [String: Dynasty] = [:]
         var boundaries: [String: OrthodoxBoundary] = [:]
 
         for record in dynastyRecords {
-            let dynasty = Dynasty(
+            let dynasty = try Dynasty(
                 id: record.id,
                 name: record.name,
                 shortName: record.shortName,
-                claimedStartDate: try takeDateExpression(record.claimedStartDateID, from: &availableDateExpressions),
-                claimedEndDate: try takeDateExpression(record.claimedEndDateID, from: &availableDateExpressions),
+                claimedStartDate: takeDateExpression(record.claimedStartDateID, from: &availableDateExpressions),
+                claimedEndDate: takeDateExpression(record.claimedEndDateID, from: &availableDateExpressions),
                 note: record.note
             )
             context.insert(dynasty)
@@ -284,12 +282,12 @@ private struct SeedStoreBuilder {
                 )
             }
 
-            let boundary = OrthodoxBoundary(
+            let boundary = try OrthodoxBoundary(
                 id: record.id,
                 traditionID: record.traditionID,
                 dateExpressionID: record.dateExpressionID,
                 tradition: tradition,
-                date: try takeDateExpression(record.dateExpressionID, from: &availableDateExpressions),
+                date: takeDateExpression(record.dateExpressionID, from: &availableDateExpressions),
                 note: record.note
             )
             context.insert(boundary)
@@ -351,6 +349,19 @@ private struct SeedStoreBuilder {
             throw SeedStoreBuilderError.missingReference("Missing ChineseDateExpression \(id).")
         }
         return makeDateExpression(from: record)
+    }
+
+    private func keyedDateExpressions(
+        from records: [ChineseDateExpressionRecord]
+    ) throws -> [String: ChineseDateExpressionRecord] {
+        var result: [String: ChineseDateExpressionRecord] = [:]
+        for record in records {
+            guard result[record.id] == nil else {
+                throw SeedStoreBuilderError.duplicateRecord("ChineseDateExpression", record.id)
+            }
+            result[record.id] = record
+        }
+        return result
     }
 
     private func makeDateExpression(from record: ChineseDateExpressionRecord) -> ChineseDateExpression {
@@ -584,6 +595,7 @@ private enum SeedStoreBuilderError: Error, LocalizedError {
     case sqliteCommandFailed(String)
     case missingReference(String)
     case unusedDateExpressions(String)
+    case duplicateRecord(String, String)
 
     var errorDescription: String? {
         switch self {
@@ -595,6 +607,8 @@ private enum SeedStoreBuilderError: Error, LocalizedError {
             message
         case let .unusedDateExpressions(ids):
             "Unused ChineseDateExpression records: \(ids)."
+        case let .duplicateRecord(entity, id):
+            "Duplicate \(entity) record id: \(id)."
         }
     }
 }

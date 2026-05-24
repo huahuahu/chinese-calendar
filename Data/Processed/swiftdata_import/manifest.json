@@ -49,7 +49,7 @@
   },
   "dynastyArtifact": {
     "artifact": "dynasty_periods",
-    "generatedAt": "2026-05-24T13:32:09.718Z",
+    "generatedAt": "2026-05-24T13:59:40.874Z",
     "generator": "Scripts/ImportChineseCalendar/generate_dynasty_periods.swift",
     "sourceURL": "https://ytliu0.github.io/ChineseCalendar/era_names_simp.html",
     "rawFile": "Data/Raw/ChineseCalendar/era_names_simp.html",
@@ -322,6 +322,7 @@
         "Automatically parsed h2 boundaries outside imported calendar coverage are kept as precision = unknown with sourceText preserved.",
         "No month-precision or day-precision dynasty boundary is automatically extracted in this version; sourceText is preserved for later refinement.",
         "OrthodoxPeriod records are concrete orthodox dynasty periods; segmentIndex and segmentName preserve the required narrative groups.",
+        "Dynasty.claimedEndDate preserves the polity's own end year, while OrthodoxPeriod uses shared half-open [start, end) boundaries for continuous orthodox assignment.",
         "Supplemental dynasties split compound h2 sections into specific h3/table polities such as 西汉、新、更始、魏、蜀汉、孙吴、刘宋、五代后梁后唐后晋后汉后周、北宋、南宋、元、明、清、中华民国、中华人民共和国.",
         "Non-orthodox polities such as 蜀汉、孙吴、北凉 remain Dynasty records but are not included in OrthodoxPeriod. 魏 is the Three Kingdoms orthodox period."
       ],

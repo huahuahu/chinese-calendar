@@ -13,6 +13,7 @@ const execFileAsync = promisify(execFile);
 
 const SOURCE_URL = "https://ytliu0.github.io/ChineseCalendar/era_names_simp.html";
 const RAW_FILE_NAME = "era_names_simp.html";
+const ORTHODOX_TRADITION_NAME = "正统史观";
 const ORTHODOX_SEGMENT_NAMES = [
   "秦汉",
   "魏晋南朝",
@@ -82,8 +83,8 @@ const SUPPLEMENTAL_DYNASTIES = [
   dynastySpec("chen", "陈", "陈", 557, 589, "陈 (557-589)"),
   dynastySpec("later_liang", "后梁", "后梁", 907, 923, "五代梁 (907 — 923)"),
   dynastySpec("later_tang", "后唐", "后唐", 923, 936, "五代唐 (923 — 936)"),
-  dynastySpec("later_jin", "后晋", "后晋", 936, 947, "五代晋 (936 — 946)"),
-  dynastySpec("later_han", "后汉", "后汉", 947, 951, "五代汉 (947 — 950)"),
+  dynastySpec("later_jin", "后晋", "后晋", 936, 946, "五代晋 (936 — 946)"),
+  dynastySpec("later_han", "后汉", "后汉", 947, 950, "五代汉 (947 — 950)"),
   dynastySpec("later_zhou", "后周", "后周", 951, 960, "五代周 (951 — 960)"),
   dynastySpec("northern_song", "北宋", "北宋", 960, 1127, "北宋 (960 — 1127)"),
   dynastySpec("southern_song", "南宋", "南宋", 1127, 1279, "南宋 (1127 — 1279)"),
@@ -111,8 +112,8 @@ const ORTHODOX_PERIOD_SPECS = [
   periodSpec("tang", "唐五代两宋", 618, 907, "唐 (618 — 907)"),
   periodSpec("later_liang", "唐五代两宋", 907, 923, "五代梁 (907 — 923)"),
   periodSpec("later_tang", "唐五代两宋", 923, 936, "五代唐 (923 — 936)"),
-  periodSpec("later_jin", "唐五代两宋", 936, 947, "五代晋 (936 — 946)"),
-  periodSpec("later_han", "唐五代两宋", 947, 951, "五代汉 (947 — 950)"),
+  periodSpec("later_jin", "唐五代两宋", 936, 947, "五代晋 (936 — 946); 正统边界使用半开区间 [936, 947)"),
+  periodSpec("later_han", "唐五代两宋", 947, 951, "五代汉 (947 — 950); 正统边界使用半开区间 [947, 951)"),
   periodSpec("later_zhou", "唐五代两宋", 951, 960, "五代周 (951 — 960)"),
   periodSpec("northern_song", "唐五代两宋", 960, 1127, "北宋 (960 — 1127)"),
   periodSpec("southern_song", "唐五代两宋", 1127, 1279, "南宋 (1127 — 1279)"),
@@ -304,7 +305,7 @@ async function fetchEraPage(upstreamCommit) {
   const failures = [];
   for (const url of urls) {
     try {
-      const { stdout } = await execFileAsync("/usr/bin/curl", [
+      const { stdout } = await execFileAsync(process.env.CURL ?? "curl", [
         "-L",
         "--fail",
         "--silent",
@@ -422,7 +423,7 @@ async function buildArtifact(rawSource, baseManifest, options) {
 
   const tradition = {
     id: "orthodox_sequence_qin_han_to_prc",
-    name: ORTHODOX_SEGMENT_NAMES.join(" -> "),
+    name: ORTHODOX_TRADITION_NAME,
     note: "Issue 18 first-version orthodox narrative sequence; ordered by OrthodoxPeriod.sequenceIndex."
   };
   records.orthodoxTraditions.push(tradition);
@@ -567,6 +568,10 @@ function parseCivilYear(value) {
 }
 
 function yearExpression(id, year, sourceText, note, availableIndexes) {
+  const normalizedNote = year < 0
+    ? `${note} BCE civil years use astronomical numbering, so 前${1 - year} maps to ${year}.`
+    : note;
+
   if (!availableIndexes.years.has(year)) {
     return {
       id,
@@ -574,7 +579,7 @@ function yearExpression(id, year, sourceText, note, availableIndexes) {
       index: null,
       sourceText,
       note:
-        `${note} Civil year ${year} is outside the current imported ChineseLunarYear coverage; ` +
+        `${normalizedNote} Civil year ${year} is outside the current imported ChineseLunarYear coverage; ` +
         "sourceText is preserved without a synthetic index."
     };
   }
@@ -584,7 +589,7 @@ function yearExpression(id, year, sourceText, note, availableIndexes) {
     precision: "year",
     index: year,
     sourceText,
-    note: `${note} BCE years use astronomical numbering, so 前221 maps to -220.`
+    note: normalizedNote
   };
 }
 
@@ -651,6 +656,7 @@ function buildSourceAudit(parsedSource, records, rawSource, baseManifest) {
       "Automatically parsed h2 boundaries outside imported calendar coverage are kept as precision = unknown with sourceText preserved.",
       "No month-precision or day-precision dynasty boundary is automatically extracted in this version; sourceText is preserved for later refinement.",
       "OrthodoxPeriod records are concrete orthodox dynasty periods; segmentIndex and segmentName preserve the required narrative groups.",
+      "Dynasty.claimedEndDate preserves the polity's own end year, while OrthodoxPeriod uses shared half-open [start, end) boundaries for continuous orthodox assignment.",
       "Supplemental dynasties split compound h2 sections into specific h3/table polities such as 西汉、新、更始、魏、蜀汉、孙吴、刘宋、五代后梁后唐后晋后汉后周、北宋、南宋、元、明、清、中华民国、中华人民共和国.",
       "Non-orthodox polities such as 蜀汉、孙吴、北凉 remain Dynasty records but are not included in OrthodoxPeriod. 魏 is the Three Kingdoms orthodox period."
     ],
@@ -807,12 +813,14 @@ function assertManifestCount(manifest, key, actual) {
 
 function validateRecords(artifact, availableIndexes) {
   const expressionIDs = new Set();
+  const expressionsByID = new Map();
   for (const expression of artifact.dateExpressions) {
     requireStableID(expression.id, "ChineseDateExpression.id");
     if (expressionIDs.has(expression.id)) {
       throw new Error(`Duplicate ChineseDateExpression ${expression.id}.`);
     }
     expressionIDs.add(expression.id);
+    expressionsByID.set(expression.id, expression);
     validateDateExpression(expression, availableIndexes);
   }
 
@@ -823,12 +831,14 @@ function validateRecords(artifact, availableIndexes) {
     requireNonEmptyString(dynasty.name, `Dynasty ${dynasty.id} name`);
     requireExpressionReference(expressionIDs, dynasty.claimedStartDateID, `Dynasty ${dynasty.id} claimedStartDateID`);
     requireExpressionReference(expressionIDs, dynasty.claimedEndDateID, `Dynasty ${dynasty.id} claimedEndDateID`);
-    const startExpression = artifact.dateExpressions.find((expression) => expression.id === dynasty.claimedStartDateID);
+    const startExpression = expressionsByID.get(dynasty.claimedStartDateID);
+    const endExpression = expressionsByID.get(dynasty.claimedEndDateID);
     const startIndex = sortableDateExpressionIndex(startExpression);
     if (startIndex < previousDynastyStartIndex) {
       throw new Error("Dynasty records must be sorted by claimed start date.");
     }
     previousDynastyStartIndex = startIndex;
+    validateClaimedDynastyRange(dynasty, startExpression, endExpression);
     if (dynastyIDs.has(dynasty.id)) {
       throw new Error(`Duplicate Dynasty ${dynasty.id}.`);
     }
@@ -846,6 +856,7 @@ function validateRecords(artifact, availableIndexes) {
   }
 
   const boundaryIDs = new Set();
+  const boundariesByID = new Map();
   for (const boundary of artifact.orthodoxBoundaries) {
     requireStableID(boundary.id, "OrthodoxBoundary.id");
     requireReference(traditionIDs, boundary.traditionID, `OrthodoxBoundary ${boundary.id} traditionID`);
@@ -854,6 +865,7 @@ function validateRecords(artifact, availableIndexes) {
       throw new Error(`Duplicate OrthodoxBoundary ${boundary.id}.`);
     }
     boundaryIDs.add(boundary.id);
+    boundariesByID.set(boundary.id, boundary);
   }
 
   const periodIDs = new Set();
@@ -885,6 +897,15 @@ function validateRecords(artifact, availableIndexes) {
     if (index > 0 && period.segmentIndex < periodsBySequence[index - 1].segmentIndex) {
       throw new Error("OrthodoxPeriod segmentIndex must be nondecreasing in sequence order.");
     }
+    validateOrthodoxPeriodBoundaries(period, boundariesByID, expressionsByID);
+    if (index > 0) {
+      const previousPeriod = periodsBySequence[index - 1];
+      if (previousPeriod.endBoundaryID !== period.startBoundaryID) {
+        throw new Error(
+          `OrthodoxPeriod ${period.id} must start at previous end boundary ${previousPeriod.endBoundaryID}.`
+        );
+      }
+    }
   }
 
   const compressedSegments = [];
@@ -898,6 +919,64 @@ function validateRecords(artifact, availableIndexes) {
       `Orthodox segment sequence is ${compressedSegments.join(" -> ")}, ` +
       `expected ${ORTHODOX_SEGMENT_NAMES.join(" -> ")}.`
     );
+  }
+}
+
+function validateClaimedDynastyRange(dynasty, startExpression, endExpression) {
+  const startYear = dateExpressionYear(startExpression);
+  const endYear = dateExpressionYear(endExpression);
+  if (startYear !== undefined && endYear !== undefined && startYear > endYear) {
+    throw new Error(`Dynasty ${dynasty.id} claimedStartDate must not be later than claimedEndDate.`);
+  }
+
+  const parsedRange = parseFirstSourceTextYearRange(startExpression.sourceText);
+  if (parsedRange === undefined) {
+    return;
+  }
+  if (startYear !== parsedRange.startYear || endYear !== parsedRange.endYear) {
+    throw new Error(
+      `Dynasty ${dynasty.id} claimed range ${startYear} — ${endYear} does not match sourceText ` +
+      `${parsedRange.startYear} — ${parsedRange.endYear}.`
+    );
+  }
+}
+
+function validateOrthodoxPeriodBoundaries(period, boundariesByID, expressionsByID) {
+  const startBoundary = boundariesByID.get(period.startBoundaryID);
+  const endBoundary = boundariesByID.get(period.endBoundaryID);
+  const startExpression = expressionsByID.get(startBoundary.dateExpressionID);
+  const endExpression = expressionsByID.get(endBoundary.dateExpressionID);
+  const startYear = dateExpressionYear(startExpression);
+  const endYear = dateExpressionYear(endExpression);
+  if (startYear === undefined || endYear === undefined) {
+    return;
+  }
+  if (startYear >= endYear) {
+    throw new Error(`OrthodoxPeriod ${period.id} must satisfy half-open startYear < endYear.`);
+  }
+}
+
+function dateExpressionYear(expression) {
+  return expression?.precision === "year" && Number.isInteger(expression.index)
+    ? expression.index
+    : undefined;
+}
+
+function parseFirstSourceTextYearRange(sourceText) {
+  if (typeof sourceText !== "string") {
+    return undefined;
+  }
+  const match = sourceText.match(/\(([^()]+?)\s*[—–-]\s*([^()]+?)\)/);
+  if (match === null) {
+    return undefined;
+  }
+  try {
+    return {
+      startYear: parseCivilYear(match[1]),
+      endYear: parseCivilYear(match[2])
+    };
+  } catch {
+    return undefined;
   }
 }
 
