@@ -43,8 +43,8 @@ struct MonthSwitcher: View {
                         stemIndex: selectedMonth.monthStemIndex,
                         branchIndex: selectedMonth.monthBranchIndex
                     ))
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .accessibilityElement(children: .combine)

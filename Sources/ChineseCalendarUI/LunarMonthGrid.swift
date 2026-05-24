@@ -86,8 +86,8 @@ private struct LunarDayCell: View {
                 stemIndex: day.dayStemIndex,
                 branchIndex: day.dayBranchIndex
             ))
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
+            .font(.subheadline)
+            .foregroundStyle(.secondary)
             Text(civilDateTitle)
                 .font(.subheadline)
                 .foregroundStyle(.tertiary)

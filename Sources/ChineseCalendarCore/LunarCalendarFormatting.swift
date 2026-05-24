@@ -32,11 +32,10 @@ public enum LunarCalendarFormatting {
         isLeapMonth: Bool,
         dayCount: Int? = nil
     ) -> String {
-        let monthName: String
-        if let monthNumber = LunarMonthNumber(rawValue: monthNumberInYear) {
-            monthName = LunarMonth(number: monthNumber, isLeapMonth: isLeapMonth).chineseName
+        let monthName: String = if let monthNumber = LunarMonthNumber(rawValue: monthNumberInYear) {
+            LunarMonth(number: monthNumber, isLeapMonth: isLeapMonth).chineseName
         } else {
-            monthName = isLeapMonth ? "闰\(monthNumberInYear)月" : "\(monthNumberInYear)月"
+            isLeapMonth ? "闰\(monthNumberInYear)月" : "\(monthNumberInYear)月"
         }
 
         guard let dayCount, let monthSize = LunarMonthSize(dayCount: dayCount) else {

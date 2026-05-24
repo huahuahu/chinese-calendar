@@ -12,8 +12,8 @@ struct LunarYearRow: View {
                 stemIndex: year.yearStemIndex,
                 branchIndex: year.yearBranchIndex
             ))
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
+            .font(.subheadline)
+            .foregroundStyle(.secondary)
         }
         .accessibilityElement(children: .combine)
     }
