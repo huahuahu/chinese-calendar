@@ -83,7 +83,9 @@ public final class CalendarAppState {
     }
 
     public func selectPreviousYear(in yearNumbers: [Int]) {
-        guard let selectedYearIndex = selectedYearIndex(in: yearNumbers), selectedYearIndex > yearNumbers.startIndex else {
+        guard let selectedYearIndex = selectedYearIndex(in: yearNumbers),
+              selectedYearIndex > yearNumbers.startIndex
+        else {
             return
         }
 
@@ -91,7 +93,9 @@ public final class CalendarAppState {
     }
 
     public func selectNextYear(in yearNumbers: [Int]) {
-        guard let selectedYearIndex = selectedYearIndex(in: yearNumbers), selectedYearIndex < yearNumbers.index(before: yearNumbers.endIndex) else {
+        guard let selectedYearIndex = selectedYearIndex(in: yearNumbers),
+              selectedYearIndex < yearNumbers.index(before: yearNumbers.endIndex)
+        else {
             return
         }
 
@@ -132,7 +136,9 @@ public final class CalendarAppState {
     }
 
     public func selectPreviousMonth(in monthIndexes: [Int]) {
-        guard let selectedMonthIndex = selectedMonthIndex(in: monthIndexes), selectedMonthIndex > monthIndexes.startIndex else {
+        guard let selectedMonthIndex = selectedMonthIndex(in: monthIndexes),
+              selectedMonthIndex > monthIndexes.startIndex
+        else {
             return
         }
 
@@ -140,7 +146,9 @@ public final class CalendarAppState {
     }
 
     public func selectNextMonth(in monthIndexes: [Int]) {
-        guard let selectedMonthIndex = selectedMonthIndex(in: monthIndexes), selectedMonthIndex < monthIndexes.index(before: monthIndexes.endIndex) else {
+        guard let selectedMonthIndex = selectedMonthIndex(in: monthIndexes),
+              selectedMonthIndex < monthIndexes.index(before: monthIndexes.endIndex)
+        else {
             return
         }
 

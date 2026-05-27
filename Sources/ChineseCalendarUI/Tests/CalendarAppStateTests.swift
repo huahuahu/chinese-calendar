@@ -1,5 +1,5 @@
-import Testing
 @testable import ChineseCalendarUI
+import Testing
 
 @MainActor
 @Suite("Calendar app state")

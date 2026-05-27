@@ -74,13 +74,13 @@ struct LunarYearDetailView: View {
                     state.selectPreviousYear(in: yearNumbers)
                 }
                 .disabled(!state.canSelectPreviousYear(in: yearNumbers))
-                    .help("切换到上一年")
+                .help("切换到上一年")
 
                 Button("下一年", systemImage: "chevron.right") {
                     state.selectNextYear(in: yearNumbers)
                 }
                 .disabled(!state.canSelectNextYear(in: yearNumbers))
-                    .help("切换到下一年")
+                .help("切换到下一年")
             }
         }
     }
