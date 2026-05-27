@@ -5,26 +5,18 @@ import SwiftUI
 struct MonthSwitcher: View {
     let months: [ChineseLunarMonth]
     let selectedMonth: ChineseLunarMonth
-    @Binding var selectedMonthIndex: Int?
+    @Bindable var state: CalendarAppState
 
-    private var selectedIndex: Int? {
-        months.firstIndex { $0.lunarMonthIndex == selectedMonth.lunarMonthIndex }
+    private var monthIndexes: [Int] {
+        months.map(\.lunarMonthIndex)
     }
 
     private var canSelectPreviousMonth: Bool {
-        guard let selectedIndex else {
-            return false
-        }
-
-        return selectedIndex > months.startIndex
+        state.canSelectPreviousMonth(in: monthIndexes)
     }
 
     private var canSelectNextMonth: Bool {
-        guard let selectedIndex else {
-            return false
-        }
-
-        return selectedIndex < months.index(before: months.endIndex)
+        state.canSelectNextMonth(in: monthIndexes)
     }
 
     var body: some View {
@@ -59,7 +51,7 @@ struct MonthSwitcher: View {
                 HStack(spacing: 8) {
                     ForEach(months, id: \.lunarMonthIndex) { month in
                         Button {
-                            selectedMonthIndex = month.lunarMonthIndex
+                            state.selectMonth(index: month.lunarMonthIndex)
                         } label: {
                             VStack(spacing: 4) {
                                 Text(monthTitle(month))
@@ -82,19 +74,11 @@ struct MonthSwitcher: View {
     }
 
     private func selectPreviousMonth() {
-        guard let selectedIndex, selectedIndex > months.startIndex else {
-            return
-        }
-
-        selectedMonthIndex = months[months.index(before: selectedIndex)].lunarMonthIndex
+        state.selectPreviousMonth(in: monthIndexes)
     }
 
     private func selectNextMonth() {
-        guard let selectedIndex, selectedIndex < months.index(before: months.endIndex) else {
-            return
-        }
-
-        selectedMonthIndex = months[months.index(after: selectedIndex)].lunarMonthIndex
+        state.selectNextMonth(in: monthIndexes)
     }
 
     private func monthTitle(_ month: ChineseLunarMonth) -> String {

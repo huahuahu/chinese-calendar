@@ -6,21 +6,28 @@ import SwiftUI
 
 public struct CalendarHomeView: View {
     @Query(sort: \ChineseLunarYear.lunarYearNumber) private var years: [ChineseLunarYear]
-    @State private var selectedYearNumber: Int?
-    @State private var selectedMonthIndex: Int?
+    @State private var appState: CalendarAppState
 
-    public init() {}
+    @MainActor
+    public init(appState: CalendarAppState = CalendarAppState()) {
+        _appState = State(initialValue: appState)
+    }
 
     @available(*, deprecated, message: "CalendarHomeView now selects the current lunar year automatically.")
-    public init(selectedDate _: ChineseCalendarDate?) {}
+    @MainActor
+    public init(selectedDate _: ChineseCalendarDate?) {
+        _appState = State(initialValue: CalendarAppState())
+    }
 
     public var body: some View {
-        NavigationSplitView {
-            List(selection: $selectedYearNumber) {
+        @Bindable var appState = appState
+
+        NavigationSplitView(columnVisibility: $appState.columnVisibility) {
+            List(selection: $appState.route) {
                 Section("农历年") {
                     ForEach(years, id: \.lunarYearNumber) { year in
                         LunarYearRow(year: year)
-                            .tag(year.lunarYearNumber)
+                            .tag(CalendarAppState.Route.lunarYear(year.lunarYearNumber))
                     }
                 }
             }
@@ -30,11 +37,8 @@ public struct CalendarHomeView: View {
                 if let selectedYear {
                     LunarYearDetailView(
                         year: selectedYear,
-                        selectedMonthIndex: $selectedMonthIndex,
-                        canSelectPreviousYear: canSelectPreviousYear,
-                        canSelectNextYear: canSelectNextYear,
-                        selectPreviousYear: selectPreviousYear,
-                        selectNextYear: selectNextYear
+                        state: appState,
+                        yearNumbers: yearNumbers
                     )
                 } else {
                     ContentUnavailableView {
@@ -51,41 +55,18 @@ public struct CalendarHomeView: View {
         .onChange(of: years.map(\.lunarYearNumber)) {
             selectDefaultYearIfNeeded()
         }
-        .onChange(of: selectedYearNumber) {
-            selectedMonthIndex = nil
-        }
+    }
+
+    private var yearNumbers: [Int] {
+        years.map(\.lunarYearNumber)
     }
 
     private var selectedYear: ChineseLunarYear? {
-        guard let selectedYearNumber else {
+        guard let selectedYearNumber = appState.selectedYearNumber else {
             return nil
         }
 
         return years.first { $0.lunarYearNumber == selectedYearNumber }
-    }
-
-    private var selectedYearIndex: Int? {
-        guard let selectedYearNumber else {
-            return nil
-        }
-
-        return years.firstIndex { $0.lunarYearNumber == selectedYearNumber }
-    }
-
-    private var canSelectPreviousYear: Bool {
-        guard let selectedYearIndex else {
-            return false
-        }
-
-        return selectedYearIndex > years.startIndex
-    }
-
-    private var canSelectNextYear: Bool {
-        guard let selectedYearIndex else {
-            return false
-        }
-
-        return selectedYearIndex < years.index(before: years.endIndex)
     }
 
     private var emptyStateDescription: String {
@@ -102,33 +83,11 @@ public struct CalendarHomeView: View {
             return
         }
 
-        guard selectedYear == nil else {
+        guard let defaultYearNumber = appState.selectDefaultYearIfNeeded(from: yearNumbers) else {
             return
         }
 
-        let fallbackYearNumber = ChineseLunarCalendar.yearNumber()
-        selectedYearNumber = years.first { $0.lunarYearNumber == fallbackYearNumber }?.lunarYearNumber
-            ?? years.last?.lunarYearNumber
-
-        if let selectedYearNumber {
-            ChineseCalendarLog.ui.info("Selected default lunar year \(selectedYearNumber)")
-        }
-    }
-
-    private func selectPreviousYear() {
-        guard let selectedYearIndex, selectedYearIndex > years.startIndex else {
-            return
-        }
-
-        selectedYearNumber = years[years.index(before: selectedYearIndex)].lunarYearNumber
-    }
-
-    private func selectNextYear() {
-        guard let selectedYearIndex, selectedYearIndex < years.index(before: years.endIndex) else {
-            return
-        }
-
-        selectedYearNumber = years[years.index(after: selectedYearIndex)].lunarYearNumber
+        ChineseCalendarLog.ui.info("Selected default lunar year \(defaultYearNumber)")
     }
 }
 

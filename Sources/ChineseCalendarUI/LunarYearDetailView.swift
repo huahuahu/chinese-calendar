@@ -5,28 +5,19 @@ import SwiftUI
 
 struct LunarYearDetailView: View {
     let year: ChineseLunarYear
-    @Binding var selectedMonthIndex: Int?
-    let canSelectPreviousYear: Bool
-    let canSelectNextYear: Bool
-    let selectPreviousYear: () -> Void
-    let selectNextYear: () -> Void
+    @Bindable var state: CalendarAppState
+    let yearNumbers: [Int]
 
     @Query private var months: [ChineseLunarMonth]
 
     init(
         year: ChineseLunarYear,
-        selectedMonthIndex: Binding<Int?>,
-        canSelectPreviousYear: Bool,
-        canSelectNextYear: Bool,
-        selectPreviousYear: @escaping () -> Void,
-        selectNextYear: @escaping () -> Void
+        state: CalendarAppState,
+        yearNumbers: [Int]
     ) {
         self.year = year
-        _selectedMonthIndex = selectedMonthIndex
-        self.canSelectPreviousYear = canSelectPreviousYear
-        self.canSelectNextYear = canSelectNextYear
-        self.selectPreviousYear = selectPreviousYear
-        self.selectNextYear = selectNextYear
+        self.state = state
+        self.yearNumbers = yearNumbers
 
         let lunarYearNumber = year.lunarYearNumber
         _months = Query(
@@ -38,7 +29,7 @@ struct LunarYearDetailView: View {
     }
 
     private var selectedMonth: ChineseLunarMonth? {
-        guard let selectedMonthIndex else {
+        guard let selectedMonthIndex = state.selectedMonthIndex else {
             return monthsInYearStartOrder.first
         }
 
@@ -63,7 +54,7 @@ struct LunarYearDetailView: View {
                     MonthSwitcher(
                         months: monthsInYearStartOrder,
                         selectedMonth: selectedMonth,
-                        selectedMonthIndex: $selectedMonthIndex
+                        state: state
                     )
 
                     LunarMonthGrid(month: selectedMonth)
@@ -79,12 +70,16 @@ struct LunarYearDetailView: View {
         .navigationTitle(LunarCalendarFormatting.yearTitle(lunarYearNumber: year.lunarYearNumber))
         .toolbar {
             ToolbarItemGroup(placement: .primaryAction) {
-                Button("上一年", systemImage: "chevron.left", action: selectPreviousYear)
-                    .disabled(!canSelectPreviousYear)
+                Button("上一年", systemImage: "chevron.left") {
+                    state.selectPreviousYear(in: yearNumbers)
+                }
+                .disabled(!state.canSelectPreviousYear(in: yearNumbers))
                     .help("切换到上一年")
 
-                Button("下一年", systemImage: "chevron.right", action: selectNextYear)
-                    .disabled(!canSelectNextYear)
+                Button("下一年", systemImage: "chevron.right") {
+                    state.selectNextYear(in: yearNumbers)
+                }
+                .disabled(!state.canSelectNextYear(in: yearNumbers))
                     .help("切换到下一年")
             }
         }
@@ -99,10 +94,6 @@ struct LunarYearDetailView: View {
     }
 
     private func selectDefaultMonthIfNeeded() {
-        guard monthsInYearStartOrder.contains(where: { $0.lunarMonthIndex == selectedMonthIndex }) == false else {
-            return
-        }
-
-        selectedMonthIndex = monthsInYearStartOrder.first?.lunarMonthIndex
+        state.selectDefaultMonthIfNeeded(from: monthsInYearStartOrder.map(\.lunarMonthIndex))
     }
 }
