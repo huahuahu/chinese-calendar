@@ -20,10 +20,10 @@ public struct CalendarHomeView: View {
     }
 
     public var body: some View {
-        @Bindable var appState = appState
+        @Bindable var state = appState
 
-        NavigationSplitView(columnVisibility: $appState.columnVisibility) {
-            List(selection: $appState.route) {
+        NavigationSplitView(columnVisibility: $state.columnVisibility) {
+            List(selection: $state.route) {
                 Section("农历年") {
                     ForEach(years, id: \.lunarYearNumber) { year in
                         LunarYearRow(year: year)
@@ -37,7 +37,7 @@ public struct CalendarHomeView: View {
                 if let selectedYear {
                     LunarYearDetailView(
                         year: selectedYear,
-                        state: appState,
+                        state: state,
                         yearNumbers: yearNumbers
                     )
                 } else {
@@ -62,7 +62,7 @@ public struct CalendarHomeView: View {
     }
 
     private var selectedYear: ChineseLunarYear? {
-        guard let selectedYearNumber = appState.selectedYearNumber else {
+        guard case let .lunarYear(selectedYearNumber) = appState.route else {
             return nil
         }
 

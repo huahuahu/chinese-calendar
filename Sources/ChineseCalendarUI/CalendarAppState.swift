@@ -5,44 +5,88 @@ import SwiftUI
 @MainActor
 @Observable
 public final class CalendarAppState {
-    public enum Route: Hashable, Sendable {
-        case lunarYear(Int)
+    public typealias Route = CalendarNavigationState.Route
+
+    public let navigation: CalendarNavigationState
+    public let lunarSelection: LunarSelectionState
+    public let dynastySelection: DynastySelectionState
+
+    public init(
+        navigation: CalendarNavigationState = CalendarNavigationState(),
+        lunarSelection: LunarSelectionState = LunarSelectionState(),
+        dynastySelection: DynastySelectionState = DynastySelectionState()
+    ) {
+        self.navigation = navigation
+        self.lunarSelection = lunarSelection
+        self.dynastySelection = dynastySelection
+        synchronizeSelectionsFromRoute()
     }
 
-    public var columnVisibility: NavigationSplitViewVisibility
+    public convenience init(
+        route: Route? = nil,
+        selectedMonthIndex: Int? = nil,
+        selectedDayIndex: Int? = nil,
+        selectedDynastyID: String? = nil,
+        columnVisibility: NavigationSplitViewVisibility = .automatic
+    ) {
+        self.init(
+            navigation: CalendarNavigationState(route: route, columnVisibility: columnVisibility),
+            lunarSelection: LunarSelectionState(
+                selectedYearNumber: route?.lunarYearNumber,
+                selectedMonthIndex: selectedMonthIndex,
+                selectedDayIndex: selectedDayIndex
+            ),
+            dynastySelection: DynastySelectionState(selectedDynastyID: selectedDynastyID ?? route?.dynastyID)
+        )
+    }
+
+    public var columnVisibility: NavigationSplitViewVisibility {
+        get { navigation.columnVisibility }
+        set { navigation.columnVisibility = newValue }
+    }
+
     public var route: Route? {
-        didSet {
-            guard route != oldValue else {
+        get { navigation.route }
+        set {
+            let oldRoute = navigation.route
+            navigation.route = newValue
+
+            guard newValue != oldRoute else {
                 return
             }
 
-            selectedMonthIndex = nil
+            synchronizeSelectionsFromRoute()
         }
-    }
-
-    public var selectedMonthIndex: Int?
-
-    public init(
-        route: Route? = nil,
-        selectedMonthIndex: Int? = nil,
-        columnVisibility: NavigationSplitViewVisibility = .automatic
-    ) {
-        self.route = route
-        self.selectedMonthIndex = selectedMonthIndex
-        self.columnVisibility = columnVisibility
     }
 
     public var selectedYearNumber: Int? {
-        get {
-            guard case let .lunarYear(yearNumber) = route else {
-                return nil
-            }
+        get { lunarSelection.selectedYearNumber }
+        set { selectLunarYear(number: newValue) }
+    }
 
-            return yearNumber
-        }
-        set {
-            route = newValue.map(Route.lunarYear)
-        }
+    public var selectedMonthIndex: Int? {
+        get { lunarSelection.selectedMonthIndex }
+        set { lunarSelection.selectMonth(index: newValue) }
+    }
+
+    public var selectedDayIndex: Int? {
+        get { lunarSelection.selectedDayIndex }
+        set { lunarSelection.selectDay(index: newValue) }
+    }
+
+    public var selectedDynastyID: String? {
+        get { dynastySelection.selectedDynastyID }
+        set { selectDynasty(id: newValue) }
+    }
+
+    public func selectLunarYear(number: Int?) {
+        lunarSelection.selectYear(number: number)
+        navigation.route = number.map(Route.lunarYear)
+    }
+
+    public func selectDynasty(id: String?) {
+        dynastySelection.selectDynasty(id: id)
+        navigation.route = id.map(Route.dynasty)
     }
 
     @discardableResult
@@ -50,124 +94,88 @@ public final class CalendarAppState {
         from yearNumbers: [Int],
         fallbackYearNumber: Int = ChineseLunarCalendar.yearNumber()
     ) -> Int? {
-        guard !yearNumbers.isEmpty else {
+        guard let selectedYearNumber = lunarSelection.selectDefaultYearIfNeeded(
+            from: yearNumbers,
+            fallbackYearNumber: fallbackYearNumber
+        ) else {
             return nil
         }
 
-        if let selectedYearNumber, yearNumbers.contains(selectedYearNumber) {
-            return nil
+        if navigation.route?.dynastyID == nil {
+            navigation.route = .lunarYear(selectedYearNumber)
         }
 
-        guard let defaultYearNumber = yearNumbers.first(where: { $0 == fallbackYearNumber }) ?? yearNumbers.last else {
-            return nil
-        }
-
-        selectedYearNumber = defaultYearNumber
-        return defaultYearNumber
+        return selectedYearNumber
     }
 
     public func canSelectPreviousYear(in yearNumbers: [Int]) -> Bool {
-        guard let selectedYearIndex = selectedYearIndex(in: yearNumbers) else {
-            return false
-        }
-
-        return selectedYearIndex > yearNumbers.startIndex
+        lunarSelection.canSelectPreviousYear(in: yearNumbers)
     }
 
     public func canSelectNextYear(in yearNumbers: [Int]) -> Bool {
-        guard let selectedYearIndex = selectedYearIndex(in: yearNumbers) else {
-            return false
-        }
-
-        return selectedYearIndex < yearNumbers.index(before: yearNumbers.endIndex)
+        lunarSelection.canSelectNextYear(in: yearNumbers)
     }
 
     public func selectPreviousYear(in yearNumbers: [Int]) {
-        guard let selectedYearIndex = selectedYearIndex(in: yearNumbers),
-              selectedYearIndex > yearNumbers.startIndex
-        else {
-            return
-        }
-
-        selectedYearNumber = yearNumbers[yearNumbers.index(before: selectedYearIndex)]
+        lunarSelection.selectPreviousYear(in: yearNumbers)
+        navigation.route = lunarSelection.selectedYearNumber.map(Route.lunarYear)
     }
 
     public func selectNextYear(in yearNumbers: [Int]) {
-        guard let selectedYearIndex = selectedYearIndex(in: yearNumbers),
-              selectedYearIndex < yearNumbers.index(before: yearNumbers.endIndex)
-        else {
-            return
-        }
-
-        selectedYearNumber = yearNumbers[yearNumbers.index(after: selectedYearIndex)]
+        lunarSelection.selectNextYear(in: yearNumbers)
+        navigation.route = lunarSelection.selectedYearNumber.map(Route.lunarYear)
     }
 
     public func selectMonth(index: Int?) {
-        selectedMonthIndex = index
+        lunarSelection.selectMonth(index: index)
     }
 
     public func selectDefaultMonthIfNeeded(from monthIndexes: [Int]) {
-        guard !monthIndexes.isEmpty else {
-            selectedMonthIndex = nil
-            return
-        }
-
-        guard monthIndexes.contains(where: { $0 == selectedMonthIndex }) == false else {
-            return
-        }
-
-        selectedMonthIndex = monthIndexes.first
+        lunarSelection.selectDefaultMonthIfNeeded(from: monthIndexes)
     }
 
     public func canSelectPreviousMonth(in monthIndexes: [Int]) -> Bool {
-        guard let selectedMonthIndex = selectedMonthIndex(in: monthIndexes) else {
-            return false
-        }
-
-        return selectedMonthIndex > monthIndexes.startIndex
+        lunarSelection.canSelectPreviousMonth(in: monthIndexes)
     }
 
     public func canSelectNextMonth(in monthIndexes: [Int]) -> Bool {
-        guard let selectedMonthIndex = selectedMonthIndex(in: monthIndexes) else {
-            return false
-        }
-
-        return selectedMonthIndex < monthIndexes.index(before: monthIndexes.endIndex)
+        lunarSelection.canSelectNextMonth(in: monthIndexes)
     }
 
     public func selectPreviousMonth(in monthIndexes: [Int]) {
-        guard let selectedMonthIndex = selectedMonthIndex(in: monthIndexes),
-              selectedMonthIndex > monthIndexes.startIndex
-        else {
-            return
-        }
-
-        self.selectedMonthIndex = monthIndexes[monthIndexes.index(before: selectedMonthIndex)]
+        lunarSelection.selectPreviousMonth(in: monthIndexes)
     }
 
     public func selectNextMonth(in monthIndexes: [Int]) {
-        guard let selectedMonthIndex = selectedMonthIndex(in: monthIndexes),
-              selectedMonthIndex < monthIndexes.index(before: monthIndexes.endIndex)
-        else {
-            return
-        }
-
-        self.selectedMonthIndex = monthIndexes[monthIndexes.index(after: selectedMonthIndex)]
+        lunarSelection.selectNextMonth(in: monthIndexes)
     }
 
-    private func selectedYearIndex(in yearNumbers: [Int]) -> [Int].Index? {
-        guard let selectedYearNumber else {
+    private func synchronizeSelectionsFromRoute() {
+        switch navigation.route {
+        case let .lunarYear(yearNumber):
+            lunarSelection.selectYear(number: yearNumber)
+        case let .dynasty(dynastyID):
+            dynastySelection.selectDynasty(id: dynastyID)
+        case nil:
+            lunarSelection.selectYear(number: nil)
+        }
+    }
+}
+
+private extension CalendarNavigationState.Route {
+    var lunarYearNumber: Int? {
+        guard case let .lunarYear(yearNumber) = self else {
             return nil
         }
 
-        return yearNumbers.firstIndex(of: selectedYearNumber)
+        return yearNumber
     }
 
-    private func selectedMonthIndex(in monthIndexes: [Int]) -> [Int].Index? {
-        guard let selectedMonthIndex else {
+    var dynastyID: String? {
+        guard case let .dynasty(dynastyID) = self else {
             return nil
         }
 
-        return monthIndexes.firstIndex(of: selectedMonthIndex)
+        return dynastyID
     }
 }
