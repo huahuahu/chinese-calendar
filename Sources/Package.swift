@@ -68,7 +68,8 @@ let package = Package(
                 "ChineseCalendarPersistence",
                 "ChineseCalendarLogging"
             ],
-            path: "ChineseCalendarUI"
+            path: "ChineseCalendarUI",
+            exclude: ["Tests"]
         ),
         .testTarget(
             name: "ChineseCalendarCoreTests",
@@ -84,6 +85,11 @@ let package = Package(
             name: "ChineseCalendarLoggingTests",
             dependencies: ["ChineseCalendarLogging"],
             path: "ChineseCalendarLogging/Tests"
+        ),
+        .testTarget(
+            name: "ChineseCalendarUITests",
+            dependencies: ["ChineseCalendarUI"],
+            path: "ChineseCalendarUI/Tests"
         )
     ]
 )
