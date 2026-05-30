@@ -9,6 +9,12 @@ public enum ChineseCalendarSeedStore {
     static let resourceBundleName = "ChineseCalendarSeedStore"
     static let resourceBundleExtension = "bundle"
     static let sharedStoreDirectoryName = "ChineseCalendarStore"
+    static let downloadsDirectoryName = "ChineseCalendarDownloads"
+}
+
+public enum ChineseCalendarSeedStoreContentLevel: String, Codable, Sendable {
+    case base
+    case full
 }
 
 enum ChineseCalendarStoreError: Error, LocalizedError {
@@ -80,7 +86,7 @@ public enum ChineseCalendarModelContainerFactory {
         return try ModelContainer(for: schema, configurations: [configuration])
     }
 
-    private static func sharedStoreDirectory(
+    public static func sharedStoreDirectory(
         appGroupIdentifier: String,
         fileManager: FileManager = .default
     ) throws -> URL {
@@ -99,6 +105,84 @@ public enum ChineseCalendarModelContainerFactory {
         )
         try fileManager.createDirectory(at: directoryURL, withIntermediateDirectories: true)
         return directoryURL
+    }
+
+    public static func sharedStoreURL(
+        appGroupIdentifier: String = ChineseCalendarAppConfiguration.appGroupIdentifier,
+        fileManager: FileManager = .default
+    ) throws -> URL {
+        try sharedStoreDirectory(
+            appGroupIdentifier: appGroupIdentifier,
+            fileManager: fileManager
+        )
+        .appendingPathComponent(ChineseCalendarSeedStore.storeFileName)
+    }
+
+    public static func sharedStoreManifestURL(
+        appGroupIdentifier: String = ChineseCalendarAppConfiguration.appGroupIdentifier,
+        fileManager: FileManager = .default
+    ) throws -> URL {
+        try sharedStoreDirectory(
+            appGroupIdentifier: appGroupIdentifier,
+            fileManager: fileManager
+        )
+        .appendingPathComponent(ChineseCalendarSeedStore.manifestFileName)
+    }
+
+    public static func downloadsDirectory(
+        appGroupIdentifier: String = ChineseCalendarAppConfiguration.appGroupIdentifier,
+        fileManager: FileManager = .default
+    ) throws -> URL {
+        guard let containerURL = fileManager.containerURL(
+            forSecurityApplicationGroupIdentifier: appGroupIdentifier
+        ) else {
+            ChineseCalendarLog.persistence.error(
+                "Missing app group container for \(appGroupIdentifier, privacy: .public)"
+            )
+            throw ChineseCalendarStoreError.missingAppGroupContainer(appGroupIdentifier)
+        }
+
+        let directoryURL = containerURL.appendingPathComponent(
+            ChineseCalendarSeedStore.downloadsDirectoryName,
+            isDirectory: true
+        )
+        try fileManager.createDirectory(at: directoryURL, withIntermediateDirectories: true)
+        return directoryURL
+    }
+
+    public static func installedStoreContentLevel(
+        appGroupIdentifier: String = ChineseCalendarAppConfiguration.appGroupIdentifier,
+        fileManager: FileManager = .default
+    ) throws -> ChineseCalendarSeedStoreContentLevel? {
+        let manifestURL = try sharedStoreManifestURL(
+            appGroupIdentifier: appGroupIdentifier,
+            fileManager: fileManager
+        )
+        guard fileManager.fileExists(atPath: manifestURL.path) else {
+            return nil
+        }
+
+        return try seedStoreContentLevel(at: manifestURL)
+    }
+
+    public static func installedStoreDatasetVersion(
+        appGroupIdentifier: String = ChineseCalendarAppConfiguration.appGroupIdentifier,
+        fileManager: FileManager = .default
+    ) throws -> String? {
+        let manifestURL = try sharedStoreManifestURL(
+            appGroupIdentifier: appGroupIdentifier,
+            fileManager: fileManager
+        )
+        guard fileManager.fileExists(atPath: manifestURL.path) else {
+            return nil
+        }
+
+        let data = try Data(contentsOf: manifestURL)
+        guard let manifest = try JSONSerialization.jsonObject(with: data) as? [String: Any] else {
+            return nil
+        }
+
+        return manifest["datasetVersion"] as? String ?? manifest["generatedAt"] as? String
     }
 
     private static func installSeedStoreIfNeeded(
@@ -171,7 +255,26 @@ public enum ChineseCalendarModelContainerFactory {
             return true
         }
 
+        let seedContentLevel = try seedStoreContentLevel(at: seedManifestURL)
+        let installedContentLevel = try seedStoreContentLevel(at: installedManifestURL)
+        if seedContentLevel == .base, installedContentLevel == .full {
+            ChineseCalendarLog.persistence
+                .info("Keeping installed full seed store instead of reinstalling bundled base store")
+            return false
+        }
+
         return try Data(contentsOf: seedManifestURL) != Data(contentsOf: installedManifestURL)
+    }
+
+    private static func seedStoreContentLevel(at manifestURL: URL) throws -> ChineseCalendarSeedStoreContentLevel? {
+        let data = try Data(contentsOf: manifestURL)
+        guard let manifest = try JSONSerialization.jsonObject(with: data) as? [String: Any],
+              let rawValue = manifest["seedStoreContentLevel"] as? String
+        else {
+            return nil
+        }
+
+        return ChineseCalendarSeedStoreContentLevel(rawValue: rawValue)
     }
 
     private static func seedStoreResourceURL(in bundle: Bundle) -> URL? {
@@ -202,7 +305,7 @@ public enum ChineseCalendarModelContainerFactory {
     }
 }
 
-private enum ChineseCalendarSeedStoreFiles {
+enum ChineseCalendarSeedStoreFiles {
     static func removeStoreFiles(
         in directoryURL: URL,
         storeFileName: String = ChineseCalendarSeedStore.storeFileName,

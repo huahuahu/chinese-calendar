@@ -2,7 +2,7 @@
 
 这个目录是把 `Data/Processed/swiftdata_import` 转成 SwiftData SQLite seed store 的脚本包。
 
-它只负责离线生成 app bundle 里的 seed store：读取 JSONL、写入 SwiftData model、收尾 SQLite journal，并复制 manifest。运行时如何安装到 App Group、widget 如何打开共享 store，不在这个 README 里展开。
+它只负责离线生成 seed store：读取 JSONL、写入 SwiftData model、收尾 SQLite journal，并复制 manifest。默认生成随 app bundle 发布的 `base` store；也可以显式生成远端发布用的 `full` store。
 
 ## 运行
 
@@ -12,6 +12,7 @@
 swift run -c release --package-path Scripts/BuildChineseCalendarSeedStore ChineseCalendarSeedStoreBuilder \
   --input Data/Processed/swiftdata_import \
   --output Apps/Shared/Resources/ChineseCalendarSeedStore.bundle \
+  --content-level base \
   --save-interval 5000
 ```
 
@@ -21,6 +22,7 @@ swift run -c release --package-path Scripts/BuildChineseCalendarSeedStore Chines
 swift run --package-path Scripts/BuildChineseCalendarSeedStore ChineseCalendarSeedStoreBuilder \
   --input ../../Data/Processed/swiftdata_import \
   --output ../../Apps/Shared/Resources/ChineseCalendarSeedStore.bundle \
+  --content-level base \
   --save-interval 2000
 ```
 
@@ -31,10 +33,13 @@ swift run --package-path Scripts/BuildChineseCalendarSeedStore ChineseCalendarSe
 ```text
 --input <path>          SwiftData import JSONL 目录
 --output <path>         输出的 resource bundle 目录
+--content-level <level> 输出内容级别：base 或 full，默认 base
 --keep-output           不删除整个 output 目录，只清理旧 SQLite store 文件
 --save-interval <count> 每导入多少条日数据保存一次，必须为正整数
 --help                  打印帮助
 ```
+
+`base` store 会导入 schema、农历年、农历月、朝代和正统数据，但跳过 `CalendarDay`、`CivilDate`、`ChineseLunarDay` 日级数据。`full` store 会导入全部数据，适合压缩后发布到远端。
 
 默认会先删除 output 目录，再重新生成。使用 `--keep-output` 时，脚本仍会删除旧的：
 
@@ -62,7 +67,7 @@ Data/Processed/swiftdata_import/
 2. `ChineseLunarMonth`
 3. `CalendarDay` + `CivilDate` + `ChineseLunarDay`
 
-日数据按 civil year 分目录读取，并按目录名数字升序导入。
+`full` 模式下，日数据按 civil year 分目录读取，并按目录名数字升序导入。`base` 模式会跳过第 3 步。
 
 ## 输出
 
@@ -78,10 +83,14 @@ Apps/Shared/Resources/ChineseCalendarSeedStore.bundle/
 
 ```sql
 PRAGMA wal_checkpoint(TRUNCATE);
+DELETE FROM ACHANGE;
+DELETE FROM ATRANSACTION;
+DELETE FROM ATRANSACTIONSTRING;
+VACUUM;
 PRAGMA journal_mode=DELETE;
 ```
 
-然后删除 `ChineseCalendar.sqlite-wal` 和 `ChineseCalendar.sqlite-shm`。最终 bundle 里应该只有一个 SQLite 主文件和 manifest。
+然后删除 `ChineseCalendar.sqlite-wal` 和 `ChineseCalendar.sqlite-shm`。这会保留 SwiftData/Core Data 需要的内部表结构，但清空构建导入阶段产生的 transaction-history 行。最终 bundle 里应该只有一个 SQLite 主文件和 manifest。
 
 ## 正确性检查
 
@@ -131,6 +140,16 @@ select 'ChineseLunarYear', count(*) from ZCHINESELUNARYEAR;
 CalendarDay|884256
 CivilDate|884256
 ChineseLunarDay|884256
+ChineseLunarMonth|29944
+ChineseLunarYear|2421
+```
+
+base store 期望为：
+
+```text
+CalendarDay|0
+CivilDate|0
+ChineseLunarDay|0
 ChineseLunarMonth|29944
 ChineseLunarYear|2421
 ```
