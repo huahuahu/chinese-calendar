@@ -56,7 +56,6 @@ targets:
       base:
         PRODUCT_NAME: Chinese Calendar
         PRODUCT_BUNDLE_IDENTIFIER: com.tiger.suzhou.ChineseCalendar
-        INFOPLIST_KEY_UILaunchScreen_Generation: YES
         SUPPORTED_PLATFORMS: iphoneos iphonesimulator
         TARGETED_DEVICE_FAMILY: 1,2
         SUPPORTS_MACCATALYST: NO
@@ -71,11 +70,13 @@ targets:
       path: Apps/iOSApp/Info.plist
       properties:
         CFBundleDisplayName: Chinese Calendar
+        ChineseCalendarFullSeedStoreManifestURL: https://github.com/huahuahu/chinese-calendar/releases/latest/download/ChineseCalendarFullSeedStoreManifest.json
         CFBundleURLTypes:
           - CFBundleURLName: com.tiger.suzhou.ChineseCalendar
             CFBundleURLSchemes:
               - chinesecalendar
               - chinese-calendar
+        UILaunchScreen: {}
 
   ChineseCalendar-macOS:
     type: application
@@ -116,7 +117,6 @@ targets:
       base:
         PRODUCT_NAME: Chinese Calendar
         PRODUCT_BUNDLE_IDENTIFIER: com.tiger.suzhou.ChineseCalendar
-        INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.reference
         SWIFT_VERSION: 6.0
         CODE_SIGN_STYLE: Automatic
         DEVELOPMENT_TEAM: 28TY995J85
@@ -127,6 +127,7 @@ targets:
       path: Apps/macOSApp/Info.plist
       properties:
         CFBundleDisplayName: Chinese Calendar
+        ChineseCalendarFullSeedStoreManifestURL: https://github.com/huahuahu/chinese-calendar/releases/latest/download/ChineseCalendarFullSeedStoreManifest.json
         LSApplicationCategoryType: public.app-category.reference
         CFBundleURLTypes:
           - CFBundleURLName: com.tiger.suzhou.ChineseCalendar
