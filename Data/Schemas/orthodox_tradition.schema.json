@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://chinese-calendar.local/schemas/orthodox_tradition.schema.json",
+  "title": "OrthodoxTraditionRecord",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "name",
+    "note"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "note": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "x-codegen": {
+    "record": true,
+    "typeName": "OrthodoxTraditionRecord",
+    "dataFile": "orthodox_traditions.jsonl"
+  }
+}

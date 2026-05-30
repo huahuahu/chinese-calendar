@@ -90,7 +90,9 @@ jobs:
           echo "$RUNNER_TEMP/bin" >> "$GITHUB_PATH"
 
       - name: Run tests
-        run: ./Scripts/test.sh
+        run: |
+          ./Scripts/validate_data_schemas.sh
+          ./Scripts/test.sh
 
       - name: Generate Xcode project
         run: ./Scripts/generate_xcodeproj.sh

@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://chinese-calendar.local/schemas/chinese_lunar_year.schema.json",
+  "title": "ChineseLunarYearRecord",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "lunarYearNumber",
+    "yearStemIndex",
+    "yearBranchIndex"
+  ],
+  "properties": {
+    "lunarYearNumber": {
+      "type": "integer"
+    },
+    "yearStemIndex": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9
+    },
+    "yearBranchIndex": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 11
+    }
+  },
+  "x-codegen": {
+    "record": true,
+    "typeName": "LunarYearRecord",
+    "dataFile": "chinese_lunar_years.jsonl"
+  }
+}

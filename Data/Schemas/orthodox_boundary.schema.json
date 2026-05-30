@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://chinese-calendar.local/schemas/orthodox_boundary.schema.json",
+  "title": "OrthodoxBoundaryRecord",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "traditionID",
+    "dateExpressionID",
+    "note"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "traditionID": {
+      "type": "string",
+      "minLength": 1
+    },
+    "dateExpressionID": {
+      "type": "string",
+      "minLength": 1
+    },
+    "note": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "x-codegen": {
+    "record": true,
+    "typeName": "OrthodoxBoundaryRecord",
+    "dataFile": "orthodox_boundaries.jsonl"
+  }
+}
