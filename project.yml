@@ -70,7 +70,7 @@ targets:
       path: Apps/iOSApp/Info.plist
       properties:
         CFBundleDisplayName: Chinese Calendar
-        ChineseCalendarFullSeedStoreManifestURL: https://github.com/huahuahu/chinese-calendar/releases/latest/download/ChineseCalendarFullSeedStoreManifest.json
+        ChineseCalendarFullSeedStoreManifestURL: https://github.com/huahuahu/chinese-calendar/releases/download/full-seed-store-2026.05.30/ChineseCalendarFullSeedStoreManifest.json
         CFBundleURLTypes:
           - CFBundleURLName: com.tiger.suzhou.ChineseCalendar
             CFBundleURLSchemes:
@@ -127,7 +127,7 @@ targets:
       path: Apps/macOSApp/Info.plist
       properties:
         CFBundleDisplayName: Chinese Calendar
-        ChineseCalendarFullSeedStoreManifestURL: https://github.com/huahuahu/chinese-calendar/releases/latest/download/ChineseCalendarFullSeedStoreManifest.json
+        ChineseCalendarFullSeedStoreManifestURL: https://github.com/huahuahu/chinese-calendar/releases/download/full-seed-store-2026.05.30/ChineseCalendarFullSeedStoreManifest.json
         LSApplicationCategoryType: public.app-category.reference
         CFBundleURLTypes:
           - CFBundleURLName: com.tiger.suzhou.ChineseCalendar
