@@ -21,10 +21,11 @@ public struct ChineseCalendarRootView: View {
             switch state {
             case .starting:
                 CalendarStoreProgressView(title: "正在准备日历数据", progress: nil)
-            case let .ready(container, contentLevel, datasetVersion):
+            case let .ready(container, contentLevel, identityToken):
                 CalendarHomeView()
+                    .environment(\.calendarStoreContentLevel, contentLevel)
                     .modelContainer(container)
-                    .id(storeIdentity(contentLevel: contentLevel, datasetVersion: datasetVersion))
+                    .id(storeIdentity(contentLevel: contentLevel, identityToken: identityToken))
                     .safeAreaInset(edge: .bottom) {
                         if canDownloadFullStore(contentLevel: contentLevel) {
                             FullStoreDownloadBanner(action: startFullStoreDownload)
@@ -73,8 +74,8 @@ public struct ChineseCalendarRootView: View {
         do {
             let container = try ChineseCalendarModelContainerFactory.makeSharedContainer()
             let contentLevel = try ChineseCalendarModelContainerFactory.installedStoreContentLevel() ?? .base
-            let datasetVersion = try ChineseCalendarModelContainerFactory.installedStoreDatasetVersion()
-            state = .ready(container: container, contentLevel: contentLevel, datasetVersion: datasetVersion)
+            let identityToken = try ChineseCalendarModelContainerFactory.installedStoreIdentityToken()
+            state = .ready(container: container, contentLevel: contentLevel, identityToken: identityToken)
         } catch {
             ChineseCalendarLog.persistence.error("Failed to prepare SwiftData store: \(error.localizedDescription)")
             state = .failed(message: error.localizedDescription)
@@ -86,6 +87,7 @@ public struct ChineseCalendarRootView: View {
             return
         }
 
+        downloadErrorMessage = nil
         state = .downloading(progress: nil)
 
         Task {
@@ -115,15 +117,14 @@ public struct ChineseCalendarRootView: View {
                     state = .ready(
                         container: container,
                         contentLevel: .full,
-                        datasetVersion: result.manifest.datasetVersion
+                        identityToken: result.manifest.datasetVersion
                     )
                 }
             }
         } catch {
             ChineseCalendarLog.persistence
                 .error("Failed to install full SwiftData store: \(error.localizedDescription)")
-            downloadErrorMessage = error.localizedDescription
-            prepareStore()
+            showDownloadErrorIfStoreRecovers(error.localizedDescription)
         }
     }
 
@@ -133,9 +134,23 @@ public struct ChineseCalendarRootView: View {
 
     private func storeIdentity(
         contentLevel: ChineseCalendarSeedStoreContentLevel,
-        datasetVersion: String?
+        identityToken: String?
     ) -> String {
-        "\(contentLevel.rawValue)-\(datasetVersion ?? "unknown")"
+        "\(contentLevel.rawValue)-\(identityToken ?? "unknown")"
+    }
+
+    private func showDownloadErrorIfStoreRecovers(_ message: String) {
+        do {
+            let container = try ChineseCalendarModelContainerFactory.makeSharedContainer()
+            let contentLevel = try ChineseCalendarModelContainerFactory.installedStoreContentLevel() ?? .base
+            let identityToken = try ChineseCalendarModelContainerFactory.installedStoreIdentityToken()
+            state = .ready(container: container, contentLevel: contentLevel, identityToken: identityToken)
+            downloadErrorMessage = message
+        } catch {
+            ChineseCalendarLog.persistence.error("Failed to recover SwiftData store: \(error.localizedDescription)")
+            downloadErrorMessage = nil
+            state = .failed(message: message)
+        }
     }
 }
 
@@ -144,7 +159,7 @@ private enum CalendarStoreBootstrapState {
     case ready(
         container: ModelContainer,
         contentLevel: ChineseCalendarSeedStoreContentLevel,
-        datasetVersion: String?
+        identityToken: String?
     )
     case downloading(progress: Double?)
     case validating

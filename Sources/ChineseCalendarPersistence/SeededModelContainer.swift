@@ -165,7 +165,7 @@ public enum ChineseCalendarModelContainerFactory {
         return try seedStoreContentLevel(at: manifestURL)
     }
 
-    public static func installedStoreDatasetVersion(
+    public static func installedStoreIdentityToken(
         appGroupIdentifier: String = ChineseCalendarAppConfiguration.appGroupIdentifier,
         fileManager: FileManager = .default
     ) throws -> String? {
