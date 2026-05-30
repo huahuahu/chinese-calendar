@@ -14,12 +14,14 @@ do {
 private struct SeedStoreBuilderOptions {
     let inputURL: URL
     let outputURL: URL
+    let contentLevel: SeedStoreContentLevel
     let resetOutput: Bool
     let saveInterval: Int
 
     init(arguments: [String]) throws {
         var inputPath = "../../Data/Processed/swiftdata_import"
         var outputPath = "../../Apps/Shared/Resources/ChineseCalendarSeedStore.bundle"
+        var contentLevel = SeedStoreContentLevel.base
         var resetOutput = true
         var saveInterval = 2000
 
@@ -31,6 +33,12 @@ private struct SeedStoreBuilderOptions {
                 inputPath = try Self.value(after: argument, in: arguments, at: &index)
             case "--output":
                 outputPath = try Self.value(after: argument, in: arguments, at: &index)
+            case "--content-level":
+                let value = try Self.value(after: argument, in: arguments, at: &index)
+                guard let parsedLevel = SeedStoreContentLevel(rawValue: value) else {
+                    throw SeedStoreBuilderError.invalidArgument("--content-level must be base or full.")
+                }
+                contentLevel = parsedLevel
             case "--keep-output":
                 resetOutput = false
             case "--save-interval":
@@ -51,6 +59,7 @@ private struct SeedStoreBuilderOptions {
 
         inputURL = URL(fileURLWithPath: inputPath).standardizedFileURL
         outputURL = URL(fileURLWithPath: outputPath).standardizedFileURL
+        self.contentLevel = contentLevel
         self.resetOutput = resetOutput
         self.saveInterval = saveInterval
     }
@@ -75,14 +84,20 @@ private struct SeedStoreBuilderOptions {
     Options:
       --input <path>          SwiftData import JSONL directory. Default: ../../Data/Processed/swiftdata_import
       --output <path>         Output resource bundle directory. Default: ../../Apps/Shared/Resources/ChineseCalendarSeedStore.bundle
+      --content-level <level> Store content to build: base or full. Default: base
       --keep-output           Do not delete the existing output directory before building.
       --save-interval <count> Save after this many day bundles. Default: 2000
       --help                  Show this help text.
     """
 }
 
+private enum SeedStoreContentLevel: String {
+    case base
+    case full
+}
+
 private struct SeedStoreBuilder {
-    private static let seedStoreFormatVersion = 3
+    private static let seedStoreFormatVersion = 4
 
     private let options: SeedStoreBuilderOptions
     private let decoder = JSONDecoder()
@@ -111,8 +126,12 @@ private struct SeedStoreBuilder {
             log("Importing lunar months...")
             try importLunarMonths(into: container)
 
-            log("Importing calendar days...")
-            try importCalendarDayBundles(into: container)
+            if options.contentLevel == .full {
+                log("Importing calendar days...")
+                try importCalendarDayBundles(into: container)
+            } else {
+                log("Skipping calendar day import for base seed store...")
+            }
 
             log("Importing dynasty and orthodox-period data...")
             try importDynastyArtifact(into: container)
@@ -479,7 +498,14 @@ private struct SeedStoreBuilder {
     private func finalizeSQLiteStore(at storeURL: URL) throws {
         try runSQLiteCommand(
             storeURL: storeURL,
-            sql: "PRAGMA wal_checkpoint(TRUNCATE); PRAGMA journal_mode=DELETE;"
+            sql: """
+            PRAGMA wal_checkpoint(TRUNCATE);
+            DELETE FROM ACHANGE;
+            DELETE FROM ATRANSACTION;
+            DELETE FROM ATRANSACTIONSTRING;
+            VACUUM;
+            PRAGMA journal_mode=DELETE;
+            """
         )
 
         for suffix in ["-shm", "-wal"] {
@@ -524,8 +550,16 @@ private struct SeedStoreBuilder {
         }
 
         manifest["seedStoreBuilder"] = "Scripts/BuildChineseCalendarSeedStore"
+        manifest["seedStoreContentLevel"] = options.contentLevel.rawValue
         manifest["seedStoreFormatVersion"] = Self.seedStoreFormatVersion
+        manifest["seedStoreHistoryPurged"] = true
         manifest["seedStoreRelationshipsLinked"] = true
+
+        if options.contentLevel == .base {
+            manifest["totalCalendarDays"] = 0
+            manifest["totalChineseLunarDays"] = 0
+            manifest["totalCivilDates"] = 0
+        }
 
         var destinationData = try JSONSerialization.data(
             withJSONObject: manifest,

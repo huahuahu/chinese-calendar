@@ -44,8 +44,11 @@ targets:
           - "$(SRCROOT)/Data/Processed/swiftdata_import/manifest.json"
           - "$(SRCROOT)/Data/Processed/swiftdata_import/chinese_lunar_years.jsonl"
           - "$(SRCROOT)/Data/Processed/swiftdata_import/chinese_lunar_months.jsonl"
-        inputFileLists:
-          - "$(SRCROOT)/Scripts/BuildChineseCalendarSeedStore/calendar_days_inputs.xcfilelist"
+          - "$(SRCROOT)/Data/Processed/swiftdata_import/chinese_date_expressions.jsonl"
+          - "$(SRCROOT)/Data/Processed/swiftdata_import/dynasties.jsonl"
+          - "$(SRCROOT)/Data/Processed/swiftdata_import/orthodox_boundaries.jsonl"
+          - "$(SRCROOT)/Data/Processed/swiftdata_import/orthodox_periods.jsonl"
+          - "$(SRCROOT)/Data/Processed/swiftdata_import/orthodox_traditions.jsonl"
         outputFiles:
           - "$(SRCROOT)/Apps/Shared/Resources/ChineseCalendarSeedStore.bundle/ChineseCalendar.sqlite"
           - "$(SRCROOT)/Apps/Shared/Resources/ChineseCalendarSeedStore.bundle/manifest.json"
@@ -53,7 +56,6 @@ targets:
       base:
         PRODUCT_NAME: Chinese Calendar
         PRODUCT_BUNDLE_IDENTIFIER: com.tiger.suzhou.ChineseCalendar
-        INFOPLIST_KEY_UILaunchScreen_Generation: YES
         SUPPORTED_PLATFORMS: iphoneos iphonesimulator
         TARGETED_DEVICE_FAMILY: 1,2
         SUPPORTS_MACCATALYST: NO
@@ -68,11 +70,13 @@ targets:
       path: Apps/iOSApp/Info.plist
       properties:
         CFBundleDisplayName: Chinese Calendar
+        ChineseCalendarFullSeedStoreManifestURL: https://github.com/huahuahu/chinese-calendar/releases/download/full-seed-store-2026.05.30/ChineseCalendarFullSeedStoreManifest.json
         CFBundleURLTypes:
           - CFBundleURLName: com.tiger.suzhou.ChineseCalendar
             CFBundleURLSchemes:
               - chinesecalendar
               - chinese-calendar
+        UILaunchScreen: {}
 
   ChineseCalendar-macOS:
     type: application
@@ -101,8 +105,11 @@ targets:
           - "$(SRCROOT)/Data/Processed/swiftdata_import/manifest.json"
           - "$(SRCROOT)/Data/Processed/swiftdata_import/chinese_lunar_years.jsonl"
           - "$(SRCROOT)/Data/Processed/swiftdata_import/chinese_lunar_months.jsonl"
-        inputFileLists:
-          - "$(SRCROOT)/Scripts/BuildChineseCalendarSeedStore/calendar_days_inputs.xcfilelist"
+          - "$(SRCROOT)/Data/Processed/swiftdata_import/chinese_date_expressions.jsonl"
+          - "$(SRCROOT)/Data/Processed/swiftdata_import/dynasties.jsonl"
+          - "$(SRCROOT)/Data/Processed/swiftdata_import/orthodox_boundaries.jsonl"
+          - "$(SRCROOT)/Data/Processed/swiftdata_import/orthodox_periods.jsonl"
+          - "$(SRCROOT)/Data/Processed/swiftdata_import/orthodox_traditions.jsonl"
         outputFiles:
           - "$(SRCROOT)/Apps/Shared/Resources/ChineseCalendarSeedStore.bundle/ChineseCalendar.sqlite"
           - "$(SRCROOT)/Apps/Shared/Resources/ChineseCalendarSeedStore.bundle/manifest.json"
@@ -110,7 +117,6 @@ targets:
       base:
         PRODUCT_NAME: Chinese Calendar
         PRODUCT_BUNDLE_IDENTIFIER: com.tiger.suzhou.ChineseCalendar
-        INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.reference
         SWIFT_VERSION: 6.0
         CODE_SIGN_STYLE: Automatic
         DEVELOPMENT_TEAM: F29WG8477A
@@ -121,6 +127,7 @@ targets:
       path: Apps/macOSApp/Info.plist
       properties:
         CFBundleDisplayName: Chinese Calendar
+        ChineseCalendarFullSeedStoreManifestURL: https://github.com/huahuahu/chinese-calendar/releases/download/full-seed-store-2026.05.30/ChineseCalendarFullSeedStoreManifest.json
         LSApplicationCategoryType: public.app-category.reference
         CFBundleURLTypes:
           - CFBundleURLName: com.tiger.suzhou.ChineseCalendar

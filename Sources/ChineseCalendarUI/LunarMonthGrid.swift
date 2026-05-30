@@ -5,6 +5,7 @@ import SwiftUI
 
 struct LunarMonthGrid: View {
     let month: ChineseLunarMonth
+    @Environment(\.calendarStoreContentLevel) private var storeContentLevel
     @Query private var days: [ChineseLunarDay]
 
     init(month: ChineseLunarMonth) {
@@ -29,14 +30,50 @@ struct LunarMonthGrid: View {
                 .font(.title2)
                 .bold()
 
-            ScrollView(.horizontal) {
-                VStack(alignment: .leading, spacing: 10) {
-                    ForEach(periods) { period in
-                        LunarTenDayPeriodRow(period: period)
+            if periods.isEmpty {
+                ContentUnavailableView(
+                    emptyStateTitle,
+                    systemImage: emptyStateSystemImage,
+                    description: Text(emptyStateDescription)
+                )
+                .frame(maxWidth: .infinity, alignment: .leading)
+            } else {
+                ScrollView(.horizontal) {
+                    VStack(alignment: .leading, spacing: 10) {
+                        ForEach(periods) { period in
+                            LunarTenDayPeriodRow(period: period)
+                        }
                     }
                 }
+                .scrollIndicators(.hidden)
             }
-            .scrollIndicators(.hidden)
+        }
+    }
+
+    private var emptyStateTitle: String {
+        switch storeContentLevel {
+        case .base:
+            "完整日期数据尚未下载"
+        case .full:
+            "没有日期数据"
+        }
+    }
+
+    private var emptyStateSystemImage: String {
+        switch storeContentLevel {
+        case .base:
+            "arrow.down.circle"
+        case .full:
+            "calendar.badge.exclamationmark"
+        }
+    }
+
+    private var emptyStateDescription: String {
+        switch storeContentLevel {
+        case .base:
+            "当前内置数据只包含年份和月份；下载完整数据后会显示每日干支和对应公历日期。"
+        case .full:
+            "这个月份暂时没有可显示的日级记录。"
         }
     }
 }
