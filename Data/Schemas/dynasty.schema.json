@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://chinese-calendar.local/schemas/dynasty.schema.json",
+  "title": "DynastyRecord",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "name",
+    "shortName",
+    "claimedStartDateID",
+    "claimedEndDateID",
+    "note"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "shortName": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "claimedStartDateID": {
+      "type": "string",
+      "minLength": 1
+    },
+    "claimedEndDateID": {
+      "type": "string",
+      "minLength": 1
+    },
+    "note": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "x-codegen": {
+    "record": true,
+    "typeName": "DynastyRecord",
+    "dataFile": "dynasties.jsonl"
+  }
+}

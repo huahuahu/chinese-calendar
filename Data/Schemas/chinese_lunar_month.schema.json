@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://chinese-calendar.local/schemas/chinese_lunar_month.schema.json",
+  "title": "ChineseLunarMonthRecord",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "lunarMonthIndex",
+    "lunarYearNumber",
+    "monthNumberInYear",
+    "isLeapMonth",
+    "intercalaryMonthNameStyle",
+    "dayCount",
+    "monthStemIndex",
+    "monthBranchIndex"
+  ],
+  "properties": {
+    "lunarMonthIndex": {
+      "type": "integer"
+    },
+    "lunarYearNumber": {
+      "type": "integer"
+    },
+    "monthNumberInYear": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 12
+    },
+    "isLeapMonth": {
+      "type": "boolean"
+    },
+    "intercalaryMonthNameStyle": {
+      "type": "string",
+      "enum": [
+        "leap",
+        "post"
+      ],
+      "x-codegen": {
+        "swiftType": "LunarIntercalaryMonthNameStyle",
+        "tsType": "LunarIntercalaryMonthNameStyle"
+      }
+    },
+    "dayCount": {
+      "type": "integer",
+      "minimum": 29,
+      "maximum": 30
+    },
+    "monthStemIndex": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9
+    },
+    "monthBranchIndex": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 11
+    }
+  },
+  "x-codegen": {
+    "record": true,
+    "typeName": "LunarMonthRecord",
+    "dataFile": "chinese_lunar_months.jsonl"
+  }
+}

@@ -117,6 +117,19 @@ Data/Processed/swiftdata_import/manifest.json
 Scripts/ImportChineseCalendar/generate_swiftdata_import.swift --validate-only
 ```
 
+导入文件的结构契约由 `Data/Schemas/*.schema.json` 维护。修改 schema 后生成网页端 TypeScript 类型
+和 seed-store builder 的 Swift `Decodable` record：
+
+```bash
+Scripts/DataSchemas/generate_schema_artifacts.swift
+```
+
+CI 使用同一份 schema 校验生成产物是否同步、以及 `Data/Processed/swiftdata_import` 下的 JSONL 是否符合结构：
+
+```bash
+Scripts/validate_data_schemas.sh
+```
+
 ## 生成朝代和正统时期导入文件
 
 `Docs/data-model-dynasty.md` 对应的朝代、日期表达和正统时期数据也输出到

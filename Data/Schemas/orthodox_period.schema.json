@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://chinese-calendar.local/schemas/orthodox_period.schema.json",
+  "title": "OrthodoxPeriodRecord",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "traditionID",
+    "dynastyID",
+    "startBoundaryID",
+    "endBoundaryID",
+    "sequenceIndex",
+    "segmentIndex",
+    "segmentName",
+    "note"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "traditionID": {
+      "type": "string",
+      "minLength": 1
+    },
+    "dynastyID": {
+      "type": "string",
+      "minLength": 1
+    },
+    "startBoundaryID": {
+      "type": "string",
+      "minLength": 1
+    },
+    "endBoundaryID": {
+      "type": "string",
+      "minLength": 1
+    },
+    "sequenceIndex": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "segmentIndex": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "segmentName": {
+      "type": "string"
+    },
+    "note": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "x-codegen": {
+    "record": true,
+    "typeName": "OrthodoxPeriodRecord",
+    "dataFile": "orthodox_periods.jsonl"
+  }
+}

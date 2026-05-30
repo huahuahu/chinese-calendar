@@ -1,0 +1,126 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://chinese-calendar.local/schemas/chinese_date_expression.schema.json",
+  "title": "ChineseDateExpressionRecord",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "precision",
+    "index",
+    "uncertainRange",
+    "sourceText",
+    "note"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "precision": {
+      "type": "string",
+      "enum": [
+        "year",
+        "month",
+        "day",
+        "range",
+        "unknown"
+      ],
+      "x-codegen": {
+        "swiftType": "ChineseDatePrecision",
+        "tsType": "ChineseDatePrecision"
+      }
+    },
+    "index": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "uncertainRange": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/chineseDateRange"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "sourceText": {
+      "type": "string"
+    },
+    "note": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "$defs": {
+    "chineseDateRange": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "lowerBound",
+        "upperBound"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "lowerBound": {
+          "$ref": "#/$defs/chineseDateBound"
+        },
+        "upperBound": {
+          "$ref": "#/$defs/chineseDateBound"
+        }
+      },
+      "x-codegen": {
+        "typeName": "ChineseDateRangeRecord"
+      }
+    },
+    "chineseDateBound": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "precision",
+        "index"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "precision": {
+          "type": "string",
+          "enum": [
+            "year",
+            "month",
+            "day",
+            "range",
+            "unknown"
+          ],
+          "x-codegen": {
+            "swiftType": "ChineseDatePrecision",
+            "tsType": "ChineseDatePrecision"
+          }
+        },
+        "index": {
+          "type": "integer"
+        }
+      },
+      "x-codegen": {
+        "typeName": "ChineseDateBoundRecord"
+      }
+    }
+  },
+  "x-codegen": {
+    "record": true,
+    "typeName": "ChineseDateExpressionRecord",
+    "dataFile": "chinese_date_expressions.jsonl"
+  }
+}

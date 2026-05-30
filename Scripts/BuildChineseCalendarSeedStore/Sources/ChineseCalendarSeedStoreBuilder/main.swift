@@ -3,12 +3,12 @@ import ChineseCalendarPersistence
 import Foundation
 import SwiftData
 
-@main
-struct ChineseCalendarSeedStoreBuilder {
-    static func main() throws {
-        let options = try SeedStoreBuilderOptions(arguments: CommandLine.arguments)
-        try SeedStoreBuilder(options: options).build()
-    }
+do {
+    let options = try SeedStoreBuilderOptions(arguments: CommandLine.arguments)
+    try SeedStoreBuilder(options: options).build()
+} catch {
+    fputs("Failed to build Chinese calendar seed store: \(error.localizedDescription)\n", stderr)
+    exit(1)
 }
 
 private struct SeedStoreBuilderOptions {
@@ -561,105 +561,6 @@ private struct SeedStoreBuilder {
         }
         return records
     }
-}
-
-private struct LunarYearRecord: Decodable {
-    let lunarYearNumber: Int
-    let yearStemIndex: Int
-    let yearBranchIndex: Int
-}
-
-private struct LunarMonthRecord: Decodable {
-    let lunarMonthIndex: Int
-    let lunarYearNumber: Int
-    let monthNumberInYear: Int
-    let isLeapMonth: Bool
-    let intercalaryMonthNameStyle: LunarIntercalaryMonthNameStyle
-    let dayCount: Int
-    let monthStemIndex: Int
-    let monthBranchIndex: Int
-}
-
-private struct CalendarDayBundleRecord: Decodable {
-    let calendarDay: CalendarDayRecord
-    let civilDate: CivilDateRecord
-    let chineseLunarDay: LunarDayRecord
-}
-
-private struct CalendarDayRecord: Decodable {
-    let dayIndex: Int
-    let julianDayNumber: Int
-}
-
-private struct CivilDateRecord: Decodable {
-    let dayIndex: Int
-    let year: Int
-    let month: Int
-    let dayOfMonth: Int
-    let calendarStyle: CivilCalendarStyle
-}
-
-private struct LunarDayRecord: Decodable {
-    let dayIndex: Int
-    let lunarMonthIndex: Int
-    let dayNumberInMonth: Int
-    let dayStemIndex: Int
-    let dayBranchIndex: Int
-}
-
-private struct DynastyRecord: Decodable {
-    let id: String
-    let name: String
-    let shortName: String?
-    let claimedStartDateID: String
-    let claimedEndDateID: String
-    let note: String?
-}
-
-private struct ChineseDateExpressionRecord: Decodable {
-    let id: String
-    let precision: ChineseDatePrecision
-    let index: Int?
-    let uncertainRange: ChineseDateRangeRecord?
-    let sourceText: String
-    let note: String?
-}
-
-private struct ChineseDateRangeRecord: Decodable {
-    let id: String
-    let lowerBound: ChineseDateBoundRecord
-    let upperBound: ChineseDateBoundRecord
-}
-
-private struct ChineseDateBoundRecord: Decodable {
-    let id: String
-    let precision: ChineseDatePrecision
-    let index: Int
-}
-
-private struct OrthodoxTraditionRecord: Decodable {
-    let id: String
-    let name: String
-    let note: String?
-}
-
-private struct OrthodoxBoundaryRecord: Decodable {
-    let id: String
-    let traditionID: String
-    let dateExpressionID: String
-    let note: String?
-}
-
-private struct OrthodoxPeriodRecord: Decodable {
-    let id: String
-    let traditionID: String
-    let dynastyID: String
-    let startBoundaryID: String
-    let endBoundaryID: String
-    let sequenceIndex: Int
-    let segmentIndex: Int
-    let segmentName: String
-    let note: String?
 }
 
 private enum SeedStoreBuilderError: Error, LocalizedError {
