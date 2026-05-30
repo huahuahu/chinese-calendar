@@ -1,13 +1,14 @@
 import ChineseCalendarCore
 import ChineseCalendarLogging
 import ChineseCalendarPersistence
+import Foundation
 import SwiftData
 import SwiftUI
 
 public struct CalendarHomeView: View {
     @Query(sort: \ChineseLunarYear.lunarYearNumber) private var years: [ChineseLunarYear]
-    @State private var selectedYearNumber: Int?
-    @State private var selectedMonthIndex: Int?
+    @State private var router = CalendarRouter()
+    @State private var didOpenColdLaunchDeepLink = false
 
     public init() {}
 
@@ -16,76 +17,59 @@ public struct CalendarHomeView: View {
 
     public var body: some View {
         NavigationSplitView {
-            List(selection: $selectedYearNumber) {
+            List(selection: $router.selectedRoute) {
                 Section("农历年") {
                     ForEach(years, id: \.lunarYearNumber) { year in
                         LunarYearRow(year: year)
-                            .tag(year.lunarYearNumber)
+                            .tag(CalendarRoute.lunarYear(year.lunarYearNumber))
                     }
                 }
             }
             .navigationTitle("年份")
         } detail: {
-            Group {
-                if let selectedYear {
-                    LunarYearDetailView(
-                        year: selectedYear,
-                        selectedMonthIndex: $selectedMonthIndex,
-                        canSelectPreviousYear: canSelectPreviousYear,
-                        canSelectNextYear: canSelectNextYear,
-                        selectPreviousYear: selectPreviousYear,
-                        selectNextYear: selectNextYear
-                    )
-                } else {
-                    ContentUnavailableView {
-                        Label("Chinese Calendar", systemImage: "calendar")
-                    } description: {
-                        Text(emptyStateDescription)
-                    }
-                }
+            CalendarRouteDestinationView(
+                route: router.selectedRoute,
+                year: selectedYear,
+                selectedMonthIndex: $router.selectedMonthIndex,
+                canSelectPreviousYear: router.canSelectPreviousYear(availableYearNumbers: yearNumbers),
+                canSelectNextYear: router.canSelectNextYear(availableYearNumbers: yearNumbers),
+                selectPreviousYear: { router.selectPreviousYear(availableYearNumbers: yearNumbers) },
+                selectNextYear: { router.selectNextYear(availableYearNumbers: yearNumbers) },
+                emptyStateDescription: emptyStateDescription
+            )
+        }
+        .sheet(item: $router.sheet, onDismiss: router.applyDeferredDeepLinkIfReady) { node in
+            CalendarPresentationNodeView(node: node, years: years) {
+                router.dismissSheet()
+            }
+        }
+        .calendarFullScreenCover(item: $router.fullScreen, onDismiss: router.applyDeferredDeepLinkIfReady) { node in
+            CalendarPresentationNodeView(node: node, years: years) {
+                router.dismissFullScreen()
             }
         }
         .task {
+            openColdLaunchDeepLinkIfNeeded()
             selectDefaultYearIfNeeded()
         }
         .onChange(of: years.map(\.lunarYearNumber)) {
             selectDefaultYearIfNeeded()
         }
-        .onChange(of: selectedYearNumber) {
-            selectedMonthIndex = nil
+        .onOpenURL { url in
+            open(url)
         }
     }
 
+    private var yearNumbers: [Int] {
+        years.map(\.lunarYearNumber)
+    }
+
     private var selectedYear: ChineseLunarYear? {
-        guard let selectedYearNumber else {
+        guard let selectedYearNumber = router.selectedYearNumber else {
             return nil
         }
 
         return years.first { $0.lunarYearNumber == selectedYearNumber }
-    }
-
-    private var selectedYearIndex: Int? {
-        guard let selectedYearNumber else {
-            return nil
-        }
-
-        return years.firstIndex { $0.lunarYearNumber == selectedYearNumber }
-    }
-
-    private var canSelectPreviousYear: Bool {
-        guard let selectedYearIndex else {
-            return false
-        }
-
-        return selectedYearIndex > years.startIndex
-    }
-
-    private var canSelectNextYear: Bool {
-        guard let selectedYearIndex else {
-            return false
-        }
-
-        return selectedYearIndex < years.index(before: years.endIndex)
     }
 
     private var emptyStateDescription: String {
@@ -97,38 +81,34 @@ public struct CalendarHomeView: View {
     }
 
     private func selectDefaultYearIfNeeded() {
-        guard !years.isEmpty else {
+        guard !yearNumbers.isEmpty else {
             ChineseCalendarLog.ui.debug("CalendarHomeView is waiting for SwiftData years")
             return
         }
 
-        guard selectedYear == nil else {
-            return
-        }
-
-        let fallbackYearNumber = ChineseLunarCalendar.yearNumber()
-        selectedYearNumber = years.first { $0.lunarYearNumber == fallbackYearNumber }?.lunarYearNumber
-            ?? years.last?.lunarYearNumber
-
-        if let selectedYearNumber {
+        if let selectedYearNumber = router.selectDefaultYearIfNeeded(
+            availableYearNumbers: yearNumbers,
+            preferredYearNumber: ChineseLunarCalendar.yearNumber()
+        ) {
             ChineseCalendarLog.ui.info("Selected default lunar year \(selectedYearNumber)")
         }
     }
 
-    private func selectPreviousYear() {
-        guard let selectedYearIndex, selectedYearIndex > years.startIndex else {
+    private func openColdLaunchDeepLinkIfNeeded() {
+        guard !didOpenColdLaunchDeepLink else {
             return
         }
 
-        selectedYearNumber = years[years.index(before: selectedYearIndex)].lunarYearNumber
+        didOpenColdLaunchDeepLink = true
+        router.openColdLaunchDeepLink(CalendarDeepLinkParser.deepLink(from: ProcessInfo.processInfo.arguments))
     }
 
-    private func selectNextYear() {
-        guard let selectedYearIndex, selectedYearIndex < years.index(before: years.endIndex) else {
+    private func open(_ url: URL) {
+        guard let deepLink = CalendarDeepLinkParser.deepLink(from: url) else {
             return
         }
 
-        selectedYearNumber = years[years.index(after: selectedYearIndex)].lunarYearNumber
+        router.openDeepLink(deepLink)
     }
 }
 

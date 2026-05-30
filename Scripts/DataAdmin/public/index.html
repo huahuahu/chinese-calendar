@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="zh-Hans">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Chinese Calendar Data Admin</title>
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <main class="app-shell">
+      <aside class="sidebar" aria-label="数据集">
+        <div class="brand-block">
+          <h1>Data Admin</h1>
+          <p id="data-root">Loading...</p>
+        </div>
+
+        <nav id="dataset-list" class="dataset-list"></nav>
+
+        <section class="manifest-panel" aria-label="数据摘要">
+          <h2>Manifest</h2>
+          <dl id="manifest-summary"></dl>
+        </section>
+      </aside>
+
+      <section class="workspace">
+        <header class="toolbar">
+          <div class="filters">
+            <label class="field compact" id="year-field">
+              <span>Year</span>
+              <select id="year-select"></select>
+            </label>
+            <label class="field search-field">
+              <span>Search</span>
+              <input id="query-input" type="search" placeholder="id, 日期, dynasty..." autocomplete="off">
+            </label>
+          </div>
+          <div class="actions" aria-label="命令">
+            <button id="reload-button" type="button" title="Reload records">Reload</button>
+            <button id="diff-button" type="button" title="Show git diff for this JSONL">Diff</button>
+            <button id="validate-button" type="button" title="Validate current JSONL artifacts">Validate</button>
+            <button id="build-button" type="button" title="Generate SwiftData SQLite from JSONL">Build SQLite</button>
+          </div>
+        </header>
+
+        <section class="content-grid">
+          <section class="record-panel" aria-label="记录列表">
+            <div class="panel-heading">
+              <div>
+                <h2 id="dataset-title">Records</h2>
+                <p id="file-path">-</p>
+              </div>
+              <div id="record-count" class="counter">0</div>
+            </div>
+            <div id="record-list" class="record-list"></div>
+            <div class="pager">
+              <button id="previous-button" type="button">Previous</button>
+              <span id="page-label">0 - 0</span>
+              <button id="next-button" type="button">Next</button>
+            </div>
+          </section>
+
+          <section class="editor-panel" aria-label="JSONL 编辑器">
+            <div class="panel-heading editor-heading">
+              <div>
+                <h2 id="editor-title">Select a record</h2>
+                <p id="editor-subtitle">No record selected.</p>
+              </div>
+              <button id="save-button" type="button" disabled>Save Line</button>
+            </div>
+            <div class="editor-body">
+              <section class="readable-panel" aria-label="可读预览">
+                <h3>可读预览</h3>
+                <dl id="readable-preview"></dl>
+              </section>
+              <textarea id="json-editor" spellcheck="false" disabled></textarea>
+            </div>
+            <div id="editor-message" class="message" role="status"></div>
+          </section>
+        </section>
+
+        <section class="output-panel" aria-label="命令输出">
+          <div class="panel-heading">
+            <div>
+              <h2>Output</h2>
+              <p id="output-subtitle">Command output</p>
+            </div>
+            <button id="clear-output-button" type="button">Clear</button>
+          </div>
+          <pre id="command-output"></pre>
+        </section>
+      </section>
+    </main>
+
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>

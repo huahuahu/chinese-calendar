@@ -13,21 +13,25 @@
   "properties": {
     "id": {
       "type": "string",
-      "minLength": 1
+      "minLength": 1,
+      "description": "正统时期边界的稳定标识符，供 OrthodoxPeriod.startBoundaryID/endBoundaryID 引用。"
     },
     "traditionID": {
       "type": "string",
-      "minLength": 1
+      "minLength": 1,
+      "description": "该边界所属的正统叙事，引用 OrthodoxTradition.id。"
     },
     "dateExpressionID": {
       "type": "string",
-      "minLength": 1
+      "minLength": 1,
+      "description": "该边界对应的日期表达，引用 ChineseDateExpression.id。"
     },
     "note": {
       "type": [
         "string",
         "null"
-      ]
+      ],
+      "description": "该边界的可选说明。"
     }
   },
   "x-codegen": {

@@ -15,7 +15,8 @@
   "properties": {
     "id": {
       "type": "string",
-      "minLength": 1
+      "minLength": 1,
+      "description": "历史日期表达的稳定标识符。其他记录通过这个 ID 引用该日期表达。"
     },
     "precision": {
       "type": "string",
@@ -26,6 +27,7 @@
         "range",
         "unknown"
       ],
+      "description": "日期表达的精度：year、month、day、range 或 unknown。它决定 index 和 uncertainRange 的解释方式。",
       "x-codegen": {
         "swiftType": "ChineseDatePrecision",
         "tsType": "ChineseDatePrecision"
@@ -35,9 +37,11 @@
       "type": [
         "integer",
         "null"
-      ]
+      ],
+      "description": "在指定精度下的稳定日期索引。precision 为 range 或 unknown 时通常为 null。"
     },
     "uncertainRange": {
+      "description": "不确定日期或范围日期的可选上下界。",
       "anyOf": [
         {
           "$ref": "#/$defs/chineseDateRange"
@@ -48,13 +52,15 @@
       ]
     },
     "sourceText": {
-      "type": "string"
+      "type": "string",
+      "description": "从上游朝代或时期来源中保留下来的可读原文。"
     },
     "note": {
       "type": [
         "string",
         "null"
-      ]
+      ],
+      "description": "导入器对来源解释、边界或不确定性的可选说明。"
     }
   },
   "$defs": {
@@ -69,12 +75,15 @@
       "properties": {
         "id": {
           "type": "string",
-          "minLength": 1
+          "minLength": 1,
+          "description": "不确定日期范围的稳定标识符。"
         },
         "lowerBound": {
+          "description": "不确定日期范围的下界。",
           "$ref": "#/$defs/chineseDateBound"
         },
         "upperBound": {
+          "description": "不确定日期范围的上界；具体是否按开区间解释取决于日期精度和调用场景。",
           "$ref": "#/$defs/chineseDateBound"
         }
       },
@@ -93,7 +102,8 @@
       "properties": {
         "id": {
           "type": "string",
-          "minLength": 1
+          "minLength": 1,
+          "description": "日期范围边界的稳定标识符。"
         },
         "precision": {
           "type": "string",
@@ -104,13 +114,15 @@
             "range",
             "unknown"
           ],
+          "description": "这个日期范围边界的精度。",
           "x-codegen": {
             "swiftType": "ChineseDatePrecision",
             "tsType": "ChineseDatePrecision"
           }
         },
         "index": {
-          "type": "integer"
+          "type": "integer",
+          "description": "这个日期范围边界在指定精度下的稳定日期索引。"
         }
       },
       "x-codegen": {

@@ -34,15 +34,7 @@ seed_store_content_level() {
 
 source_data_is_newer_than_seed_manifest() {
     [[ "$INPUT_DIR/manifest.json" -nt "$SEED_MANIFEST" ]] && return 0
-    [[ "$INPUT_DIR/chinese_lunar_years.jsonl" -nt "$SEED_MANIFEST" ]] && return 0
-    [[ "$INPUT_DIR/chinese_lunar_months.jsonl" -nt "$SEED_MANIFEST" ]] && return 0
-    [[ "$INPUT_DIR/chinese_date_expressions.jsonl" -nt "$SEED_MANIFEST" ]] && return 0
-    [[ "$INPUT_DIR/dynasties.jsonl" -nt "$SEED_MANIFEST" ]] && return 0
-    [[ "$INPUT_DIR/orthodox_boundaries.jsonl" -nt "$SEED_MANIFEST" ]] && return 0
-    [[ "$INPUT_DIR/orthodox_periods.jsonl" -nt "$SEED_MANIFEST" ]] && return 0
-    [[ "$INPUT_DIR/orthodox_traditions.jsonl" -nt "$SEED_MANIFEST" ]] && return 0
-
-    return 1
+    [[ -n "$(find "$INPUT_DIR" -name '*.jsonl' -newer "$SEED_MANIFEST" -print -quit)" ]]
 }
 
 if [[ -f "$SEED_STORE" && -f "$SEED_MANIFEST" ]]; then

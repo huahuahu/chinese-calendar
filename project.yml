@@ -56,8 +56,6 @@ targets:
       base:
         PRODUCT_NAME: Chinese Calendar
         PRODUCT_BUNDLE_IDENTIFIER: com.tiger.suzhou.ChineseCalendar
-        GENERATE_INFOPLIST_FILE: YES
-        INFOPLIST_KEY_CFBundleDisplayName: Chinese Calendar
         INFOPLIST_KEY_UILaunchScreen_Generation: YES
         SUPPORTED_PLATFORMS: iphoneos iphonesimulator
         TARGETED_DEVICE_FAMILY: 1,2
@@ -69,6 +67,15 @@ targets:
         CODE_SIGN_ENTITLEMENTS: Apps/iOSApp/ChineseCalendar-iOS.entitlements
         MARKETING_VERSION: 1.0
         CURRENT_PROJECT_VERSION: 1
+    info:
+      path: Apps/iOSApp/Info.plist
+      properties:
+        CFBundleDisplayName: Chinese Calendar
+        CFBundleURLTypes:
+          - CFBundleURLName: com.tiger.suzhou.ChineseCalendar
+            CFBundleURLSchemes:
+              - chinesecalendar
+              - chinese-calendar
 
   ChineseCalendar-macOS:
     type: application
@@ -109,8 +116,6 @@ targets:
       base:
         PRODUCT_NAME: Chinese Calendar
         PRODUCT_BUNDLE_IDENTIFIER: com.tiger.suzhou.ChineseCalendar
-        GENERATE_INFOPLIST_FILE: YES
-        INFOPLIST_KEY_CFBundleDisplayName: Chinese Calendar
         INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.reference
         SWIFT_VERSION: 6.0
         CODE_SIGN_STYLE: Automatic
@@ -118,6 +123,16 @@ targets:
         CODE_SIGN_ENTITLEMENTS: Apps/macOSApp/ChineseCalendar-macOS.entitlements
         MARKETING_VERSION: 1.0
         CURRENT_PROJECT_VERSION: 1
+    info:
+      path: Apps/macOSApp/Info.plist
+      properties:
+        CFBundleDisplayName: Chinese Calendar
+        LSApplicationCategoryType: public.app-category.reference
+        CFBundleURLTypes:
+          - CFBundleURLName: com.tiger.suzhou.ChineseCalendar
+            CFBundleURLSchemes:
+              - chinesecalendar
+              - chinese-calendar
 
 schemes:
   ChineseCalendar-iOS:

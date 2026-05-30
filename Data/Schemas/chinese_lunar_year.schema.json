@@ -11,17 +11,20 @@
   ],
   "properties": {
     "lunarYearNumber": {
-      "type": "integer"
+      "type": "integer",
+      "description": "导入后的农历年编号。它是农历月表和应用查询使用的稳定年份键。"
     },
     "yearStemIndex": {
       "type": "integer",
       "minimum": 0,
-      "maximum": 9
+      "maximum": 9,
+      "description": "农历年的天干索引，0...9 对应 甲、乙、丙、丁、戊、己、庚、辛、壬、癸。"
     },
     "yearBranchIndex": {
       "type": "integer",
       "minimum": 0,
-      "maximum": 11
+      "maximum": 11,
+      "description": "农历年的地支索引，0...11 对应 子、丑、寅、卯、辰、巳、午、未、申、酉、戌、亥。"
     }
   },
   "x-codegen": {
