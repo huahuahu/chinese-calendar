@@ -31,3 +31,4 @@ Apps/Shared/Resources/ChineseCalendarSeedStore.bundle/*
 !Apps/Shared/Resources/ChineseCalendarSeedStore.bundle/.gitkeep
 !Apps/Shared/Resources/ChineseCalendarSeedStore.bundle/ChineseCalendar.sqlite
 !Apps/Shared/Resources/ChineseCalendarSeedStore.bundle/manifest.json
+Data/Processed/remote_full_seed_store/

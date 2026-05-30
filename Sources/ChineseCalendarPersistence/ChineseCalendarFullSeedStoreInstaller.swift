@@ -178,7 +178,12 @@ public actor ChineseCalendarFullSeedStoreInstaller {
     }
 
     private func fetchRemoteManifest() async throws -> FullSeedStoreManifest {
-        let (data, _) = try await session.data(from: configuration.manifestURL)
+        let (data, response) = try await session.data(from: configuration.manifestURL)
+        let statusCode = (response as? HTTPURLResponse)?.statusCode
+        if let statusCode, !(200 ... 299).contains(statusCode) {
+            throw ChineseCalendarFullSeedStoreInstallError.downloadFailed(statusCode)
+        }
+
         return try decoder.decode(FullSeedStoreManifest.self, from: data)
     }
 
