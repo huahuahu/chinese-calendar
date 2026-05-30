@@ -15,31 +15,37 @@
   "properties": {
     "id": {
       "type": "string",
-      "minLength": 1
+      "minLength": 1,
+      "description": "朝代或政权的稳定标识符，供 OrthodoxPeriod.dynastyID 等字段引用。"
     },
     "name": {
       "type": "string",
-      "minLength": 1
+      "minLength": 1,
+      "description": "朝代或政权的完整显示名称。"
     },
     "shortName": {
       "type": [
         "string",
         "null"
-      ]
+      ],
+      "description": "较短的显示名称；没有合适简称时为 null。"
     },
     "claimedStartDateID": {
       "type": "string",
-      "minLength": 1
+      "minLength": 1,
+      "description": "该朝代或政权自身声称/记录的开始日期，引用 ChineseDateExpression.id。"
     },
     "claimedEndDateID": {
       "type": "string",
-      "minLength": 1
+      "minLength": 1,
+      "description": "该朝代或政权自身声称/记录的结束日期，引用 ChineseDateExpression.id。"
     },
     "note": {
       "type": [
         "string",
         "null"
-      ]
+      ],
+      "description": "导入器对来源、拆分规则或历史口径的可选说明。"
     }
   },
   "x-codegen": {

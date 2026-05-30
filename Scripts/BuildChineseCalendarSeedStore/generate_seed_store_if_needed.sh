@@ -25,10 +25,7 @@ seed_store_format_version() {
 
 source_data_is_newer_than_seed_manifest() {
     [[ "$INPUT_DIR/manifest.json" -nt "$SEED_MANIFEST" ]] && return 0
-    [[ "$INPUT_DIR/chinese_lunar_years.jsonl" -nt "$SEED_MANIFEST" ]] && return 0
-    [[ "$INPUT_DIR/chinese_lunar_months.jsonl" -nt "$SEED_MANIFEST" ]] && return 0
-
-    [[ -n "$(find "$INPUT_DIR/calendar_days" -name calendar_days.jsonl -newer "$SEED_MANIFEST" -print -quit)" ]]
+    [[ -n "$(find "$INPUT_DIR" -name '*.jsonl' -newer "$SEED_MANIFEST" -print -quit)" ]]
 }
 
 if [[ -f "$SEED_STORE" && -f "$SEED_MANIFEST" ]]; then

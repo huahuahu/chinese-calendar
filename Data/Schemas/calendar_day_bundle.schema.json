@@ -23,6 +23,7 @@
   "$defs": {
     "calendarDay": {
       "type": "object",
+      "description": "单个绝对日对应的 SwiftData CalendarDay 字段。相关的 CivilDate 和 ChineseLunarDay 共享同一个 dayIndex。",
       "additionalProperties": false,
       "required": [
         "dayIndex",
@@ -30,11 +31,13 @@
       ],
       "properties": {
         "dayIndex": {
-          "type": "integer"
+          "type": "integer",
+          "description": "稳定的绝对日键，从处理后数据集起点开始按 0 递增，用来关联 CalendarDay、CivilDate 和 ChineseLunarDay。"
         },
         "julianDayNumber": {
           "type": "integer",
-          "minimum": 0
+          "minimum": 0,
+          "description": "这个公历/儒略历日期对应的天文学 Julian Day Number。"
         }
       },
       "x-codegen": {
@@ -43,6 +46,7 @@
     },
     "civilDate": {
       "type": "object",
+      "description": "单个绝对日对应的民用日期。具体使用儒略历还是格里历由 calendarStyle 表示。",
       "additionalProperties": false,
       "required": [
         "dayIndex",
@@ -53,20 +57,24 @@
       ],
       "properties": {
         "dayIndex": {
-          "type": "integer"
+          "type": "integer",
+          "description": "稳定的绝对日键，必须与 CalendarDay.dayIndex 相同。"
         },
         "year": {
-          "type": "integer"
+          "type": "integer",
+          "description": "民用年份，使用天文学年份编号；0 年表示公元前 1 年。"
         },
         "month": {
           "type": "integer",
           "minimum": 1,
-          "maximum": 12
+          "maximum": 12,
+          "description": "民用月份序号，范围为 1...12。"
         },
         "dayOfMonth": {
           "type": "integer",
           "minimum": 1,
-          "maximum": 31
+          "maximum": 31,
+          "description": "民用日期中的日序号。"
         },
         "calendarStyle": {
           "type": "string",
@@ -74,6 +82,7 @@
             "julian",
             "gregorian"
           ],
+          "description": "这个日期使用的民用历法系统。格里历采用前的历史日期可能使用 julian。",
           "x-codegen": {
             "swiftType": "CivilCalendarStyle",
             "tsType": "CivilCalendarStyle"
@@ -86,6 +95,7 @@
     },
     "chineseLunarDay": {
       "type": "object",
+      "description": "单个绝对日对应的中国农历日字段，包括所属农历月、月内日序号和日干支。",
       "additionalProperties": false,
       "required": [
         "dayIndex",
@@ -96,25 +106,30 @@
       ],
       "properties": {
         "dayIndex": {
-          "type": "integer"
+          "type": "integer",
+          "description": "稳定的绝对日键，必须与 CalendarDay.dayIndex 相同。"
         },
         "lunarMonthIndex": {
-          "type": "integer"
+          "type": "integer",
+          "description": "稳定的农历月键，对应 ChineseLunarMonth.lunarMonthIndex。"
         },
         "dayNumberInMonth": {
           "type": "integer",
           "minimum": 1,
-          "maximum": 30
+          "maximum": 30,
+          "description": "农历月内的日序号。根据该月 dayCount，范围为 1...29 或 1...30。"
         },
         "dayStemIndex": {
           "type": "integer",
           "minimum": 0,
-          "maximum": 9
+          "maximum": 9,
+          "description": "日的天干索引，0...9 对应 甲、乙、丙、丁、戊、己、庚、辛、壬、癸。"
         },
         "dayBranchIndex": {
           "type": "integer",
           "minimum": 0,
-          "maximum": 11
+          "maximum": 11,
+          "description": "日的地支索引，0...11 对应 子、丑、寅、卯、辰、巳、午、未、申、酉、戌、亥。"
         }
       },
       "x-codegen": {
