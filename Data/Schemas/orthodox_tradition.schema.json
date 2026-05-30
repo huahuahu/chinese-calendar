@@ -12,17 +12,20 @@
   "properties": {
     "id": {
       "type": "string",
-      "minLength": 1
+      "minLength": 1,
+      "description": "正统叙事的稳定标识符，供 OrthodoxBoundary 和 OrthodoxPeriod 引用。"
     },
     "name": {
       "type": "string",
-      "minLength": 1
+      "minLength": 1,
+      "description": "正统叙事的显示名称。"
     },
     "note": {
       "type": [
         "string",
         "null"
-      ]
+      ],
+      "description": "该正统叙事的可选说明。"
     }
   },
   "x-codegen": {

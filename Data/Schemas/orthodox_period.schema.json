@@ -18,40 +18,49 @@
   "properties": {
     "id": {
       "type": "string",
-      "minLength": 1
+      "minLength": 1,
+      "description": "正统时期记录的稳定标识符。"
     },
     "traditionID": {
       "type": "string",
-      "minLength": 1
+      "minLength": 1,
+      "description": "该正统时期所属的正统叙事，引用 OrthodoxTradition.id。"
     },
     "dynastyID": {
       "type": "string",
-      "minLength": 1
+      "minLength": 1,
+      "description": "该正统时期对应的朝代或政权，引用 Dynasty.id。"
     },
     "startBoundaryID": {
       "type": "string",
-      "minLength": 1
+      "minLength": 1,
+      "description": "该正统时期的开始边界，引用 OrthodoxBoundary.id。"
     },
     "endBoundaryID": {
       "type": "string",
-      "minLength": 1
+      "minLength": 1,
+      "description": "该正统时期的结束边界，引用 OrthodoxBoundary.id。正统时期按 [start, end) 半开区间理解。"
     },
     "sequenceIndex": {
       "type": "integer",
-      "minimum": 0
+      "minimum": 0,
+      "description": "正统叙事中的全局顺序，从 0 开始连续递增。"
     },
     "segmentIndex": {
       "type": "integer",
-      "minimum": 0
+      "minimum": 0,
+      "description": "正统叙事中的分段顺序，用来保留三国、五代等叙事分组。"
     },
     "segmentName": {
-      "type": "string"
+      "type": "string",
+      "description": "正统叙事分段名称，例如 秦、汉、三国、晋、南朝、五代、宋。"
     },
     "note": {
       "type": [
         "string",
         "null"
-      ]
+      ],
+      "description": "该正统时期的可选说明。"
     }
   },
   "x-codegen": {
