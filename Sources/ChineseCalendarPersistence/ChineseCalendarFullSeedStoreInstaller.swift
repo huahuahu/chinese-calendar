@@ -141,7 +141,10 @@ public actor ChineseCalendarFullSeedStoreInstaller {
             .appendingPathComponent("\(ChineseCalendarSeedStore.storeFileName).partial")
 
         try resetDirectory(stagingDirectory)
+        try excludeFromBackup(downloadsDirectory)
+        try excludeFromBackup(stagingDirectory)
         try fileManager.createDirectory(at: partialDirectory, withIntermediateDirectories: true)
+        try excludeFromBackup(partialDirectory)
         let temporaryDownloadURL = try await downloadStore(
             manifest: manifest,
             partialURL: partialStoreURL,
@@ -215,7 +218,7 @@ public actor ChineseCalendarFullSeedStoreInstaller {
             request.setValue("bytes=\(downloadedByteCount)-", forHTTPHeaderField: "Range")
         }
 
-        let (bytes, response) = try await session.bytes(for: request)
+        let (downloadedURL, response) = try await session.download(for: request)
         let didRestart = try normalizeDownloadResponse(
             response,
             partialURL: partialURL,
@@ -229,8 +232,8 @@ public actor ChineseCalendarFullSeedStoreInstaller {
             fileManager.createFile(atPath: partialURL.path, contents: nil)
         }
 
-        downloadedByteCount = try await append(
-            bytes,
+        downloadedByteCount = try append(
+            downloadedURL,
             to: partialURL,
             downloadedByteCount: downloadedByteCount,
             expectedLength: manifest.byteCount,
@@ -265,38 +268,36 @@ private extension ChineseCalendarFullSeedStoreInstaller {
     }
 
     private func append(
-        _ bytes: URLSession.AsyncBytes,
+        _ downloadedURL: URL,
         to partialURL: URL,
         downloadedByteCount: Int64,
         expectedLength: Int64,
         eventHandler: @Sendable (ChineseCalendarFullSeedStoreInstallEvent) -> Void
-    ) async throws -> Int64 {
-        let handle = try FileHandle(forWritingTo: partialURL)
+    ) throws -> Int64 {
+        let sourceHandle = try FileHandle(forReadingFrom: downloadedURL)
         defer {
-            try? handle.close()
+            try? sourceHandle.close()
+            try? fileManager.removeItem(at: downloadedURL)
         }
 
-        try handle.seekToEnd()
+        let destinationHandle = try FileHandle(forWritingTo: partialURL)
+        defer {
+            try? destinationHandle.close()
+        }
+
+        try destinationHandle.seekToEnd()
 
         var downloadedByteCount = downloadedByteCount
-        var buffer = Data()
-        buffer.reserveCapacity(64 * 1024)
-
-        for try await byte in bytes {
+        while true {
             try Task.checkCancellation()
-            buffer.append(byte)
-
-            if buffer.count >= 64 * 1024 {
-                try handle.write(contentsOf: buffer)
-                downloadedByteCount += Int64(buffer.count)
-                buffer.removeAll(keepingCapacity: true)
-                eventHandler(.downloading(progress: progress(downloadedByteCount, expectedLength: expectedLength)))
+            let data = sourceHandle.readData(ofLength: 1024 * 1024)
+            guard !data.isEmpty else {
+                break
             }
-        }
 
-        if !buffer.isEmpty {
-            try handle.write(contentsOf: buffer)
-            downloadedByteCount += Int64(buffer.count)
+            try destinationHandle.write(contentsOf: data)
+            downloadedByteCount += Int64(data.count)
+            eventHandler(.downloading(progress: progress(downloadedByteCount, expectedLength: expectedLength)))
         }
 
         return downloadedByteCount
@@ -321,6 +322,7 @@ private extension ChineseCalendarFullSeedStoreInstaller {
             fileManager.createFile(atPath: partialURL.path, contents: nil)
             return true
         case (_, 416):
+            try? fileManager.removeItem(at: partialURL)
             throw ChineseCalendarFullSeedStoreInstallError.rangeNotSatisfiable
         default:
             throw ChineseCalendarFullSeedStoreInstallError.downloadFailed(httpResponse.statusCode)
