@@ -49,7 +49,7 @@
   },
   "dynastyArtifact": {
     "artifact": "dynasty_periods",
-    "generatedAt": "2026-05-24T13:59:40.874Z",
+    "generatedAt": "2026-05-30T06:03:23.570Z",
     "generator": "Scripts/ImportChineseCalendar/generate_dynasty_periods.swift",
     "sourceURL": "https://ytliu0.github.io/ChineseCalendar/era_names_simp.html",
     "rawFile": "Data/Raw/ChineseCalendar/era_names_simp.html",
@@ -348,19 +348,28 @@
         "bceConversion": "Civil BCE year N maps to astronomical year 1 - N, so 前221 maps to -220."
       },
       "orthodoxSequence": [
-        "秦汉",
-        "魏晋南朝",
-        "唐五代两宋",
-        "元明清民国",
+        "秦",
+        "两汉",
+        "魏晋南北朝",
+        "隋",
+        "唐",
+        "五代",
+        "两宋",
+        "元",
+        "明",
+        "清",
+        "民国",
         "中华人民共和国"
       ],
       "orthodoxPeriodsBySegment": {
-        "秦汉": [
+        "秦": [
           {
             "dynastyID": "qin",
             "startYear": -220,
             "endYear": -205
-          },
+          }
+        ],
+        "两汉": [
           {
             "dynastyID": "western_han",
             "startYear": -205,
@@ -382,7 +391,7 @@
             "endYear": 220
           }
         ],
-        "魏晋南朝": [
+        "魏晋南北朝": [
           {
             "dynastyID": "cao_wei",
             "startYear": 220,
@@ -417,19 +426,23 @@
             "dynastyID": "chen",
             "startYear": 557,
             "endYear": 589
-          },
+          }
+        ],
+        "隋": [
           {
             "dynastyID": "sui",
             "startYear": 589,
             "endYear": 618
           }
         ],
-        "唐五代两宋": [
+        "唐": [
           {
             "dynastyID": "tang",
             "startYear": 618,
             "endYear": 907
-          },
+          }
+        ],
+        "五代": [
           {
             "dynastyID": "later_liang",
             "startYear": 907,
@@ -454,7 +467,9 @@
             "dynastyID": "later_zhou",
             "startYear": 951,
             "endYear": 960
-          },
+          }
+        ],
+        "两宋": [
           {
             "dynastyID": "northern_song",
             "startYear": 960,
@@ -466,22 +481,28 @@
             "endYear": 1279
           }
         ],
-        "元明清民国": [
+        "元": [
           {
             "dynastyID": "yuan",
             "startYear": 1279,
             "endYear": 1368
-          },
+          }
+        ],
+        "明": [
           {
             "dynastyID": "ming",
             "startYear": 1368,
             "endYear": 1644
-          },
+          }
+        ],
+        "清": [
           {
             "dynastyID": "qing",
             "startYear": 1644,
             "endYear": 1912
-          },
+          }
+        ],
+        "民国": [
           {
             "dynastyID": "republic_of_china",
             "startYear": 1912,
