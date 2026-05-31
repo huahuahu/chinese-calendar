@@ -23,7 +23,7 @@ Set up an isolated branch workspace for this repository and wire a branch-scoped
 1. Repository root: `/Users/tigerguo/git/Chinese-date`
 1. Worktree root: `~/worktrees/chinese-date`
 1. Worktree path: `~/worktrees/chinese-date/<sanitized-branchname>`
-1. MCP config: `/Users/tigerguo/git/Chinese-date/.xcodebuildmcp/config.yaml`
+1. MCP config: `~/worktrees/chinese-date/<sanitized-branchname>/.xcodebuildmcp/config.yaml`
 1. Ensure the worktree root directory exists.
 1. Create or reuse branch behavior:
 1. If the local branch exists, use it.
@@ -38,13 +38,14 @@ Set up an isolated branch workspace for this repository and wire a branch-scoped
 1. Use simulator name `iPhone 17 Pro (<sanitized-branchname>)`.
 1. If a simulator with that exact name already exists, reuse its UUID.
 1. Otherwise create it and capture the returned UUID.
-1. Update `/Users/tigerguo/git/Chinese-date/.xcodebuildmcp/config.yaml`:
+1. Update `~/worktrees/chinese-date/<sanitized-branchname>/.xcodebuildmcp/config.yaml`:
 1. Set `sessionDefaults.simulatorId` to the new UUID.
 1. Ensure `sessionDefaults.simulatorName` is `iPhone 17 Pro (<sanitized-branchname>)`.
 1. Validate end state:
 1. `git worktree list` contains `~/worktrees/chinese-date/<sanitized-branchname>`.
 1. `xcrun simctl list devices` contains created UUID.
 1. Config file `sessionDefaults.simulatorId` equals created UUID.
+1. Run `make setup` in `~/worktrees/chinese-date/<sanitized-branchname>`.
 
 ## Guardrails
 
@@ -68,7 +69,7 @@ fi
 SANITIZED_BRANCH_NAME="${BRANCH_NAME//\//-}"
 WORKTREE_ROOT="$HOME/worktrees/chinese-date"
 WORKTREE_PATH="$WORKTREE_ROOT/$SANITIZED_BRANCH_NAME"
-CONFIG_FILE="$REPO_ROOT/.xcodebuildmcp/config.yaml"
+CONFIG_FILE="$WORKTREE_PATH/.xcodebuildmcp/config.yaml"
 SIM_NAME="iPhone 17 Pro ($SANITIZED_BRANCH_NAME)"
 
 mkdir -p "$WORKTREE_ROOT"
@@ -116,11 +117,11 @@ else
   perl -i -pe 's/^(\s*simulatorId:\s*).*$/$1$ENV{SIM_UUID}/' "$CONFIG_FILE"
   perl -i -pe 's/^(\s*simulatorName:\s*).*$/$1$ENV{SIM_NAME}/' "$CONFIG_FILE"
 
-  grep -Eq "^\s*simulatorId:\s*$SIM_UUID$" "$CONFIG_FILE" || {
+  grep -F "simulatorId: $SIM_UUID" "$CONFIG_FILE" >/dev/null || {
     echo "Fallback edit did not update simulatorId" >&2
     exit 1
   }
-  grep -Eq "^\s*simulatorName:\s*$SIM_NAME$" "$CONFIG_FILE" || {
+  grep -F "simulatorName: $SIM_NAME" "$CONFIG_FILE" >/dev/null || {
     echo "Fallback edit did not update simulatorName" >&2
     exit 1
   }
@@ -129,6 +130,8 @@ fi
 git -C "$REPO_ROOT" worktree list | grep -F "$WORKTREE_PATH"
 xcrun simctl list devices | grep -F "$SIM_UUID"
 grep -n "simulatorId:" "$CONFIG_FILE"
+
+make -C "$WORKTREE_PATH" setup
 ```
 
 ## Output expectations
@@ -138,3 +141,4 @@ Provide a concise summary with:
 1. Branch and worktree path created/used.
 1. New simulator UUID.
 1. Final `sessionDefaults.simulatorId` value in config.
+1. `make setup` result from the worktree.
