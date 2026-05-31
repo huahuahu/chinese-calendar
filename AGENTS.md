@@ -54,6 +54,7 @@ This repository hosts a Swift project for browsing the traditional Chinese calen
 - Project-local Codex skill: `./.codex/skills/swiftui-pro`
 - Project-local Codex skill: `./.codex/skills/swift-concurrency-pro`
 - Project-local Codex skill: `./.codex/skills/swiftdata-pro`
+- Project-local Codex skill: `./.codex/skills/worktree-setup`
 - Upstream Swift agent index reference: `./Docs/AgentReferences/swift-agent-skills/README.md`
 - Upstream SwiftAgents reference: `./Docs/AgentReferences/SwiftAgents/AGENTS.upstream.md`
 
