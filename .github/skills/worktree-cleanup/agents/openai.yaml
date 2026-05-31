@@ -1,0 +1,10 @@
+interface:
+  display_name: "Worktree Cleanup"
+  short_description: "Safely removes branch worktrees, scoped simulators, and branches."
+  icon_small: "./assets/worktree-cleanup-icon.svg"
+  icon_large: "./assets/worktree-cleanup-icon.svg"
+  brand_color: "#6F42C1"
+  default_prompt: "Use $worktree-cleanup to safely remove a branch worktree, simulator, and branches."
+
+policy:
+  allow_implicit_invocation: true
