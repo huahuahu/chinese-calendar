@@ -26,7 +26,7 @@ public struct ChineseCalendarRootView: View {
             case .starting:
                 CalendarStoreProgressView(title: "正在准备日历数据", progress: nil)
             case let .ready(container, contentLevel, identityToken):
-                CalendarHomeView()
+                CalendarHomeView(openSettings: showSettings)
                     .environment(\.calendarStoreContentLevel, contentLevel)
                     .modelContainer(container)
                     .id(coordinator.storeIdentity(contentLevel: contentLevel, identityToken: identityToken))
@@ -36,15 +36,6 @@ public struct ChineseCalendarRootView: View {
             case let .failed(message):
                 CalendarStoreFailureView(message: message, retry: coordinator.prepareStore)
             }
-        }
-        .toolbar {
-            #if os(iOS)
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button("设置", systemImage: "gearshape") {
-                        isSettingsPresented = true
-                    }
-                }
-            #endif
         }
         .sheet(isPresented: $isSettingsPresented) {
             NavigationStack {
@@ -70,6 +61,10 @@ public struct ChineseCalendarRootView: View {
                 }
             }
         )
+    }
+
+    private func showSettings() {
+        isSettingsPresented = true
     }
 
     @ViewBuilder

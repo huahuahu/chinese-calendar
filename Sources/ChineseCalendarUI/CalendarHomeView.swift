@@ -9,11 +9,16 @@ public struct CalendarHomeView: View {
     @Query(sort: \ChineseLunarYear.lunarYearNumber) private var years: [ChineseLunarYear]
     @State private var router = CalendarRouter()
     @State private var didOpenColdLaunchDeepLink = false
+    private let openSettings: (() -> Void)?
 
-    public init() {}
+    public init(openSettings: (() -> Void)? = nil) {
+        self.openSettings = openSettings
+    }
 
     @available(*, deprecated, message: "CalendarHomeView now selects the current lunar year automatically.")
-    public init(selectedDate _: ChineseCalendarDate?) {}
+    public init(selectedDate _: ChineseCalendarDate?) {
+        self.init()
+    }
 
     public var body: some View {
         NavigationSplitView {
@@ -26,6 +31,15 @@ public struct CalendarHomeView: View {
                 }
             }
             .navigationTitle("年份")
+            #if os(iOS)
+                .toolbar {
+                    if let openSettings {
+                        ToolbarItem(placement: .topBarTrailing) {
+                            Button("设置", systemImage: "gearshape", action: openSettings)
+                        }
+                    }
+                }
+            #endif
         } detail: {
             CalendarRouteDestinationView(
                 route: router.selectedRoute,
