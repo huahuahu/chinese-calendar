@@ -1,0 +1,17 @@
+schemaVersion: 1
+enabledWorkflows:
+  - debugging
+  - simulator
+  - simulator-management
+  - swift-package
+  - ui-automation
+debug: true
+sentryDisabled: false
+setupPreferences:
+  platforms:
+    - iOS
+sessionDefaults:
+  projectPath: ChineseCalendar.xcodeproj
+  scheme: ChineseCalendar-iOS
+  simulatorId: 490CBD01-38FC-4A16-A4AA-D6CCB2313390
+  simulatorName: iPhone 17 Pro
