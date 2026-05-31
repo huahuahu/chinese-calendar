@@ -11,6 +11,26 @@ struct CalendarRouteDestinationView: View {
     let selectNextYear: () -> Void
     let emptyStateDescription: String
 
+    init(
+        route: CalendarRoute?,
+        year: ChineseLunarYear?,
+        selectedMonthIndex: Binding<Int?>,
+        canSelectPreviousYear: Bool,
+        canSelectNextYear: Bool,
+        selectPreviousYear: @escaping () -> Void,
+        selectNextYear: @escaping () -> Void,
+        emptyStateDescription: String
+    ) {
+        self.route = route
+        self.year = year
+        _selectedMonthIndex = selectedMonthIndex
+        self.canSelectPreviousYear = canSelectPreviousYear
+        self.canSelectNextYear = canSelectNextYear
+        self.selectPreviousYear = selectPreviousYear
+        self.selectNextYear = selectNextYear
+        self.emptyStateDescription = emptyStateDescription
+    }
+
     var body: some View {
         Group {
             switch route {
