@@ -34,7 +34,8 @@ const OUTPUT_FILES = {
   dateExpressions: "chinese_date_expressions.jsonl",
   orthodoxTraditions: "orthodox_traditions.jsonl",
   orthodoxBoundaries: "orthodox_boundaries.jsonl",
-  orthodoxPeriods: "orthodox_periods.jsonl"
+  orthodoxPeriods: "orthodox_periods.jsonl",
+  sourceAudit: "dynasty_source_audit.json"
 };
 
 const SECTION_ID_MAP = new Map([
@@ -676,21 +677,8 @@ function buildSourceAudit(parsedSource, records, rawSource, baseManifest) {
       range: "uncertainRange uses half-open [lowerBound, upperBound); range records are validated if emitted.",
       bceConversion: "Civil BCE year N maps to astronomical year 1 - N, so 前221 maps to -220."
     },
-    orthodoxSequence: ORTHODOX_SEGMENT_NAMES,
-    orthodoxPeriodsBySegment: groupPeriodSpecsBySegment()
+    orthodoxSequence: ORTHODOX_SEGMENT_NAMES
   };
-}
-
-function groupPeriodSpecsBySegment() {
-  const result = Object.fromEntries(ORTHODOX_SEGMENT_NAMES.map((name) => [name, []]));
-  for (const period of ORTHODOX_PERIOD_SPECS) {
-    result[period.segmentName].push({
-      dynastyID: period.dynastyID,
-      startYear: period.startYear,
-      endYear: period.endYear
-    });
-  }
-  return result;
 }
 
 function countPrecisions(expressions) {
@@ -708,8 +696,20 @@ async function writeArtifact(output, artifact) {
     writeJsonl(path.join(output, OUTPUT_FILES.dateExpressions), artifact.dateExpressions),
     writeJsonl(path.join(output, OUTPUT_FILES.orthodoxTraditions), artifact.orthodoxTraditions),
     writeJsonl(path.join(output, OUTPUT_FILES.orthodoxBoundaries), artifact.orthodoxBoundaries),
-    writeJsonl(path.join(output, OUTPUT_FILES.orthodoxPeriods), artifact.orthodoxPeriods)
+    writeJsonl(path.join(output, OUTPUT_FILES.orthodoxPeriods), artifact.orthodoxPeriods),
+    writeJson(path.join(output, OUTPUT_FILES.sourceAudit), artifact.sourceAudit)
   ]);
+}
+
+function sourceAuditSummary(sourceAudit) {
+  return {
+    parsedH2SectionCount: sourceAudit.parsedH2SectionCount,
+    parsedH3HeadingCount: sourceAudit.parsedH3HeadingCount,
+    nonEmittedH2SectionCount: sourceAudit.nonEmittedH2Sections.length,
+    automaticPrecisionCounts: sourceAudit.automaticPrecisionCounts,
+    manualPrecisionCounts: sourceAudit.manualPrecisionCounts,
+    orthodoxSequence: sourceAudit.orthodoxSequence
+  };
 }
 
 async function writeProcessedManifest(output, baseManifest, artifact, rawSource) {
@@ -737,6 +737,8 @@ async function writeProcessedManifest(output, baseManifest, artifact, rawSource)
         OrthodoxBoundary: OUTPUT_FILES.orthodoxBoundaries,
         OrthodoxPeriod: OUTPUT_FILES.orthodoxPeriods
       },
+      sourceAuditFile: OUTPUT_FILES.sourceAudit,
+      sourceAuditSummary: sourceAuditSummary(artifact.sourceAudit),
       importOrder: [
         "ChineseDateExpression",
         "Dynasty",
@@ -753,8 +755,7 @@ async function writeProcessedManifest(output, baseManifest, artifact, rawSource)
         "OrthodoxPeriod.dynasty": "orthodoxPeriod.dynastyID -> Dynasty.id",
         "OrthodoxPeriod.startBoundary": "orthodoxPeriod.startBoundaryID -> OrthodoxBoundary.id",
         "OrthodoxPeriod.endBoundary": "orthodoxPeriod.endBoundaryID -> OrthodoxBoundary.id"
-      },
-      sourceAudit: artifact.sourceAudit
+      }
     }
   };
 
@@ -784,13 +785,14 @@ function appendImportOrder(existing, additions) {
 async function validateArtifact(output) {
   const manifest = await readRequiredJson(path.join(output, "manifest.json"));
   const availableIndexes = await loadAvailableIndexes(output, manifest);
+  const sourceAudit = await loadSourceAudit(output, manifest);
   const artifact = {
     dynasties: await readJsonl(path.join(output, OUTPUT_FILES.dynasties)),
     dateExpressions: await readJsonl(path.join(output, OUTPUT_FILES.dateExpressions)),
     orthodoxTraditions: await readJsonl(path.join(output, OUTPUT_FILES.orthodoxTraditions)),
     orthodoxBoundaries: await readJsonl(path.join(output, OUTPUT_FILES.orthodoxBoundaries)),
     orthodoxPeriods: await readJsonl(path.join(output, OUTPUT_FILES.orthodoxPeriods)),
-    sourceAudit: manifest.dynastyArtifact?.sourceAudit
+    sourceAudit
   };
   validateRecords(artifact, availableIndexes);
 
@@ -810,6 +812,14 @@ async function validateArtifact(output) {
     orthodoxBoundaries: artifact.orthodoxBoundaries.length,
     orthodoxPeriods: artifact.orthodoxPeriods.length
   };
+}
+
+async function loadSourceAudit(output, manifest) {
+  const auditFile = manifest.dynastyArtifact?.sourceAuditFile;
+  if (typeof auditFile === "string" && auditFile.length > 0) {
+    return readRequiredJson(path.join(output, auditFile));
+  }
+  return manifest.dynastyArtifact?.sourceAudit;
 }
 
 function assertManifestCount(manifest, key, actual) {
@@ -1140,6 +1150,10 @@ async function writeJsonl(filePath, records) {
       writer.end(resolve);
     });
   }
+}
+
+async function writeJson(filePath, value) {
+  await writeFile(filePath, `${JSON.stringify(value, null, 2)}\n`, "utf8");
 }
 
 async function readJsonl(filePath) {

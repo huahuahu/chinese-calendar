@@ -545,24 +545,25 @@ private struct SeedStoreBuilder {
         }
 
         let sourceData = try Data(contentsOf: sourceURL)
-        guard var manifest = try JSONSerialization.jsonObject(with: sourceData) as? [String: Any] else {
+        guard let manifest = try JSONSerialization.jsonObject(with: sourceData) as? [String: Any] else {
             throw SeedStoreBuilderError.invalidManifest(sourceURL)
         }
 
-        manifest["seedStoreBuilder"] = "Scripts/BuildChineseCalendarSeedStore"
-        manifest["seedStoreContentLevel"] = options.contentLevel.rawValue
-        manifest["seedStoreFormatVersion"] = Self.seedStoreFormatVersion
-        manifest["seedStoreHistoryPurged"] = true
-        manifest["seedStoreRelationshipsLinked"] = true
+        var runtimeManifest = runtimeSeedStoreManifest(from: manifest)
+        runtimeManifest["seedStoreBuilder"] = "Scripts/BuildChineseCalendarSeedStore"
+        runtimeManifest["seedStoreContentLevel"] = options.contentLevel.rawValue
+        runtimeManifest["seedStoreFormatVersion"] = Self.seedStoreFormatVersion
+        runtimeManifest["seedStoreHistoryPurged"] = true
+        runtimeManifest["seedStoreRelationshipsLinked"] = true
 
         if options.contentLevel == .base {
-            manifest["totalCalendarDays"] = 0
-            manifest["totalChineseLunarDays"] = 0
-            manifest["totalCivilDates"] = 0
+            runtimeManifest["totalCalendarDays"] = 0
+            runtimeManifest["totalChineseLunarDays"] = 0
+            runtimeManifest["totalCivilDates"] = 0
         }
 
         var destinationData = try JSONSerialization.data(
-            withJSONObject: manifest,
+            withJSONObject: runtimeManifest,
             options: [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]
         )
         destinationData.append(Data("\n".utf8))
@@ -571,6 +572,74 @@ private struct SeedStoreBuilder {
             try fileManager.removeItem(at: destinationURL)
         }
         try destinationData.write(to: destinationURL, options: .atomic)
+    }
+
+    private func runtimeSeedStoreManifest(from source: [String: Any]) -> [String: Any] {
+        var manifest: [String: Any] = [:]
+        copyManifestValues(
+            [
+                "artifact",
+                "datasetVersion",
+                "generatedAt",
+                "schemaVersion",
+                "sourceArtifact",
+                "sourceUpstreamCommit",
+                "sourceUpstreamRepository",
+                "startDayIndex",
+                "startYear",
+                "endDayIndex",
+                "endYear",
+                "totalCalendarDays",
+                "totalChineseLunarDays",
+                "totalChineseLunarMonths",
+                "totalChineseLunarYears",
+                "totalCivilDates"
+            ],
+            from: source,
+            to: &manifest
+        )
+
+        if let dynastyArtifact = source["dynastyArtifact"] as? [String: Any] {
+            manifest["dynastyArtifact"] = compactDynastyArtifact(from: dynastyArtifact)
+        }
+
+        return manifest
+    }
+
+    private func compactDynastyArtifact(from source: [String: Any]) -> [String: Any] {
+        var artifact: [String: Any] = [:]
+        copyManifestValues(
+            [
+                "artifact",
+                "generatedAt",
+                "rawFetchedAt",
+                "rawFile",
+                "rawSha256",
+                "sourceURL",
+                "sourceUpstreamCommit",
+                "sourceUpstreamRepository",
+                "totalChineseDateExpressions",
+                "totalDynasties",
+                "totalOrthodoxBoundaries",
+                "totalOrthodoxPeriods",
+                "totalOrthodoxTraditions"
+            ],
+            from: source,
+            to: &artifact
+        )
+        return artifact
+    }
+
+    private func copyManifestValues(
+        _ keys: [String],
+        from source: [String: Any],
+        to destination: inout [String: Any]
+    ) {
+        for key in keys {
+            if let value = source[key] {
+                destination[key] = value
+            }
+        }
     }
 
     private func readJSONLines<Record: Decodable>(
