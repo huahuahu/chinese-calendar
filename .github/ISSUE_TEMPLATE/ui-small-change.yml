@@ -1,0 +1,77 @@
+name: UI 小改动
+description: 记录界面展示、交互细节、文案或视觉层级上的小调整
+title: "优化："
+labels:
+  - ui
+body:
+  - type: markdown
+    attributes:
+      value: |
+        请用中文描述这个 UI 小改动。提交前请尽量确认它在 iOS 和 macOS 上都符合预期。
+
+  - type: textarea
+    id: background
+    attributes:
+      label: 背景
+      description: 这个改动出现在哪个页面、流程或状态里？当前用户会看到什么？
+      placeholder: |
+        例如：当前「正在下载完整日历数据」页面会以整页遮罩/空白窗口的形式展示加载状态，用户在下载期间无法继续操作应用。
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: 问题
+      description: 当前体验哪里不够清楚、不够顺手，或者和平台习惯不一致？
+      placeholder: |
+        例如：
+        1. 下载状态会完全阻挡用户操作。
+        2. 只有不确定进度的转圈，用户无法判断还需要多久。
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected-experience
+    attributes:
+      label: 期望体验
+      description: 描述改完之后用户应该看到什么、能做什么。
+      placeholder: |
+        例如：
+        1. macOS：下载进度应单独打开一个页面/窗口，避免阻塞主界面操作。
+        2. iOS：下载进度可以收起到底部区域，用户点击后再展开查看详情。
+        3. 显示明确进度条，最好包含已完成比例、当前步骤或下载状态。
+    validations:
+      required: true
+
+  - type: textarea
+    id: scope
+    attributes:
+      label: 调整范围
+      description: 说明这个改动涉及哪些界面元素。若不确定，可以写“待确认”。
+      placeholder: |
+        例如：按钮文案、加载状态、列表行高度、空状态提示、弹窗布局、导航标题等。
+    validations:
+      required: false
+
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: 验收标准
+      description: 用可勾选清单描述这个 issue 完成时需要满足的条件。
+      value: |
+        - [ ] iOS 上已验证展示和交互符合预期。
+        - [ ] macOS 上已验证展示和交互符合预期。
+        - [ ] 文案、间距、颜色和平台默认行为没有明显不一致。
+    validations:
+      required: true
+
+  - type: textarea
+    id: references
+    attributes:
+      label: 参考资料或截图
+      description: 可以贴截图、录屏、相关 issue、设计稿或 Apple 文档链接。
+      placeholder: |
+        例如：https://github.com/huahuahu/chinese-calendar/issues/36
+    validations:
+      required: false
