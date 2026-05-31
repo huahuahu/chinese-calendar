@@ -305,6 +305,60 @@ public enum ChineseCalendarModelContainerFactory {
     }
 }
 
+public extension ChineseCalendarModelContainerFactory {
+    @discardableResult
+    static func clearDownloadedSeedStore(
+        bundle: Bundle = .main,
+        appGroupIdentifier: String = ChineseCalendarAppConfiguration.appGroupIdentifier,
+        fileManager: FileManager = .default
+    ) throws -> URL {
+        let storeDirectory = try sharedStoreDirectory(
+            appGroupIdentifier: appGroupIdentifier,
+            fileManager: fileManager
+        )
+
+        guard let seedDirectory = seedStoreResourceURL(in: bundle) else {
+            ChineseCalendarLog.persistence.error("Missing bundled seed store resource")
+            throw ChineseCalendarStoreError.missingSeedResource(
+                "\(ChineseCalendarSeedStore.resourceBundleName).\(ChineseCalendarSeedStore.resourceBundleExtension)"
+            )
+        }
+
+        ChineseCalendarLog.persistence.notice("Clearing downloaded seed store and restoring bundled base store")
+
+        try ChineseCalendarSeedStoreFiles.removeStoreFiles(
+            in: storeDirectory,
+            fileManager: fileManager
+        )
+
+        let installedManifestURL = storeDirectory.appendingPathComponent(ChineseCalendarSeedStore.manifestFileName)
+        if fileManager.fileExists(atPath: installedManifestURL.path) {
+            try fileManager.removeItem(at: installedManifestURL)
+        }
+
+        try ChineseCalendarSeedStoreFiles.copyStoreFiles(
+            from: seedDirectory,
+            to: storeDirectory,
+            fileManager: fileManager
+        )
+        try copyManifestIfPresent(
+            from: seedDirectory,
+            to: storeDirectory,
+            fileManager: fileManager
+        )
+
+        let downloadsDirectory = try downloadsDirectory(
+            appGroupIdentifier: appGroupIdentifier,
+            fileManager: fileManager
+        )
+        if fileManager.fileExists(atPath: downloadsDirectory.path) {
+            try fileManager.removeItem(at: downloadsDirectory)
+        }
+
+        return storeDirectory.appendingPathComponent(ChineseCalendarSeedStore.storeFileName)
+    }
+}
+
 enum ChineseCalendarSeedStoreFiles {
     static func removeStoreFiles(
         in directoryURL: URL,
