@@ -51,10 +51,11 @@ This repository hosts a Swift project for browsing the traditional Chinese calen
 ## Installed Agent Resources
 
 - Sosumi MCP: configured in `./.codex/config.toml` at `http://127.0.0.1:8787/mcp`; use it to search and fetch Apple Developer documentation and WWDC pages when checking Swift, SwiftUI, SwiftData, Xcode, or platform API behavior.
-- Project-local Codex skill: `./.codex/skills/swiftui-pro`
-- Project-local Codex skill: `./.codex/skills/swift-concurrency-pro`
-- Project-local Codex skill: `./.codex/skills/swiftdata-pro`
-- Project-local Codex skill: `./.codex/skills/worktree-setup`
+- Project-local skill: `./.github/skills/swiftui-pro`
+- Project-local skill: `./.github/skills/swift-concurrency-pro`
+- Project-local skill: `./.github/skills/swiftdata-pro`
+- Project-local skill: `./.github/skills/worktree-setup`
+- Project-local skill: `./.github/skills/worktree-cleanup`
 - Upstream Swift agent index reference: `./Docs/AgentReferences/swift-agent-skills/README.md`
 - Upstream SwiftAgents reference: `./Docs/AgentReferences/SwiftAgents/AGENTS.upstream.md`
 
@@ -71,3 +72,4 @@ The project keeps its own repository-specific rules above, but also adopts the s
 When a task is primarily about SwiftUI review or generation, prefer using the local `$swiftui-pro` skill.
 When a task is primarily about async/await, actor isolation, cancellation, or task structure, prefer `$swift-concurrency-pro`.
 When a task is primarily about SwiftData models, predicates, indexing, or CloudKit integration, prefer `$swiftdata-pro`.
+When setting up or cleaning up branch worktrees, prefer `$worktree-setup` or `$worktree-cleanup`.
