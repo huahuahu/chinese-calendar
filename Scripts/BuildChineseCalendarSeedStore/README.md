@@ -2,7 +2,7 @@
 
 这个目录是把 `Data/Processed/swiftdata_import` 转成 SwiftData SQLite seed store 的脚本包。
 
-它只负责离线生成 seed store：读取 JSONL、写入 SwiftData model、收尾 SQLite journal，并复制 manifest。默认生成随 app bundle 发布的 `base` store；也可以显式生成远端发布用的 `full` store。
+它只负责离线生成 seed store：读取 JSONL、写入 SwiftData model、收尾 SQLite journal，并写出 runtime manifest。默认生成随 app bundle 发布的 `base` store；也可以显式生成远端发布用的 `full` store。
 
 ## 运行
 
@@ -57,6 +57,12 @@ ChineseCalendar.sqlite-shm
 Data/Processed/swiftdata_import/
   chinese_lunar_years.jsonl
   chinese_lunar_months.jsonl
+  chinese_date_expressions.jsonl
+  dynasties.jsonl
+  dynasty_source_audit.json
+  orthodox_traditions.jsonl
+  orthodox_boundaries.jsonl
+  orthodox_periods.jsonl
   calendar_days/<civil-year>/calendar_days.jsonl
   manifest.json
 ```
@@ -66,8 +72,13 @@ Data/Processed/swiftdata_import/
 1. `ChineseLunarYear`
 2. `ChineseLunarMonth`
 3. `CalendarDay` + `CivilDate` + `ChineseLunarDay`
+4. `ChineseDateExpression`
+5. `Dynasty`
+6. `OrthodoxTradition`
+7. `OrthodoxBoundary`
+8. `OrthodoxPeriod`
 
-`full` 模式下，日数据按 civil year 分目录读取，并按目录名数字升序导入。`base` 模式会跳过第 3 步。
+`full` 模式下，日数据按 civil year 分目录读取，并按目录名数字升序导入。`base` 模式会跳过第 3 步，但仍会导入农历年、农历月、朝代和正统时期数据。
 
 ## 输出
 
@@ -78,6 +89,8 @@ Apps/Shared/Resources/ChineseCalendarSeedStore.bundle/
   ChineseCalendar.sqlite
   manifest.json
 ```
+
+`Data/Processed/swiftdata_import/manifest.json` 是导入目录和计数 manifest；完整朝代来源审计信息保存在同目录的 `dynasty_source_audit.json`。输出到 app resource bundle 的 `manifest.json` 是精简 runtime manifest，只保留安装、版本、覆盖范围、row count 和少量来源摘要。运行时朝代数据以 SQLite 里的 `Dynasty` / `OrthodoxPeriod` 等 SwiftData 表为准，不再在 manifest 中重复保存解析明细。
 
 生成结束后，脚本会执行：
 

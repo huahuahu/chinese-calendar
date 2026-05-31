@@ -24,7 +24,7 @@ Bundled resource:
 ```text
 Apps/Shared/Resources/ChineseCalendarSeedStore.bundle/
   ChineseCalendar.sqlite        # base store, tracked in git
-  manifest.json                 # includes seedStoreContentLevel: base
+  manifest.json                 # compact runtime manifest, includes seedStoreContentLevel: base
 ```
 
 Installed shared store:
@@ -67,6 +67,8 @@ swift run -c release --package-path Scripts/BuildChineseCalendarSeedStore Chines
 ```
 
 Xcode targets also run this command automatically before building if `ChineseCalendar.sqlite` is missing from the resource bundle, or if the bundled store is not the expected base-store format. The builder checkpoints WAL content back into the main database, switches the seed store to DELETE journal mode, and removes SQLite sidecar files so the bundled seed store stays as a single SQLite file.
+
+The processed import directory under `Data/Processed/swiftdata_import` keeps JSONL import data, a compact manifest, and a separate `dynasty_source_audit.json` for dynasty import audit details. The resource-bundle manifest is intentionally slim: it keeps only runtime install/version fields, coverage counts, and compact provenance. Dynasty and orthodox-period records are read from the SwiftData SQLite tables, not duplicated in manifests.
 
 To build a remote full store, use a separate output directory:
 

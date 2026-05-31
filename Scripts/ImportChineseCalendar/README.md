@@ -160,13 +160,17 @@ Data/Processed/swiftdata_import/chinese_date_expressions.jsonl
 Data/Processed/swiftdata_import/orthodox_traditions.jsonl
 Data/Processed/swiftdata_import/orthodox_boundaries.jsonl
 Data/Processed/swiftdata_import/orthodox_periods.jsonl
+Data/Processed/swiftdata_import/dynasty_source_audit.json
 ```
 
-`manifest.json` 的 `dynastyArtifact.sourceAudit` 记录 source audit 结论、解析精度统计和首版正统叙事分组：
+`manifest.json` 的 `dynastyArtifact` 只记录文件名、计数、来源和 `sourceAuditFile` 指针；完整 source audit 写入
+`dynasty_source_audit.json`，记录解析结论、精度统计和首版正统叙事分组：
 
 ```text
 秦、两汉、魏晋南北朝、隋、唐、五代、两宋、元、明、清、民国、中华人民共和国
 ```
+
+这份完整 source audit 只保留在 `Data/Processed/swiftdata_import/dynasty_source_audit.json`，用于开发期检查导入决策。seed-store builder 写入 app resource bundle 的 `manifest.json` 会裁剪为 runtime manifest，不再携带 `parsedH2Sections`、`nonEmittedH2Sections`、`auditedH3Headings` 等导入审计明细。
 
 `Dynasty` 记录网页中有历日资料的政权/王朝，以及从网页 h3/table 拆出的具体政权。
 `春秋时期`、`战国时期`、`西汉、新、更始`、`魏、蜀、吴`、`晋`、`南北朝`、`五代`、`宋` 这类时期或复合 h2 分节只进入 source audit，不作为单独政权；三国按 `魏`、`蜀汉`、`孙吴` 三个政权记录，晋按 `西晋`、`东晋` 记录，南朝按 `刘宋`、`齐`、`梁`、`陈` 记录，五代按 `后梁`、`后唐`、`后晋`、`后汉`、`后周` 记录，两宋按 `北宋`、`南宋` 记录。
