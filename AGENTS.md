@@ -51,6 +51,7 @@ This repository hosts a Swift project for browsing the traditional Chinese calen
 ## Installed Agent Resources
 
 - Sosumi MCP: configured in `./.codex/config.toml` at `http://127.0.0.1:8787/mcp`; use it to search and fetch Apple Developer documentation and WWDC pages when checking Swift, SwiftUI, SwiftData, Xcode, or platform API behavior.
+- XcodeBuildMCP: use XcodeBuildMCP whenever possible for Xcode builds, tests, simulator runs, UI inspection, and debugging workflows.
 - Project-local skill: `./.github/skills/swiftui-pro`
 - Project-local skill: `./.github/skills/swift-concurrency-pro`
 - Project-local skill: `./.github/skills/swiftdata-pro`
