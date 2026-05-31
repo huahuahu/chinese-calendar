@@ -40,3 +40,4 @@ Use these workspace skills when relevant:
 - `swiftui-pro` for SwiftUI generation/review.
 - `swift-concurrency-pro` for async/await, actor isolation, cancellation, and task structure.
 - `swiftdata-pro` for SwiftData models, predicates, indexing, and CloudKit-related constraints.
+- `worktree-setup` for creating a branch worktree at `~/worktrees/chinese-date/<branchname>`, creating a new iPhone 17 Pro simulator, and updating `.xcodebuildmcp/config.yaml` simulator defaults.

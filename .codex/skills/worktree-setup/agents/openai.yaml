@@ -1,0 +1,10 @@
+interface:
+  display_name: "Worktree Setup"
+  short_description: "Creates a worktree, creates a new simulator, and updates MCP config."
+  icon_small: "./assets/worktree-setup-icon.svg"
+  icon_large: "./assets/worktree-setup-icon.svg"
+  brand_color: "#0C7D69"
+  default_prompt: "Use $worktree-setup for branch worktree and simulator setup."
+
+policy:
+  allow_implicit_invocation: true
