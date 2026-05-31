@@ -10,7 +10,6 @@ struct LunarYearDetailView: View {
     let canSelectNextYear: Bool
     let selectPreviousYear: () -> Void
     let selectNextYear: () -> Void
-    let openSettings: (() -> Void)?
 
     @Query private var months: [ChineseLunarMonth]
 
@@ -20,8 +19,7 @@ struct LunarYearDetailView: View {
         canSelectPreviousYear: Bool,
         canSelectNextYear: Bool,
         selectPreviousYear: @escaping () -> Void,
-        selectNextYear: @escaping () -> Void,
-        openSettings: (() -> Void)? = nil
+        selectNextYear: @escaping () -> Void
     ) {
         self.year = year
         _selectedMonthIndex = selectedMonthIndex
@@ -29,7 +27,6 @@ struct LunarYearDetailView: View {
         self.canSelectNextYear = canSelectNextYear
         self.selectPreviousYear = selectPreviousYear
         self.selectNextYear = selectNextYear
-        self.openSettings = openSettings
 
         let lunarYearNumber = year.lunarYearNumber
         _months = Query(
@@ -89,12 +86,6 @@ struct LunarYearDetailView: View {
                 Button("下一年", systemImage: "chevron.right", action: selectNextYear)
                     .disabled(!canSelectNextYear)
                     .help("切换到下一年")
-
-                #if os(iOS)
-                    if let openSettings {
-                        Button("设置", systemImage: "gearshape", action: openSettings)
-                    }
-                #endif
             }
         }
     }

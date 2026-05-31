@@ -49,8 +49,7 @@ public struct CalendarHomeView: View {
                 canSelectNextYear: router.canSelectNextYear(availableYearNumbers: yearNumbers),
                 selectPreviousYear: { router.selectPreviousYear(availableYearNumbers: yearNumbers) },
                 selectNextYear: { router.selectNextYear(availableYearNumbers: yearNumbers) },
-                emptyStateDescription: emptyStateDescription,
-                openSettings: openSettings
+                emptyStateDescription: emptyStateDescription
             )
         }
         .sheet(item: $router.sheet, onDismiss: router.applyDeferredDeepLinkIfReady) { node in
