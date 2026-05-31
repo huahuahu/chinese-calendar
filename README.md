@@ -37,7 +37,7 @@ Then generate the Xcode project and build server config once:
 ./Scripts/generate_buildserver_config.sh
 ```
 
-This repository contains a Swift Package rooted at `Sources` and Xcode app targets under `Apps/`, so VS Code navigation is most reliable when SourceKit-LSP uses the generated `buildServer.json`.
+This repository contains a Swift Package rooted at `Sources` and Xcode app targets under `Apps/`, so VS Code navigation is most reliable when SourceKit-LSP uses the generated `buildServer.json`. The build server config script normalizes `workspace` and `build_root` to relative paths so the file works across git worktrees.
 
 ## Agent Skills
 
