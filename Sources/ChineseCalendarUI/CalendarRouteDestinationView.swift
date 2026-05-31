@@ -10,6 +10,29 @@ struct CalendarRouteDestinationView: View {
     let selectPreviousYear: () -> Void
     let selectNextYear: () -> Void
     let emptyStateDescription: String
+    let openSettings: (() -> Void)?
+
+    init(
+        route: CalendarRoute?,
+        year: ChineseLunarYear?,
+        selectedMonthIndex: Binding<Int?>,
+        canSelectPreviousYear: Bool,
+        canSelectNextYear: Bool,
+        selectPreviousYear: @escaping () -> Void,
+        selectNextYear: @escaping () -> Void,
+        emptyStateDescription: String,
+        openSettings: (() -> Void)? = nil
+    ) {
+        self.route = route
+        self.year = year
+        _selectedMonthIndex = selectedMonthIndex
+        self.canSelectPreviousYear = canSelectPreviousYear
+        self.canSelectNextYear = canSelectNextYear
+        self.selectPreviousYear = selectPreviousYear
+        self.selectNextYear = selectNextYear
+        self.emptyStateDescription = emptyStateDescription
+        self.openSettings = openSettings
+    }
 
     var body: some View {
         Group {
@@ -22,7 +45,8 @@ struct CalendarRouteDestinationView: View {
                         canSelectPreviousYear: canSelectPreviousYear,
                         canSelectNextYear: canSelectNextYear,
                         selectPreviousYear: selectPreviousYear,
-                        selectNextYear: selectNextYear
+                        selectNextYear: selectNextYear,
+                        openSettings: openSettings
                     )
                 } else {
                     ContentUnavailableView {

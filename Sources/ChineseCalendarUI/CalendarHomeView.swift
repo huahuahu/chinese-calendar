@@ -34,7 +34,7 @@ public struct CalendarHomeView: View {
             #if os(iOS)
                 .toolbar {
                     if let openSettings {
-                        ToolbarItem(placement: .topBarTrailing) {
+                        ToolbarItem(placement: .primaryAction) {
                             Button("设置", systemImage: "gearshape", action: openSettings)
                         }
                     }
@@ -49,7 +49,8 @@ public struct CalendarHomeView: View {
                 canSelectNextYear: router.canSelectNextYear(availableYearNumbers: yearNumbers),
                 selectPreviousYear: { router.selectPreviousYear(availableYearNumbers: yearNumbers) },
                 selectNextYear: { router.selectNextYear(availableYearNumbers: yearNumbers) },
-                emptyStateDescription: emptyStateDescription
+                emptyStateDescription: emptyStateDescription,
+                openSettings: openSettings
             )
         }
         .sheet(item: $router.sheet, onDismiss: router.applyDeferredDeepLinkIfReady) { node in
