@@ -13,6 +13,7 @@ import Testing
 
     #expect(selectedYear == 2025)
     #expect(router.selectedRoute == .lunarYear(2025))
+    #expect(router.yearsPath == [.lunarYear(2025)])
 }
 
 @MainActor
@@ -26,6 +27,30 @@ import Testing
 
     #expect(selectedYear == nil)
     #expect(router.selectedRoute == .lunarYear(2024))
+}
+
+@MainActor
+@Test func pushUpdatesSelectedTabPath() {
+    let router = CalendarRouter()
+
+    router.push(.dynasty("qin"), on: .history)
+
+    #expect(router.selectedTab == .history)
+    #expect(router.historyPath == [.dynasty("qin")])
+    #expect(router.yearsPath.isEmpty)
+}
+
+@MainActor
+@Test func tabPathsDoNotPolluteEachOther() {
+    let router = CalendarRouter()
+
+    router.push(.lunarYear(2025), on: .years)
+    router.push(.dynasty("qin"), on: .history)
+
+    #expect(router.yearsPath == [.lunarYear(2025)])
+    #expect(router.historyPath == [.dynasty("qin")])
+    #expect(router.selectedRoute == .dynasty("qin"))
+    #expect(router.currentRoute(on: .years) == .lunarYear(2025))
 }
 
 @MainActor
@@ -44,10 +69,10 @@ import Testing
     let years = [2024, 2025, 2026]
 
     router.selectPreviousYear(availableYearNumbers: years)
-    #expect(router.selectedRoute == .lunarYear(2024))
+    #expect(router.currentRoute(on: .years) == .lunarYear(2024))
 
     router.selectNextYear(availableYearNumbers: years)
-    #expect(router.selectedRoute == .lunarYear(2025))
+    #expect(router.currentRoute(on: .years) == .lunarYear(2025))
 }
 
 @MainActor
@@ -70,7 +95,7 @@ import Testing
     router.selectYear(2025)
     router.presentSheet(.lunarYear(2025))
 
-    #expect(router.selectedRoute == router.sheet?.route)
+    #expect(router.currentRoute(on: .years) == router.sheet?.route)
 }
 
 @MainActor
@@ -81,7 +106,7 @@ import Testing
     let sheet = router.sheet
     sheet?.push(.lunarYear(2026))
 
-    #expect(router.selectedRoute == nil)
+    #expect(router.yearsPath.isEmpty)
     #expect(sheet?.path == [.lunarYear(2026)])
 }
 
@@ -108,12 +133,12 @@ import Testing
 
     #expect(router.sheet == nil)
     #expect(router.deferredDeepLink == .lunarYear(2026, monthIndex: 26001))
-    #expect(router.selectedRoute == .lunarYear(2024))
+    #expect(router.currentRoute(on: .years) == .lunarYear(2024))
 
     router.applyDeferredDeepLinkIfReady()
 
     #expect(router.deferredDeepLink == nil)
-    #expect(router.selectedRoute == .lunarYear(2026))
+    #expect(router.currentRoute(on: .years) == .lunarYear(2026))
     #expect(router.selectedMonthIndex == 26001)
 }
 
@@ -124,14 +149,31 @@ import Testing
     router.openColdLaunchDeepLink(.lunarYear(2026, monthIndex: 26001))
 
     #expect(router.deferredDeepLink == nil)
-    #expect(router.selectedRoute == .lunarYear(2026))
+    #expect(router.currentRoute(on: .years) == .lunarYear(2026))
     #expect(router.selectedMonthIndex == 26001)
+}
+
+@MainActor
+@Test func dynastyDeepLinkSelectsHistoryTab() {
+    let router = CalendarRouter()
+
+    router.openColdLaunchDeepLink(.dynasty("qin"))
+
+    #expect(router.selectedTab == .history)
+    #expect(router.historyPath == [.dynasty("qin")])
+    #expect(router.selectedMonthIndex == nil)
 }
 
 @Test func parserSupportsYearURLs() throws {
     let url = try #require(URL(string: "chinesecalendar://year/2026?monthIndex=26001"))
 
     #expect(CalendarDeepLinkParser.deepLink(from: url) == .lunarYear(2026, monthIndex: 26001))
+}
+
+@Test func parserSupportsDynastyURLs() throws {
+    let url = try #require(URL(string: "chinesecalendar://dynasty/qin"))
+
+    #expect(CalendarDeepLinkParser.deepLink(from: url) == .dynasty("qin"))
 }
 
 @Test func parserSupportsLaunchArguments() {

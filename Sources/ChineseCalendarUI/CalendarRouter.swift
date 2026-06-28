@@ -4,34 +4,84 @@ import Observation
 @MainActor
 @Observable
 final class CalendarRouter {
-    var selectedRoute: CalendarRoute? {
+    var selectedTab: CalendarTab
+    var yearsPath: [CalendarRoute] {
         didSet {
-            if selectedRoute?.lunarYearNumber != oldValue?.lunarYearNumber {
-                selectedMonthIndex = nil
-            }
+            clearSelectedMonthIfSelectedYearChanged(from: oldValue, to: yearsPath)
         }
     }
 
+    var historyPath: [CalendarRoute]
     var selectedMonthIndex: Int?
     var sheet: CalendarPresentationNode?
     var fullScreen: CalendarPresentationNode?
     private(set) var deferredDeepLink: CalendarDeepLink?
 
+    var selectedRoute: CalendarRoute? {
+        get { currentRoute(on: selectedTab) }
+        set {
+            if let newValue {
+                setPath([newValue], for: selectedTab)
+            } else {
+                setPath([], for: selectedTab)
+            }
+        }
+    }
+
     var selectedYearNumber: Int? {
-        selectedRoute?.lunarYearNumber
+        currentRoute(on: .years)?.lunarYearNumber
     }
 
     var hasActivePresentation: Bool {
         sheet != nil || fullScreen != nil
     }
 
-    init(selectedRoute: CalendarRoute? = nil, selectedMonthIndex: Int? = nil) {
-        self.selectedRoute = selectedRoute
+    init(
+        selectedTab: CalendarTab = .years,
+        selectedRoute: CalendarRoute? = nil,
+        yearsPath: [CalendarRoute]? = nil,
+        historyPath: [CalendarRoute] = [],
+        selectedMonthIndex: Int? = nil
+    ) {
+        self.selectedTab = selectedTab
+        self.yearsPath = yearsPath ?? selectedRoute.map { [$0] } ?? []
+        self.historyPath = historyPath
         self.selectedMonthIndex = selectedMonthIndex
     }
 
+    func path(for tab: CalendarTab) -> [CalendarRoute] {
+        switch tab {
+        case .years:
+            yearsPath
+        case .history:
+            historyPath
+        }
+    }
+
+    func setPath(_ path: [CalendarRoute], for tab: CalendarTab) {
+        switch tab {
+        case .years:
+            yearsPath = path
+        case .history:
+            historyPath = path
+        }
+    }
+
+    func currentRoute(on tab: CalendarTab) -> CalendarRoute? {
+        path(for: tab).last
+    }
+
+    func push(_ route: CalendarRoute, on tab: CalendarTab? = nil) {
+        let targetTab = tab ?? selectedTab
+        selectedTab = targetTab
+        var path = path(for: targetTab)
+        path.append(route)
+        setPath(path, for: targetTab)
+    }
+
     func selectYear(_ yearNumber: Int, monthIndex: Int? = nil) {
-        selectedRoute = .lunarYear(yearNumber)
+        selectedTab = .years
+        setPath([.lunarYear(yearNumber)], for: .years)
         selectedMonthIndex = monthIndex
     }
 
@@ -145,7 +195,19 @@ final class CalendarRouter {
         switch deepLink {
         case let .lunarYear(yearNumber, monthIndex):
             selectYear(yearNumber, monthIndex: monthIndex)
+        case let .dynasty(dynastyID):
+            selectedTab = .history
+            setPath([.dynasty(dynastyID)], for: .history)
+            selectedMonthIndex = nil
         }
+    }
+
+    private func clearSelectedMonthIfSelectedYearChanged(from oldPath: [CalendarRoute], to newPath: [CalendarRoute]) {
+        guard oldPath.last?.lunarYearNumber != newPath.last?.lunarYearNumber else {
+            return
+        }
+
+        selectedMonthIndex = nil
     }
 }
 

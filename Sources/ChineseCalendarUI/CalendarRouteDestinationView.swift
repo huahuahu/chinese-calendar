@@ -51,6 +51,8 @@ struct CalendarRouteDestinationView: View {
                         Text("没有找到这个农历年。")
                     }
                 }
+            case let .dynasty(dynastyID):
+                DynastyDetailView(dynastyID: dynastyID)
             case nil:
                 ContentUnavailableView {
                     Label("Chinese Calendar", systemImage: "calendar")
