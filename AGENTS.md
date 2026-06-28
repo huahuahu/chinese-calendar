@@ -54,6 +54,7 @@ This repository hosts a Swift project for browsing the traditional Chinese calen
 - Project-local skill: `./.agents/skills/swiftui-pro`
 - Project-local skill: `./.agents/skills/swift-concurrency-pro`
 - Project-local skill: `./.agents/skills/swiftdata-pro`
+- Project-local skill: `./.agents/skills/publish-full-seed-store`
 - Project-local skill: `./.agents/skills/worktree-setup`
 - Project-local skill: `./.agents/skills/worktree-cleanup`
 
@@ -84,4 +85,5 @@ The project keeps its own repository-specific rules above, but also adopts the s
 When a task is primarily about SwiftUI review or generation, prefer using the local `swiftui-pro` skill.
 When a task is primarily about async/await, actor isolation, cancellation, or task structure, prefer `swift-concurrency-pro`.
 When a task is primarily about SwiftData models, predicates, indexing, or CloudKit integration, prefer `swiftdata-pro`.
+When publishing a new remote full SwiftData seed store SQLite release, prefer `publish-full-seed-store`.
 When setting up or cleaning up branch worktrees, prefer `worktree-setup` or `worktree-cleanup`.
