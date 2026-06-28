@@ -42,6 +42,9 @@ SQLite is treated as generated output and should be rebuilt from JSONL.
 - `chinese_lunar_months.jsonl`
 - `calendar_days/<year>/calendar_days.jsonl`
 - `dynasties.jsonl`
+- `emperors.jsonl`
+- `emperor_reign_segments.jsonl`
+- `reign_eras.jsonl`
 - `chinese_date_expressions.jsonl`
 - `orthodox_traditions.jsonl`
 - `orthodox_boundaries.jsonl`

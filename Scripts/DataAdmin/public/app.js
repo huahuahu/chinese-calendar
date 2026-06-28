@@ -134,6 +134,9 @@ function renderManifest() {
     ["Years", formatNumber(manifest.totalChineseLunarYears)],
     ["Months", formatNumber(manifest.totalChineseLunarMonths)],
     ["Dynasties", formatNumber(manifest.totalDynasties)],
+    ["Emperors", formatNumber(manifest.totalEmperors)],
+    ["Reign segments", formatNumber(manifest.totalEmperorReignSegments)],
+    ["Reign eras", formatNumber(manifest.totalReignEras)],
     ["Generated", manifest.generatedAt],
     ["Commit", manifest.sourceUpstreamCommit]
   ];
