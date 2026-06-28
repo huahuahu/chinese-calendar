@@ -1,254 +1,171 @@
 # UI Plan
 
-## Purpose
+## 目的
 
-This document defines the first UI slice for the Chinese calendar app.
-The first release should prioritize a clear timeline-browsing experience over advanced search or analysis tools.
+本文记录首版信息架构和关键展示规则，供后续 SwiftUI 实现时对齐。
 
-## Product Direction
+首版采用三个 tab：
 
-The app should feel like a historical day browser.
+1. **日历**
+2. **历史**
+3. **设置**
 
-- The user moves through time by civil date.
-- The app reveals the Chinese calendar and political context for the selected day.
-- Detail is available without overwhelming the home screen.
+整体原则是：**日历回答“这一天在历法上是什么”，历史回答“这段时间在政治时间线上属于谁、用什么年号”，设置只处理偏好和数据状态。**
 
-The core question the UI answers is:
+## Tab 结构
 
-- what was this specific day in the Chinese calendar and reign-era system?
+### 日历
 
-## First-Release Screens
+日历 tab 是主入口，以农历月浏览为主。
 
-### Timeline Home
+核心规则：
 
-The home screen is the main browsing surface.
+- 主标题使用农历年、农历月和月大小，例如 `丙午年 五月小`。
+- 副标题显示该农历月覆盖的公历范围，例如 `2026年6月15日 - 7月13日`。
+- 不显示现代星期表头。
+- 不按上旬、中旬、下旬拆分。
+- 使用连续农历月格，从 `初一` 排到 `廿九` 或 `三十`。
+- 日期格以农历日为主信息，公历日期和日干支作为辅助信息。
+- 选中某一天后，下方展示日详情卡。
 
-Primary jobs:
+日期格建议层级：
 
-- show the currently selected day
-- make it easy to move backward or forward by day
-- summarize the most important information for that day
-- provide a path into fuller detail
+1. 农历日：`十四`
+2. 公历日：`6月28日`
+3. 日干支：`甲子`
 
-Suggested sections:
+日详情卡建议展示：
 
-1. date header
-2. lunar summary
-3. sexagenary summary
-4. primary reign-era summary
-5. parallel records preview
-6. timeline controls
+- 农历年月日
+- 公历年月日和 calendar style
+- 年干支、月干支、日干支
+- 生肖
+- 月大小
+- dayIndex 或调试/内部定位信息（仅调试或开发版本需要）
+- 简短历史归属摘要
 
-### Day Detail
+历史归属摘要只显示主记录，例如：
 
-The detail screen expands all information for the selected day.
+```text
+清 / 宣统 / 宣统二年
+```
 
-Primary jobs:
+如果同一天还有并立政权或其他政治时间线记录，日历页只提示 `另有 N 条并立政权记录`，详情或历史页再展开。
 
-- show the full civil-date presentation
-- show full lunar and sexagenary values
-- list every applicable reign-era assignment
-- make ambiguity visible instead of hiding it
+### 历史
 
-## Timeline Home Structure
+历史 tab 只处理政治时间线，不做百科式历史内容。
 
-### Date Header Card
+范围包括：
 
-Show:
+- 朝代
+- 正统时间线
+- 皇帝
+- 年号
+- 在位区间作为皇帝详情或后续扩展信息
 
-- civil year, month, day
-- explicit `Julian` or `Gregorian` label
-- a concise descriptor that the date is part of the historical browsing timeline
+默认入口：
 
-Purpose:
+- 默认展示一条主流正统时间线。
+- 提供 `全部朝代/政权` 入口查看并存政权。
+- 提供搜索入口，搜索范围包括朝代、皇帝和年号。
 
-- anchor the user in the current browsing position
-- make the civil-calendar system unambiguous
+朝代详情页的主展示应以年号顺序为主，皇帝作为年号的归属信息显示并可点击。
 
-### Lunar Summary Card
+示例：
 
-Show:
+```text
+顺治 · 世祖 · 福临 · 1644
+康熙 · 圣祖 · 玄烨 · 1662
+雍正 · 世宗 · 胤禛 · 1723
+乾隆 · 高宗 · 弘历 · 1736
+```
 
-- lunar year
-- lunar month
-- lunar day
-- leap-month marker when needed
+不要在首版把年号强行嵌入皇帝在位区间。数据模型中“谁在位”和“当天用哪个年号”是两条相关但不完全重合的时间线，继位和改元可能不同日。
 
-Purpose:
+### 设置
 
-- present the Chinese calendar layer as the primary content
+设置 tab 只放应用偏好和数据状态。
 
-### Sexagenary Summary Card
+建议包括：
 
-Show:
+- 首页是否突出农历
+- 是否显示干支
+- 是否显示历史归属摘要
+- 外观偏好
+- 数据版本
+- base seed store 安装状态
+- full seed store 下载状态
+- 下载或更新完整日级数据的入口
 
-- sexagenary year
-- sexagenary month
-- sexagenary day
+不要把历史筛选、朝代选择或日历浏览规则放进设置。它们应该属于日历或历史 tab 的局部交互。
 
-Purpose:
+## 数据状态与空态
 
-- surface cyclical calendar information without forcing the user into a detail screen
+当前 seed store 分为 base 和 full：
 
-### Primary Reign-Era Card
+- base store 有 schema、农历年/月、朝代和正统时间线元数据。
+- full store 才有完整 day-level 数据。
 
-Show one summary line for the primary assignment.
+因此：
 
-Suggested display:
+- 未安装 full store 时，历史 tab 仍可用。
+- 未安装 full store 时，日历 tab 不应假装可以完整浏览 day-level 月格；应显示数据状态说明和下载入口。
+- 安装 full store 后，日历 tab 开放完整农历月格和 day-level 查询。
 
-- dynasty name
-- emperor name
-- reign-era name
-- regnal year in Chinese form
+## 与数据模型的关系
 
-Example:
+日历 tab 的主浏览单位是农历月，但日期身份仍然以 `dayIndex` 为锚点。
 
-- `西汉 · 汉武帝 · 建元元年`
+实现时应遵守：
 
-Purpose:
+- 用 `lunarMonthIndex` 定位具体农历月。
+- 用 `dayIndex` 连接公历、农历、干支和历史归属。
+- 不用现代星期组织传统日历浏览。
+- 不把年号、皇帝或朝代混入基础农历年月日模型。
 
-- provide immediate historical context for the selected day
+## 不在首版范围
 
-### Parallel Records Preview
+首版不做：
 
-Show when the selected day has more than one assignment.
+- 历史事件流
+- 节气、节日、宜忌
+- 地图
+- 朝代树或人物关系图
+- 多种正统历史观的完整对比
+- 用户编辑史料
+- 按现代星期的月历视图
 
-Suggested behavior:
+这些可以在日历和历史两个 tab 稳定后再扩展。
 
-- show a short note such as `另有 2 条并立政权记录`
-- offer a clear path to the detail screen
+## 建议 View 类型
 
-Purpose:
+潜在共享 SwiftUI view：
 
-- acknowledge ambiguity without cluttering the home screen
+- `RootTabView`
+- `LunarCalendarTab`
+- `LunarMonthHeader`
+- `LunarMonthGrid`
+- `LunarDayCell`
+- `LunarDayDetailCard`
+- `HistoricalAttributionSummary`
+- `HistoryTab`
+- `OrthodoxTimelineView`
+- `DynastyDetailView`
+- `ReignEraList`
+- `SettingsTab`
+- `SeedStoreStatusView`
 
-### Timeline Controls
+## 术语参考
 
-First-release controls should stay simple.
+业务术语以根目录 `CONTEXT.md` 为准，尤其是：
 
-Include:
-
-- previous day
-- next day
-- jump to a civil date
-
-Optional later additions:
-
-- month jump
-- year jump
-- bookmark current day
-
-## Day Detail Structure
-
-### Civil Date Section
-
-Show:
-
-- full civil date
-- `Julian` or `Gregorian`
-- a short explanation of the current display rule if needed
-
-### Lunar Date Section
-
-Show:
-
-- lunar year
-- lunar month
-- lunar day
-- leap-month state
-
-### Sexagenary Section
-
-Show:
-
-- year stem-branch
-- month stem-branch
-- day stem-branch
-
-### Reign-Era Section
-
-Show all assignments for the day.
-
-Each row should include:
-
-- dynasty
-- emperor
-- reign era
-- regnal year in Chinese display form
-- optional notes when the source material is ambiguous
-
-Purpose:
-
-- preserve parallel political records instead of forcing a single interpretation
-
-## Interaction Notes
-
-### Browsing Style
-
-The first release should feel lightweight and direct.
-
-- Day-to-day browsing should require one gesture or click.
-- The user should not need to choose filters before seeing useful information.
-- Detail should be one tap or click away.
-
-### State Model
-
-The UI can start with a single selected day in state.
-
-Suggested state responsibilities:
-
-- selected day index
-- loaded summary record for that day
-- loaded detail payload for that day when needed
-
-### Empty and Loading States
-
-The app should handle gaps cleanly.
-
-Show explicit messages when:
-
-- data is still importing
-- the selected day is outside the supported range
-- no reign-era assignment is available for that day
-
-## Accessibility and Clarity
-
-The app should remain readable on both iPhone-sized screens and wider macOS windows.
-
-First-release UI rules:
-
-- prefer clear typographic hierarchy over dense tables
-- avoid relying on color alone to distinguish record types
-- keep labels explicit for Julian versus Gregorian dates
-- make parallel-record counts readable by VoiceOver
-
-## Not in Scope for v1
-
-The first release should not depend on these features:
-
-- advanced search by emperor or reign era
-- map views
-- dynasty tree visualizations
-- side-by-side comparison mode
-- user-editable source data
-
-These can be layered in later once the day model and dataset are stable.
-
-## Suggested View Types
-
-Potential shared SwiftUI views:
-
-- `TimelineHomeView`
-- `DateHeaderCard`
-- `LunarSummaryCard`
-- `GanzhiSummaryCard`
-- `PrimaryReignCard`
-- `ParallelRecordsBanner`
-- `DayDetailView`
-- `ReignEraAssignmentRow`
-
-## Open Questions
-
-- Should the timeline home screen show one day at a time or a short scrollable list centered on the selected day?
-- Should the jump control be free-form date entry or a picker-based interaction in v1?
-- Should the primary reign-era selection be manually curated in processed data or derived by app logic?
+- 日历
+- 历史
+- 朝代
+- 历史归属
+- 正统时间线
+- 皇帝
+- 年号
+- 农历月格
+- 农历主标题
