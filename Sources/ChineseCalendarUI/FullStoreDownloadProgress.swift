@@ -1,4 +1,5 @@
 import Foundation
+import SFSafeSymbols
 
 enum FullStoreDownloadPhase: Equatable {
     case preparingManifest
@@ -70,18 +71,18 @@ struct FullStoreDownloadProgress: Equatable {
         }
     }
 
-    var systemImage: String {
+    var systemSymbol: SFSymbol {
         switch phase {
         case .preparingManifest:
-            "doc.text.magnifyingglass"
+            .textPageBadgeMagnifyingglass
         case .downloading:
-            "arrow.down.circle"
+            .arrowDownCircle
         case .validating:
-            "checkmark.shield"
+            .checkmarkShield
         case .installing:
-            "externaldrive.badge.checkmark"
+            .externaldriveBadgeCheckmark
         case .completed:
-            "checkmark.circle.fill"
+            .checkmarkCircleFill
         }
     }
 

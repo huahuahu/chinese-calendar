@@ -1,4 +1,5 @@
 import ChineseCalendarPersistence
+import SFSafeSymbols
 import SwiftData
 import SwiftUI
 
@@ -98,12 +99,12 @@ private struct FullStoreDownloadBanner: View {
 
     var body: some View {
         HStack(spacing: 12) {
-            Label("可下载完整日期数据", systemImage: "arrow.down.circle")
+            Label("可下载完整日期数据", systemSymbol: .arrowDownCircle)
                 .font(.callout)
 
             Spacer(minLength: 12)
 
-            Button("下载", systemImage: "arrow.down", action: action)
+            Button("下载", systemSymbol: .arrowDown, action: action)
                 .buttonStyle(.borderedProminent)
         }
         .padding(.horizontal)
@@ -142,11 +143,11 @@ private struct CalendarStoreFailureView: View {
 
     var body: some View {
         ContentUnavailableView {
-            Label("无法打开日历数据", systemImage: "externaldrive.badge.exclamationmark")
+            Label("无法打开日历数据", systemSymbol: .externaldriveBadgeExclamationmark)
         } description: {
             Text(message)
         } actions: {
-            Button("重试", systemImage: "arrow.clockwise", action: retry)
+            Button("重试", systemSymbol: .arrowClockwise, action: retry)
         }
     }
 }

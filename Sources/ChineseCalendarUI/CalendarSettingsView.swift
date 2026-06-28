@@ -1,4 +1,5 @@
 import ChineseCalendarPersistence
+import SFSafeSymbols
 import SwiftUI
 
 public struct CalendarSettingsView: View {
@@ -16,7 +17,7 @@ public struct CalendarSettingsView: View {
         Form {
             Section("数据") {
                 VStack(alignment: .leading, spacing: 6) {
-                    Label(dataStatusTitle, systemImage: dataStatusSystemImage)
+                    Label(dataStatusTitle, systemSymbol: dataStatusSystemSymbol)
                         .font(.headline)
                     Text(dataStatusDetail)
                         .font(.callout)
@@ -34,7 +35,7 @@ public struct CalendarSettingsView: View {
                             ProgressView()
                         }
                     } else {
-                        Label("清空已下载数据", systemImage: "trash")
+                        Label("清空已下载数据", systemSymbol: .trash)
                     }
                 }
                 .disabled(coordinator.isClearingDownloadedData)
@@ -113,20 +114,20 @@ public struct CalendarSettingsView: View {
         }
     }
 
-    private var dataStatusSystemImage: String {
+    private var dataStatusSystemSymbol: SFSymbol {
         if coordinator.fullStoreDownloadProgress != nil {
-            return "arrow.down.circle"
+            return .arrowDownCircle
         }
 
         switch coordinator.state {
         case .ready(_, .full, _):
-            return "externaldrive.fill"
+            return .externaldriveFill
         case .ready:
-            return "externaldrive"
+            return .externaldrive
         case .starting:
-            return "hourglass"
+            return .hourglass
         case .failed:
-            return "externaldrive.badge.exclamationmark"
+            return .externaldriveBadgeExclamationmark
         }
     }
 

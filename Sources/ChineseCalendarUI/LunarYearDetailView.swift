@@ -1,5 +1,6 @@
 import ChineseCalendarCore
 import ChineseCalendarPersistence
+import SFSafeSymbols
 import SwiftData
 import SwiftUI
 
@@ -58,7 +59,9 @@ struct LunarYearDetailView: View {
                     .foregroundStyle(.secondary)
 
                 if monthsInYearStartOrder.isEmpty {
-                    ContentUnavailableView("没有月份数据", systemImage: "calendar.badge.exclamationmark")
+                    ContentUnavailableView {
+                        Label("没有月份数据", systemSymbol: .calendarBadgeExclamationmark)
+                    }
                 } else if let selectedMonth {
                     MonthSwitcher(
                         months: monthsInYearStartOrder,
@@ -79,11 +82,11 @@ struct LunarYearDetailView: View {
         .navigationTitle(LunarCalendarFormatting.yearTitle(lunarYearNumber: year.lunarYearNumber))
         .toolbar {
             ToolbarItemGroup(placement: .primaryAction) {
-                Button("上一年", systemImage: "chevron.left", action: selectPreviousYear)
+                Button("上一年", systemSymbol: .chevronLeft, action: selectPreviousYear)
                     .disabled(!canSelectPreviousYear)
                     .help("切换到上一年")
 
-                Button("下一年", systemImage: "chevron.right", action: selectNextYear)
+                Button("下一年", systemSymbol: .chevronRight, action: selectNextYear)
                     .disabled(!canSelectNextYear)
                     .help("切换到下一年")
             }

@@ -61,6 +61,7 @@ targets:
         SUPPORTS_MACCATALYST: NO
         SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD: NO
         SWIFT_VERSION: 6.0
+        SWIFT_DEFAULT_ACTOR_ISOLATION: MainActor
         CODE_SIGN_STYLE: Automatic
         DEVELOPMENT_TEAM: F29WG8477A
         CODE_SIGN_ENTITLEMENTS: Apps/iOSApp/ChineseCalendar-iOS.entitlements
@@ -118,6 +119,7 @@ targets:
         PRODUCT_NAME: Chinese Calendar
         PRODUCT_BUNDLE_IDENTIFIER: com.tiger.suzhou.ChineseCalendar
         SWIFT_VERSION: 6.0
+        SWIFT_DEFAULT_ACTOR_ISOLATION: MainActor
         CODE_SIGN_STYLE: Automatic
         DEVELOPMENT_TEAM: F29WG8477A
         CODE_SIGN_ENTITLEMENTS: Apps/macOSApp/ChineseCalendar-macOS.entitlements

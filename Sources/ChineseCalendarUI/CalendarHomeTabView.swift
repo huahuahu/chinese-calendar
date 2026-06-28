@@ -1,4 +1,5 @@
 import ChineseCalendarPersistence
+import SFSafeSymbols
 import SwiftUI
 
 struct CalendarHomeTabView: View {
@@ -15,7 +16,7 @@ struct CalendarHomeTabView: View {
                     .toolbar(content: settingsToolbar)
             }
             .tabItem {
-                Label(CalendarTab.years.title, systemImage: CalendarTab.years.systemImage)
+                Label(CalendarTab.years.title, systemSymbol: CalendarTab.years.systemSymbol)
             }
             .tag(CalendarTab.years)
 
@@ -25,7 +26,7 @@ struct CalendarHomeTabView: View {
                     .toolbar(content: settingsToolbar)
             }
             .tabItem {
-                Label(CalendarTab.history.title, systemImage: CalendarTab.history.systemImage)
+                Label(CalendarTab.history.title, systemSymbol: CalendarTab.history.systemSymbol)
             }
             .tag(CalendarTab.history)
         }
@@ -35,7 +36,7 @@ struct CalendarHomeTabView: View {
     private func settingsToolbar() -> some ToolbarContent {
         if let openSettings {
             ToolbarItem(placement: .primaryAction) {
-                Button("设置", systemImage: "gearshape", action: openSettings)
+                Button("设置", systemSymbol: .gearshape, action: openSettings)
             }
         }
     }

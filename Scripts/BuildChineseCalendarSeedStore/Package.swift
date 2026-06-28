@@ -1,5 +1,10 @@
-// swift-tools-version: 6.2
+// swift-tools-version: 6.3
 import PackageDescription
+
+let nonisolatedSwiftSettings: [SwiftSetting] = [
+    .swiftLanguageMode(.v6),
+    .defaultIsolation(nil)
+]
 
 let package = Package(
     name: "BuildChineseCalendarSeedStore",
@@ -21,7 +26,8 @@ let package = Package(
             dependencies: [
                 .product(name: "ChineseCalendarCore", package: "Sources"),
                 .product(name: "ChineseCalendarPersistence", package: "Sources")
-            ]
+            ],
+            swiftSettings: nonisolatedSwiftSettings
         )
     ]
 )

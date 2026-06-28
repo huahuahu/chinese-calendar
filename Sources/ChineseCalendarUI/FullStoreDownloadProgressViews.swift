@@ -1,3 +1,4 @@
+import SFSafeSymbols
 import SwiftUI
 
 public struct FullStoreDownloadProgressWindow: View {
@@ -16,9 +17,12 @@ public struct FullStoreDownloadProgressWindow: View {
                     .padding(20)
             } else {
                 ContentUnavailableView(
-                    "没有正在下载的数据",
-                    systemImage: "checkmark.circle",
-                    description: Text("开始下载完整日期数据后，进度会显示在这里。")
+                    label: {
+                        Label("没有正在下载的数据", systemSymbol: .checkmarkCircle)
+                    },
+                    description: {
+                        Text("开始下载完整日期数据后，进度会显示在这里。")
+                    }
                 )
                 .padding()
             }
@@ -40,7 +44,7 @@ struct FullStoreDownloadBottomProgressView: View {
         } label: {
             VStack(alignment: .leading, spacing: 10) {
                 HStack(spacing: 10) {
-                    Image(systemName: progress.systemImage)
+                    Image(systemSymbol: progress.systemSymbol)
                         .font(.title3)
                         .foregroundStyle(.tint)
                         .frame(width: 24)
@@ -55,7 +59,7 @@ struct FullStoreDownloadBottomProgressView: View {
                         .font(.footnote.monospacedDigit())
                         .foregroundStyle(.secondary)
 
-                    Image(systemName: "chevron.up")
+                    Image(systemSymbol: .chevronUp)
                         .font(.caption.weight(.semibold))
                         .foregroundStyle(.secondary)
                         .rotationEffect(isExpanded ? .zero : .degrees(180))
@@ -87,7 +91,7 @@ struct FullStoreDownloadMacStatusBar: View {
 
     var body: some View {
         HStack(spacing: 12) {
-            Label(progress.title, systemImage: progress.systemImage)
+            Label(progress.title, systemSymbol: progress.systemSymbol)
                 .font(.callout)
 
             ProgressView(value: progress.fractionCompleted)
@@ -99,7 +103,7 @@ struct FullStoreDownloadMacStatusBar: View {
 
             Spacer(minLength: 12)
 
-            Button("查看进度", systemImage: "arrow.up.forward.app", action: openProgressWindow)
+            Button("查看进度", systemSymbol: .arrowUpForwardApp, action: openProgressWindow)
                 .buttonStyle(.bordered)
         }
         .padding(.horizontal)
@@ -114,7 +118,7 @@ private struct FullStoreDownloadProgressContent: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Label(progress.title, systemImage: progress.systemImage)
+            Label(progress.title, systemSymbol: progress.systemSymbol)
                 .font(.headline)
 
             VStack(alignment: .leading, spacing: 8) {
