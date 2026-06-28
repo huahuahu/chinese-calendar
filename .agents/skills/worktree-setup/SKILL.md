@@ -50,6 +50,7 @@ Set up an isolated branch workspace for this repository and wire a branch-scoped
 ## Guardrails
 
 - Do not delete existing worktrees or simulators as part of this flow.
+- Prefer XcodeBuildMCP for simulator inspection when available; use `xcrun simctl` only for creating the branch-scoped simulator because XcodeBuildMCP does not expose simulator creation.
 - Fail fast if runtime or device type cannot be resolved.
 - If the config file does not exist, stop and report an error instead of creating it.
 - If `sessionDefaults` is missing from config, stop and report instead of writing malformed YAML.

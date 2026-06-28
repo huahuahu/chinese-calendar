@@ -55,6 +55,7 @@ Clean up an isolated branch workspace created for this repository, including its
 - Never use branch globs or fuzzy branch matches for deletion.
 - Never delete a remote branch unless it exactly matches `origin/<branch>`.
 - Never delete a simulator unless its name exactly matches `iPhone 17 Pro (<sanitized-branchname>)`.
+- Prefer XcodeBuildMCP for simulator inspection when available; use `xcrun simctl` only for shutdown/delete operations because XcodeBuildMCP does not expose branch-scoped simulator deletion.
 - Abort if the worktree has uncommitted or untracked changes.
 - Abort if the branch has commits ahead of its upstream or matching remote branch, unless the user explicitly requested force cleanup.
 - Abort if local branch deletion with `git branch -d` fails, unless the user explicitly requested force cleanup.
