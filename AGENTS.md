@@ -42,7 +42,7 @@ This repository hosts a Swift project for browsing the traditional Chinese calen
 3. Build a calendar browsing UI backed by real imported data.
 4. Create an Xcode project or workspace that wraps the shared package targets.
 
-## Notes for Codex
+## Notes for GitHub Copilot
 
 - Before adding new modules, check whether the code belongs in an existing shared package target.
 - Prefer incremental scaffolding over large speculative implementations.
@@ -50,15 +50,26 @@ This repository hosts a Swift project for browsing the traditional Chinese calen
 
 ## Installed Agent Resources
 
-- Sosumi MCP: configured in `./.codex/config.toml` at `http://127.0.0.1:8787/mcp`; use it to search and fetch Apple Developer documentation and WWDC pages when checking Swift, SwiftUI, SwiftData, Xcode, or platform API behavior.
-- XcodeBuildMCP: use XcodeBuildMCP whenever possible for Xcode builds, tests, simulator runs, UI inspection, and debugging workflows.
-- Project-local skill: `./.github/skills/swiftui-pro`
-- Project-local skill: `./.github/skills/swift-concurrency-pro`
-- Project-local skill: `./.github/skills/swiftdata-pro`
-- Project-local skill: `./.github/skills/worktree-setup`
-- Project-local skill: `./.github/skills/worktree-cleanup`
-- Upstream Swift agent index reference: `./Docs/AgentReferences/swift-agent-skills/README.md`
-- Upstream SwiftAgents reference: `./Docs/AgentReferences/SwiftAgents/AGENTS.upstream.md`
+- Project-local skill: `./.agents/skills/grill-with-docs`
+- Project-local skill: `./.agents/skills/swiftui-pro`
+- Project-local skill: `./.agents/skills/swift-concurrency-pro`
+- Project-local skill: `./.agents/skills/swiftdata-pro`
+- Project-local skill: `./.agents/skills/worktree-setup`
+- Project-local skill: `./.agents/skills/worktree-cleanup`
+
+## Apple Documentation
+
+- Prefer the sosumi MCP for Apple Developer Documentation, Human Interface Guidelines, and Apple Developer video transcripts before using web search or direct fetch tools.
+- Use non-sosumi sources only when the needed material is not available through sosumi.
+
+## XcodeBuildMCP
+
+- XcodeBuildMCP is installed as a CLI and exposed through MCP. Prefer XcodeBuildMCP tools over direct `xcrun simctl` calls whenever XcodeBuildMCP exposes the needed operation.
+- Use `xcrun simctl` only for simulator lifecycle operations not exposed by XcodeBuildMCP, such as creating or deleting branch-scoped simulators in the worktree skills.
+- Project defaults live in `.xcodebuildmcp/config.yaml`.
+- At the start of each new agent session, before the first xcodebuildmcp build/run/test call, show active defaults with `session_show_defaults`.
+- If active defaults are missing or differ from `.xcodebuildmcp/config.yaml`, read `sessionDefaults` from that file and apply them with `session_set_defaults` before building, running, or testing.
+- Resolve any relative `projectPath` in `sessionDefaults` from the repository root before calling `session_set_defaults` (for example, `ChineseCalendar.xcodeproj` becomes `<repo-root>/ChineseCalendar.xcodeproj`).
 
 ## Swift Agent Guidance
 
@@ -68,9 +79,9 @@ The project keeps its own repository-specific rules above, but also adopts the s
 - Favor Swift concurrency and safe state management patterns.
 - Avoid third-party dependencies unless there is a clear project need.
 - Keep SwiftUI code accessible, testable, and structurally simple.
-- When current Apple API behavior matters, prefer Sosumi MCP or the `sosumi search` / `sosumi fetch` commands over memory alone; use fetched Apple documentation as the reference for implementation and reviews.
+- When current Apple API behavior matters, use fetched Apple documentation as the reference for implementation and reviews.
 
-When a task is primarily about SwiftUI review or generation, prefer using the local `$swiftui-pro` skill.
-When a task is primarily about async/await, actor isolation, cancellation, or task structure, prefer `$swift-concurrency-pro`.
-When a task is primarily about SwiftData models, predicates, indexing, or CloudKit integration, prefer `$swiftdata-pro`.
-When setting up or cleaning up branch worktrees, prefer `$worktree-setup` or `$worktree-cleanup`.
+When a task is primarily about SwiftUI review or generation, prefer using the local `swiftui-pro` skill.
+When a task is primarily about async/await, actor isolation, cancellation, or task structure, prefer `swift-concurrency-pro`.
+When a task is primarily about SwiftData models, predicates, indexing, or CloudKit integration, prefer `swiftdata-pro`.
+When setting up or cleaning up branch worktrees, prefer `worktree-setup` or `worktree-cleanup`.
