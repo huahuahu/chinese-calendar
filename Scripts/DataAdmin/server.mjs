@@ -55,6 +55,33 @@ const datasets = [
     keyPath: "id"
   },
   {
+    id: "emperors",
+    label: "皇帝",
+    detail: "Emperor",
+    recordType: "EmperorRecord",
+    schema: "emperor.schema.json",
+    file: "emperors.jsonl",
+    keyPath: "id"
+  },
+  {
+    id: "emperor-reign-segments",
+    label: "在位时间",
+    detail: "EmperorReignSegment",
+    recordType: "EmperorReignSegmentRecord",
+    schema: "emperor_reign_segment.schema.json",
+    file: "emperor_reign_segments.jsonl",
+    keyPath: "id"
+  },
+  {
+    id: "reign-eras",
+    label: "年号",
+    detail: "ReignEra",
+    recordType: "ReignEraRecord",
+    schema: "reign_era.schema.json",
+    file: "reign_eras.jsonl",
+    keyPath: "id"
+  },
+  {
     id: "date-expressions",
     label: "日期表达",
     detail: "ChineseDateExpression",
@@ -282,6 +309,9 @@ function manifestSummary(manifest) {
     totalChineseLunarYears: manifest.totalChineseLunarYears ?? null,
     totalChineseLunarMonths: manifest.totalChineseLunarMonths ?? null,
     totalDynasties: manifest.dynastyArtifact?.totalDynasties ?? null,
+    totalEmperors: manifest.dynastyArtifact?.totalEmperors ?? null,
+    totalEmperorReignSegments: manifest.dynastyArtifact?.totalEmperorReignSegments ?? null,
+    totalReignEras: manifest.dynastyArtifact?.totalReignEras ?? null,
     sourceUpstreamCommit: manifest.sourceUpstreamCommit ?? null
   };
 }
@@ -569,6 +599,12 @@ function summarizeRecord(datasetID, record) {
       return `${record.civilDate?.year}-${pad(record.civilDate?.month)}-${pad(record.civilDate?.dayOfMonth)} -> 月 ${record.chineseLunarDay?.lunarMonthIndex} 日 ${record.chineseLunarDay?.dayNumberInMonth} · ${stemBranch(record.chineseLunarDay?.dayStemIndex, record.chineseLunarDay?.dayBranchIndex)}`;
     case "dynasties":
       return `${record.name}${record.shortName ? ` (${record.shortName})` : ""}`;
+    case "emperors":
+      return `${record.displayName} / ${record.dynastyID} · #${record.sequenceIndex}`;
+    case "emperor-reign-segments":
+      return `${record.emperorID}${record.segmentName ? ` · ${record.segmentName}` : ""}: ${record.startDateID} -> ${record.endDateID}`;
+    case "reign-eras":
+      return `${record.name} / ${record.emperorID}: ${record.startDateID} -> ${record.endDateID}`;
     case "date-expressions":
       return `${record.id}: ${record.sourceText}`;
     case "orthodox-traditions":
@@ -624,6 +660,40 @@ function readableRecord(datasetID, record) {
         item("简称", record.shortName ?? "无", "shortName"),
         item("开始日期 ID", record.claimedStartDateID, "claimedStartDateID"),
         item("结束日期 ID", record.claimedEndDateID, "claimedEndDateID"),
+        item("说明", record.note ?? "无", "note")
+      ];
+    case "emperors":
+      return [
+        item("标识符", record.id, "id"),
+        item("所属朝代 ID", record.dynastyID, "dynastyID"),
+        item("显示名", record.displayName, "displayName"),
+        item("本名", record.personalName ?? "无", "personalName"),
+        item("庙号", record.templeName ?? "无", "templeName"),
+        item("谥号/王号", record.posthumousName ?? "无", "posthumousName"),
+        item("朝代内顺序", record.sequenceIndex, "sequenceIndex"),
+        item("说明", record.note ?? "无", "note")
+      ];
+    case "emperor-reign-segments":
+      return [
+        item("标识符", record.id, "id"),
+        item("皇帝 ID", record.emperorID, "emperorID"),
+        item("政治时间线顺序", record.sequenceIndex, "sequenceIndex"),
+        item("皇帝内在位顺序", record.segmentIndex, "segmentIndex"),
+        item("区间名称", record.segmentName ?? "无", "segmentName"),
+        item("开始日期 ID", record.startDateID, "startDateID"),
+        item("结束日期 ID", record.endDateID, "endDateID"),
+        item("说明", record.note ?? "无", "note")
+      ];
+    case "reign-eras":
+      return [
+        item("标识符", record.id, "id"),
+        item("皇帝 ID", record.emperorID, "emperorID"),
+        item("年号", record.name, "name"),
+        item("归一化年号", record.normalizedName, "normalizedName"),
+        item("政治时间线顺序", record.sequenceIndex, "sequenceIndex"),
+        item("皇帝内年号顺序", record.eraIndexWithinEmperor, "eraIndexWithinEmperor"),
+        item("开始日期 ID", record.startDateID, "startDateID"),
+        item("结束日期 ID", record.endDateID, "endDateID"),
         item("说明", record.note ?? "无", "note")
       ];
     case "date-expressions":
