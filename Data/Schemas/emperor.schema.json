@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://chinese-calendar.local/schemas/emperor.schema.json",
+  "title": "EmperorRecord",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "dynastyID",
+    "displayName",
+    "personalName",
+    "templeName",
+    "posthumousName",
+    "sequenceIndex",
+    "note"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "皇帝或国主的稳定标识符。"
+    },
+    "dynastyID": {
+      "type": "string",
+      "minLength": 1,
+      "description": "所属朝代或政权，引用 Dynasty.id。"
+    },
+    "displayName": {
+      "type": "string",
+      "minLength": 1,
+      "description": "主要显示名，保留来源中的君主/皇帝称呼。"
+    },
+    "personalName": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "可解析出的本名；无法可靠解析时为 null。"
+    },
+    "templeName": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "可解析出的庙号；无法可靠解析时为 null。"
+    },
+    "posthumousName": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "可解析出的谥号、王号或其他括注称号；无法可靠解析时为 null。"
+    },
+    "sequenceIndex": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "同一朝代或政权下的皇帝默认展示顺序。"
+    },
+    "note": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "导入器对来源、别名或称号解析的可选说明。"
+    }
+  },
+  "x-codegen": {
+    "record": true,
+    "typeName": "EmperorRecord",
+    "dataFile": "emperors.jsonl"
+  }
+}

@@ -77,6 +77,28 @@ struct DynastyRecord: Decodable {
     let note: String?
 }
 
+struct EmperorRecord: Decodable {
+    let id: String
+    let dynastyID: String
+    let displayName: String
+    let personalName: String?
+    let templeName: String?
+    let posthumousName: String?
+    let sequenceIndex: Int
+    let note: String?
+}
+
+struct EmperorReignSegmentRecord: Decodable {
+    let id: String
+    let emperorID: String
+    let sequenceIndex: Int
+    let segmentIndex: Int
+    let segmentName: String?
+    let startDateID: String
+    let endDateID: String
+    let note: String?
+}
+
 struct OrthodoxBoundaryRecord: Decodable {
     let id: String
     let traditionID: String
@@ -99,5 +121,17 @@ struct OrthodoxPeriodRecord: Decodable {
 struct OrthodoxTraditionRecord: Decodable {
     let id: String
     let name: String
+    let note: String?
+}
+
+struct ReignEraRecord: Decodable {
+    let id: String
+    let emperorID: String
+    let name: String
+    let normalizedName: String
+    let sequenceIndex: Int
+    let eraIndexWithinEmperor: Int
+    let startDateID: String
+    let endDateID: String
     let note: String?
 }

@@ -32,6 +32,9 @@ const ORTHODOX_SEGMENT_NAMES = [
 const OUTPUT_FILES = {
   dynasties: "dynasties.jsonl",
   dateExpressions: "chinese_date_expressions.jsonl",
+  emperors: "emperors.jsonl",
+  emperorReignSegments: "emperor_reign_segments.jsonl",
+  reignEras: "reign_eras.jsonl",
   orthodoxTraditions: "orthodox_traditions.jsonl",
   orthodoxBoundaries: "orthodox_boundaries.jsonl",
   orthodoxPeriods: "orthodox_periods.jsonl",
@@ -89,6 +92,7 @@ const SUPPLEMENTAL_DYNASTIES = [
   dynastySpec("southern_qi", "齐", "齐", 479, 502, "齐 (479-502)"),
   dynastySpec("southern_liang", "梁", "梁", 502, 557, "梁 (502-557)"),
   dynastySpec("chen", "陈", "陈", 557, 589, "陈 (557-589)"),
+  dynastySpec("wu_zhou", "武周", "周", 690, 705, "武周年号 (690 — 705)", "Supplemental Wu Zhou polity split from the Tang section's 武周年号 table."),
   dynastySpec("later_liang", "后梁", "后梁", 907, 923, "五代梁 (907 — 923)"),
   dynastySpec("later_tang", "后唐", "后唐", 923, 936, "五代唐 (923 — 936)"),
   dynastySpec("later_jin", "后晋", "后晋", 936, 946, "五代晋 (936 — 946)"),
@@ -98,6 +102,7 @@ const SUPPLEMENTAL_DYNASTIES = [
   dynastySpec("southern_song", "南宋", "南宋", 1127, 1279, "南宋 (1127 — 1279)"),
   dynastySpec("yuan", "元", "元", 1271, 1368, "至元八年建国号大元; 正统期从宋亡后的 1279 年起算"),
   dynastySpec("ming", "明", "明", 1368, 1644, "明 (1368 — 1644)"),
+  dynastySpec("southern_ming", "南明和明郑", "南明", 1645, 1683, "南明和明郑 (1645 — 1683)", "Supplemental non-orthodox polity split from the Ming section's 南明和明郑 table."),
   dynastySpec("qing", "清", "清", 1636, 1912, "1636 年改国号大清; 正统期从 1644 年起算"),
   dynastySpec("republic_of_china", "中华民国", "民国", 1912, 1949, "中华民国 (1912 — 1949); 首版正统期按大陆历史时期口径"),
   dynastySpec("peoples_republic_of_china", "中华人民共和国", "中华人民共和国", 1949, 2200, "中华人民共和国 (1949 — present); 2200 为当前 seed 覆盖终点", "Supplemental modern polity; claimed end uses the current seed coverage end and is not a historical end.")
@@ -132,6 +137,26 @@ const ORTHODOX_PERIOD_SPECS = [
   periodSpec("peoples_republic_of_china", "中华人民共和国", 1949, 2200, "中华人民共和国; 2200 为当前 seed 覆盖终点，不是历史结束")
 ];
 
+const REIGN_TABLE_DYNASTY_IDS = new Map([
+  ["qin", ["qin"]],
+  ["han1", ["western_han", "xin", "gengshi"]],
+  ["han2", ["eastern_han"]],
+  ["3kingdoms", ["cao_wei", "shu_han", "sun_wu"]],
+  ["jin", ["western_jin", "eastern_jin"]],
+  ["qinliang", ["later_qin", "northern_liang"]],
+  ["northdynasties", ["northern_wei", "eastern_wei", "northern_qi", "western_wei", "northern_zhou"]],
+  ["southdynasties", ["liu_song", "southern_qi", "southern_liang", "chen"]],
+  ["sui", ["sui"]],
+  ["tang", ["tang", "wu_zhou", "tang"]],
+  ["5dynasties", ["later_liang", "later_tang", "later_jin", "later_han", "later_zhou"]],
+  ["song", ["northern_song", "southern_song"]],
+  ["khitan", ["khitan_liao"]],
+  ["jurchen", ["jin_jurchen"]],
+  ["mongol", ["yuan"]],
+  ["ming", ["ming", "southern_ming"]],
+  ["qing", ["qing"]]
+]);
+
 function dynastySpec(id, name, shortName, startYear, endYear, sourceText, note) {
   return {
     id,
@@ -163,7 +188,9 @@ async function main() {
     const result = await validateArtifact(options.output);
     console.log(
       `Validated dynasty-period artifact under ${options.output}: ${result.dynasties} dynasties, ` +
-        `${result.dateExpressions} date expressions, ${result.orthodoxTraditions} tradition, ` +
+        `${result.dateExpressions} date expressions, ${result.emperors} emperors, ` +
+        `${result.emperorReignSegments} reign segments, ${result.reignEras} reign eras, ` +
+        `${result.orthodoxTraditions} tradition, ` +
         `${result.orthodoxBoundaries} boundaries, ${result.orthodoxPeriods} periods.`
     );
     return;
@@ -178,7 +205,9 @@ async function main() {
 
   console.log(
     `Generated dynasty-period artifact under ${options.output}: ${artifact.dynasties.length} dynasties, ` +
-      `${artifact.dateExpressions.length} date expressions, ${artifact.orthodoxTraditions.length} tradition, ` +
+      `${artifact.dateExpressions.length} date expressions, ${artifact.emperors.length} emperors, ` +
+      `${artifact.emperorReignSegments.length} reign segments, ${artifact.reignEras.length} reign eras, ` +
+      `${artifact.orthodoxTraditions.length} tradition, ` +
       `${artifact.orthodoxBoundaries.length} boundaries, ${artifact.orthodoxPeriods.length} periods.`
   );
 }
@@ -347,6 +376,9 @@ async function buildArtifact(rawSource, baseManifest, options) {
   const records = {
     dynasties: [],
     dateExpressions: [],
+    emperors: [],
+    emperorReignSegments: [],
+    reignEras: [],
     orthodoxTraditions: [],
     orthodoxBoundaries: [],
     orthodoxPeriods: []
@@ -428,6 +460,7 @@ async function buildArtifact(rawSource, baseManifest, options) {
   }
 
   sortDynastiesByClaimedStart(records);
+  buildReignEraRecords(parsedSource, records, addDateExpression, availableIndexes);
 
   const tradition = {
     id: "orthodox_sequence_qin_han_to_prc",
@@ -504,12 +537,237 @@ function sortableDateExpressionIndex(expression) {
   return Number.MAX_SAFE_INTEGER;
 }
 
+function buildReignEraRecords(parsedSource, records, addDateExpression, availableIndexes) {
+  const dynastyIDs = new Set(records.dynasties.map((dynasty) => dynasty.id));
+  const emperorsByDynastyAndName = new Map();
+  const nextEmperorSequenceByDynasty = new Map();
+  const nextSegmentSequenceByDynasty = new Map();
+  const nextEraSequenceByDynasty = new Map();
+  const nextSegmentIndexByEmperor = new Map();
+  const nextEraIndexByEmperor = new Map();
+
+  function nextCounter(map, key) {
+    const value = map.get(key) ?? 0;
+    map.set(key, value + 1);
+    return value;
+  }
+
+  function getOrCreateEmperor(dynastyID, rulerText, table) {
+    const parsedName = parseRulerName(rulerText);
+    const key = `${dynastyID}:${parsedName.displayName}`;
+    const existingID = emperorsByDynastyAndName.get(key);
+    if (existingID !== undefined) {
+      return existingID;
+    }
+
+    const sequenceIndex = nextCounter(nextEmperorSequenceByDynasty, dynastyID);
+    const id = `${dynastyID}_emperor_${paddedOrdinal(sequenceIndex)}`;
+    records.emperors.push({
+      id,
+      dynastyID,
+      displayName: parsedName.displayName,
+      personalName: parsedName.personalName,
+      templeName: parsedName.templeName,
+      posthumousName: parsedName.posthumousName,
+      sequenceIndex,
+      note: `Parsed from era_names_simp.html table "${table.contextHeading}"; source ruler cell: ${rulerText}`
+    });
+    emperorsByDynastyAndName.set(key, id);
+    return id;
+  }
+
+  function addSegment(dynastyID, emperorID, table, segmentRows) {
+    if (segmentRows.length === 0) {
+      return;
+    }
+    const firstRange = parseCivilYearRange(segmentRows[0].yearText);
+    const lastRange = parseCivilYearRange(segmentRows.at(-1).yearText);
+    const sequenceIndex = nextCounter(nextSegmentSequenceByDynasty, dynastyID);
+    const segmentIndex = nextCounter(nextSegmentIndexByEmperor, emperorID);
+    const id = `${dynastyID}_reign_segment_${paddedOrdinal(sequenceIndex)}`;
+    const sourceText = `${table.contextHeading}; ${segmentRows[0].rulerText}; ${firstRange.sourceText}`;
+    const startDateID = `${id}_start`;
+    const endDateID = `${id}_end`;
+    addDateExpression(yearExpression(
+      startDateID,
+      firstRange.startYear,
+      sourceText,
+      "Reign segment start parsed from era_names_simp.html civil-year table row.",
+      availableIndexes
+    ));
+    addDateExpression(yearExpression(
+      endDateID,
+      nextCivilYear(lastRange.endYear),
+      `${table.contextHeading}; ${segmentRows.at(-1).rulerText}; ${lastRange.sourceText}`,
+      "Reign segment end is stored as the exclusive upper civil-year boundary.",
+      availableIndexes
+    ));
+
+    records.emperorReignSegments.push({
+      id,
+      emperorID,
+      sequenceIndex,
+      segmentIndex,
+      segmentName: segmentIndex === 0 ? null : `第 ${segmentIndex + 1} 段在位`,
+      startDateID,
+      endDateID,
+      note: sourceNotesForRows(segmentRows, table)
+    });
+  }
+
+  function addReignEra(dynastyID, emperorID, table, row) {
+    const eraName = parseReignEraName(row.eraText);
+    if (eraName === undefined) {
+      return;
+    }
+    const range = parseCivilYearRange(row.yearText);
+    const sequenceIndex = nextCounter(nextEraSequenceByDynasty, dynastyID);
+    const eraIndexWithinEmperor = nextCounter(nextEraIndexByEmperor, emperorID);
+    const id = `${dynastyID}_reign_era_${paddedOrdinal(sequenceIndex)}`;
+    const sourceText = `${table.contextHeading}; ${row.rulerText}; ${row.eraText}; ${range.sourceText}`;
+    const startDateID = `${id}_start`;
+    const endDateID = `${id}_end`;
+    addDateExpression(yearExpression(
+      startDateID,
+      range.startYear,
+      sourceText,
+      "Reign era start parsed from era_names_simp.html civil-year table row.",
+      availableIndexes
+    ));
+    addDateExpression(yearExpression(
+      endDateID,
+      nextCivilYear(range.endYear),
+      sourceText,
+      "Reign era end is stored as the exclusive upper civil-year boundary.",
+      availableIndexes
+    ));
+
+    records.reignEras.push({
+      id,
+      emperorID,
+      name: eraName,
+      normalizedName: normalizeReignEraName(eraName),
+      sequenceIndex,
+      eraIndexWithinEmperor,
+      startDateID,
+      endDateID,
+      note: row.noteText === ""
+        ? `Parsed from era_names_simp.html table "${table.contextHeading}".`
+        : `Parsed from era_names_simp.html table "${table.contextHeading}"; source note: ${row.noteText}`
+    });
+  }
+
+  for (const table of parsedSource.reignTables) {
+    const dynastyID = table.dynastyID;
+    if (!dynastyIDs.has(dynastyID)) {
+      throw new Error(`Reign table ${table.sourceID}#${table.tableIndex} references missing Dynasty ${dynastyID}.`);
+    }
+
+    let currentSegment = undefined;
+    for (const row of table.rows) {
+      if (row.hasExplicitRuler) {
+        if (currentSegment !== undefined) {
+          addSegment(dynastyID, currentSegment.emperorID, table, currentSegment.rows);
+        }
+        const emperorID = getOrCreateEmperor(dynastyID, row.rulerText, table);
+        currentSegment = { emperorID, rows: [] };
+      }
+
+      if (currentSegment === undefined) {
+        throw new Error(`Reign row in ${table.sourceID}#${table.tableIndex} has no active ruler.`);
+      }
+
+      currentSegment.rows.push(row);
+      addReignEra(dynastyID, currentSegment.emperorID, table, row);
+    }
+
+    if (currentSegment !== undefined) {
+      addSegment(dynastyID, currentSegment.emperorID, table, currentSegment.rows);
+    }
+  }
+}
+
+function sourceNotesForRows(rows, table) {
+  const notes = rows.map((row) => row.noteText).filter((note) => note.length > 0);
+  const source = `Parsed from era_names_simp.html table "${table.contextHeading}".`;
+  if (notes.length === 0) {
+    return source;
+  }
+  return `${source} Source notes: ${deduplicate(notes).join(" / ")}`;
+}
+
+function deduplicate(values) {
+  return [...new Set(values)];
+}
+
+function paddedOrdinal(value) {
+  return String(value).padStart(4, "0");
+}
+
+function parseRulerName(value) {
+  const displayName = value.replace(/\s+/g, "");
+  const match = displayName.match(/^(.+?)[（(]([^（）()]+)[）)]$/);
+  if (match === null) {
+    return {
+      displayName,
+      personalName: displayName === "?" ? null : displayName,
+      templeName: null,
+      posthumousName: null
+    };
+  }
+
+  const personalName = match[1] === "?" ? null : match[1];
+  const title = match[2];
+  return {
+    displayName,
+    personalName,
+    templeName: /[祖宗]$/.test(title) ? title : null,
+    posthumousName: /[祖宗]$/.test(title) ? null : title
+  };
+}
+
+function parseReignEraName(value) {
+  const compact = value.replace(/\s+/g, "");
+  if (compact.length === 0) {
+    return undefined;
+  }
+  const withoutParenthetical = compact.replace(/[（(][^（）()]*[）)]/g, "");
+  const withoutYearSuffix = withoutParenthetical.replace(/[元一二三四五六七八九十百千万〇零两\d、至]+年$/u, "");
+  const normalized = withoutYearSuffix.length > 0 ? withoutYearSuffix : withoutParenthetical;
+  return normalized.length === 0 ? undefined : normalized;
+}
+
+function normalizeReignEraName(value) {
+  return value.replace(/\s+/g, "");
+}
+
+function parseCivilYearRange(value) {
+  const sourceText = value;
+  const normalized = value.replace(/年/g, "").replace(/\s+/g, "");
+  const match = normalized.match(/^(.+?)[—–-](.+)$/);
+  if (match !== null) {
+    return {
+      startYear: parseCivilYear(match[1]),
+      endYear: parseCivilYear(match[2]),
+      sourceText
+    };
+  }
+  const year = parseCivilYear(normalized);
+  return { startYear: year, endYear: year, sourceText };
+}
+
+function nextCivilYear(year) {
+  return year + 1;
+}
+
 function parseEraPage(html) {
   const sections = [];
-  const sectionPattern = /<input[^>]+id="([^"]+)"[^>]*>\s*<label[^>]*>\s*<h2[^>]*>(.*?)<\/h2>/g;
+  const reignTables = [];
+  const sectionPattern = /<input[^>]+id="([^"]+)"[^>]*>\s*<label[^>]*>\s*<h2[^>]*>(.*?)<\/h2><\/label><div class="content">([\s\S]*?)(?=<br><input type="checkbox" class="accordion"|<\/div><\/body>|$)/g;
   for (const match of html.matchAll(sectionPattern)) {
     const sourceID = match[1];
     const heading = cleanHtmlText(match[2]);
+    const content = match[3];
     const range = parseHeadingRange(heading);
     if (range === undefined) {
       continue;
@@ -521,6 +779,7 @@ function parseEraPage(html) {
       startYear: range.startYear,
       endYear: range.endYear
     });
+    reignTables.push(...parseReignTables(sourceID, heading, content));
   }
 
   const h3Headings = [];
@@ -532,7 +791,140 @@ function parseEraPage(html) {
     throw new Error("No dynasty sections could be parsed from era_names_simp.html.");
   }
 
-  return { sections, h3Headings };
+  return { sections, h3Headings, reignTables };
+}
+
+function parseReignTables(sourceID, sectionHeading, content) {
+  const dynastyIDs = REIGN_TABLE_DYNASTY_IDS.get(sourceID);
+  if (dynastyIDs === undefined) {
+    return [];
+  }
+
+  const tables = [];
+  let contextHeading = sectionHeading;
+  let tableIndex = 0;
+  const markerPattern = /<h3[^>]*>(.*?)<\/h3>|<table[\s\S]*?<\/table>/g;
+  for (const match of content.matchAll(markerPattern)) {
+    const marker = match[0];
+    if (marker.startsWith("<h3")) {
+      contextHeading = cleanHtmlText(match[1]);
+      continue;
+    }
+
+    const dynastyID = dynastyIDs[tableIndex];
+    if (dynastyID === undefined) {
+      throw new Error(`No dynasty mapping for reign table ${sourceID}#${tableIndex}.`);
+    }
+    const parsedTable = parseHtmlTable(marker);
+    const rows = parseReignTableRows(parsedTable, sourceID, tableIndex);
+    tables.push({
+      sourceID,
+      tableIndex,
+      dynastyID,
+      sectionHeading,
+      contextHeading,
+      headers: parsedTable.headers,
+      rows
+    });
+    tableIndex += 1;
+  }
+
+  if (tableIndex !== dynastyIDs.length) {
+    throw new Error(`Section ${sourceID} had ${tableIndex} reign tables, expected ${dynastyIDs.length}.`);
+  }
+  return tables;
+}
+
+function parseHtmlTable(tableHtml) {
+  const rows = [];
+  const pendingRowspans = [];
+  for (const rowMatch of tableHtml.matchAll(/<tr[^>]*>([\s\S]*?)<\/tr>/g)) {
+    const cells = [];
+    const explicitColumns = new Set();
+    applyPendingRowspans(cells, pendingRowspans);
+
+    for (const cellMatch of rowMatch[1].matchAll(/<t[hd]([^>]*)>([\s\S]*?)<\/t[hd]>/g)) {
+      let columnIndex = 0;
+      while (cells[columnIndex] !== undefined) {
+        columnIndex += 1;
+      }
+      const text = cleanHtmlText(cellMatch[2]);
+      cells[columnIndex] = text;
+      explicitColumns.add(columnIndex);
+
+      const rowspan = parseRowspan(cellMatch[1]);
+      if (rowspan > 1) {
+        pendingRowspans[columnIndex] = {
+          text,
+          remaining: rowspan - 1
+        };
+      }
+    }
+
+    rows.push({ cells, explicitColumns });
+  }
+
+  const [headerRow, ...bodyRows] = rows;
+  if (headerRow === undefined) {
+    throw new Error("Encountered empty HTML table in era_names_simp.html.");
+  }
+  return {
+    headers: headerRow.cells,
+    rows: bodyRows
+  };
+}
+
+function applyPendingRowspans(cells, pendingRowspans) {
+  for (let index = 0; index < pendingRowspans.length; index += 1) {
+    const pending = pendingRowspans[index];
+    if (pending === undefined) {
+      continue;
+    }
+    cells[index] = pending.text;
+    pending.remaining -= 1;
+    if (pending.remaining === 0) {
+      pendingRowspans[index] = undefined;
+    }
+  }
+}
+
+function parseRowspan(attributes) {
+  const match = attributes.match(/\browspan=["']?(\d+)/i);
+  return match === null ? 1 : Number.parseInt(match[1], 10);
+}
+
+function parseReignTableRows(table, sourceID, tableIndex) {
+  if (table.headers.length < 2) {
+    throw new Error(`Reign table ${sourceID}#${tableIndex} has too few columns.`);
+  }
+
+  return table.rows.map((row, rowIndex) => {
+    const rulerText = row.cells[0] ?? "";
+    const hasExplicitRuler = row.explicitColumns.has(0) && rulerText.length > 0;
+    if (table.headers.length === 2) {
+      return {
+        rulerText,
+        hasExplicitRuler,
+        eraText: "",
+        yearText: row.cells[1] ?? "",
+        noteText: ""
+      };
+    }
+
+    const eraText = row.cells[1] ?? "";
+    const yearText = row.cells[2] ?? "";
+    const noteText = row.cells[3] ?? "";
+    if (yearText.length === 0) {
+      throw new Error(`Reign table ${sourceID}#${tableIndex} row ${rowIndex + 1} has no civil year text.`);
+    }
+    return {
+      rulerText,
+      hasExplicitRuler,
+      eraText,
+      yearText,
+      noteText
+    };
+  });
 }
 
 function cleanHtmlText(value) {
@@ -643,11 +1035,22 @@ function buildSourceAudit(parsedSource, records, rawSource, baseManifest) {
     upstreamCommit: rawSource.upstreamCommit ?? baseManifest?.sourceUpstreamCommit,
     parsedH2SectionCount: parsedSource.sections.length,
     parsedH3HeadingCount: parsedSource.h3Headings.length,
+    parsedReignTableCount: parsedSource.reignTables.length,
+    emittedEmperorCount: records.emperors.length,
+    emittedEmperorReignSegmentCount: records.emperorReignSegments.length,
+    emittedReignEraCount: records.reignEras.length,
     parsedH2Sections: parsedSource.sections.map((section) => ({
       sourceID: section.sourceID,
       heading: section.heading,
       startYear: section.startYear,
       endYear: section.endYear
+    })),
+    parsedReignTables: parsedSource.reignTables.map((table) => ({
+      sourceID: table.sourceID,
+      tableIndex: table.tableIndex,
+      dynastyID: table.dynastyID,
+      contextHeading: table.contextHeading,
+      rowCount: table.rows.length
     })),
     nonEmittedH2Sections: parsedSource.sections
       .filter((section) => !DIRECT_DYNASTY_SOURCE_SECTION_IDS.has(section.sourceID))
@@ -666,7 +1069,8 @@ function buildSourceAudit(parsedSource, records, rawSource, baseManifest) {
       "OrthodoxPeriod records are concrete orthodox dynasty periods; segmentIndex and segmentName preserve the required narrative groups.",
       "Dynasty.claimedEndDate preserves the polity's own end year, while OrthodoxPeriod uses shared half-open [start, end) boundaries for continuous orthodox assignment.",
       "Supplemental dynasties split compound h2 sections into specific h3/table polities such as 西汉、新、更始、魏、蜀汉、孙吴、刘宋、五代后梁后唐后晋后汉后周、北宋、南宋、元、明、清、中华民国、中华人民共和国.",
-      "Non-orthodox polities such as 蜀汉、孙吴、北凉 remain Dynasty records but are not included in OrthodoxPeriod. 魏 is the Three Kingdoms orthodox period."
+      "Non-orthodox polities such as 蜀汉、孙吴、北凉、武周、南明 remain Dynasty records but are not included in OrthodoxPeriod. 魏 is the Three Kingdoms orthodox period.",
+      "Emperor, EmperorReignSegment, and ReignEra records are parsed from h2/h3 tables that map to emitted Dynasty records. Spring/Autumn and Warring States ruler tables are audited through h2/h3 counts but skipped because they are outside the current processed calendar coverage."
     ],
     automaticPrecisionCounts: countPrecisions(h2Expressions),
     manualPrecisionCounts: countPrecisions(nonH2Expressions),
@@ -694,6 +1098,9 @@ async function writeArtifact(output, artifact) {
   await Promise.all([
     writeJsonl(path.join(output, OUTPUT_FILES.dynasties), artifact.dynasties),
     writeJsonl(path.join(output, OUTPUT_FILES.dateExpressions), artifact.dateExpressions),
+    writeJsonl(path.join(output, OUTPUT_FILES.emperors), artifact.emperors),
+    writeJsonl(path.join(output, OUTPUT_FILES.emperorReignSegments), artifact.emperorReignSegments),
+    writeJsonl(path.join(output, OUTPUT_FILES.reignEras), artifact.reignEras),
     writeJsonl(path.join(output, OUTPUT_FILES.orthodoxTraditions), artifact.orthodoxTraditions),
     writeJsonl(path.join(output, OUTPUT_FILES.orthodoxBoundaries), artifact.orthodoxBoundaries),
     writeJsonl(path.join(output, OUTPUT_FILES.orthodoxPeriods), artifact.orthodoxPeriods),
@@ -705,7 +1112,11 @@ function sourceAuditSummary(sourceAudit) {
   return {
     parsedH2SectionCount: sourceAudit.parsedH2SectionCount,
     parsedH3HeadingCount: sourceAudit.parsedH3HeadingCount,
+    parsedReignTableCount: sourceAudit.parsedReignTableCount,
     nonEmittedH2SectionCount: sourceAudit.nonEmittedH2Sections.length,
+    emittedEmperorCount: sourceAudit.emittedEmperorCount,
+    emittedEmperorReignSegmentCount: sourceAudit.emittedEmperorReignSegmentCount,
+    emittedReignEraCount: sourceAudit.emittedReignEraCount,
     automaticPrecisionCounts: sourceAudit.automaticPrecisionCounts,
     manualPrecisionCounts: sourceAudit.manualPrecisionCounts,
     orthodoxSequence: sourceAudit.orthodoxSequence
@@ -727,12 +1138,18 @@ async function writeProcessedManifest(output, baseManifest, artifact, rawSource)
       sourceUpstreamCommit: rawSource.upstreamCommit ?? baseManifest?.sourceUpstreamCommit,
       totalDynasties: artifact.dynasties.length,
       totalChineseDateExpressions: artifact.dateExpressions.length,
+      totalEmperors: artifact.emperors.length,
+      totalEmperorReignSegments: artifact.emperorReignSegments.length,
+      totalReignEras: artifact.reignEras.length,
       totalOrthodoxTraditions: artifact.orthodoxTraditions.length,
       totalOrthodoxBoundaries: artifact.orthodoxBoundaries.length,
       totalOrthodoxPeriods: artifact.orthodoxPeriods.length,
       files: {
         Dynasty: OUTPUT_FILES.dynasties,
         ChineseDateExpression: OUTPUT_FILES.dateExpressions,
+        Emperor: OUTPUT_FILES.emperors,
+        EmperorReignSegment: OUTPUT_FILES.emperorReignSegments,
+        ReignEra: OUTPUT_FILES.reignEras,
         OrthodoxTradition: OUTPUT_FILES.orthodoxTraditions,
         OrthodoxBoundary: OUTPUT_FILES.orthodoxBoundaries,
         OrthodoxPeriod: OUTPUT_FILES.orthodoxPeriods
@@ -742,6 +1159,9 @@ async function writeProcessedManifest(output, baseManifest, artifact, rawSource)
       importOrder: [
         "ChineseDateExpression",
         "Dynasty",
+        "Emperor",
+        "EmperorReignSegment",
+        "ReignEra",
         "OrthodoxTradition",
         "OrthodoxBoundary",
         "OrthodoxPeriod"
@@ -749,6 +1169,13 @@ async function writeProcessedManifest(output, baseManifest, artifact, rawSource)
       relationshipKeys: {
         "Dynasty.claimedStartDate": "dynasty.claimedStartDateID -> ChineseDateExpression.id",
         "Dynasty.claimedEndDate": "dynasty.claimedEndDateID -> ChineseDateExpression.id",
+        "Emperor.dynasty": "emperor.dynastyID -> Dynasty.id",
+        "EmperorReignSegment.emperor": "emperorReignSegment.emperorID -> Emperor.id",
+        "EmperorReignSegment.startDate": "emperorReignSegment.startDateID -> ChineseDateExpression.id",
+        "EmperorReignSegment.endDate": "emperorReignSegment.endDateID -> ChineseDateExpression.id",
+        "ReignEra.emperor": "reignEra.emperorID -> Emperor.id",
+        "ReignEra.startDate": "reignEra.startDateID -> ChineseDateExpression.id",
+        "ReignEra.endDate": "reignEra.endDateID -> ChineseDateExpression.id",
         "OrthodoxBoundary.tradition": "orthodoxBoundary.traditionID -> OrthodoxTradition.id",
         "OrthodoxBoundary.date": "orthodoxBoundary.dateExpressionID -> ChineseDateExpression.id",
         "OrthodoxPeriod.tradition": "orthodoxPeriod.traditionID -> OrthodoxTradition.id",
@@ -763,9 +1190,16 @@ async function writeProcessedManifest(output, baseManifest, artifact, rawSource)
     ...(baseManifest?.files ?? {}),
     Dynasty: OUTPUT_FILES.dynasties,
     ChineseDateExpression: OUTPUT_FILES.dateExpressions,
+    Emperor: OUTPUT_FILES.emperors,
+    EmperorReignSegment: OUTPUT_FILES.emperorReignSegments,
+    ReignEra: OUTPUT_FILES.reignEras,
     OrthodoxTradition: OUTPUT_FILES.orthodoxTraditions,
     OrthodoxBoundary: OUTPUT_FILES.orthodoxBoundaries,
     OrthodoxPeriod: OUTPUT_FILES.orthodoxPeriods
+  };
+  manifest.relationshipKeys = {
+    ...(baseManifest?.relationshipKeys ?? {}),
+    ...manifest.dynastyArtifact.relationshipKeys
   };
   manifest.importOrder = appendImportOrder(baseManifest?.importOrder ?? [], manifest.dynastyArtifact.importOrder);
 
@@ -773,13 +1207,11 @@ async function writeProcessedManifest(output, baseManifest, artifact, rawSource)
 }
 
 function appendImportOrder(existing, additions) {
-  const result = [...existing];
-  for (const value of additions) {
-    if (!result.includes(value)) {
-      result.push(value);
-    }
-  }
-  return result;
+  const additionSet = new Set(additions);
+  return [
+    ...existing.filter((value) => !additionSet.has(value)),
+    ...additions
+  ];
 }
 
 async function validateArtifact(output) {
@@ -789,6 +1221,9 @@ async function validateArtifact(output) {
   const artifact = {
     dynasties: await readJsonl(path.join(output, OUTPUT_FILES.dynasties)),
     dateExpressions: await readJsonl(path.join(output, OUTPUT_FILES.dateExpressions)),
+    emperors: await readJsonl(path.join(output, OUTPUT_FILES.emperors)),
+    emperorReignSegments: await readJsonl(path.join(output, OUTPUT_FILES.emperorReignSegments)),
+    reignEras: await readJsonl(path.join(output, OUTPUT_FILES.reignEras)),
     orthodoxTraditions: await readJsonl(path.join(output, OUTPUT_FILES.orthodoxTraditions)),
     orthodoxBoundaries: await readJsonl(path.join(output, OUTPUT_FILES.orthodoxBoundaries)),
     orthodoxPeriods: await readJsonl(path.join(output, OUTPUT_FILES.orthodoxPeriods)),
@@ -800,6 +1235,9 @@ async function validateArtifact(output) {
   if (dynastyManifest !== undefined) {
     assertManifestCount(dynastyManifest, "totalDynasties", artifact.dynasties.length);
     assertManifestCount(dynastyManifest, "totalChineseDateExpressions", artifact.dateExpressions.length);
+    assertManifestCount(dynastyManifest, "totalEmperors", artifact.emperors.length);
+    assertManifestCount(dynastyManifest, "totalEmperorReignSegments", artifact.emperorReignSegments.length);
+    assertManifestCount(dynastyManifest, "totalReignEras", artifact.reignEras.length);
     assertManifestCount(dynastyManifest, "totalOrthodoxTraditions", artifact.orthodoxTraditions.length);
     assertManifestCount(dynastyManifest, "totalOrthodoxBoundaries", artifact.orthodoxBoundaries.length);
     assertManifestCount(dynastyManifest, "totalOrthodoxPeriods", artifact.orthodoxPeriods.length);
@@ -808,6 +1246,9 @@ async function validateArtifact(output) {
   return {
     dynasties: artifact.dynasties.length,
     dateExpressions: artifact.dateExpressions.length,
+    emperors: artifact.emperors.length,
+    emperorReignSegments: artifact.emperorReignSegments.length,
+    reignEras: artifact.reignEras.length,
     orthodoxTraditions: artifact.orthodoxTraditions.length,
     orthodoxBoundaries: artifact.orthodoxBoundaries.length,
     orthodoxPeriods: artifact.orthodoxPeriods.length
@@ -860,6 +1301,92 @@ function validateRecords(artifact, availableIndexes) {
       throw new Error(`Duplicate Dynasty ${dynasty.id}.`);
     }
     dynastyIDs.add(dynasty.id);
+  }
+
+  const emperorIDs = new Set();
+  const emperorsByID = new Map();
+  const emperorSequenceByDynasty = new Set();
+  for (const emperor of artifact.emperors) {
+    requireStableID(emperor.id, "Emperor.id");
+    requireReference(dynastyIDs, emperor.dynastyID, `Emperor ${emperor.id} dynastyID`);
+    requireNonEmptyString(emperor.displayName, `Emperor ${emperor.id} displayName`);
+    requireInteger(emperor.sequenceIndex, `Emperor ${emperor.id} sequenceIndex`);
+    const sequenceKey = `${emperor.dynastyID}:${emperor.sequenceIndex}`;
+    if (emperorSequenceByDynasty.has(sequenceKey)) {
+      throw new Error(`Duplicate Emperor sequenceIndex ${emperor.sequenceIndex} in Dynasty ${emperor.dynastyID}.`);
+    }
+    emperorSequenceByDynasty.add(sequenceKey);
+    if (emperorIDs.has(emperor.id)) {
+      throw new Error(`Duplicate Emperor ${emperor.id}.`);
+    }
+    emperorIDs.add(emperor.id);
+    emperorsByID.set(emperor.id, emperor);
+  }
+
+  const segmentIDs = new Set();
+  const segmentIndexByEmperor = new Set();
+  const segmentSequenceByDynasty = new Set();
+  for (const segment of artifact.emperorReignSegments) {
+    requireStableID(segment.id, "EmperorReignSegment.id");
+    requireReference(emperorIDs, segment.emperorID, `EmperorReignSegment ${segment.id} emperorID`);
+    requireExpressionReference(expressionIDs, segment.startDateID, `EmperorReignSegment ${segment.id} startDateID`);
+    requireExpressionReference(expressionIDs, segment.endDateID, `EmperorReignSegment ${segment.id} endDateID`);
+    requireInteger(segment.sequenceIndex, `EmperorReignSegment ${segment.id} sequenceIndex`);
+    requireInteger(segment.segmentIndex, `EmperorReignSegment ${segment.id} segmentIndex`);
+    const emperor = emperorsByID.get(segment.emperorID);
+    const segmentIndexKey = `${segment.emperorID}:${segment.segmentIndex}`;
+    if (segmentIndexByEmperor.has(segmentIndexKey)) {
+      throw new Error(`Duplicate EmperorReignSegment segmentIndex ${segment.segmentIndex} for Emperor ${segment.emperorID}.`);
+    }
+    segmentIndexByEmperor.add(segmentIndexKey);
+    const sequenceKey = `${emperor.dynastyID}:${segment.sequenceIndex}`;
+    if (segmentSequenceByDynasty.has(sequenceKey)) {
+      throw new Error(`Duplicate EmperorReignSegment sequenceIndex ${segment.sequenceIndex} in Dynasty ${emperor.dynastyID}.`);
+    }
+    segmentSequenceByDynasty.add(sequenceKey);
+    if (segmentIDs.has(segment.id)) {
+      throw new Error(`Duplicate EmperorReignSegment ${segment.id}.`);
+    }
+    segmentIDs.add(segment.id);
+    validateHalfOpenDateExpressions(
+      segment.id,
+      expressionsByID.get(segment.startDateID),
+      expressionsByID.get(segment.endDateID)
+    );
+  }
+
+  const reignEraIDs = new Set();
+  const eraIndexByEmperor = new Set();
+  const eraSequenceByDynasty = new Set();
+  for (const reignEra of artifact.reignEras) {
+    requireStableID(reignEra.id, "ReignEra.id");
+    requireReference(emperorIDs, reignEra.emperorID, `ReignEra ${reignEra.id} emperorID`);
+    requireNonEmptyString(reignEra.name, `ReignEra ${reignEra.id} name`);
+    requireNonEmptyString(reignEra.normalizedName, `ReignEra ${reignEra.id} normalizedName`);
+    requireExpressionReference(expressionIDs, reignEra.startDateID, `ReignEra ${reignEra.id} startDateID`);
+    requireExpressionReference(expressionIDs, reignEra.endDateID, `ReignEra ${reignEra.id} endDateID`);
+    requireInteger(reignEra.sequenceIndex, `ReignEra ${reignEra.id} sequenceIndex`);
+    requireInteger(reignEra.eraIndexWithinEmperor, `ReignEra ${reignEra.id} eraIndexWithinEmperor`);
+    const emperor = emperorsByID.get(reignEra.emperorID);
+    const eraIndexKey = `${reignEra.emperorID}:${reignEra.eraIndexWithinEmperor}`;
+    if (eraIndexByEmperor.has(eraIndexKey)) {
+      throw new Error(`Duplicate ReignEra eraIndexWithinEmperor ${reignEra.eraIndexWithinEmperor} for Emperor ${reignEra.emperorID}.`);
+    }
+    eraIndexByEmperor.add(eraIndexKey);
+    const sequenceKey = `${emperor.dynastyID}:${reignEra.sequenceIndex}`;
+    if (eraSequenceByDynasty.has(sequenceKey)) {
+      throw new Error(`Duplicate ReignEra sequenceIndex ${reignEra.sequenceIndex} in Dynasty ${emperor.dynastyID}.`);
+    }
+    eraSequenceByDynasty.add(sequenceKey);
+    if (reignEraIDs.has(reignEra.id)) {
+      throw new Error(`Duplicate ReignEra ${reignEra.id}.`);
+    }
+    reignEraIDs.add(reignEra.id);
+    validateHalfOpenDateExpressions(
+      reignEra.id,
+      expressionsByID.get(reignEra.startDateID),
+      expressionsByID.get(reignEra.endDateID)
+    );
   }
 
   const traditionIDs = new Set();
@@ -970,6 +1497,17 @@ function validateOrthodoxPeriodBoundaries(period, boundariesByID, expressionsByI
   }
   if (startYear >= endYear) {
     throw new Error(`OrthodoxPeriod ${period.id} must satisfy half-open startYear < endYear.`);
+  }
+}
+
+function validateHalfOpenDateExpressions(id, startExpression, endExpression) {
+  const startYear = dateExpressionYear(startExpression);
+  const endYear = dateExpressionYear(endExpression);
+  if (startYear === undefined || endYear === undefined) {
+    return;
+  }
+  if (startYear >= endYear) {
+    throw new Error(`${id} must satisfy half-open startYear < endYear.`);
   }
 }
 

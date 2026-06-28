@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://chinese-calendar.local/schemas/reign_era.schema.json",
+  "title": "ReignEraRecord",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "emperorID",
+    "name",
+    "normalizedName",
+    "sequenceIndex",
+    "eraIndexWithinEmperor",
+    "startDateID",
+    "endDateID",
+    "note"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "年号使用区间的稳定标识符。"
+    },
+    "emperorID": {
+      "type": "string",
+      "minLength": 1,
+      "description": "该年号记录所属皇帝，引用 Emperor.id。"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "description": "来源中的年号显示名。"
+    },
+    "normalizedName": {
+      "type": "string",
+      "minLength": 1,
+      "description": "归一化检索名，去除空白和纪年后缀。"
+    },
+    "sequenceIndex": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "同一朝代或政权政治时间线中的年号顺序。"
+    },
+    "eraIndexWithinEmperor": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "该皇帝名下的年号顺序，从 0 开始。"
+    },
+    "startDateID": {
+      "type": "string",
+      "minLength": 1,
+      "description": "年号开始日期，引用 ChineseDateExpression.id。"
+    },
+    "endDateID": {
+      "type": "string",
+      "minLength": 1,
+      "description": "年号结束日期，引用 ChineseDateExpression.id，按 [start, end) 半开区间理解。"
+    },
+    "note": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "改元边界、沿用前任年号或来源备注等可选说明。"
+    }
+  },
+  "x-codegen": {
+    "record": true,
+    "typeName": "ReignEraRecord",
+    "dataFile": "reign_eras.jsonl"
+  }
+}

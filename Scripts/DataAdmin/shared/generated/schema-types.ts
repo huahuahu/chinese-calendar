@@ -78,6 +78,28 @@ export interface DynastyRecord {
   note: string | null;
 }
 
+export interface EmperorRecord {
+  id: string;
+  dynastyID: string;
+  displayName: string;
+  personalName: string | null;
+  templeName: string | null;
+  posthumousName: string | null;
+  sequenceIndex: number;
+  note: string | null;
+}
+
+export interface EmperorReignSegmentRecord {
+  id: string;
+  emperorID: string;
+  sequenceIndex: number;
+  segmentIndex: number;
+  segmentName: string | null;
+  startDateID: string;
+  endDateID: string;
+  note: string | null;
+}
+
 export interface OrthodoxBoundaryRecord {
   id: string;
   traditionID: string;
@@ -100,5 +122,17 @@ export interface OrthodoxPeriodRecord {
 export interface OrthodoxTraditionRecord {
   id: string;
   name: string;
+  note: string | null;
+}
+
+export interface ReignEraRecord {
+  id: string;
+  emperorID: string;
+  name: string;
+  normalizedName: string;
+  sequenceIndex: number;
+  eraIndexWithinEmperor: number;
+  startDateID: string;
+  endDateID: string;
   note: string | null;
 }

@@ -308,6 +308,18 @@ private struct SeedStoreBuilder {
             at: options.inputURL.appendingPathComponent("dynasties.jsonl"),
             as: DynastyRecord.self
         )
+        let emperorRecords = try readJSONLines(
+            at: options.inputURL.appendingPathComponent("emperors.jsonl"),
+            as: EmperorRecord.self
+        )
+        let emperorReignSegmentRecords = try readJSONLines(
+            at: options.inputURL.appendingPathComponent("emperor_reign_segments.jsonl"),
+            as: EmperorReignSegmentRecord.self
+        )
+        let reignEraRecords = try readJSONLines(
+            at: options.inputURL.appendingPathComponent("reign_eras.jsonl"),
+            as: ReignEraRecord.self
+        )
         let traditionRecords = try readJSONLines(
             at: options.inputURL.appendingPathComponent("orthodox_traditions.jsonl"),
             as: OrthodoxTraditionRecord.self
@@ -325,6 +337,7 @@ private struct SeedStoreBuilder {
         var availableDateExpressions = try keyedDateExpressions(from: dateExpressionRecords)
         var traditions: [String: OrthodoxTradition] = [:]
         var dynasties: [String: Dynasty] = [:]
+        var emperors: [String: Emperor] = [:]
         var boundaries: [String: OrthodoxBoundary] = [:]
 
         for record in dynastyRecords {
@@ -338,6 +351,27 @@ private struct SeedStoreBuilder {
             )
             context.insert(dynasty)
             dynasties[record.id] = dynasty
+        }
+
+        for record in emperorRecords.sorted(by: { $0.sequenceIndex < $1.sequenceIndex }) {
+            guard let dynasty = dynasties[record.dynastyID] else {
+                throw SeedStoreBuilderError.missingReference(
+                    "Emperor \(record.id) references missing Dynasty \(record.dynastyID)."
+                )
+            }
+
+            let emperor = Emperor(
+                id: record.id,
+                dynasty: dynasty,
+                displayName: record.displayName,
+                personalName: record.personalName,
+                templeName: record.templeName,
+                posthumousName: record.posthumousName,
+                sequenceIndex: record.sequenceIndex,
+                note: record.note
+            )
+            context.insert(emperor)
+            emperors[record.id] = emperor
         }
 
         for record in traditionRecords {
@@ -367,6 +401,45 @@ private struct SeedStoreBuilder {
             )
             context.insert(boundary)
             boundaries[record.id] = boundary
+        }
+
+        for record in emperorReignSegmentRecords.sorted(by: { $0.sequenceIndex < $1.sequenceIndex }) {
+            guard let emperor = emperors[record.emperorID] else {
+                throw SeedStoreBuilderError.missingReference(
+                    "EmperorReignSegment \(record.id) references missing Emperor \(record.emperorID)."
+                )
+            }
+
+            context.insert(try EmperorReignSegment(
+                id: record.id,
+                emperor: emperor,
+                sequenceIndex: record.sequenceIndex,
+                segmentIndex: record.segmentIndex,
+                segmentName: record.segmentName,
+                startDate: takeDateExpression(record.startDateID, from: &availableDateExpressions),
+                endDate: takeDateExpression(record.endDateID, from: &availableDateExpressions),
+                note: record.note
+            ))
+        }
+
+        for record in reignEraRecords.sorted(by: { $0.sequenceIndex < $1.sequenceIndex }) {
+            guard let emperor = emperors[record.emperorID] else {
+                throw SeedStoreBuilderError.missingReference(
+                    "ReignEra \(record.id) references missing Emperor \(record.emperorID)."
+                )
+            }
+
+            context.insert(try ReignEra(
+                id: record.id,
+                emperor: emperor,
+                name: record.name,
+                normalizedName: record.normalizedName,
+                sequenceIndex: record.sequenceIndex,
+                eraIndexWithinEmperor: record.eraIndexWithinEmperor,
+                startDate: takeDateExpression(record.startDateID, from: &availableDateExpressions),
+                endDate: takeDateExpression(record.endDateID, from: &availableDateExpressions),
+                note: record.note
+            ))
         }
 
         if !availableDateExpressions.isEmpty {
@@ -620,9 +693,12 @@ private struct SeedStoreBuilder {
                 "sourceUpstreamRepository",
                 "totalChineseDateExpressions",
                 "totalDynasties",
+                "totalEmperorReignSegments",
+                "totalEmperors",
                 "totalOrthodoxBoundaries",
                 "totalOrthodoxPeriods",
-                "totalOrthodoxTraditions"
+                "totalOrthodoxTraditions",
+                "totalReignEras"
             ],
             from: source,
             to: &artifact

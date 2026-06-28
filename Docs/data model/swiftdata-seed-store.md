@@ -42,7 +42,7 @@ Remote full-store manifest:
 ```json
 {
   "datasetVersion": "2026.05.30",
-  "schemaVersion": "1.1.0",
+  "schemaVersion": "1.2.0",
   "seedStoreContentLevel": "full",
   "seedStoreFormatVersion": 4,
   "storeFileName": "ChineseCalendar.sqlite",
