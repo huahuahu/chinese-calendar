@@ -410,7 +410,7 @@ private struct SeedStoreBuilder {
                 )
             }
 
-            context.insert(try EmperorReignSegment(
+            try context.insert(EmperorReignSegment(
                 id: record.id,
                 emperor: emperor,
                 sequenceIndex: record.sequenceIndex,
@@ -429,7 +429,7 @@ private struct SeedStoreBuilder {
                 )
             }
 
-            context.insert(try ReignEra(
+            try context.insert(ReignEra(
                 id: record.id,
                 emperor: emperor,
                 name: record.name,

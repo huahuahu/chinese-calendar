@@ -22,12 +22,12 @@ public final class Emperor {
     /// 皇帝所属的朝代或政权。
     public var dynasty: Dynasty
 
-    @Relationship(deleteRule: .cascade, inverse: \EmperorReignSegment.emperor)
     /// 该皇帝的一个或多个在位区间。
+    @Relationship(deleteRule: .cascade, inverse: \EmperorReignSegment.emperor)
     public var reignSegments: [EmperorReignSegment]
 
-    @Relationship(deleteRule: .cascade, inverse: \ReignEra.emperor)
     /// 归属于该皇帝名下的年号记录。
+    @Relationship(deleteRule: .cascade, inverse: \ReignEra.emperor)
     public var reignEras: [ReignEra]
 
     /// 导入来源、称号解析或史料差异的补充说明。
@@ -75,12 +75,12 @@ public final class EmperorReignSegment {
     /// 该在位区间所属的皇帝。
     public var emperor: Emperor
 
-    @Relationship(deleteRule: .cascade)
     /// 在位区间开始日期。
+    @Relationship(deleteRule: .cascade)
     public var startDate: ChineseDateExpression
 
-    @Relationship(deleteRule: .cascade)
     /// 在位区间结束日期，按 [startDate, endDate) 半开区间理解。
+    @Relationship(deleteRule: .cascade)
     public var endDate: ChineseDateExpression
 
     /// 该在位区间的来源备注或解析说明。
@@ -126,12 +126,12 @@ public final class ReignEra {
     /// 该年号记录归属的皇帝。
     public var emperor: Emperor
 
-    @Relationship(deleteRule: .cascade)
     /// 年号开始日期。
+    @Relationship(deleteRule: .cascade)
     public var startDate: ChineseDateExpression
 
-    @Relationship(deleteRule: .cascade)
     /// 年号结束日期，按 [startDate, endDate) 半开区间理解。
+    @Relationship(deleteRule: .cascade)
     public var endDate: ChineseDateExpression
 
     /// 改元边界、沿用前任年号或来源备注等补充说明。
