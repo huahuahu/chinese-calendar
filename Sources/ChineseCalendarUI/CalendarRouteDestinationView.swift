@@ -1,4 +1,5 @@
 import ChineseCalendarPersistence
+import SFSafeSymbols
 import SwiftUI
 
 struct CalendarRouteDestinationView: View {
@@ -46,7 +47,7 @@ struct CalendarRouteDestinationView: View {
                     )
                 } else {
                     ContentUnavailableView {
-                        Label("Chinese Calendar", systemImage: "calendar.badge.exclamationmark")
+                        Label("Chinese Calendar", systemSymbol: .calendarBadgeExclamationmark)
                     } description: {
                         Text("没有找到这个农历年。")
                     }
@@ -55,7 +56,7 @@ struct CalendarRouteDestinationView: View {
                 DynastyDetailView(dynastyID: dynastyID)
             case nil:
                 ContentUnavailableView {
-                    Label("Chinese Calendar", systemImage: "calendar")
+                    Label("Chinese Calendar", systemSymbol: .calendar)
                 } description: {
                     Text(emptyStateDescription)
                 }

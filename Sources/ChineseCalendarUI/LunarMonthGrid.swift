@@ -1,5 +1,6 @@
 import ChineseCalendarCore
 import ChineseCalendarPersistence
+import SFSafeSymbols
 import SwiftData
 import SwiftUI
 
@@ -32,9 +33,12 @@ struct LunarMonthGrid: View {
 
             if periods.isEmpty {
                 ContentUnavailableView(
-                    emptyStateTitle,
-                    systemImage: emptyStateSystemImage,
-                    description: Text(emptyStateDescription)
+                    label: {
+                        Label(emptyStateTitle, systemSymbol: emptyStateSystemSymbol)
+                    },
+                    description: {
+                        Text(emptyStateDescription)
+                    }
                 )
                 .frame(maxWidth: .infinity, alignment: .leading)
             } else {
@@ -59,12 +63,12 @@ struct LunarMonthGrid: View {
         }
     }
 
-    private var emptyStateSystemImage: String {
+    private var emptyStateSystemSymbol: SFSymbol {
         switch storeContentLevel {
         case .base:
-            "arrow.down.circle"
+            .arrowDownCircle
         case .full:
-            "calendar.badge.exclamationmark"
+            .calendarBadgeExclamationmark
         }
     }
 

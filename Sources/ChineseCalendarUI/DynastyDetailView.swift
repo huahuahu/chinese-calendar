@@ -1,4 +1,5 @@
 import ChineseCalendarPersistence
+import SFSafeSymbols
 import SwiftData
 import SwiftUI
 
@@ -57,7 +58,7 @@ struct DynastyDetailView: View {
             .navigationTitle(dynasty.shortName ?? dynasty.name)
         } else {
             ContentUnavailableView {
-                Label("没有找到朝代", systemImage: "building.columns")
+                Label("没有找到朝代", systemSymbol: .buildingColumns)
             } description: {
                 Text("这个朝代记录不在当前 SwiftData store 中。")
             }

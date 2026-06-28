@@ -1,4 +1,5 @@
 import Foundation
+import SFSafeSymbols
 
 enum CalendarTab: Hashable, CaseIterable, Identifiable {
     case years
@@ -17,12 +18,12 @@ enum CalendarTab: Hashable, CaseIterable, Identifiable {
         }
     }
 
-    var systemImage: String {
+    var systemSymbol: SFSymbol {
         switch self {
         case .years:
-            "calendar"
+            .calendar
         case .history:
-            "timeline.selection"
+            .timelineSelection
         }
     }
 }

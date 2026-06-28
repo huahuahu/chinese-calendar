@@ -12,6 +12,13 @@ excluded:
 analyzer_rules:
   - unused_import
 
+custom_rules:
+  sf_safe_symbols:
+    name: "Safe SF Symbols"
+    message: "Use SFSafeSymbols via systemSymbol instead of raw SF Symbol strings."
+    regex: "(systemImage:|systemName:|UIImage\\(systemName:|NSImage\\(systemSymbolName:)"
+    severity: warning
+
 opt_in_rules:
   - empty_count
   - explicit_init

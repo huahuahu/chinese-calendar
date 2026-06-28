@@ -1,5 +1,6 @@
 import ChineseCalendarCore
 import ChineseCalendarPersistence
+import SFSafeSymbols
 import SwiftUI
 
 struct MonthSwitcher: View {
@@ -30,7 +31,7 @@ struct MonthSwitcher: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack(spacing: 12) {
-                Button("上个月", systemImage: "chevron.left", action: selectPreviousMonth)
+                Button("上个月", systemSymbol: .chevronLeft, action: selectPreviousMonth)
                     .labelStyle(.iconOnly)
                     .disabled(!canSelectPreviousMonth)
                     .help("切换到上个月")
@@ -49,7 +50,7 @@ struct MonthSwitcher: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .accessibilityElement(children: .combine)
 
-                Button("下个月", systemImage: "chevron.right", action: selectNextMonth)
+                Button("下个月", systemSymbol: .chevronRight, action: selectNextMonth)
                     .labelStyle(.iconOnly)
                     .disabled(!canSelectNextMonth)
                     .help("切换到下个月")
