@@ -353,7 +353,9 @@ private struct SeedStoreBuilder {
             dynasties[record.id] = dynasty
         }
 
-        for record in emperorRecords.sorted(by: { $0.sequenceIndex < $1.sequenceIndex }) {
+        for record in emperorRecords.sorted(by: {
+            ($0.sequenceIndex, $0.id) < ($1.sequenceIndex, $1.id)
+        }) {
             guard let dynasty = dynasties[record.dynastyID] else {
                 throw SeedStoreBuilderError.missingReference(
                     "Emperor \(record.id) references missing Dynasty \(record.dynastyID)."
@@ -403,7 +405,9 @@ private struct SeedStoreBuilder {
             boundaries[record.id] = boundary
         }
 
-        for record in emperorReignSegmentRecords.sorted(by: { $0.sequenceIndex < $1.sequenceIndex }) {
+        for record in emperorReignSegmentRecords.sorted(by: {
+            ($0.sequenceIndex, $0.id) < ($1.sequenceIndex, $1.id)
+        }) {
             guard let emperor = emperors[record.emperorID] else {
                 throw SeedStoreBuilderError.missingReference(
                     "EmperorReignSegment \(record.id) references missing Emperor \(record.emperorID)."
@@ -422,7 +426,9 @@ private struct SeedStoreBuilder {
             ))
         }
 
-        for record in reignEraRecords.sorted(by: { $0.sequenceIndex < $1.sequenceIndex }) {
+        for record in reignEraRecords.sorted(by: {
+            ($0.sequenceIndex, $0.id) < ($1.sequenceIndex, $1.id)
+        }) {
             guard let emperor = emperors[record.emperorID] else {
                 throw SeedStoreBuilderError.missingReference(
                     "ReignEra \(record.id) references missing Emperor \(record.emperorID)."
