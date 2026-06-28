@@ -57,6 +57,7 @@ This repository hosts a Swift project for browsing the traditional Chinese calen
 - Project-local skill: `./.agents/skills/publish-full-seed-store`
 - Project-local skill: `./.agents/skills/worktree-setup`
 - Project-local skill: `./.agents/skills/worktree-cleanup`
+- Project-local skill: `./.agents/skills/cleaning-merged-pr-worktrees`
 
 ## Apple Documentation
 
@@ -87,3 +88,4 @@ When a task is primarily about async/await, actor isolation, cancellation, or ta
 When a task is primarily about SwiftData models, predicates, indexing, or CloudKit integration, prefer `swiftdata-pro`.
 When publishing a new remote full SwiftData seed store SQLite release, prefer `publish-full-seed-store`.
 When setting up or cleaning up branch worktrees, prefer `worktree-setup` or `worktree-cleanup`.
+When cleaning up a local worktree for a PR that was already merged, closed, or whose remote branch was deleted, prefer `cleaning-merged-pr-worktrees`.
