@@ -21,6 +21,7 @@
 {"id":"northern_zhou","name":"北周","shortName":"北周","claimedStartDateID":"northern_zhou_claimed_start","claimedEndDateID":"northern_zhou_claimed_end","note":"Supplemental polity split from era_names_simp.html h3/table text."}
 {"id":"sui","name":"隋","shortName":"隋","claimedStartDateID":"sui_claimed_start","claimedEndDateID":"sui_claimed_end","note":"Parsed from era_names_simp.html section id=sui; boundary precision is year."}
 {"id":"tang","name":"唐","shortName":"唐","claimedStartDateID":"tang_claimed_start","claimedEndDateID":"tang_claimed_end","note":"Parsed from era_names_simp.html section id=tang; boundary precision is year."}
+{"id":"wu_zhou","name":"武周","shortName":"周","claimedStartDateID":"wu_zhou_claimed_start","claimedEndDateID":"wu_zhou_claimed_end","note":"Supplemental Wu Zhou polity split from the Tang section's 武周年号 table."}
 {"id":"khitan_liao","name":"契丹、辽","shortName":"契丹、辽","claimedStartDateID":"khitan_liao_claimed_start","claimedEndDateID":"khitan_liao_claimed_end","note":"Parsed from era_names_simp.html section id=khitan; boundary precision is year."}
 {"id":"later_liang","name":"后梁","shortName":"后梁","claimedStartDateID":"later_liang_claimed_start","claimedEndDateID":"later_liang_claimed_end","note":"Supplemental polity split from era_names_simp.html h3/table text."}
 {"id":"later_tang","name":"后唐","shortName":"后唐","claimedStartDateID":"later_tang_claimed_start","claimedEndDateID":"later_tang_claimed_end","note":"Supplemental polity split from era_names_simp.html h3/table text."}
@@ -33,5 +34,6 @@
 {"id":"yuan","name":"元","shortName":"元","claimedStartDateID":"yuan_claimed_start","claimedEndDateID":"yuan_claimed_end","note":"Supplemental polity split from era_names_simp.html h3/table text."}
 {"id":"ming","name":"明","shortName":"明","claimedStartDateID":"ming_claimed_start","claimedEndDateID":"ming_claimed_end","note":"Supplemental polity split from era_names_simp.html h3/table text."}
 {"id":"qing","name":"清","shortName":"清","claimedStartDateID":"qing_claimed_start","claimedEndDateID":"qing_claimed_end","note":"Supplemental polity split from era_names_simp.html h3/table text."}
+{"id":"southern_ming","name":"南明和明郑","shortName":"南明","claimedStartDateID":"southern_ming_claimed_start","claimedEndDateID":"southern_ming_claimed_end","note":"Supplemental non-orthodox polity split from the Ming section's 南明和明郑 table."}
 {"id":"republic_of_china","name":"中华民国","shortName":"民国","claimedStartDateID":"republic_of_china_claimed_start","claimedEndDateID":"republic_of_china_claimed_end","note":"Supplemental polity split from era_names_simp.html h3/table text."}
 {"id":"peoples_republic_of_china","name":"中华人民共和国","shortName":"中华人民共和国","claimedStartDateID":"peoples_republic_of_china_claimed_start","claimedEndDateID":"peoples_republic_of_china_claimed_end","note":"Supplemental modern polity; claimed end uses the current seed coverage end and is not a historical end."}

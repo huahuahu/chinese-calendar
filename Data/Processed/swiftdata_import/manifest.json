@@ -24,7 +24,10 @@
     "ChineseDateExpression": "chinese_date_expressions.jsonl",
     "OrthodoxTradition": "orthodox_traditions.jsonl",
     "OrthodoxBoundary": "orthodox_boundaries.jsonl",
-    "OrthodoxPeriod": "orthodox_periods.jsonl"
+    "OrthodoxPeriod": "orthodox_periods.jsonl",
+    "Emperor": "emperors.jsonl",
+    "EmperorReignSegment": "emperor_reign_segments.jsonl",
+    "ReignEra": "reign_eras.jsonl"
   },
   "importOrder": [
     "ChineseLunarYear",
@@ -32,6 +35,9 @@
     "CalendarDayBundleByCivilYear",
     "ChineseDateExpression",
     "Dynasty",
+    "Emperor",
+    "EmperorReignSegment",
+    "ReignEra",
     "OrthodoxTradition",
     "OrthodoxBoundary",
     "OrthodoxPeriod"
@@ -45,26 +51,47 @@
     "ChineseLunarMonth.chineseLunarYear": "ChineseLunarMonth.lunarYearNumber -> ChineseLunarYear.lunarYearNumber",
     "CivilDate.calendarDay": "calendarDay.dayIndex -> civilDate.dayIndex",
     "ChineseLunarDay.calendarDay": "calendarDay.dayIndex -> chineseLunarDay.dayIndex",
-    "ChineseLunarDay.chineseLunarMonth": "chineseLunarDay.lunarMonthIndex -> ChineseLunarMonth.lunarMonthIndex"
+    "ChineseLunarDay.chineseLunarMonth": "chineseLunarDay.lunarMonthIndex -> ChineseLunarMonth.lunarMonthIndex",
+    "Dynasty.claimedStartDate": "dynasty.claimedStartDateID -> ChineseDateExpression.id",
+    "Dynasty.claimedEndDate": "dynasty.claimedEndDateID -> ChineseDateExpression.id",
+    "Emperor.dynasty": "emperor.dynastyID -> Dynasty.id",
+    "EmperorReignSegment.emperor": "emperorReignSegment.emperorID -> Emperor.id",
+    "EmperorReignSegment.startDate": "emperorReignSegment.startDateID -> ChineseDateExpression.id",
+    "EmperorReignSegment.endDate": "emperorReignSegment.endDateID -> ChineseDateExpression.id",
+    "ReignEra.emperor": "reignEra.emperorID -> Emperor.id",
+    "ReignEra.startDate": "reignEra.startDateID -> ChineseDateExpression.id",
+    "ReignEra.endDate": "reignEra.endDateID -> ChineseDateExpression.id",
+    "OrthodoxBoundary.tradition": "orthodoxBoundary.traditionID -> OrthodoxTradition.id",
+    "OrthodoxBoundary.date": "orthodoxBoundary.dateExpressionID -> ChineseDateExpression.id",
+    "OrthodoxPeriod.tradition": "orthodoxPeriod.traditionID -> OrthodoxTradition.id",
+    "OrthodoxPeriod.dynasty": "orthodoxPeriod.dynastyID -> Dynasty.id",
+    "OrthodoxPeriod.startBoundary": "orthodoxPeriod.startBoundaryID -> OrthodoxBoundary.id",
+    "OrthodoxPeriod.endBoundary": "orthodoxPeriod.endBoundaryID -> OrthodoxBoundary.id"
   },
   "dynastyArtifact": {
     "artifact": "dynasty_periods",
-    "generatedAt": "2026-05-31T05:31:55.220Z",
+    "generatedAt": "2026-06-28T08:56:12.613Z",
     "generator": "Scripts/ImportChineseCalendar/generate_dynasty_periods.swift",
     "sourceURL": "https://ytliu0.github.io/ChineseCalendar/era_names_simp.html",
     "rawFile": "Data/Raw/ChineseCalendar/era_names_simp.html",
     "rawSha256": "2f1dfca96a48bb90602f0ee28ba0afaece51e24bac64e770b1b1a2200f0b2775",
-    "rawFetchedAt": "2026-05-24T10:47:01.840Z",
+    "rawFetchedAt": "2026-06-28T08:54:42.596Z",
     "sourceUpstreamRepository": "https://github.com/ytliu0/ChineseCalendar",
     "sourceUpstreamCommit": "d6aae82b63b79a6f8659ea3e064024b7d8ac3077",
-    "totalDynasties": 37,
-    "totalChineseDateExpressions": 101,
+    "totalDynasties": 39,
+    "totalChineseDateExpressions": 1649,
+    "totalEmperors": 242,
+    "totalEmperorReignSegments": 246,
+    "totalReignEras": 526,
     "totalOrthodoxTraditions": 1,
     "totalOrthodoxBoundaries": 27,
     "totalOrthodoxPeriods": 26,
     "files": {
       "Dynasty": "dynasties.jsonl",
       "ChineseDateExpression": "chinese_date_expressions.jsonl",
+      "Emperor": "emperors.jsonl",
+      "EmperorReignSegment": "emperor_reign_segments.jsonl",
+      "ReignEra": "reign_eras.jsonl",
       "OrthodoxTradition": "orthodox_traditions.jsonl",
       "OrthodoxBoundary": "orthodox_boundaries.jsonl",
       "OrthodoxPeriod": "orthodox_periods.jsonl"
@@ -73,7 +100,11 @@
     "sourceAuditSummary": {
       "parsedH2SectionCount": 19,
       "parsedH3HeadingCount": 35,
+      "parsedReignTableCount": 38,
       "nonEmittedH2SectionCount": 13,
+      "emittedEmperorCount": 242,
+      "emittedEmperorReignSegmentCount": 246,
+      "emittedReignEraCount": 526,
       "automaticPrecisionCounts": {
         "year": 12,
         "month": 0,
@@ -82,11 +113,11 @@
         "unknown": 0
       },
       "manualPrecisionCounts": {
-        "year": 89,
+        "year": 1636,
         "month": 0,
         "day": 0,
         "range": 0,
-        "unknown": 0
+        "unknown": 1
       },
       "orthodoxSequence": [
         "秦",
@@ -106,6 +137,9 @@
     "importOrder": [
       "ChineseDateExpression",
       "Dynasty",
+      "Emperor",
+      "EmperorReignSegment",
+      "ReignEra",
       "OrthodoxTradition",
       "OrthodoxBoundary",
       "OrthodoxPeriod"
@@ -113,6 +147,13 @@
     "relationshipKeys": {
       "Dynasty.claimedStartDate": "dynasty.claimedStartDateID -> ChineseDateExpression.id",
       "Dynasty.claimedEndDate": "dynasty.claimedEndDateID -> ChineseDateExpression.id",
+      "Emperor.dynasty": "emperor.dynastyID -> Dynasty.id",
+      "EmperorReignSegment.emperor": "emperorReignSegment.emperorID -> Emperor.id",
+      "EmperorReignSegment.startDate": "emperorReignSegment.startDateID -> ChineseDateExpression.id",
+      "EmperorReignSegment.endDate": "emperorReignSegment.endDateID -> ChineseDateExpression.id",
+      "ReignEra.emperor": "reignEra.emperorID -> Emperor.id",
+      "ReignEra.startDate": "reignEra.startDateID -> ChineseDateExpression.id",
+      "ReignEra.endDate": "reignEra.endDateID -> ChineseDateExpression.id",
       "OrthodoxBoundary.tradition": "orthodoxBoundary.traditionID -> OrthodoxTradition.id",
       "OrthodoxBoundary.date": "orthodoxBoundary.dateExpressionID -> ChineseDateExpression.id",
       "OrthodoxPeriod.tradition": "orthodoxPeriod.traditionID -> OrthodoxTradition.id",

@@ -24,6 +24,9 @@ public final class Dynasty {
     @Relationship(deleteRule: .cascade)
     public var claimedEndDate: ChineseDateExpression
 
+    @Relationship(deleteRule: .cascade, inverse: \Emperor.dynasty)
+    public var emperors: [Emperor]
+
     public var note: String?
 
     public init(
@@ -32,6 +35,7 @@ public final class Dynasty {
         shortName: String? = nil,
         claimedStartDate: ChineseDateExpression,
         claimedEndDate: ChineseDateExpression,
+        emperors: [Emperor] = [],
         note: String? = nil
     ) {
         self.id = id
@@ -39,6 +43,7 @@ public final class Dynasty {
         self.shortName = shortName
         self.claimedStartDate = claimedStartDate
         self.claimedEndDate = claimedEndDate
+        self.emperors = emperors
         self.note = note
     }
 }

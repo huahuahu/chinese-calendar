@@ -7,7 +7,7 @@ public enum CivilCalendarStyle: String, Codable, CaseIterable, Sendable {
 }
 
 public enum ChineseCalendarModelSchema {
-    public static let version = Schema.Version(1, 1, 0)
+    public static let version = Schema.Version(1, 2, 0)
 
     public static let models: [any PersistentModel.Type] = [
         CalendarDay.self,
@@ -19,6 +19,9 @@ public enum ChineseCalendarModelSchema {
         ChineseDateExpression.self,
         ChineseDateRange.self,
         ChineseDateBound.self,
+        Emperor.self,
+        EmperorReignSegment.self,
+        ReignEra.self,
         OrthodoxTradition.self,
         OrthodoxBoundary.self,
         OrthodoxPeriod.self

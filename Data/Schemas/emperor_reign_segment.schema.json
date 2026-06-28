@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://chinese-calendar.local/schemas/emperor_reign_segment.schema.json",
+  "title": "EmperorReignSegmentRecord",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "emperorID",
+    "sequenceIndex",
+    "segmentIndex",
+    "segmentName",
+    "startDateID",
+    "endDateID",
+    "note"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "一次在位区间的稳定标识符。"
+    },
+    "emperorID": {
+      "type": "string",
+      "minLength": 1,
+      "description": "该在位区间所属皇帝，引用 Emperor.id。"
+    },
+    "sequenceIndex": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "同一朝代或政权政治时间线中的在位区间顺序。"
+    },
+    "segmentIndex": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "同一皇帝自己的第几次在位，从 0 开始。"
+    },
+    "segmentName": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "在位区间显示名，例如初立、复辟；没有来源说明时为 null。"
+    },
+    "startDateID": {
+      "type": "string",
+      "minLength": 1,
+      "description": "在位区间开始日期，引用 ChineseDateExpression.id。"
+    },
+    "endDateID": {
+      "type": "string",
+      "minLength": 1,
+      "description": "在位区间结束日期，引用 ChineseDateExpression.id，按 [start, end) 半开区间理解。"
+    },
+    "note": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "该在位区间的可选说明。"
+    }
+  },
+  "x-codegen": {
+    "record": true,
+    "typeName": "EmperorReignSegmentRecord",
+    "dataFile": "emperor_reign_segments.jsonl"
+  }
+}

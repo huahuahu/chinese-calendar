@@ -77,6 +77,9 @@ function plannedFiles(input, manifest, schemas) {
     "LunarMonthRecord",
     "ChineseDateExpressionRecord",
     "DynastyRecord",
+    "EmperorRecord",
+    "EmperorReignSegmentRecord",
+    "ReignEraRecord",
     "OrthodoxTraditionRecord",
     "OrthodoxBoundaryRecord",
     "OrthodoxPeriodRecord"

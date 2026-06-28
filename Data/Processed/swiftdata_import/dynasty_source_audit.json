@@ -2,11 +2,15 @@
   "sourceURL": "https://ytliu0.github.io/ChineseCalendar/era_names_simp.html",
   "rawFile": "Data/Raw/ChineseCalendar/era_names_simp.html",
   "rawSha256": "2f1dfca96a48bb90602f0ee28ba0afaece51e24bac64e770b1b1a2200f0b2775",
-  "rawFetchedAt": "2026-05-24T10:47:01.840Z",
+  "rawFetchedAt": "2026-06-28T08:54:42.596Z",
   "upstreamRepository": "https://github.com/ytliu0/ChineseCalendar",
   "upstreamCommit": "d6aae82b63b79a6f8659ea3e064024b7d8ac3077",
   "parsedH2SectionCount": 19,
   "parsedH3HeadingCount": 35,
+  "parsedReignTableCount": 38,
+  "emittedEmperorCount": 242,
+  "emittedEmperorReignSegmentCount": 246,
+  "emittedReignEraCount": 526,
   "parsedH2Sections": [
     {
       "sourceID": "chunqiu",
@@ -123,6 +127,274 @@
       "endYear": 1911
     }
   ],
+  "parsedReignTables": [
+    {
+      "sourceID": "qin",
+      "tableIndex": 0,
+      "dynastyID": "qin",
+      "contextHeading": "秦 (公元前221 — 前207)",
+      "rowCount": 3
+    },
+    {
+      "sourceID": "han1",
+      "tableIndex": 0,
+      "dynastyID": "western_han",
+      "contextHeading": "西 汉 (公元前206-公元8)",
+      "rowCount": 46
+    },
+    {
+      "sourceID": "han1",
+      "tableIndex": 1,
+      "dynastyID": "xin",
+      "contextHeading": "新 (8-23)",
+      "rowCount": 3
+    },
+    {
+      "sourceID": "han1",
+      "tableIndex": 2,
+      "dynastyID": "gengshi",
+      "contextHeading": "更 始 (23-25)",
+      "rowCount": 1
+    },
+    {
+      "sourceID": "han2",
+      "tableIndex": 0,
+      "dynastyID": "eastern_han",
+      "contextHeading": "东 汉 (25 — 220)",
+      "rowCount": 40
+    },
+    {
+      "sourceID": "3kingdoms",
+      "tableIndex": 0,
+      "dynastyID": "cao_wei",
+      "contextHeading": "曹 魏 (220 — 265)",
+      "rowCount": 10
+    },
+    {
+      "sourceID": "3kingdoms",
+      "tableIndex": 1,
+      "dynastyID": "shu_han",
+      "contextHeading": "蜀 汉 (221 — 263)",
+      "rowCount": 5
+    },
+    {
+      "sourceID": "3kingdoms",
+      "tableIndex": 2,
+      "dynastyID": "sun_wu",
+      "contextHeading": "孙 吴 (222 — 280)",
+      "rowCount": 18
+    },
+    {
+      "sourceID": "jin",
+      "tableIndex": 0,
+      "dynastyID": "western_jin",
+      "contextHeading": "西晋 (265-317)",
+      "rowCount": 16
+    },
+    {
+      "sourceID": "jin",
+      "tableIndex": 1,
+      "dynastyID": "eastern_jin",
+      "contextHeading": "东晋 (317-420)",
+      "rowCount": 20
+    },
+    {
+      "sourceID": "qinliang",
+      "tableIndex": 0,
+      "dynastyID": "later_qin",
+      "contextHeading": "后 秦 (384-417)",
+      "rowCount": 5
+    },
+    {
+      "sourceID": "qinliang",
+      "tableIndex": 1,
+      "dynastyID": "northern_liang",
+      "contextHeading": "北 凉 (397-439)",
+      "rowCount": 7
+    },
+    {
+      "sourceID": "northdynasties",
+      "tableIndex": 0,
+      "dynastyID": "northern_wei",
+      "contextHeading": "北 魏 (386-534)",
+      "rowCount": 40
+    },
+    {
+      "sourceID": "northdynasties",
+      "tableIndex": 1,
+      "dynastyID": "eastern_wei",
+      "contextHeading": "东 魏 (534-550)",
+      "rowCount": 4
+    },
+    {
+      "sourceID": "northdynasties",
+      "tableIndex": 2,
+      "dynastyID": "northern_qi",
+      "contextHeading": "北 齐 (550-577)",
+      "rowCount": 9
+    },
+    {
+      "sourceID": "northdynasties",
+      "tableIndex": 3,
+      "dynastyID": "western_wei",
+      "contextHeading": "西 魏 (535-557)",
+      "rowCount": 3
+    },
+    {
+      "sourceID": "northdynasties",
+      "tableIndex": 4,
+      "dynastyID": "northern_zhou",
+      "contextHeading": "北 周 (557-581)",
+      "rowCount": 10
+    },
+    {
+      "sourceID": "southdynasties",
+      "tableIndex": 0,
+      "dynastyID": "liu_song",
+      "contextHeading": "宋 (420-479)",
+      "rowCount": 11
+    },
+    {
+      "sourceID": "southdynasties",
+      "tableIndex": 1,
+      "dynastyID": "southern_qi",
+      "contextHeading": "齐 (479-502)",
+      "rowCount": 8
+    },
+    {
+      "sourceID": "southdynasties",
+      "tableIndex": 2,
+      "dynastyID": "southern_liang",
+      "contextHeading": "梁 (502-557)",
+      "rowCount": 13
+    },
+    {
+      "sourceID": "southdynasties",
+      "tableIndex": 3,
+      "dynastyID": "chen",
+      "contextHeading": "陈 (557-589)",
+      "rowCount": 7
+    },
+    {
+      "sourceID": "sui",
+      "tableIndex": 0,
+      "dynastyID": "sui",
+      "contextHeading": "隋 (581 — 618)",
+      "rowCount": 4
+    },
+    {
+      "sourceID": "tang",
+      "tableIndex": 0,
+      "dynastyID": "tang",
+      "contextHeading": "唐 (618 — 907)",
+      "rowCount": 22
+    },
+    {
+      "sourceID": "tang",
+      "tableIndex": 1,
+      "dynastyID": "wu_zhou",
+      "contextHeading": "武周年号",
+      "rowCount": 14
+    },
+    {
+      "sourceID": "tang",
+      "tableIndex": 2,
+      "dynastyID": "tang",
+      "contextHeading": "续唐年号",
+      "rowCount": 41
+    },
+    {
+      "sourceID": "5dynasties",
+      "tableIndex": 0,
+      "dynastyID": "later_liang",
+      "contextHeading": "梁 (907 — 923)",
+      "rowCount": 6
+    },
+    {
+      "sourceID": "5dynasties",
+      "tableIndex": 1,
+      "dynastyID": "later_tang",
+      "contextHeading": "唐 (923 — 936)",
+      "rowCount": 5
+    },
+    {
+      "sourceID": "5dynasties",
+      "tableIndex": 2,
+      "dynastyID": "later_jin",
+      "contextHeading": "晋 (936 — 946)",
+      "rowCount": 3
+    },
+    {
+      "sourceID": "5dynasties",
+      "tableIndex": 3,
+      "dynastyID": "later_han",
+      "contextHeading": "汉 (947 — 950)",
+      "rowCount": 3
+    },
+    {
+      "sourceID": "5dynasties",
+      "tableIndex": 4,
+      "dynastyID": "later_zhou",
+      "contextHeading": "周 (951 — 960)",
+      "rowCount": 4
+    },
+    {
+      "sourceID": "song",
+      "tableIndex": 0,
+      "dynastyID": "northern_song",
+      "contextHeading": "北 宋 (960 — 1127)",
+      "rowCount": 35
+    },
+    {
+      "sourceID": "song",
+      "tableIndex": 1,
+      "dynastyID": "southern_song",
+      "contextHeading": "南 宋 (1127 — 1279)",
+      "rowCount": 22
+    },
+    {
+      "sourceID": "khitan",
+      "tableIndex": 0,
+      "dynastyID": "khitan_liao",
+      "contextHeading": "契 丹、辽 (907 — 1125)",
+      "rowCount": 24
+    },
+    {
+      "sourceID": "jurchen",
+      "tableIndex": 0,
+      "dynastyID": "jin_jurchen",
+      "contextHeading": "金 (1115 — 1234)",
+      "rowCount": 21
+    },
+    {
+      "sourceID": "mongol",
+      "tableIndex": 0,
+      "dynastyID": "yuan",
+      "contextHeading": "蒙 古、元 (1206 — 1370)",
+      "rowCount": 27
+    },
+    {
+      "sourceID": "ming",
+      "tableIndex": 0,
+      "dynastyID": "ming",
+      "contextHeading": "明 (1368 — 1644)",
+      "rowCount": 17
+    },
+    {
+      "sourceID": "ming",
+      "tableIndex": 1,
+      "dynastyID": "southern_ming",
+      "contextHeading": "南 明 和 明 郑 (1645 — 1683)",
+      "rowCount": 4
+    },
+    {
+      "sourceID": "qing",
+      "tableIndex": 0,
+      "dynastyID": "qing",
+      "contextHeading": "满 洲、后 金、清 (1583 — 1911)",
+      "rowCount": 14
+    }
+  ],
   "nonEmittedH2Sections": [
     {
       "sourceID": "chunqiu",
@@ -236,7 +508,8 @@
     "OrthodoxPeriod records are concrete orthodox dynasty periods; segmentIndex and segmentName preserve the required narrative groups.",
     "Dynasty.claimedEndDate preserves the polity's own end year, while OrthodoxPeriod uses shared half-open [start, end) boundaries for continuous orthodox assignment.",
     "Supplemental dynasties split compound h2 sections into specific h3/table polities such as 西汉、新、更始、魏、蜀汉、孙吴、刘宋、五代后梁后唐后晋后汉后周、北宋、南宋、元、明、清、中华民国、中华人民共和国.",
-    "Non-orthodox polities such as 蜀汉、孙吴、北凉 remain Dynasty records but are not included in OrthodoxPeriod. 魏 is the Three Kingdoms orthodox period."
+    "Non-orthodox polities such as 蜀汉、孙吴、北凉、武周、南明 remain Dynasty records but are not included in OrthodoxPeriod. 魏 is the Three Kingdoms orthodox period.",
+    "Emperor, EmperorReignSegment, and ReignEra records are parsed from h2/h3 tables that map to emitted Dynasty records. Spring/Autumn and Warring States ruler tables are audited through h2/h3 counts but skipped because they are outside the current processed calendar coverage."
   ],
   "automaticPrecisionCounts": {
     "year": 12,
@@ -246,11 +519,11 @@
     "unknown": 0
   },
   "manualPrecisionCounts": {
-    "year": 89,
+    "year": 1636,
     "month": 0,
     "day": 0,
     "range": 0,
-    "unknown": 0
+    "unknown": 1
   },
   "dateIndexRules": {
     "year": "ChineseDateExpression.index is ChineseLunarYear.lunarYearNumber.",

@@ -79,7 +79,7 @@ public enum ChineseCalendarFullSeedStoreInstallError: Error, LocalizedError {
 }
 
 public actor ChineseCalendarFullSeedStoreInstaller {
-    private static let supportedSchemaVersion = "1.1.0"
+    private static let supportedSchemaVersion = "1.2.0"
 
     private let configuration: FullSeedStoreConfig
     private let appGroupIdentifier: String
