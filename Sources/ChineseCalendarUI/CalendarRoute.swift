@@ -2,11 +2,14 @@ import Foundation
 
 enum CalendarRoute: Hashable, Identifiable {
     case lunarYear(Int)
+    case dynasty(String)
 
     var id: String {
         switch self {
         case let .lunarYear(yearNumber):
             "lunar-year-\(yearNumber)"
+        case let .dynasty(dynastyID):
+            "dynasty-\(dynastyID)"
         }
     }
 
@@ -14,12 +17,15 @@ enum CalendarRoute: Hashable, Identifiable {
         switch self {
         case let .lunarYear(yearNumber):
             yearNumber
+        case .dynasty:
+            nil
         }
     }
 }
 
 enum CalendarDeepLink: Equatable {
     case lunarYear(Int, monthIndex: Int? = nil)
+    case dynasty(String)
 }
 
 enum CalendarDeepLinkParser {
@@ -44,6 +50,12 @@ enum CalendarDeepLinkParser {
             }
 
             return .lunarYear(yearNumber, monthIndex: monthIndex)
+        case "dynasty":
+            guard parts.count >= 2 else {
+                return nil
+            }
+
+            return .dynasty(parts[1])
         default:
             guard let yearNumber = Int(firstPart) else {
                 return nil

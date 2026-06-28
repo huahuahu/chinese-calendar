@@ -21,36 +21,23 @@ public struct CalendarHomeView: View {
     }
 
     public var body: some View {
-        NavigationSplitView {
-            List(selection: $router.selectedRoute) {
-                Section("农历年") {
-                    ForEach(years, id: \.lunarYearNumber) { year in
-                        LunarYearRow(year: year)
-                            .tag(CalendarRoute.lunarYear(year.lunarYearNumber))
-                    }
-                }
-            }
-            .navigationTitle("年份")
+        @Bindable var router = router
+
+        Group {
             #if os(iOS)
-                .toolbar {
-                    if let openSettings {
-                        ToolbarItem(placement: .primaryAction) {
-                            Button("设置", systemImage: "gearshape", action: openSettings)
-                        }
-                    }
-                }
+                CalendarHomeTabView(
+                    router: router,
+                    years: years,
+                    emptyStateDescription: emptyStateDescription,
+                    openSettings: openSettings
+                )
+            #else
+                CalendarHomeSplitView(
+                    router: router,
+                    years: years,
+                    emptyStateDescription: emptyStateDescription
+                )
             #endif
-        } detail: {
-            CalendarRouteDestinationView(
-                route: router.selectedRoute,
-                year: selectedYear,
-                selectedMonthIndex: $router.selectedMonthIndex,
-                canSelectPreviousYear: router.canSelectPreviousYear(availableYearNumbers: yearNumbers),
-                canSelectNextYear: router.canSelectNextYear(availableYearNumbers: yearNumbers),
-                selectPreviousYear: { router.selectPreviousYear(availableYearNumbers: yearNumbers) },
-                selectNextYear: { router.selectNextYear(availableYearNumbers: yearNumbers) },
-                emptyStateDescription: emptyStateDescription
-            )
         }
         .sheet(item: $router.sheet, onDismiss: router.applyDeferredDeepLinkIfReady) { node in
             CalendarPresentationNodeView(node: node, years: years) {
@@ -74,18 +61,6 @@ public struct CalendarHomeView: View {
         }
     }
 
-    private var yearNumbers: [Int] {
-        years.map(\.lunarYearNumber)
-    }
-
-    private var selectedYear: ChineseLunarYear? {
-        guard let selectedYearNumber = router.selectedYearNumber else {
-            return nil
-        }
-
-        return years.first { $0.lunarYearNumber == selectedYearNumber }
-    }
-
     private var emptyStateDescription: String {
         if years.isEmpty {
             return "正在加载 SwiftData 日历数据。"
@@ -95,6 +70,7 @@ public struct CalendarHomeView: View {
     }
 
     private func selectDefaultYearIfNeeded() {
+        let yearNumbers = years.map(\.lunarYearNumber)
         guard !yearNumbers.isEmpty else {
             ChineseCalendarLog.ui.debug("CalendarHomeView is waiting for SwiftData years")
             return
