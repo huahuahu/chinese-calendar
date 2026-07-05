@@ -66,15 +66,15 @@ struct DynastyBoundarySourceDetailsView: View {
     private func precisionText(for date: ChineseDateExpression) -> String {
         switch date.precision {
         case .year:
-            return "年精度"
+            "年精度"
         case .month:
-            return "月精度"
+            "月精度"
         case .day:
-            return "日精度"
+            "日精度"
         case .range:
-            return "范围精度"
+            "范围精度"
         case .unknown:
-            return "精度未知"
+            "精度未知"
         }
     }
 }
