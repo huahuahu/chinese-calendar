@@ -43,6 +43,7 @@ public struct ChineseCalendarRootView: View {
         } message: {
             Text(coordinator.downloadErrorMessage ?? "请稍后再试。")
         }
+        .calendarColorSchemePreference()
     }
 
     @ViewBuilder

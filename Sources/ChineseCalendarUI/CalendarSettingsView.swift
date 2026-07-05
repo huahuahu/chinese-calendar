@@ -7,6 +7,8 @@ public struct CalendarSettingsView: View {
     private let showsDoneButton: Bool
 
     @Environment(\.dismiss) private var dismiss
+    @AppStorage(CalendarColorSchemePreference.storageKey)
+    private var colorSchemePreference = CalendarColorSchemePreference.system
     @State private var isConfirmingClear = false
     @State private var resultMessage: SettingsResultMessage?
 
@@ -17,6 +19,15 @@ public struct CalendarSettingsView: View {
 
     public var body: some View {
         Form {
+            Section("外观") {
+                Picker("颜色模式", selection: $colorSchemePreference) {
+                    ForEach(CalendarColorSchemePreference.allCases) { preference in
+                        Text(preference.title)
+                            .tag(preference)
+                    }
+                }
+            }
+
             Section("数据") {
                 VStack(alignment: .leading, spacing: 6) {
                     Label(dataStatusTitle, systemSymbol: dataStatusSystemSymbol)
@@ -71,6 +82,7 @@ public struct CalendarSettingsView: View {
         } message: { resultMessage in
             Text(resultMessage.message)
         }
+        .calendarColorSchemePreference()
     }
 
     private var resultMessageIsPresented: Binding<Bool> {

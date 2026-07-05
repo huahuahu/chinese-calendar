@@ -28,6 +28,7 @@ public struct FullStoreDownloadProgressWindow: View {
             }
         }
         .frame(minWidth: 360, idealWidth: 420, minHeight: 180, idealHeight: 220)
+        .calendarColorSchemePreference()
     }
 }
 
