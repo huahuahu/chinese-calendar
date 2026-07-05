@@ -26,13 +26,11 @@ public struct ChineseCalendarRootView: View {
             case .starting:
                 CalendarStoreProgressView(title: "正在准备日历数据", progress: nil)
             case let .ready(container, contentLevel, identityToken):
-                CalendarHomeView(settingsCoordinator: coordinator)
-                    .environment(\.calendarStoreContentLevel, contentLevel)
-                    .modelContainer(container)
-                    .id(coordinator.storeIdentity(contentLevel: contentLevel, identityToken: identityToken))
-                    .safeAreaInset(edge: .bottom) {
-                        bottomStatusBar(contentLevel: contentLevel)
-                    }
+                readyCalendarHome(
+                    container: container,
+                    contentLevel: contentLevel,
+                    identityToken: identityToken
+                )
             case let .failed(message):
                 CalendarStoreFailureView(message: message, retry: coordinator.prepareStore)
             }
@@ -45,6 +43,30 @@ public struct ChineseCalendarRootView: View {
         } message: {
             Text(coordinator.downloadErrorMessage ?? "请稍后再试。")
         }
+    }
+
+    @ViewBuilder
+    private func readyCalendarHome(
+        container: ModelContainer,
+        contentLevel: ChineseCalendarSeedStoreContentLevel,
+        identityToken: String?
+    ) -> some View {
+        #if os(iOS)
+            CalendarHomeView(settingsCoordinator: coordinator) {
+                bottomStatusBar(contentLevel: contentLevel)
+            }
+            .environment(\.calendarStoreContentLevel, contentLevel)
+            .modelContainer(container)
+            .id(coordinator.storeIdentity(contentLevel: contentLevel, identityToken: identityToken))
+        #else
+            CalendarHomeView(settingsCoordinator: coordinator)
+                .environment(\.calendarStoreContentLevel, contentLevel)
+                .modelContainer(container)
+                .id(coordinator.storeIdentity(contentLevel: contentLevel, identityToken: identityToken))
+                .safeAreaInset(edge: .bottom) {
+                    bottomStatusBar(contentLevel: contentLevel)
+                }
+        #endif
     }
 
     private var downloadErrorIsPresented: Binding<Bool> {

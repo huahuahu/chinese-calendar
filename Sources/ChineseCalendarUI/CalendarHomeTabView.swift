@@ -2,11 +2,12 @@ import ChineseCalendarPersistence
 import SFSafeSymbols
 import SwiftUI
 
-struct CalendarHomeTabView: View {
+struct CalendarHomeTabView<BottomStatusBar: View>: View {
     @Bindable var router: CalendarRouter
     let years: [ChineseLunarYear]
     let emptyStateDescription: String
     let settingsCoordinator: ChineseCalendarStoreCoordinator?
+    let bottomStatusBar: () -> BottomStatusBar
 
     var body: some View {
         TabView(selection: $router.selectedTab) {
@@ -14,6 +15,7 @@ struct CalendarHomeTabView: View {
                 CalendarYearsListView(years: years)
                     .navigationDestination(for: CalendarRoute.self, destination: destination)
             }
+            .safeAreaInset(edge: .bottom, spacing: 0, content: bottomStatusBar)
             .tabItem {
                 Label(CalendarTab.years.title, systemSymbol: CalendarTab.years.systemSymbol)
             }
@@ -23,6 +25,7 @@ struct CalendarHomeTabView: View {
                 CalendarHistoryHomeView()
                     .navigationDestination(for: CalendarRoute.self, destination: destination)
             }
+            .safeAreaInset(edge: .bottom, spacing: 0, content: bottomStatusBar)
             .tabItem {
                 Label(CalendarTab.history.title, systemSymbol: CalendarTab.history.systemSymbol)
             }
@@ -39,6 +42,7 @@ struct CalendarHomeTabView: View {
                     }
                 }
             }
+            .safeAreaInset(edge: .bottom, spacing: 0, content: bottomStatusBar)
             .tabItem {
                 Label(CalendarTab.settings.title, systemSymbol: CalendarTab.settings.systemSymbol)
             }
