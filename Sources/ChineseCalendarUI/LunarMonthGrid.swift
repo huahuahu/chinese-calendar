@@ -1,16 +1,36 @@
 import ChineseCalendarCore
 import ChineseCalendarPersistence
+import Foundation
 import SFSafeSymbols
 import SwiftData
 import SwiftUI
 
 struct LunarMonthGrid: View {
+    let year: ChineseLunarYear
+    let months: [ChineseLunarMonth]
     let month: ChineseLunarMonth
-    @Environment(\.calendarStoreContentLevel) private var storeContentLevel
-    @Query private var days: [ChineseLunarDay]
+    @Binding var selectedMonthIndex: Int?
+    let showYearList: (() -> Void)?
 
-    init(month: ChineseLunarMonth) {
+    @Environment(\.calendarStoreContentLevel) private var storeContentLevel
+    @State private var selectedDayIndex: Int?
+    @Query private var days: [ChineseLunarDay]
+    private let todayComponents: DateComponents
+
+    init(
+        year: ChineseLunarYear,
+        months: [ChineseLunarMonth],
+        month: ChineseLunarMonth,
+        selectedMonthIndex: Binding<Int?>,
+        showYearList: (() -> Void)? = nil,
+        today: Date = .now
+    ) {
+        self.year = year
+        self.months = months
         self.month = month
+        _selectedMonthIndex = selectedMonthIndex
+        self.showYearList = showYearList
+        todayComponents = Self.gregorianDateComponents(for: today)
 
         let lunarMonthIndex = month.lunarMonthIndex
         _days = Query(
@@ -21,17 +41,20 @@ struct LunarMonthGrid: View {
         )
     }
 
-    private var periods: [LunarTenDayPeriod] {
-        LunarTenDayPeriod.makePeriods(from: days)
-    }
-
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("本月日期")
-                .font(.title2)
-                .bold()
+        VStack(alignment: .leading, spacing: 16) {
+            MonthSwitcher(
+                title: monthNavigationTitle,
+                subtitle: monthNavigationSubtitle,
+                months: months,
+                selectedMonth: month,
+                selectedMonthIndex: $selectedMonthIndex,
+                showYearList: showYearList
+            )
+            .padding()
+            .background(.background.secondary, in: RoundedRectangle(cornerRadius: 28))
 
-            if periods.isEmpty {
+            if days.isEmpty {
                 ContentUnavailableView(
                     label: {
                         Label(emptyStateTitle, systemSymbol: emptyStateSystemSymbol)
@@ -40,18 +63,101 @@ struct LunarMonthGrid: View {
                         Text(emptyStateDescription)
                     }
                 )
+                .padding()
                 .frame(maxWidth: .infinity, alignment: .leading)
+                .background(.background.secondary, in: RoundedRectangle(cornerRadius: 28))
             } else {
-                ScrollView(.horizontal) {
-                    VStack(alignment: .leading, spacing: 10) {
-                        ForEach(periods) { period in
-                            LunarTenDayPeriodRow(period: period)
+                VStack(alignment: .leading, spacing: 12) {
+                    HStack(alignment: .firstTextBaseline) {
+                        Text("农历月格")
+                            .font(.title2)
+                            .bold()
+
+                        Spacer()
+
+                        Text("连续日序")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                    }
+
+                    LazyVGrid(columns: gridColumns, alignment: .leading, spacing: 8) {
+                        ForEach(days, id: \.dayIndex) { day in
+                            Button {
+                                selectedDayIndex = day.dayIndex
+                            } label: {
+                                LunarDayGridCell(
+                                    day: day,
+                                    isSelected: day.dayIndex == selectedDay?.dayIndex,
+                                    isToday: isToday(day)
+                                )
+                            }
+                            .buttonStyle(.plain)
                         }
                     }
                 }
-                .scrollIndicators(.hidden)
+                .padding()
+                .background(.background.secondary, in: RoundedRectangle(cornerRadius: 28))
+
+                if let selectedDay {
+                    SelectedLunarDayDetailCard(
+                        day: selectedDay,
+                        month: month,
+                        contentLevel: storeContentLevel
+                    )
+                }
             }
         }
+        .onAppear(perform: selectDefaultDayIfNeeded)
+        .onChange(of: days.map(\.dayIndex)) {
+            selectDefaultDayIfNeeded()
+        }
+    }
+
+    private var gridColumns: [GridItem] {
+        [GridItem(.adaptive(minimum: 58), spacing: 8)]
+    }
+
+    private var selectedDay: ChineseLunarDay? {
+        if let selectedDayIndex {
+            return days.first { $0.dayIndex == selectedDayIndex } ?? defaultSelectedDay
+        }
+
+        return defaultSelectedDay
+    }
+
+    private var defaultSelectedDay: ChineseLunarDay? {
+        days.first(where: isToday) ?? days.first
+    }
+
+    private var monthNavigationTitle: String {
+        let yearTitle = LunarCalendarFormatting.yearSubtitle(
+            stemIndex: year.yearStemIndex,
+            branchIndex: year.yearBranchIndex
+        )
+        return "\(yearTitle) \(LunarMonthDisplay.title(for: month))"
+    }
+
+    private var monthNavigationSubtitle: String {
+        if let civilDateRangeTitle {
+            let selectionText = defaultSelectedDay.map(isToday) == true ? "今天优先选中" : "默认选中初一"
+            return "\(civilDateRangeTitle) · \(selectionText)"
+        }
+
+        return LunarCalendarFormatting.monthSubtitle(
+            dayCount: month.dayCount,
+            stemIndex: month.monthStemIndex,
+            branchIndex: month.monthBranchIndex
+        )
+    }
+
+    private var civilDateRangeTitle: String? {
+        guard let firstCivilDate = days.first?.calendarDay?.civilDate,
+              let lastCivilDate = days.last?.calendarDay?.civilDate
+        else {
+            return nil
+        }
+
+        return "\(fullCivilDateTitle(for: firstCivilDate)) - \(fullCivilDateTitle(for: lastCivilDate))"
     }
 
     private var emptyStateTitle: String {
@@ -80,76 +186,42 @@ struct LunarMonthGrid: View {
             "这个月份暂时没有可显示的日级记录。"
         }
     }
-}
 
-private struct LunarTenDayPeriod: Identifiable {
-    let id: Int
-    let title: String
-    let days: [ChineseLunarDay]
+    private func selectDefaultDayIfNeeded() {
+        guard !days.isEmpty else {
+            selectedDayIndex = nil
+            return
+        }
 
-    static func makePeriods(from days: [ChineseLunarDay]) -> [Self] {
-        [
-            Self(id: 0, title: "上旬", days: days.filter { (1 ... 10).contains($0.dayNumberInMonth) }),
-            Self(id: 1, title: "中旬", days: days.filter { (11 ... 20).contains($0.dayNumberInMonth) }),
-            Self(id: 2, title: "下旬", days: days.filter { (21 ... 30).contains($0.dayNumberInMonth) })
-        ]
-        .filter { !$0.days.isEmpty }
-    }
-}
-
-private struct LunarTenDayPeriodRow: View {
-    let period: LunarTenDayPeriod
-
-    var body: some View {
-        HStack(alignment: .top, spacing: 8) {
-            Text(period.title)
-                .font(.headline)
-                .foregroundStyle(.secondary)
-                .frame(width: 48, alignment: .topLeading)
-                .frame(minHeight: 88, alignment: .topLeading)
-
-            ForEach(period.days, id: \.dayIndex) { day in
-                LunarDayCell(day: day)
+        if let selectedDayIndex {
+            guard !days.contains(where: { $0.dayIndex == selectedDayIndex }) else {
+                return
             }
         }
-        .accessibilityElement(children: .contain)
-    }
-}
 
-private struct LunarDayCell: View {
-    let day: ChineseLunarDay
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            Text(LunarCalendarFormatting.dayTitle(dayNumberInMonth: day.dayNumberInMonth))
-                .font(.headline)
-            Text(LunarCalendarFormatting.daySubtitle(
-                stemIndex: day.dayStemIndex,
-                branchIndex: day.dayBranchIndex
-            ))
-            .font(.subheadline)
-            .foregroundStyle(.secondary)
-            Text(civilDateTitle)
-                .font(.subheadline)
-                .foregroundStyle(.tertiary)
-        }
-        .padding(10)
-        .frame(width: 96, alignment: .topLeading)
-        .frame(minHeight: 88, alignment: .topLeading)
-        .background(.background.secondary, in: RoundedRectangle(cornerRadius: 8))
-        .accessibilityElement(children: .combine)
+        selectedDayIndex = defaultSelectedDay?.dayIndex
     }
 
-    private var civilDateTitle: String {
-        guard let civilDate = day.calendarDay?.civilDate else {
-            return "-"
+    private func isToday(_ day: ChineseLunarDay) -> Bool {
+        guard let civilDate = day.calendarDay?.civilDate,
+              civilDate.calendarStyle == .gregorian
+        else {
+            return false
         }
 
-        return LunarCalendarFormatting.civilDateTitle(
-            year: civilDate.year,
-            month: civilDate.month,
-            dayOfMonth: civilDate.dayOfMonth,
-            isJulianCalendar: civilDate.calendarStyle == .julian
-        )
+        return civilDate.year == todayComponents.year
+            && civilDate.month == todayComponents.month
+            && civilDate.dayOfMonth == todayComponents.day
+    }
+
+    private func fullCivilDateTitle(for civilDate: CivilDate) -> String {
+        let prefix = civilDate.calendarStyle == .julian ? "儒略" : "公历"
+        return "\(prefix) \(civilDate.year)年\(civilDate.month)月\(civilDate.dayOfMonth)日"
+    }
+
+    private static func gregorianDateComponents(for date: Date) -> DateComponents {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = .autoupdatingCurrent
+        return calendar.dateComponents([.year, .month, .day], from: date)
     }
 }

@@ -4,9 +4,12 @@ import SFSafeSymbols
 import SwiftUI
 
 struct MonthSwitcher: View {
+    let title: String
+    let subtitle: String
     let months: [ChineseLunarMonth]
     let selectedMonth: ChineseLunarMonth
     @Binding var selectedMonthIndex: Int?
+    let showYearList: (() -> Void)?
 
     private var selectedIndex: Int? {
         months.firstIndex { $0.lunarMonthIndex == selectedMonth.lunarMonthIndex }
@@ -30,28 +33,23 @@ struct MonthSwitcher: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            HStack(spacing: 12) {
+            HStack(alignment: .center, spacing: 10) {
                 Button("上个月", systemSymbol: .chevronLeft, action: selectPreviousMonth)
                     .labelStyle(.iconOnly)
+                    .frame(width: 44, height: 44)
+                    .buttonStyle(.bordered)
+                    .controlSize(.large)
                     .disabled(!canSelectPreviousMonth)
                     .help("切换到上个月")
 
-                VStack(alignment: .leading) {
-                    Text(monthTitle(selectedMonth))
-                        .font(.headline)
-                    Text(LunarCalendarFormatting.monthSubtitle(
-                        dayCount: selectedMonth.dayCount,
-                        stemIndex: selectedMonth.monthStemIndex,
-                        branchIndex: selectedMonth.monthBranchIndex
-                    ))
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .accessibilityElement(children: .combine)
+                titleContent
+                    .frame(maxWidth: .infinity, alignment: .leading)
 
                 Button("下个月", systemSymbol: .chevronRight, action: selectNextMonth)
                     .labelStyle(.iconOnly)
+                    .frame(width: 44, height: 44)
+                    .buttonStyle(.bordered)
+                    .controlSize(.large)
                     .disabled(!canSelectNextMonth)
                     .help("切换到下个月")
             }
@@ -63,7 +61,7 @@ struct MonthSwitcher: View {
                             selectedMonthIndex = month.lunarMonthIndex
                         } label: {
                             VStack(spacing: 4) {
-                                Text(monthTitle(month))
+                                Text(LunarMonthDisplay.title(for: month))
                                 Text("\(month.dayCount)天")
                                     .font(.caption)
                                     .foregroundStyle(.secondary)
@@ -82,6 +80,32 @@ struct MonthSwitcher: View {
         }
     }
 
+    @ViewBuilder
+    private var titleContent: some View {
+        if let showYearList {
+            Button(action: showYearList) {
+                monthTitleContent
+            }
+            .buttonStyle(.plain)
+            .contentShape(Rectangle())
+            .accessibilityHint("打开农历年列表")
+        } else {
+            monthTitleContent
+        }
+    }
+
+    private var monthTitleContent: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(title)
+                .font(.title2)
+                .bold()
+            Text(subtitle)
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+        }
+        .accessibilityElement(children: .combine)
+    }
+
     private func selectPreviousMonth() {
         guard let selectedIndex, selectedIndex > months.startIndex else {
             return
@@ -96,14 +120,5 @@ struct MonthSwitcher: View {
         }
 
         selectedMonthIndex = months[months.index(after: selectedIndex)].lunarMonthIndex
-    }
-
-    private func monthTitle(_ month: ChineseLunarMonth) -> String {
-        LunarCalendarFormatting.monthTitle(
-            monthNumberInYear: month.monthNumberInYear,
-            isLeapMonth: month.isLeapMonth,
-            intercalaryMonthNameStyle: month.intercalaryMonthNameStyle,
-            dayCount: month.dayCount
-        )
     }
 }

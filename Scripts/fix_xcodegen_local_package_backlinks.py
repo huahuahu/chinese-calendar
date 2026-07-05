@@ -21,6 +21,14 @@ from pathlib import Path
 
 PBXPROJ = Path("ChineseCalendar.xcodeproj/project.pbxproj")
 PROJECT_YML = Path("project.yml")
+IOS_SCHEME = Path("ChineseCalendar.xcodeproj/xcshareddata/xcschemes/ChineseCalendar-iOS.xcscheme")
+PACKAGE_CONTAINER = "container:Sources"
+IOS_TEST_TARGETS = [
+    "ChineseCalendarCoreTests",
+    "ChineseCalendarDataTests",
+    "ChineseCalendarLoggingTests",
+    "ChineseCalendarUITests",
+]
 
 
 @dataclass(frozen=True)
@@ -243,6 +251,62 @@ def patch_product_dependencies(
     return output, changed, unresolved
 
 
+def testable_reference(target_name: str) -> list[str]:
+    return [
+        '          <TestableReference',
+        '             skipped = "NO">',
+        '             <BuildableReference',
+        '                BuildableIdentifier = "primary"',
+        f'                BlueprintIdentifier = "{target_name}"',
+        f'                BuildableName = "{target_name}"',
+        f'                BlueprintName = "{target_name}"',
+        f'                ReferencedContainer = "{PACKAGE_CONTAINER}">',
+        '             </BuildableReference>',
+        '          </TestableReference>',
+    ]
+
+
+def patch_ios_scheme_testables(path: Path) -> bool:
+    if not path.exists():
+        print(f"warning: {path} does not exist; skipping iOS scheme testables", file=sys.stderr)
+        return False
+
+    original_text = path.read_text()
+    if all(f'BlueprintName = "{target}"' in original_text for target in IOS_TEST_TARGETS):
+        return False
+
+    lines = original_text.splitlines()
+    output: list[str] = []
+    index = 0
+    patched = False
+
+    while index < len(lines):
+        output.append(lines[index])
+        if lines[index].strip() != "<Testables>":
+            index += 1
+            continue
+
+        index += 1
+        while index < len(lines) and lines[index].strip() != "</Testables>":
+            index += 1
+
+        for target_name in IOS_TEST_TARGETS:
+            output.extend(testable_reference(target_name))
+
+        if index < len(lines):
+            output.append(lines[index])
+        patched = True
+        index += 1
+
+    if not patched:
+        print(f"warning: no Testables section found in {path}", file=sys.stderr)
+        return False
+
+    trailing_newline = "\n" if original_text.endswith("\n") else ""
+    path.write_text("\n".join(output) + trailing_newline)
+    return True
+
+
 def main() -> int:
     pbxproj = Path(sys.argv[1]) if len(sys.argv) > 1 else PBXPROJ
     if not pbxproj.exists():
@@ -267,13 +331,20 @@ def main() -> int:
         print(f"error: could not resolve local package for product(s): {names}", file=sys.stderr)
         return 1
 
-    if changed == 0:
-        print("Local Swift package backlinks already present.")
-        return 0
+    scheme_changed = patch_ios_scheme_testables(IOS_SCHEME)
 
     trailing_newline = "\n" if original_text.endswith("\n") else ""
-    pbxproj.write_text("\n".join(patched_lines) + trailing_newline)
-    print(f"Patched {changed} local Swift package product backlink(s).")
+    if changed > 0:
+        pbxproj.write_text("\n".join(patched_lines) + trailing_newline)
+
+    if changed == 0 and not scheme_changed:
+        print("Local Swift package backlinks and iOS scheme testables already present.")
+        return 0
+
+    if changed > 0:
+        print(f"Patched {changed} local Swift package product backlink(s).")
+    if scheme_changed:
+        print("Patched ChineseCalendar-iOS scheme package testables.")
     return 0
 
 

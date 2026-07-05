@@ -5,19 +5,19 @@ import Foundation
 import SwiftData
 import SwiftUI
 
-public struct CalendarHomeView: View {
+public struct CalendarHomeView<BottomStatusBar: View>: View {
     @Query(sort: \ChineseLunarYear.lunarYearNumber) private var years: [ChineseLunarYear]
     @State private var router = CalendarRouter()
     @State private var didOpenColdLaunchDeepLink = false
-    private let openSettings: (() -> Void)?
+    private let settingsCoordinator: ChineseCalendarStoreCoordinator?
+    private let bottomStatusBar: () -> BottomStatusBar
 
-    public init(openSettings: (() -> Void)? = nil) {
-        self.openSettings = openSettings
-    }
-
-    @available(*, deprecated, message: "CalendarHomeView now selects the current lunar year automatically.")
-    public init(selectedDate _: ChineseCalendarDate?) {
-        self.init()
+    public init(
+        settingsCoordinator: ChineseCalendarStoreCoordinator? = nil,
+        @ViewBuilder bottomStatusBar: @escaping () -> BottomStatusBar
+    ) {
+        self.settingsCoordinator = settingsCoordinator
+        self.bottomStatusBar = bottomStatusBar
     }
 
     public var body: some View {
@@ -29,7 +29,8 @@ public struct CalendarHomeView: View {
                     router: router,
                     years: years,
                     emptyStateDescription: emptyStateDescription,
-                    openSettings: openSettings
+                    settingsCoordinator: settingsCoordinator,
+                    bottomStatusBar: bottomStatusBar
                 )
             #else
                 CalendarHomeSplitView(
@@ -104,4 +105,16 @@ public struct CalendarHomeView: View {
 
 #Preview {
     CalendarHomeView()
+}
+
+public extension CalendarHomeView where BottomStatusBar == EmptyView {
+    init(settingsCoordinator: ChineseCalendarStoreCoordinator? = nil) {
+        self.settingsCoordinator = settingsCoordinator
+        bottomStatusBar = { EmptyView() }
+    }
+
+    @available(*, deprecated, message: "CalendarHomeView now selects the current lunar year automatically.")
+    init(selectedDate _: ChineseCalendarDate?) {
+        self.init()
+    }
 }
