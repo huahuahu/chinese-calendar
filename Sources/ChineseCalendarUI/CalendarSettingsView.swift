@@ -4,13 +4,15 @@ import SwiftUI
 
 public struct CalendarSettingsView: View {
     private let coordinator: ChineseCalendarStoreCoordinator
+    private let showsDoneButton: Bool
 
     @Environment(\.dismiss) private var dismiss
     @State private var isConfirmingClear = false
     @State private var resultMessage: SettingsResultMessage?
 
-    public init(coordinator: ChineseCalendarStoreCoordinator) {
+    public init(coordinator: ChineseCalendarStoreCoordinator, showsDoneButton: Bool = true) {
         self.coordinator = coordinator
+        self.showsDoneButton = showsDoneButton
     }
 
     public var body: some View {
@@ -44,9 +46,11 @@ public struct CalendarSettingsView: View {
         #if os(iOS)
         .navigationTitle("设置")
         .toolbar {
-            ToolbarItem(placement: .confirmationAction) {
-                Button("完成") {
-                    dismiss()
+            if showsDoneButton {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("完成") {
+                        dismiss()
+                    }
                 }
             }
         }

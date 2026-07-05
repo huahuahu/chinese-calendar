@@ -6,14 +6,13 @@ struct CalendarHomeTabView: View {
     @Bindable var router: CalendarRouter
     let years: [ChineseLunarYear]
     let emptyStateDescription: String
-    let openSettings: (() -> Void)?
+    let settingsCoordinator: ChineseCalendarStoreCoordinator?
 
     var body: some View {
         TabView(selection: $router.selectedTab) {
             NavigationStack(path: $router.yearsPath) {
                 CalendarYearsListView(years: years)
                     .navigationDestination(for: CalendarRoute.self, destination: destination)
-                    .toolbar(content: settingsToolbar)
             }
             .tabItem {
                 Label(CalendarTab.years.title, systemSymbol: CalendarTab.years.systemSymbol)
@@ -23,21 +22,27 @@ struct CalendarHomeTabView: View {
             NavigationStack(path: $router.historyPath) {
                 CalendarHistoryHomeView()
                     .navigationDestination(for: CalendarRoute.self, destination: destination)
-                    .toolbar(content: settingsToolbar)
             }
             .tabItem {
                 Label(CalendarTab.history.title, systemSymbol: CalendarTab.history.systemSymbol)
             }
             .tag(CalendarTab.history)
-        }
-    }
 
-    @ToolbarContentBuilder
-    private func settingsToolbar() -> some ToolbarContent {
-        if let openSettings {
-            ToolbarItem(placement: .primaryAction) {
-                Button("设置", systemSymbol: .gearshape, action: openSettings)
+            NavigationStack {
+                if let settingsCoordinator {
+                    CalendarSettingsView(coordinator: settingsCoordinator, showsDoneButton: false)
+                } else {
+                    ContentUnavailableView {
+                        Label("无法打开设置", systemSymbol: .gearshape)
+                    } description: {
+                        Text("当前日历数据尚未准备完成。")
+                    }
+                }
             }
+            .tabItem {
+                Label(CalendarTab.settings.title, systemSymbol: CalendarTab.settings.systemSymbol)
+            }
+            .tag(CalendarTab.settings)
         }
     }
 
@@ -50,6 +55,7 @@ struct CalendarHomeTabView: View {
             canSelectNextYear: router.canSelectNextYear(availableYearNumbers: yearNumbers),
             selectPreviousYear: { router.selectPreviousYear(availableYearNumbers: yearNumbers) },
             selectNextYear: { router.selectNextYear(availableYearNumbers: yearNumbers) },
+            showYearList: { router.setPath([], for: .years) },
             emptyStateDescription: emptyStateDescription
         )
     }

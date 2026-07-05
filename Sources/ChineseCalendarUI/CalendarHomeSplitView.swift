@@ -26,6 +26,7 @@ struct CalendarHomeSplitView: View {
                 canSelectNextYear: router.canSelectNextYear(availableYearNumbers: yearNumbers),
                 selectPreviousYear: { router.selectPreviousYear(availableYearNumbers: yearNumbers) },
                 selectNextYear: { router.selectNextYear(availableYearNumbers: yearNumbers) },
+                showYearList: nil,
                 emptyStateDescription: emptyStateDescription
             )
         }

@@ -9,10 +9,10 @@ public struct CalendarHomeView: View {
     @Query(sort: \ChineseLunarYear.lunarYearNumber) private var years: [ChineseLunarYear]
     @State private var router = CalendarRouter()
     @State private var didOpenColdLaunchDeepLink = false
-    private let openSettings: (() -> Void)?
+    private let settingsCoordinator: ChineseCalendarStoreCoordinator?
 
-    public init(openSettings: (() -> Void)? = nil) {
-        self.openSettings = openSettings
+    public init(settingsCoordinator: ChineseCalendarStoreCoordinator? = nil) {
+        self.settingsCoordinator = settingsCoordinator
     }
 
     @available(*, deprecated, message: "CalendarHomeView now selects the current lunar year automatically.")
@@ -29,7 +29,7 @@ public struct CalendarHomeView: View {
                     router: router,
                     years: years,
                     emptyStateDescription: emptyStateDescription,
-                    openSettings: openSettings
+                    settingsCoordinator: settingsCoordinator
                 )
             #else
                 CalendarHomeSplitView(

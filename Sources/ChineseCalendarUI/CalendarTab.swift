@@ -4,6 +4,7 @@ import SFSafeSymbols
 enum CalendarTab: Hashable, CaseIterable, Identifiable {
     case years
     case history
+    case settings
 
     var id: Self {
         self
@@ -12,9 +13,11 @@ enum CalendarTab: Hashable, CaseIterable, Identifiable {
     var title: String {
         switch self {
         case .years:
-            "年份"
+            "日历"
         case .history:
             "历史"
+        case .settings:
+            "设置"
         }
     }
 
@@ -24,6 +27,8 @@ enum CalendarTab: Hashable, CaseIterable, Identifiable {
             .calendar
         case .history:
             .timelineSelection
+        case .settings:
+            .gearshape
         }
     }
 }

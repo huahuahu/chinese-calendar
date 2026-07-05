@@ -55,6 +55,8 @@ final class CalendarRouter {
             yearsPath
         case .history:
             historyPath
+        case .settings:
+            []
         }
     }
 
@@ -64,6 +66,8 @@ final class CalendarRouter {
             yearsPath = path
         case .history:
             historyPath = path
+        case .settings:
+            break
         }
     }
 

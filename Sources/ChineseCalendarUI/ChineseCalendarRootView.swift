@@ -7,7 +7,6 @@ import SwiftUI
 public struct ChineseCalendarRootView: View {
     @Environment(\.openWindow) private var openWindow
     @State private var coordinator: ChineseCalendarStoreCoordinator
-    @State private var isSettingsPresented = false
 
     public init(coordinator: ChineseCalendarStoreCoordinator) {
         _coordinator = State(initialValue: coordinator)
@@ -27,7 +26,7 @@ public struct ChineseCalendarRootView: View {
             case .starting:
                 CalendarStoreProgressView(title: "正在准备日历数据", progress: nil)
             case let .ready(container, contentLevel, identityToken):
-                CalendarHomeView(openSettings: showSettings)
+                CalendarHomeView(settingsCoordinator: coordinator)
                     .environment(\.calendarStoreContentLevel, contentLevel)
                     .modelContainer(container)
                     .id(coordinator.storeIdentity(contentLevel: contentLevel, identityToken: identityToken))
@@ -36,11 +35,6 @@ public struct ChineseCalendarRootView: View {
                     }
             case let .failed(message):
                 CalendarStoreFailureView(message: message, retry: coordinator.prepareStore)
-            }
-        }
-        .sheet(isPresented: $isSettingsPresented) {
-            NavigationStack {
-                CalendarSettingsView(coordinator: coordinator)
             }
         }
         .task {
@@ -62,10 +56,6 @@ public struct ChineseCalendarRootView: View {
                 }
             }
         )
-    }
-
-    private func showSettings() {
-        isSettingsPresented = true
     }
 
     @ViewBuilder

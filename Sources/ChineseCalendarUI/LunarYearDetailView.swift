@@ -11,8 +11,10 @@ struct LunarYearDetailView: View {
     let canSelectNextYear: Bool
     let selectPreviousYear: () -> Void
     let selectNextYear: () -> Void
+    let showYearList: (() -> Void)?
 
     @Query private var months: [ChineseLunarMonth]
+    @Query private var todayCivilDates: [CivilDate]
 
     init(
         year: ChineseLunarYear,
@@ -20,7 +22,9 @@ struct LunarYearDetailView: View {
         canSelectPreviousYear: Bool,
         canSelectNextYear: Bool,
         selectPreviousYear: @escaping () -> Void,
-        selectNextYear: @escaping () -> Void
+        selectNextYear: @escaping () -> Void,
+        showYearList: (() -> Void)? = nil,
+        today: Date = .now
     ) {
         self.year = year
         _selectedMonthIndex = selectedMonthIndex
@@ -28,6 +32,7 @@ struct LunarYearDetailView: View {
         self.canSelectNextYear = canSelectNextYear
         self.selectPreviousYear = selectPreviousYear
         self.selectNextYear = selectNextYear
+        self.showYearList = showYearList
 
         let lunarYearNumber = year.lunarYearNumber
         _months = Query(
@@ -35,6 +40,21 @@ struct LunarYearDetailView: View {
                 month.lunarYearNumber == lunarYearNumber
             },
             sort: \ChineseLunarMonth.lunarMonthIndex
+        )
+
+        let todayComponents = Self.gregorianDateComponents(for: today)
+        let todayYear = todayComponents.year ?? 0
+        let todayMonth = todayComponents.month ?? 0
+        let todayDay = todayComponents.day ?? 0
+        let gregorianCalendarStyle = CivilCalendarStyle.gregorian.rawValue
+        _todayCivilDates = Query(
+            filter: #Predicate<CivilDate> { civilDate in
+                civilDate.year == todayYear
+                    && civilDate.month == todayMonth
+                    && civilDate.dayOfMonth == todayDay
+                    && civilDate.calendarStyleRawValue == gregorianCalendarStyle
+            },
+            sort: \CivilDate.dayIndex
         )
     }
 
@@ -54,22 +74,19 @@ struct LunarYearDetailView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
-                Text(yearSubtitle)
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-
                 if monthsInYearStartOrder.isEmpty {
                     ContentUnavailableView {
                         Label("没有月份数据", systemSymbol: .calendarBadgeExclamationmark)
                     }
                 } else if let selectedMonth {
-                    MonthSwitcher(
+                    LunarMonthGrid(
+                        year: year,
                         months: monthsInYearStartOrder,
-                        selectedMonth: selectedMonth,
-                        selectedMonthIndex: $selectedMonthIndex
+                        month: selectedMonth,
+                        selectedMonthIndex: $selectedMonthIndex,
+                        showYearList: showYearList
                     )
-
-                    LunarMonthGrid(month: selectedMonth)
+                    .id(selectedMonth.lunarMonthIndex)
                 }
             }
             .padding()
@@ -79,7 +96,7 @@ struct LunarYearDetailView: View {
         .onChange(of: year.lunarYearNumber) {
             selectDefaultMonthIfNeeded()
         }
-        .navigationTitle(LunarCalendarFormatting.yearTitle(lunarYearNumber: year.lunarYearNumber))
+        .navigationTitle("日历")
         .toolbar {
             ToolbarItemGroup(placement: .primaryAction) {
                 Button("上一年", systemSymbol: .chevronLeft, action: selectPreviousYear)
@@ -93,12 +110,12 @@ struct LunarYearDetailView: View {
         }
     }
 
-    private var yearSubtitle: String {
-        let sexagenaryYear = LunarCalendarFormatting.yearSubtitle(
-            stemIndex: year.yearStemIndex,
-            branchIndex: year.yearBranchIndex
-        )
-        return "\(sexagenaryYear) · \(monthsInYearStartOrder.count)个月"
+    private var todayMonthIndex: Int? {
+        let monthIndexes = Set(monthsInYearStartOrder.map(\.lunarMonthIndex))
+        return todayCivilDates
+            .lazy
+            .compactMap { $0.calendarDay?.chineseLunarDay?.lunarMonthIndex }
+            .first { monthIndexes.contains($0) }
     }
 
     private func selectDefaultMonthIfNeeded() {
@@ -106,6 +123,12 @@ struct LunarYearDetailView: View {
             return
         }
 
-        selectedMonthIndex = monthsInYearStartOrder.first?.lunarMonthIndex
+        selectedMonthIndex = todayMonthIndex ?? monthsInYearStartOrder.first?.lunarMonthIndex
+    }
+
+    private static func gregorianDateComponents(for date: Date) -> DateComponents {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = .autoupdatingCurrent
+        return calendar.dateComponents([.year, .month, .day], from: date)
     }
 }
