@@ -118,9 +118,8 @@ struct LunarMonthGrid: View {
     }
 
     private var selectedDay: ChineseLunarDay? {
-        if let selectedDayIndex,
-           let selectedDay = days.first(where: { $0.dayIndex == selectedDayIndex }) {
-            return selectedDay
+        if let selectedDayIndex {
+            return days.first { $0.dayIndex == selectedDayIndex } ?? defaultSelectedDay
         }
 
         return defaultSelectedDay
@@ -194,9 +193,10 @@ struct LunarMonthGrid: View {
             return
         }
 
-        if let selectedDayIndex,
-           days.contains(where: { $0.dayIndex == selectedDayIndex }) {
-            return
+        if let selectedDayIndex {
+            guard !days.contains(where: { $0.dayIndex == selectedDayIndex }) else {
+                return
+            }
         }
 
         selectedDayIndex = defaultSelectedDay?.dayIndex
