@@ -92,6 +92,7 @@ struct LunarYearDetailView: View {
             .padding()
             .frame(maxWidth: 980, alignment: .leading)
         }
+        .background(.calendarSystemBackground)
         .onAppear(perform: selectDefaultMonthIfNeeded)
         .onChange(of: year.lunarYearNumber) {
             selectDefaultMonthIfNeeded()

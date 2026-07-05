@@ -30,6 +30,7 @@ struct CalendarHistoryHomeView: View {
             .padding()
             .frame(maxWidth: 760, alignment: .leading)
         }
+        .background(.calendarSystemBackground)
         .navigationTitle("历史")
     }
 

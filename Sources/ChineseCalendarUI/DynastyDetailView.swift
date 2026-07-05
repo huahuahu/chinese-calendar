@@ -5,6 +5,7 @@ import SwiftUI
 
 struct DynastyDetailView: View {
     @Query private var dynasties: [Dynasty]
+    @Query private var orthodoxPeriods: [OrthodoxPeriod]
 
     init(dynastyID: String) {
         let dynastyID = dynastyID
@@ -12,6 +13,12 @@ struct DynastyDetailView: View {
             filter: #Predicate<Dynasty> { dynasty in
                 dynasty.id == dynastyID
             }
+        )
+        _orthodoxPeriods = Query(
+            filter: #Predicate<OrthodoxPeriod> { period in
+                period.dynastyID == dynastyID
+            },
+            sort: \OrthodoxPeriod.sequenceIndex
         )
     }
 
@@ -34,11 +41,14 @@ struct DynastyDetailView: View {
                     LazyVGrid(columns: columns, alignment: .leading, spacing: 12) {
                         DynastyFactCard(title: "皇帝", value: "\(emperors.count) 位")
                         DynastyFactCard(title: "年号", value: "\(reignEraCount) 个")
+                        DynastyFactCard(title: "正统期", value: orthodoxPeriodCountText)
                         DynastyFactCard(title: "短名", value: dynasty.shortName ?? dynasty.name)
                     }
 
-                    ChineseDateExpressionSummaryView(title: "自称开始", date: dynasty.claimedStartDate)
-                    ChineseDateExpressionSummaryView(title: "自称结束", date: dynasty.claimedEndDate)
+                    DynastyBoundaryComparisonView(
+                        dynasty: dynasty,
+                        orthodoxPeriods: orthodoxPeriods
+                    )
 
                     if !emperors.isEmpty {
                         VStack(alignment: .leading, spacing: 12) {
@@ -58,6 +68,7 @@ struct DynastyDetailView: View {
                 .padding()
                 .frame(maxWidth: 760, alignment: .leading)
             }
+            .background(.calendarSystemBackground)
             .navigationTitle(dynasty.shortName ?? dynasty.name)
         } else {
             ContentUnavailableView {
@@ -86,5 +97,9 @@ struct DynastyDetailView: View {
         emperors.reduce(0) { count, emperor in
             count + emperor.reignEras.count
         }
+    }
+
+    private var orthodoxPeriodCountText: String {
+        orthodoxPeriods.isEmpty ? "暂无" : "\(orthodoxPeriods.count) 段"
     }
 }
