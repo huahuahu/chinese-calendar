@@ -179,6 +179,17 @@ import Testing
     #expect(router.historyPath == [.dynasty("ming")])
 }
 
+@MainActor
+@Test func emperorDeepLinkSelectsHistoryTab() {
+    let router = CalendarRouter()
+
+    router.openColdLaunchDeepLink(.emperor("ming-taizu"))
+
+    #expect(router.selectedTab == .history)
+    #expect(router.historyPath == [.emperor("ming-taizu")])
+    #expect(router.selectedMonthIndex == nil)
+}
+
 @Test func parserSupportsYearURLs() throws {
     let url = try #require(URL(string: "chinesecalendar://year/2026?monthIndex=26001"))
 
@@ -189,6 +200,12 @@ import Testing
     let url = try #require(URL(string: "chinesecalendar://dynasty/qin"))
 
     #expect(CalendarDeepLinkParser.deepLink(from: url) == .dynasty("qin"))
+}
+
+@Test func parserSupportsEmperorURLs() throws {
+    let url = try #require(URL(string: "chinesecalendar://emperor/ming-taizu"))
+
+    #expect(CalendarDeepLinkParser.deepLink(from: url) == .emperor("ming-taizu"))
 }
 
 @Test func parserSupportsLaunchArguments() {

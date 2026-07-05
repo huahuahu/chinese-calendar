@@ -207,6 +207,10 @@ final class CalendarRouter {
             selectedTab = .history
             setPath([.dynasty(dynastyID)], for: .history)
             selectedMonthIndex = nil
+        case let .emperor(emperorID):
+            selectedTab = .history
+            setPath([.emperor(emperorID)], for: .history)
+            selectedMonthIndex = nil
         }
     }
 
