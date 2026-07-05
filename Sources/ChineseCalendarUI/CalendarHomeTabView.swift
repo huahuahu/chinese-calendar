@@ -1,3 +1,4 @@
+import ChineseCalendarCore
 import ChineseCalendarPersistence
 import SFSafeSymbols
 import SwiftUI
@@ -5,15 +6,19 @@ import SwiftUI
 struct CalendarHomeTabView<BottomStatusBar: View>: View {
     @Bindable var router: CalendarRouter
     let years: [ChineseLunarYear]
+    let months: [ChineseLunarMonth]
     let emptyStateDescription: String
     let settingsCoordinator: ChineseCalendarStoreCoordinator?
+    let bottomStatusBarIsPresented: Bool
     let bottomStatusBar: () -> BottomStatusBar
 
     var body: some View {
         TabView(selection: $router.selectedTab) {
-            NavigationStack(path: $router.yearsPath) {
-                CalendarYearsListView(years: years)
-                    .navigationDestination(for: CalendarRoute.self, destination: destination)
+            NavigationStack {
+                calendarDestination(
+                    for: router.currentRoute(on: .years),
+                    year: selectedYear
+                )
             }
             .safeAreaInset(edge: .bottom, spacing: 0, content: bottomStatusBar)
             .tabItem {
@@ -52,15 +57,28 @@ struct CalendarHomeTabView<BottomStatusBar: View>: View {
     }
 
     private func destination(for route: CalendarRoute) -> some View {
+        calendarDestination(for: route, year: year(for: route))
+    }
+
+    private func calendarDestination(for route: CalendarRoute?, year: ChineseLunarYear?) -> some View {
         CalendarRouteDestinationView(
             route: route,
-            year: year(for: route),
+            year: year,
+            months: months,
             selectedMonthIndex: $router.selectedMonthIndex,
             canSelectPreviousYear: router.canSelectPreviousYear(availableYearNumbers: yearNumbers),
             canSelectNextYear: router.canSelectNextYear(availableYearNumbers: yearNumbers),
             selectPreviousYear: { router.selectPreviousYear(availableYearNumbers: yearNumbers) },
             selectNextYear: { router.selectNextYear(availableYearNumbers: yearNumbers) },
-            showYearList: { router.setPath([], for: .years) },
+            showYearPicker: router.presentYearPicker,
+            selectMonth: { month in
+                router.selectMonth(
+                    lunarYearNumber: month.lunarYearNumber,
+                    monthIndex: month.lunarMonthIndex
+                )
+            },
+            selectToday: { router.selectToday(preferredYearNumber: ChineseLunarCalendar.yearNumber()) },
+            bottomStatusBarIsPresented: bottomStatusBarIsPresented,
             emptyStateDescription: emptyStateDescription
         )
     }
@@ -75,5 +93,9 @@ struct CalendarHomeTabView<BottomStatusBar: View>: View {
         }
 
         return years.first { $0.lunarYearNumber == yearNumber }
+    }
+
+    private var selectedYear: ChineseLunarYear? {
+        year(for: router.currentRoute(on: .years))
     }
 }

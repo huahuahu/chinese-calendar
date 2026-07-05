@@ -13,6 +13,7 @@ final class CalendarRouter {
 
     var historyPath: [CalendarRoute]
     var selectedMonthIndex: Int?
+    var isYearPickerPresented = false
     var sheet: CalendarPresentationNode?
     var fullScreen: CalendarPresentationNode?
     private(set) var deferredDeepLink: CalendarDeepLink?
@@ -87,6 +88,27 @@ final class CalendarRouter {
         selectedTab = .years
         setPath([.lunarYear(yearNumber)], for: .years)
         selectedMonthIndex = monthIndex
+    }
+
+    func selectMonth(lunarYearNumber: Int, monthIndex: Int) {
+        selectYear(lunarYearNumber, monthIndex: monthIndex)
+    }
+
+    func selectToday(preferredYearNumber: Int) {
+        selectYear(preferredYearNumber)
+    }
+
+    func presentYearPicker() {
+        isYearPickerPresented = true
+    }
+
+    func dismissYearPicker() {
+        isYearPickerPresented = false
+    }
+
+    func selectYearFromPicker(_ yearNumber: Int) {
+        selectYear(yearNumber)
+        dismissYearPicker()
     }
 
     func selectDefaultYearIfNeeded(availableYearNumbers yearNumbers: [Int], preferredYearNumber: Int) -> Int? {
@@ -202,12 +224,15 @@ final class CalendarRouter {
     private func apply(_ deepLink: CalendarDeepLink) {
         switch deepLink {
         case let .lunarYear(yearNumber, monthIndex):
+            dismissYearPicker()
             selectYear(yearNumber, monthIndex: monthIndex)
         case let .dynasty(dynastyID):
+            dismissYearPicker()
             selectedTab = .history
             setPath([.dynasty(dynastyID)], for: .history)
             selectedMonthIndex = nil
         case let .emperor(emperorID):
+            dismissYearPicker()
             selectedTab = .history
             setPath([.emperor(emperorID)], for: .history)
             selectedMonthIndex = nil

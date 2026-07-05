@@ -4,6 +4,7 @@ import SwiftUI
 struct CalendarPresentationNodeView: View {
     @Bindable var node: CalendarPresentationNode
     let years: [ChineseLunarYear]
+    let months: [ChineseLunarMonth]
     let dismiss: () -> Void
 
     var body: some View {
@@ -11,11 +12,13 @@ struct CalendarPresentationNodeView: View {
             CalendarRouteDestinationView(
                 route: node.route,
                 year: year(for: node.route),
+                months: months,
                 selectedMonthIndex: $node.selectedMonthIndex,
                 canSelectPreviousYear: false,
                 canSelectNextYear: false,
                 selectPreviousYear: {},
                 selectNextYear: {},
+                selectMonth: selectMonth,
                 emptyStateDescription: "请选择一个农历年。"
             )
             .toolbar {
@@ -27,22 +30,24 @@ struct CalendarPresentationNodeView: View {
                 CalendarRouteDestinationView(
                     route: route,
                     year: year(for: route),
+                    months: months,
                     selectedMonthIndex: $node.selectedMonthIndex,
                     canSelectPreviousYear: false,
                     canSelectNextYear: false,
                     selectPreviousYear: {},
                     selectNextYear: {},
+                    selectMonth: selectMonth,
                     emptyStateDescription: "请选择一个农历年。"
                 )
             }
         }
         .sheet(item: $node.sheet) { child in
-            CalendarPresentationNodeView(node: child, years: years) {
+            CalendarPresentationNodeView(node: child, years: years, months: months) {
                 node.dismissSheet()
             }
         }
         .calendarFullScreenCover(item: $node.fullScreen) { child in
-            CalendarPresentationNodeView(node: child, years: years) {
+            CalendarPresentationNodeView(node: child, years: years, months: months) {
                 node.dismissFullScreen()
             }
         }
@@ -54,5 +59,15 @@ struct CalendarPresentationNodeView: View {
         }
 
         return years.first { $0.lunarYearNumber == yearNumber }
+    }
+
+    private func selectMonth(_ month: ChineseLunarMonth) {
+        node.selectedMonthIndex = month.lunarMonthIndex
+
+        guard node.route.lunarYearNumber != month.lunarYearNumber else {
+            return
+        }
+
+        node.path = [.lunarYear(month.lunarYearNumber)]
     }
 }

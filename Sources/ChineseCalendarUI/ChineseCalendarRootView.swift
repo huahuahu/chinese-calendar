@@ -54,7 +54,10 @@ public struct ChineseCalendarRootView: View {
         identityToken: String?
     ) -> some View {
         #if os(iOS)
-            CalendarHomeView(settingsCoordinator: coordinator) {
+            CalendarHomeView(
+                settingsCoordinator: coordinator,
+                bottomStatusBarIsPresented: bottomStatusBarIsPresented(contentLevel: contentLevel)
+            ) {
                 bottomStatusBar(contentLevel: contentLevel)
             }
             .environment(\.calendarStoreContentLevel, contentLevel)
@@ -69,6 +72,10 @@ public struct ChineseCalendarRootView: View {
                     bottomStatusBar(contentLevel: contentLevel)
                 }
         #endif
+    }
+
+    private func bottomStatusBarIsPresented(contentLevel: ChineseCalendarSeedStoreContentLevel) -> Bool {
+        coordinator.fullStoreDownloadProgress != nil || coordinator.canDownloadFullStore(contentLevel: contentLevel)
     }
 
     private var downloadErrorIsPresented: Binding<Bool> {
