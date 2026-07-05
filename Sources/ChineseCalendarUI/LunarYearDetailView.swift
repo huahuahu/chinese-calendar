@@ -123,28 +123,28 @@ struct LunarYearDetailView: View {
         }
         .navigationTitle("日历")
         .toolbar {
-#if os(iOS)
-            if let selectToday {
-                ToolbarItem(placement: .primaryAction) {
-                    Button("今天", action: selectToday)
-                }
-            }
-#else
-            ToolbarItemGroup(placement: .primaryAction) {
+            #if os(iOS)
                 if let selectToday {
-                    Button("今天", action: selectToday)
-                        .help("回到今天")
+                    ToolbarItem(placement: .primaryAction) {
+                        Button("今天", action: selectToday)
+                    }
                 }
+            #else
+                ToolbarItemGroup(placement: .primaryAction) {
+                    if let selectToday {
+                        Button("今天", action: selectToday)
+                            .help("回到今天")
+                    }
 
-                Button("上一年", systemSymbol: .chevronLeft, action: selectPreviousYear)
-                    .disabled(!canSelectPreviousYear)
-                    .help("切换到上一年")
+                    Button("上一年", systemSymbol: .chevronLeft, action: selectPreviousYear)
+                        .disabled(!canSelectPreviousYear)
+                        .help("切换到上一年")
 
-                Button("下一年", systemSymbol: .chevronRight, action: selectNextYear)
-                    .disabled(!canSelectNextYear)
-                    .help("切换到下一年")
-            }
-#endif
+                    Button("下一年", systemSymbol: .chevronRight, action: selectNextYear)
+                        .disabled(!canSelectNextYear)
+                        .help("切换到下一年")
+                }
+            #endif
         }
     }
 

@@ -89,5 +89,4 @@ struct MonthSwitcher: View {
         }
         .accessibilityElement(children: .combine)
     }
-
 }
