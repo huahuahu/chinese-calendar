@@ -51,7 +51,6 @@ This repository contains a Swift Package rooted at `Sources` and Xcode app targe
 - Project-local SwiftUI skill: `./.agents/skills/swiftui-pro`
 - Project-local Swift Concurrency skill: `./.agents/skills/swift-concurrency-pro`
 - Project-local SwiftData skill: `./.agents/skills/swiftdata-pro`
-- Project-local worktree setup skill: `./.agents/skills/worktree-setup`
 - Project-local worktree cleanup skill: `./.agents/skills/worktree-cleanup`
 - Project-local documentation grilling skill: `./.agents/skills/grill-with-docs`
 
