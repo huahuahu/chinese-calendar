@@ -12,7 +12,12 @@ final class CalendarRouter {
     }
 
     var historyPath: [CalendarRoute]
-    var selectedMonthIndex: Int?
+    var selectedMonthIndex: Int? {
+        didSet {
+            clearSelectedDayIfSelectedMonthChanged(from: oldValue, to: selectedMonthIndex)
+        }
+    }
+    var selectedDayIndex: Int?
     var isYearPickerPresented = false
     var sheet: CalendarPresentationNode?
     var fullScreen: CalendarPresentationNode?
@@ -42,12 +47,14 @@ final class CalendarRouter {
         selectedRoute: CalendarRoute? = nil,
         yearsPath: [CalendarRoute]? = nil,
         historyPath: [CalendarRoute] = [],
-        selectedMonthIndex: Int? = nil
+        selectedMonthIndex: Int? = nil,
+        selectedDayIndex: Int? = nil
     ) {
         self.selectedTab = selectedTab
         self.yearsPath = yearsPath ?? selectedRoute.map { [$0] } ?? []
         self.historyPath = historyPath
         self.selectedMonthIndex = selectedMonthIndex
+        self.selectedDayIndex = selectedDayIndex
     }
 
     func path(for tab: CalendarTab) -> [CalendarRoute] {
@@ -84,18 +91,32 @@ final class CalendarRouter {
         setPath(path, for: targetTab)
     }
 
-    func selectYear(_ yearNumber: Int, monthIndex: Int? = nil) {
+    func selectYear(_ yearNumber: Int, monthIndex: Int? = nil, dayIndex: Int? = nil) {
         selectedTab = .years
         setPath([.lunarYear(yearNumber)], for: .years)
         selectedMonthIndex = monthIndex
+        selectedDayIndex = dayIndex
     }
 
     func selectMonth(lunarYearNumber: Int, monthIndex: Int) {
         selectYear(lunarYearNumber, monthIndex: monthIndex)
     }
 
+    func selectToday(_ todaySelection: CalendarTodaySelection?, preferredYearNumber: Int) {
+        guard let todaySelection else {
+            selectYear(preferredYearNumber)
+            return
+        }
+
+        selectYear(
+            todaySelection.lunarYearNumber,
+            monthIndex: todaySelection.lunarMonthIndex,
+            dayIndex: todaySelection.dayIndex
+        )
+    }
+
     func selectToday(preferredYearNumber: Int) {
-        selectYear(preferredYearNumber)
+        selectToday(nil, preferredYearNumber: preferredYearNumber)
     }
 
     func presentYearPicker() {
@@ -245,6 +266,15 @@ final class CalendarRouter {
         }
 
         selectedMonthIndex = nil
+        selectedDayIndex = nil
+    }
+
+    private func clearSelectedDayIfSelectedMonthChanged(from oldMonthIndex: Int?, to newMonthIndex: Int?) {
+        guard oldMonthIndex != newMonthIndex else {
+            return
+        }
+
+        selectedDayIndex = nil
     }
 }
 
@@ -254,14 +284,25 @@ final class CalendarPresentationNode: Identifiable {
     let id = UUID()
     let route: CalendarRoute
     var path: [CalendarRoute]
-    var selectedMonthIndex: Int?
+    var selectedMonthIndex: Int? {
+        didSet {
+            clearSelectedDayIfSelectedMonthChanged(from: oldValue, to: selectedMonthIndex)
+        }
+    }
+    var selectedDayIndex: Int?
     var sheet: CalendarPresentationNode?
     var fullScreen: CalendarPresentationNode?
 
-    init(route: CalendarRoute, path: [CalendarRoute] = [], selectedMonthIndex: Int? = nil) {
+    init(
+        route: CalendarRoute,
+        path: [CalendarRoute] = [],
+        selectedMonthIndex: Int? = nil,
+        selectedDayIndex: Int? = nil
+    ) {
         self.route = route
         self.path = path
         self.selectedMonthIndex = selectedMonthIndex
+        self.selectedDayIndex = selectedDayIndex
     }
 
     func push(_ route: CalendarRoute) {
@@ -282,5 +323,13 @@ final class CalendarPresentationNode: Identifiable {
 
     func dismissFullScreen() {
         fullScreen = nil
+    }
+
+    private func clearSelectedDayIfSelectedMonthChanged(from oldMonthIndex: Int?, to newMonthIndex: Int?) {
+        guard oldMonthIndex != newMonthIndex else {
+            return
+        }
+
+        selectedDayIndex = nil
     }
 }

@@ -66,6 +66,7 @@ struct CalendarHomeTabView<BottomStatusBar: View>: View {
             year: year,
             months: months,
             selectedMonthIndex: $router.selectedMonthIndex,
+            selectedDayIndex: $router.selectedDayIndex,
             canSelectPreviousYear: router.canSelectPreviousYear(availableYearNumbers: yearNumbers),
             canSelectNextYear: router.canSelectNextYear(availableYearNumbers: yearNumbers),
             selectPreviousYear: { router.selectPreviousYear(availableYearNumbers: yearNumbers) },
@@ -77,7 +78,9 @@ struct CalendarHomeTabView<BottomStatusBar: View>: View {
                     monthIndex: month.lunarMonthIndex
                 )
             },
-            selectToday: { router.selectToday(preferredYearNumber: ChineseLunarCalendar.yearNumber()) },
+            selectToday: { todaySelection in
+                router.selectToday(todaySelection, preferredYearNumber: ChineseLunarCalendar.yearNumber())
+            },
             bottomStatusBarIsPresented: bottomStatusBarIsPresented,
             emptyStateDescription: emptyStateDescription
         )
