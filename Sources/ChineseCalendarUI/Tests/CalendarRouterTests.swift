@@ -55,32 +55,79 @@ import Testing
 
 @MainActor
 @Test func changingSelectedYearClearsSelectedMonth() {
-    let router = CalendarRouter(selectedRoute: .lunarYear(2024), selectedMonthIndex: 24001)
+    let router = CalendarRouter(
+        selectedRoute: .lunarYear(2024),
+        selectedMonthIndex: 24001,
+        selectedDayIndex: 2400101
+    )
 
     router.selectYear(2025)
 
     #expect(router.selectedRoute == .lunarYear(2025))
     #expect(router.selectedMonthIndex == nil)
+    #expect(router.selectedDayIndex == nil)
 }
 
 @MainActor
 @Test func selectingMonthUpdatesYearAndMonthTogether() {
-    let router = CalendarRouter(selectedRoute: .lunarYear(2024))
+    let router = CalendarRouter(selectedRoute: .lunarYear(2024), selectedDayIndex: 2400101)
 
     router.selectMonth(lunarYearNumber: 2025, monthIndex: 25006)
 
     #expect(router.currentRoute(on: .years) == .lunarYear(2025))
     #expect(router.selectedMonthIndex == 25006)
+    #expect(router.selectedDayIndex == nil)
 }
 
 @MainActor
-@Test func todaySelectionReturnsToPreferredYearAndClearsMonth() {
-    let router = CalendarRouter(selectedRoute: .lunarYear(2024), selectedMonthIndex: 24001)
+@Test func todaySelectionRoutesToResolvedDay() {
+    let router = CalendarRouter(
+        selectedRoute: .lunarYear(2024),
+        selectedMonthIndex: 24001,
+        selectedDayIndex: 2400101
+    )
 
-    router.selectToday(preferredYearNumber: 2026)
+    router.selectToday(
+        CalendarTodaySelection(lunarYearNumber: 2026, lunarMonthIndex: 26005, dayIndex: 2600512),
+        preferredYearNumber: 2025
+    )
+
+    #expect(router.currentRoute(on: .years) == .lunarYear(2026))
+    #expect(router.selectedMonthIndex == 26005)
+    #expect(router.selectedDayIndex == 2600512)
+}
+
+@MainActor
+@Test func todaySelectionCanReselectDayWithinCurrentMonth() {
+    let router = CalendarRouter(
+        selectedRoute: .lunarYear(2026),
+        selectedMonthIndex: 26005,
+        selectedDayIndex: 2600501
+    )
+
+    router.selectToday(
+        CalendarTodaySelection(lunarYearNumber: 2026, lunarMonthIndex: 26005, dayIndex: 2600512),
+        preferredYearNumber: 2026
+    )
+
+    #expect(router.currentRoute(on: .years) == .lunarYear(2026))
+    #expect(router.selectedMonthIndex == 26005)
+    #expect(router.selectedDayIndex == 2600512)
+}
+
+@MainActor
+@Test func todaySelectionFallsBackToPreferredYearWhenDailyDataIsMissing() {
+    let router = CalendarRouter(
+        selectedRoute: .lunarYear(2024),
+        selectedMonthIndex: 24001,
+        selectedDayIndex: 2400101
+    )
+
+    router.selectToday(nil, preferredYearNumber: 2026)
 
     #expect(router.currentRoute(on: .years) == .lunarYear(2026))
     #expect(router.selectedMonthIndex == nil)
+    #expect(router.selectedDayIndex == nil)
 }
 
 @MainActor

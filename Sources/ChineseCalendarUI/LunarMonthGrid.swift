@@ -17,7 +17,7 @@ struct LunarMonthGrid: View {
     let selectMonth: (ChineseLunarMonth) -> Void
 
     @Environment(\.calendarStoreContentLevel) private var storeContentLevel
-    @State private var selectedDayIndex: Int?
+    @Binding var selectedDayIndex: Int?
     @Query private var days: [ChineseLunarDay]
     private let todayComponents: DateComponents
 
@@ -25,6 +25,7 @@ struct LunarMonthGrid: View {
         year: ChineseLunarYear,
         months: [ChineseLunarMonth],
         month: ChineseLunarMonth,
+        selectedDayIndex: Binding<Int?>,
         showYearPicker: (() -> Void)? = nil,
         canSelectPreviousMonth: Bool,
         canSelectNextMonth: Bool,
@@ -36,6 +37,7 @@ struct LunarMonthGrid: View {
         self.year = year
         self.months = months
         self.month = month
+        _selectedDayIndex = selectedDayIndex
         self.showYearPicker = showYearPicker
         self.canSelectPreviousMonth = canSelectPreviousMonth
         self.canSelectNextMonth = canSelectNextMonth

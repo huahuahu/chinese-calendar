@@ -8,13 +8,14 @@ struct LunarYearDetailView: View {
     let year: ChineseLunarYear
     let calendarMonths: [ChineseLunarMonth]
     @Binding var selectedMonthIndex: Int?
+    @Binding var selectedDayIndex: Int?
     let canSelectPreviousYear: Bool
     let canSelectNextYear: Bool
     let selectPreviousYear: () -> Void
     let selectNextYear: () -> Void
     let showYearPicker: (() -> Void)?
     let selectMonth: ((ChineseLunarMonth) -> Void)?
-    let selectToday: (() -> Void)?
+    let selectToday: ((CalendarTodaySelection?) -> Void)?
     let bottomStatusBarIsPresented: Bool
 
     @Environment(\.calendarStoreContentLevel) private var storeContentLevel
@@ -25,19 +26,21 @@ struct LunarYearDetailView: View {
         year: ChineseLunarYear,
         calendarMonths: [ChineseLunarMonth] = [],
         selectedMonthIndex: Binding<Int?>,
+        selectedDayIndex: Binding<Int?>,
         canSelectPreviousYear: Bool,
         canSelectNextYear: Bool,
         selectPreviousYear: @escaping () -> Void,
         selectNextYear: @escaping () -> Void,
         showYearPicker: (() -> Void)? = nil,
         selectMonth: ((ChineseLunarMonth) -> Void)? = nil,
-        selectToday: (() -> Void)? = nil,
+        selectToday: ((CalendarTodaySelection?) -> Void)? = nil,
         bottomStatusBarIsPresented: Bool = false,
         today: Date = .now
     ) {
         self.year = year
         self.calendarMonths = calendarMonths
         _selectedMonthIndex = selectedMonthIndex
+        _selectedDayIndex = selectedDayIndex
         self.canSelectPreviousYear = canSelectPreviousYear
         self.canSelectNextYear = canSelectNextYear
         self.selectPreviousYear = selectPreviousYear
@@ -96,6 +99,7 @@ struct LunarYearDetailView: View {
                         year: year,
                         months: monthsInYearStartOrder,
                         month: selectedMonth,
+                        selectedDayIndex: $selectedDayIndex,
                         showYearPicker: showYearPicker,
                         canSelectPreviousMonth: canSelectPreviousMonth,
                         canSelectNextMonth: canSelectNextMonth,
@@ -124,15 +128,15 @@ struct LunarYearDetailView: View {
         .navigationTitle("日历")
         .toolbar {
             #if os(iOS)
-                if let selectToday {
+                if selectToday != nil {
                     ToolbarItem(placement: .primaryAction) {
-                        Button("今天", action: selectToday)
+                        Button("今天", action: selectTodayFromToolbar)
                     }
                 }
             #else
                 ToolbarItemGroup(placement: .primaryAction) {
-                    if let selectToday {
-                        Button("今天", action: selectToday)
+                    if selectToday != nil {
+                        Button("今天", action: selectTodayFromToolbar)
                             .help("回到今天")
                     }
 
@@ -149,11 +153,37 @@ struct LunarYearDetailView: View {
     }
 
     private var todayMonthIndex: Int? {
-        let monthIndexes = Set(monthsInYearStartOrder.map(\.lunarMonthIndex))
-        return todayCivilDates
+        guard let todaySelection,
+              monthsInYearStartOrder.contains(where: { $0.lunarMonthIndex == todaySelection.lunarMonthIndex })
+        else {
+            return nil
+        }
+
+        return todaySelection.lunarMonthIndex
+    }
+
+    private var todaySelection: CalendarTodaySelection? {
+        todayCivilDates
             .lazy
-            .compactMap { $0.calendarDay?.chineseLunarDay?.lunarMonthIndex }
-            .first { monthIndexes.contains($0) }
+            .compactMap { civilDate -> CalendarTodaySelection? in
+                guard let lunarDay = civilDate.calendarDay?.chineseLunarDay else {
+                    return nil
+                }
+
+                let lunarYearNumber = lunarDay.chineseLunarMonth?.lunarYearNumber
+                    ?? calendarMonthsInOrder.first { $0.lunarMonthIndex == lunarDay.lunarMonthIndex }?.lunarYearNumber
+
+                guard let lunarYearNumber else {
+                    return nil
+                }
+
+                return CalendarTodaySelection(
+                    lunarYearNumber: lunarYearNumber,
+                    lunarMonthIndex: lunarDay.lunarMonthIndex,
+                    dayIndex: lunarDay.dayIndex
+                )
+            }
+            .first
     }
 
     private func selectDefaultMonthIfNeeded() {
@@ -240,10 +270,17 @@ struct LunarYearDetailView: View {
 
     private func selectMonthInCalendar(_ month: ChineseLunarMonth) {
         if month.lunarYearNumber == year.lunarYearNumber {
+            if selectedMonthIndex != month.lunarMonthIndex {
+                selectedDayIndex = nil
+            }
             selectedMonthIndex = month.lunarMonthIndex
         } else {
             selectMonth?(month)
         }
+    }
+
+    private func selectTodayFromToolbar() {
+        selectToday?(todaySelection)
     }
 
     private var bottomStatusBarContentPadding: CGFloat {

@@ -25,6 +25,7 @@ struct CalendarHomeSplitView: View {
                 year: selectedYear,
                 months: months,
                 selectedMonthIndex: $router.selectedMonthIndex,
+                selectedDayIndex: $router.selectedDayIndex,
                 canSelectPreviousYear: router.canSelectPreviousYear(availableYearNumbers: yearNumbers),
                 canSelectNextYear: router.canSelectNextYear(availableYearNumbers: yearNumbers),
                 selectPreviousYear: { router.selectPreviousYear(availableYearNumbers: yearNumbers) },
@@ -36,7 +37,9 @@ struct CalendarHomeSplitView: View {
                         monthIndex: month.lunarMonthIndex
                     )
                 },
-                selectToday: { router.selectToday(preferredYearNumber: ChineseLunarCalendar.yearNumber()) },
+                selectToday: { todaySelection in
+                    router.selectToday(todaySelection, preferredYearNumber: ChineseLunarCalendar.yearNumber())
+                },
                 emptyStateDescription: emptyStateDescription
             )
         }

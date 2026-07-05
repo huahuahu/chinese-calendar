@@ -7,13 +7,14 @@ struct CalendarRouteDestinationView: View {
     let year: ChineseLunarYear?
     let months: [ChineseLunarMonth]
     @Binding var selectedMonthIndex: Int?
+    @Binding var selectedDayIndex: Int?
     let canSelectPreviousYear: Bool
     let canSelectNextYear: Bool
     let selectPreviousYear: () -> Void
     let selectNextYear: () -> Void
     let showYearPicker: (() -> Void)?
     let selectMonth: ((ChineseLunarMonth) -> Void)?
-    let selectToday: (() -> Void)?
+    let selectToday: ((CalendarTodaySelection?) -> Void)?
     let bottomStatusBarIsPresented: Bool
     let emptyStateDescription: String
 
@@ -22,13 +23,14 @@ struct CalendarRouteDestinationView: View {
         year: ChineseLunarYear?,
         months: [ChineseLunarMonth] = [],
         selectedMonthIndex: Binding<Int?>,
+        selectedDayIndex: Binding<Int?>,
         canSelectPreviousYear: Bool,
         canSelectNextYear: Bool,
         selectPreviousYear: @escaping () -> Void,
         selectNextYear: @escaping () -> Void,
         showYearPicker: (() -> Void)? = nil,
         selectMonth: ((ChineseLunarMonth) -> Void)? = nil,
-        selectToday: (() -> Void)? = nil,
+        selectToday: ((CalendarTodaySelection?) -> Void)? = nil,
         bottomStatusBarIsPresented: Bool = false,
         emptyStateDescription: String
     ) {
@@ -36,6 +38,7 @@ struct CalendarRouteDestinationView: View {
         self.year = year
         self.months = months
         _selectedMonthIndex = selectedMonthIndex
+        _selectedDayIndex = selectedDayIndex
         self.canSelectPreviousYear = canSelectPreviousYear
         self.canSelectNextYear = canSelectNextYear
         self.selectPreviousYear = selectPreviousYear
@@ -56,6 +59,7 @@ struct CalendarRouteDestinationView: View {
                         year: year,
                         calendarMonths: months,
                         selectedMonthIndex: $selectedMonthIndex,
+                        selectedDayIndex: $selectedDayIndex,
                         canSelectPreviousYear: canSelectPreviousYear,
                         canSelectNextYear: canSelectNextYear,
                         selectPreviousYear: selectPreviousYear,
