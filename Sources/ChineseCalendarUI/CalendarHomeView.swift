@@ -7,16 +7,20 @@ import SwiftUI
 
 public struct CalendarHomeView<BottomStatusBar: View>: View {
     @Query(sort: \ChineseLunarYear.lunarYearNumber) private var years: [ChineseLunarYear]
+    @Query(sort: \ChineseLunarMonth.lunarMonthIndex) private var months: [ChineseLunarMonth]
     @State private var router = CalendarRouter()
     @State private var didOpenColdLaunchDeepLink = false
     private let settingsCoordinator: ChineseCalendarStoreCoordinator?
+    private let bottomStatusBarIsPresented: Bool
     private let bottomStatusBar: () -> BottomStatusBar
 
     public init(
         settingsCoordinator: ChineseCalendarStoreCoordinator? = nil,
+        bottomStatusBarIsPresented: Bool = false,
         @ViewBuilder bottomStatusBar: @escaping () -> BottomStatusBar
     ) {
         self.settingsCoordinator = settingsCoordinator
+        self.bottomStatusBarIsPresented = bottomStatusBarIsPresented
         self.bottomStatusBar = bottomStatusBar
     }
 
@@ -28,25 +32,36 @@ public struct CalendarHomeView<BottomStatusBar: View>: View {
                 CalendarHomeTabView(
                     router: router,
                     years: years,
+                    months: months,
                     emptyStateDescription: emptyStateDescription,
                     settingsCoordinator: settingsCoordinator,
+                    bottomStatusBarIsPresented: bottomStatusBarIsPresented,
                     bottomStatusBar: bottomStatusBar
                 )
             #else
                 CalendarHomeSplitView(
                     router: router,
                     years: years,
+                    months: months,
                     emptyStateDescription: emptyStateDescription
                 )
             #endif
         }
+        .sheet(isPresented: $router.isYearPickerPresented) {
+            CalendarYearPickerView(
+                years: years,
+                selectedYearNumber: router.selectedYearNumber,
+                selectYear: router.selectYearFromPicker,
+                dismiss: router.dismissYearPicker
+            )
+        }
         .sheet(item: $router.sheet, onDismiss: router.applyDeferredDeepLinkIfReady) { node in
-            CalendarPresentationNodeView(node: node, years: years) {
+            CalendarPresentationNodeView(node: node, years: years, months: months) {
                 router.dismissSheet()
             }
         }
         .calendarFullScreenCover(item: $router.fullScreen, onDismiss: router.applyDeferredDeepLinkIfReady) { node in
-            CalendarPresentationNodeView(node: node, years: years) {
+            CalendarPresentationNodeView(node: node, years: years, months: months) {
                 router.dismissFullScreen()
             }
         }
@@ -110,6 +125,7 @@ public struct CalendarHomeView<BottomStatusBar: View>: View {
 public extension CalendarHomeView where BottomStatusBar == EmptyView {
     init(settingsCoordinator: ChineseCalendarStoreCoordinator? = nil) {
         self.settingsCoordinator = settingsCoordinator
+        bottomStatusBarIsPresented = false
         bottomStatusBar = { EmptyView() }
     }
 

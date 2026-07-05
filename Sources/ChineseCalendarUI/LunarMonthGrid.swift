@@ -9,8 +9,12 @@ struct LunarMonthGrid: View {
     let year: ChineseLunarYear
     let months: [ChineseLunarMonth]
     let month: ChineseLunarMonth
-    @Binding var selectedMonthIndex: Int?
-    let showYearList: (() -> Void)?
+    let showYearPicker: (() -> Void)?
+    let canSelectPreviousMonth: Bool
+    let canSelectNextMonth: Bool
+    let selectPreviousMonth: () -> Void
+    let selectNextMonth: () -> Void
+    let selectMonth: (ChineseLunarMonth) -> Void
 
     @Environment(\.calendarStoreContentLevel) private var storeContentLevel
     @State private var selectedDayIndex: Int?
@@ -21,15 +25,23 @@ struct LunarMonthGrid: View {
         year: ChineseLunarYear,
         months: [ChineseLunarMonth],
         month: ChineseLunarMonth,
-        selectedMonthIndex: Binding<Int?>,
-        showYearList: (() -> Void)? = nil,
+        showYearPicker: (() -> Void)? = nil,
+        canSelectPreviousMonth: Bool,
+        canSelectNextMonth: Bool,
+        selectPreviousMonth: @escaping () -> Void,
+        selectNextMonth: @escaping () -> Void,
+        selectMonth: @escaping (ChineseLunarMonth) -> Void,
         today: Date = .now
     ) {
         self.year = year
         self.months = months
         self.month = month
-        _selectedMonthIndex = selectedMonthIndex
-        self.showYearList = showYearList
+        self.showYearPicker = showYearPicker
+        self.canSelectPreviousMonth = canSelectPreviousMonth
+        self.canSelectNextMonth = canSelectNextMonth
+        self.selectPreviousMonth = selectPreviousMonth
+        self.selectNextMonth = selectNextMonth
+        self.selectMonth = selectMonth
         todayComponents = Self.gregorianDateComponents(for: today)
 
         let lunarMonthIndex = month.lunarMonthIndex
@@ -48,8 +60,12 @@ struct LunarMonthGrid: View {
                 subtitle: monthNavigationSubtitle,
                 months: months,
                 selectedMonth: month,
-                selectedMonthIndex: $selectedMonthIndex,
-                showYearList: showYearList
+                showYearPicker: showYearPicker,
+                canSelectPreviousMonth: canSelectPreviousMonth,
+                canSelectNextMonth: canSelectNextMonth,
+                selectPreviousMonth: selectPreviousMonth,
+                selectNextMonth: selectNextMonth,
+                selectMonth: selectMonth
             )
             .padding()
             .background(.background.secondary, in: RoundedRectangle(cornerRadius: 28))

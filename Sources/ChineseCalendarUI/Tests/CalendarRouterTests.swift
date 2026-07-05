@@ -64,6 +64,37 @@ import Testing
 }
 
 @MainActor
+@Test func selectingMonthUpdatesYearAndMonthTogether() {
+    let router = CalendarRouter(selectedRoute: .lunarYear(2024))
+
+    router.selectMonth(lunarYearNumber: 2025, monthIndex: 25006)
+
+    #expect(router.currentRoute(on: .years) == .lunarYear(2025))
+    #expect(router.selectedMonthIndex == 25006)
+}
+
+@MainActor
+@Test func todaySelectionReturnsToPreferredYearAndClearsMonth() {
+    let router = CalendarRouter(selectedRoute: .lunarYear(2024), selectedMonthIndex: 24001)
+
+    router.selectToday(preferredYearNumber: 2026)
+
+    #expect(router.currentRoute(on: .years) == .lunarYear(2026))
+    #expect(router.selectedMonthIndex == nil)
+}
+
+@MainActor
+@Test func yearPickerSelectionDismissesPicker() {
+    let router = CalendarRouter()
+
+    router.presentYearPicker()
+    router.selectYearFromPicker(2026)
+
+    #expect(router.isYearPickerPresented == false)
+    #expect(router.currentRoute(on: .years) == .lunarYear(2026))
+}
+
+@MainActor
 @Test func adjacentYearSelectionUsesAvailableYearNumbers() {
     let router = CalendarRouter(selectedRoute: .lunarYear(2025))
     let years = [2024, 2025, 2026]

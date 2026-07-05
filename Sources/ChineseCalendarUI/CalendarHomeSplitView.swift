@@ -1,9 +1,11 @@
+import ChineseCalendarCore
 import ChineseCalendarPersistence
 import SwiftUI
 
 struct CalendarHomeSplitView: View {
     @Bindable var router: CalendarRouter
     let years: [ChineseLunarYear]
+    let months: [ChineseLunarMonth]
     let emptyStateDescription: String
 
     var body: some View {
@@ -21,12 +23,20 @@ struct CalendarHomeSplitView: View {
             CalendarRouteDestinationView(
                 route: router.currentRoute(on: .years),
                 year: selectedYear,
+                months: months,
                 selectedMonthIndex: $router.selectedMonthIndex,
                 canSelectPreviousYear: router.canSelectPreviousYear(availableYearNumbers: yearNumbers),
                 canSelectNextYear: router.canSelectNextYear(availableYearNumbers: yearNumbers),
                 selectPreviousYear: { router.selectPreviousYear(availableYearNumbers: yearNumbers) },
                 selectNextYear: { router.selectNextYear(availableYearNumbers: yearNumbers) },
-                showYearList: nil,
+                showYearPicker: nil,
+                selectMonth: { month in
+                    router.selectMonth(
+                        lunarYearNumber: month.lunarYearNumber,
+                        monthIndex: month.lunarMonthIndex
+                    )
+                },
+                selectToday: { router.selectToday(preferredYearNumber: ChineseLunarCalendar.yearNumber()) },
                 emptyStateDescription: emptyStateDescription
             )
         }

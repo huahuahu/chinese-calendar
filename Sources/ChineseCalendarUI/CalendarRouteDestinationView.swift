@@ -5,33 +5,45 @@ import SwiftUI
 struct CalendarRouteDestinationView: View {
     let route: CalendarRoute?
     let year: ChineseLunarYear?
+    let months: [ChineseLunarMonth]
     @Binding var selectedMonthIndex: Int?
     let canSelectPreviousYear: Bool
     let canSelectNextYear: Bool
     let selectPreviousYear: () -> Void
     let selectNextYear: () -> Void
-    let showYearList: (() -> Void)?
+    let showYearPicker: (() -> Void)?
+    let selectMonth: ((ChineseLunarMonth) -> Void)?
+    let selectToday: (() -> Void)?
+    let bottomStatusBarIsPresented: Bool
     let emptyStateDescription: String
 
     init(
         route: CalendarRoute?,
         year: ChineseLunarYear?,
+        months: [ChineseLunarMonth] = [],
         selectedMonthIndex: Binding<Int?>,
         canSelectPreviousYear: Bool,
         canSelectNextYear: Bool,
         selectPreviousYear: @escaping () -> Void,
         selectNextYear: @escaping () -> Void,
-        showYearList: (() -> Void)? = nil,
+        showYearPicker: (() -> Void)? = nil,
+        selectMonth: ((ChineseLunarMonth) -> Void)? = nil,
+        selectToday: (() -> Void)? = nil,
+        bottomStatusBarIsPresented: Bool = false,
         emptyStateDescription: String
     ) {
         self.route = route
         self.year = year
+        self.months = months
         _selectedMonthIndex = selectedMonthIndex
         self.canSelectPreviousYear = canSelectPreviousYear
         self.canSelectNextYear = canSelectNextYear
         self.selectPreviousYear = selectPreviousYear
         self.selectNextYear = selectNextYear
-        self.showYearList = showYearList
+        self.showYearPicker = showYearPicker
+        self.selectMonth = selectMonth
+        self.selectToday = selectToday
+        self.bottomStatusBarIsPresented = bottomStatusBarIsPresented
         self.emptyStateDescription = emptyStateDescription
     }
 
@@ -42,12 +54,16 @@ struct CalendarRouteDestinationView: View {
                 if let year {
                     LunarYearDetailView(
                         year: year,
+                        calendarMonths: months,
                         selectedMonthIndex: $selectedMonthIndex,
                         canSelectPreviousYear: canSelectPreviousYear,
                         canSelectNextYear: canSelectNextYear,
                         selectPreviousYear: selectPreviousYear,
                         selectNextYear: selectNextYear,
-                        showYearList: showYearList
+                        showYearPicker: showYearPicker,
+                        selectMonth: selectMonth,
+                        selectToday: selectToday,
+                        bottomStatusBarIsPresented: bottomStatusBarIsPresented
                     )
                 } else {
                     ContentUnavailableView {

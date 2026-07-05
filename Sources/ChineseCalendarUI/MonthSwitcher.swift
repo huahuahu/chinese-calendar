@@ -8,28 +8,12 @@ struct MonthSwitcher: View {
     let subtitle: String
     let months: [ChineseLunarMonth]
     let selectedMonth: ChineseLunarMonth
-    @Binding var selectedMonthIndex: Int?
-    let showYearList: (() -> Void)?
-
-    private var selectedIndex: Int? {
-        months.firstIndex { $0.lunarMonthIndex == selectedMonth.lunarMonthIndex }
-    }
-
-    private var canSelectPreviousMonth: Bool {
-        guard let selectedIndex else {
-            return false
-        }
-
-        return selectedIndex > months.startIndex
-    }
-
-    private var canSelectNextMonth: Bool {
-        guard let selectedIndex else {
-            return false
-        }
-
-        return selectedIndex < months.index(before: months.endIndex)
-    }
+    let showYearPicker: (() -> Void)?
+    let canSelectPreviousMonth: Bool
+    let canSelectNextMonth: Bool
+    let selectPreviousMonth: () -> Void
+    let selectNextMonth: () -> Void
+    let selectMonth: (ChineseLunarMonth) -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -58,7 +42,7 @@ struct MonthSwitcher: View {
                 HStack(spacing: 8) {
                     ForEach(months, id: \.lunarMonthIndex) { month in
                         Button {
-                            selectedMonthIndex = month.lunarMonthIndex
+                            selectMonth(month)
                         } label: {
                             VStack(spacing: 4) {
                                 Text(LunarMonthDisplay.title(for: month))
@@ -82,13 +66,13 @@ struct MonthSwitcher: View {
 
     @ViewBuilder
     private var titleContent: some View {
-        if let showYearList {
-            Button(action: showYearList) {
+        if let showYearPicker {
+            Button(action: showYearPicker) {
                 monthTitleContent
             }
             .buttonStyle(.plain)
             .contentShape(Rectangle())
-            .accessibilityHint("打开农历年列表")
+            .accessibilityHint("打开年份选择器")
         } else {
             monthTitleContent
         }
@@ -106,19 +90,4 @@ struct MonthSwitcher: View {
         .accessibilityElement(children: .combine)
     }
 
-    private func selectPreviousMonth() {
-        guard let selectedIndex, selectedIndex > months.startIndex else {
-            return
-        }
-
-        selectedMonthIndex = months[months.index(before: selectedIndex)].lunarMonthIndex
-    }
-
-    private func selectNextMonth() {
-        guard let selectedIndex, selectedIndex < months.index(before: months.endIndex) else {
-            return
-        }
-
-        selectedMonthIndex = months[months.index(after: selectedIndex)].lunarMonthIndex
-    }
 }
