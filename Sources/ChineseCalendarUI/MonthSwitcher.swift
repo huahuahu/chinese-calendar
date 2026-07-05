@@ -15,6 +15,8 @@ struct MonthSwitcher: View {
     let selectNextMonth: () -> Void
     let selectMonth: (ChineseLunarMonth) -> Void
 
+    @State private var scrollPosition: Int?
+
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack(alignment: .center, spacing: 10) {
@@ -44,23 +46,25 @@ struct MonthSwitcher: View {
                         Button {
                             selectMonth(month)
                         } label: {
-                            VStack(spacing: 4) {
-                                Text(LunarMonthDisplay.title(for: month))
-                                Text("\(month.dayCount)天")
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-                            }
-                            .padding(.horizontal, 12)
-                            .padding(.vertical, 8)
-                            .frame(minWidth: 76)
+                            Text(LunarMonthDisplay.title(for: month))
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 8)
+                                .frame(minWidth: 76, minHeight: 44)
                         }
+                        .id(month.lunarMonthIndex)
                         .buttonStyle(.bordered)
                         .controlSize(.regular)
                         .tint(month.lunarMonthIndex == selectedMonth.lunarMonthIndex ? .accentColor : nil)
                     }
                 }
+                .scrollTargetLayout()
             }
             .scrollIndicators(.hidden)
+            .scrollPosition(id: $scrollPosition, anchor: .center)
+            .onAppear(perform: scrollToSelectedMonth)
+            .onChange(of: selectedMonth.lunarMonthIndex) {
+                scrollToSelectedMonth()
+            }
         }
     }
 
@@ -88,5 +92,9 @@ struct MonthSwitcher: View {
                 .foregroundStyle(.secondary)
         }
         .accessibilityElement(children: .combine)
+    }
+
+    private func scrollToSelectedMonth() {
+        scrollPosition = selectedMonth.lunarMonthIndex
     }
 }
