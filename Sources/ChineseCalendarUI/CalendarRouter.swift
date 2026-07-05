@@ -98,6 +98,10 @@ final class CalendarRouter {
             return nil
         }
 
+        if selectedRoute != nil, selectedYearNumber == nil {
+            return nil
+        }
+
         let defaultYearNumber = yearNumbers.first { $0 == preferredYearNumber } ?? yearNumbers.last
         guard let defaultYearNumber else {
             return nil

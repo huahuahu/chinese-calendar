@@ -35,6 +35,7 @@ public struct ChineseCalendarRootView: View {
                 CalendarStoreFailureView(message: message, retry: coordinator.prepareStore)
             }
         }
+        .background(.calendarSystemBackground)
         .task {
             await coordinator.prepareStoreIfNeeded()
         }
@@ -121,7 +122,7 @@ private struct FullStoreDownloadBanner: View {
         }
         .padding(.horizontal)
         .padding(.vertical, 10)
-        .background(.bar)
+        .background(.calendarSystemBackground)
     }
 }
 
@@ -146,6 +147,7 @@ private struct CalendarStoreProgressView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .padding()
+        .background(.calendarSystemBackground)
     }
 }
 
@@ -161,6 +163,7 @@ private struct CalendarStoreFailureView: View {
         } actions: {
             Button("重试", systemSymbol: .arrowClockwise, action: retry)
         }
+        .background(.calendarSystemBackground)
     }
 }
 

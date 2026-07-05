@@ -48,6 +48,7 @@ struct CalendarHomeTabView<BottomStatusBar: View>: View {
             }
             .tag(CalendarTab.settings)
         }
+        .background(.calendarSystemBackground)
     }
 
     private func destination(for route: CalendarRoute) -> some View {

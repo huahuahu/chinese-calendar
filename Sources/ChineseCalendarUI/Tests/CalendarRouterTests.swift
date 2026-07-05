@@ -164,6 +164,21 @@ import Testing
     #expect(router.selectedMonthIndex == nil)
 }
 
+@MainActor
+@Test func defaultSelectionDoesNotOverrideDynastyDeepLink() {
+    let router = CalendarRouter()
+
+    router.openColdLaunchDeepLink(.dynasty("ming"))
+    let selectedYear = router.selectDefaultYearIfNeeded(
+        availableYearNumbers: [2024, 2025, 2026],
+        preferredYearNumber: 2025
+    )
+
+    #expect(selectedYear == nil)
+    #expect(router.selectedTab == .history)
+    #expect(router.historyPath == [.dynasty("ming")])
+}
+
 @Test func parserSupportsYearURLs() throws {
     let url = try #require(URL(string: "chinesecalendar://year/2026?monthIndex=26001"))
 

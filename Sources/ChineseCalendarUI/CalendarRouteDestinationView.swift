@@ -66,5 +66,7 @@ struct CalendarRouteDestinationView: View {
                 }
             }
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(.calendarSystemBackground)
     }
 }
