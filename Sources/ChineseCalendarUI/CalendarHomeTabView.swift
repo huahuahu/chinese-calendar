@@ -13,11 +13,15 @@ struct CalendarHomeTabView<BottomStatusBar: View>: View {
     let bottomStatusBar: () -> BottomStatusBar
 
     var body: some View {
+        let yearsRoute = router.currentRoute(on: .years)
+        let yearNumbers = years.map(\.lunarYearNumber)
+
         TabView(selection: $router.selectedTab) {
             NavigationStack {
                 calendarDestination(
-                    for: router.currentRoute(on: .years),
-                    year: selectedYear
+                    for: yearsRoute,
+                    year: year(for: yearsRoute),
+                    yearNumbers: yearNumbers
                 )
             }
             .safeAreaInset(edge: .bottom, spacing: 0, content: bottomStatusBar)
@@ -28,7 +32,9 @@ struct CalendarHomeTabView<BottomStatusBar: View>: View {
 
             NavigationStack(path: $router.historyPath) {
                 CalendarHistoryHomeView()
-                    .navigationDestination(for: CalendarRoute.self, destination: destination)
+                    .navigationDestination(for: CalendarRoute.self) { route in
+                        calendarDestination(for: route, year: year(for: route), yearNumbers: yearNumbers)
+                    }
             }
             .safeAreaInset(edge: .bottom, spacing: 0, content: bottomStatusBar)
             .tabItem {
@@ -56,11 +62,11 @@ struct CalendarHomeTabView<BottomStatusBar: View>: View {
         .background(.calendarSystemBackground)
     }
 
-    private func destination(for route: CalendarRoute) -> some View {
-        calendarDestination(for: route, year: year(for: route))
-    }
-
-    private func calendarDestination(for route: CalendarRoute?, year: ChineseLunarYear?) -> some View {
+    private func calendarDestination(
+        for route: CalendarRoute?,
+        year: ChineseLunarYear?,
+        yearNumbers: [Int]
+    ) -> some View {
         CalendarRouteDestinationView(
             route: route,
             year: year,
@@ -86,19 +92,11 @@ struct CalendarHomeTabView<BottomStatusBar: View>: View {
         )
     }
 
-    private var yearNumbers: [Int] {
-        years.map(\.lunarYearNumber)
-    }
-
     private func year(for route: CalendarRoute?) -> ChineseLunarYear? {
         guard let yearNumber = route?.lunarYearNumber else {
             return nil
         }
 
         return years.first { $0.lunarYearNumber == yearNumber }
-    }
-
-    private var selectedYear: ChineseLunarYear? {
-        year(for: router.currentRoute(on: .years))
     }
 }

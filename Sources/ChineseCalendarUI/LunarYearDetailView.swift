@@ -88,6 +88,8 @@ struct LunarYearDetailView: View {
     }
 
     var body: some View {
+        let adjacentMonths = adjacentCalendarMonths
+
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
                 if monthsInYearStartOrder.isEmpty {
@@ -101,13 +103,12 @@ struct LunarYearDetailView: View {
                         month: selectedMonth,
                         selectedDayIndex: $selectedDayIndex,
                         showYearPicker: showYearPicker,
-                        canSelectPreviousMonth: canSelectPreviousMonth,
-                        canSelectNextMonth: canSelectNextMonth,
-                        selectPreviousMonth: selectPreviousMonth,
-                        selectNextMonth: selectNextMonth,
+                        canSelectPreviousMonth: canSelect(adjacentMonths.previous),
+                        canSelectNextMonth: canSelect(adjacentMonths.next),
+                        selectPreviousMonth: { selectMonthInCalendar(adjacentMonths.previous) },
+                        selectNextMonth: { selectMonthInCalendar(adjacentMonths.next) },
                         selectMonth: selectMonthInCalendar
                     )
-                    .id(selectedMonth.lunarMonthIndex)
                 }
             }
             .padding()
@@ -208,40 +209,33 @@ struct LunarYearDetailView: View {
         calendarMonths
     }
 
-    private var selectedMonthInCalendarIndex: [ChineseLunarMonth].Index? {
+    private var adjacentCalendarMonths: (previous: ChineseLunarMonth?, next: ChineseLunarMonth?) {
         guard let selectedMonth else {
-            return nil
+            return (nil, nil)
         }
 
-        return calendarMonthsInOrder.firstIndex { $0.lunarMonthIndex == selectedMonth.lunarMonthIndex }
-    }
-
-    private var previousCalendarMonth: ChineseLunarMonth? {
-        guard let selectedMonthInCalendarIndex,
-              selectedMonthInCalendarIndex > calendarMonthsInOrder.startIndex
+        guard let selectedMonthInCalendarIndex = calendarMonthsInOrder.firstIndex(where: {
+            $0.lunarMonthIndex == selectedMonth.lunarMonthIndex
+        })
         else {
-            return nil
+            return (nil, nil)
         }
 
-        return calendarMonthsInOrder[calendarMonthsInOrder.index(before: selectedMonthInCalendarIndex)]
-    }
-
-    private var nextCalendarMonth: ChineseLunarMonth? {
-        guard let selectedMonthInCalendarIndex,
-              selectedMonthInCalendarIndex < calendarMonthsInOrder.index(before: calendarMonthsInOrder.endIndex)
-        else {
-            return nil
+        let previousMonth: ChineseLunarMonth?
+        if selectedMonthInCalendarIndex > calendarMonthsInOrder.startIndex {
+            previousMonth = calendarMonthsInOrder[calendarMonthsInOrder.index(before: selectedMonthInCalendarIndex)]
+        } else {
+            previousMonth = nil
         }
 
-        return calendarMonthsInOrder[calendarMonthsInOrder.index(after: selectedMonthInCalendarIndex)]
-    }
+        let nextMonth: ChineseLunarMonth?
+        if selectedMonthInCalendarIndex < calendarMonthsInOrder.index(before: calendarMonthsInOrder.endIndex) {
+            nextMonth = calendarMonthsInOrder[calendarMonthsInOrder.index(after: selectedMonthInCalendarIndex)]
+        } else {
+            nextMonth = nil
+        }
 
-    private var canSelectPreviousMonth: Bool {
-        canSelect(previousCalendarMonth)
-    }
-
-    private var canSelectNextMonth: Bool {
-        canSelect(nextCalendarMonth)
+        return (previousMonth, nextMonth)
     }
 
     private func canSelect(_ month: ChineseLunarMonth?) -> Bool {
@@ -252,31 +246,27 @@ struct LunarYearDetailView: View {
         return month.lunarYearNumber == year.lunarYearNumber || selectMonth != nil
     }
 
-    private func selectPreviousMonth() {
-        guard let previousCalendarMonth else {
-            return
-        }
-
-        selectMonthInCalendar(previousCalendarMonth)
-    }
-
-    private func selectNextMonth() {
-        guard let nextCalendarMonth else {
-            return
-        }
-
-        selectMonthInCalendar(nextCalendarMonth)
-    }
-
     private func selectMonthInCalendar(_ month: ChineseLunarMonth) {
         if month.lunarYearNumber == year.lunarYearNumber {
-            if selectedMonthIndex != month.lunarMonthIndex {
+            guard selectedMonthIndex != month.lunarMonthIndex else {
+                return
+            }
+
+            selectedMonthIndex = month.lunarMonthIndex
+            if selectedDayIndex != nil {
                 selectedDayIndex = nil
             }
-            selectedMonthIndex = month.lunarMonthIndex
         } else {
             selectMonth?(month)
         }
+    }
+
+    private func selectMonthInCalendar(_ month: ChineseLunarMonth?) {
+        guard let month else {
+            return
+        }
+
+        selectMonthInCalendar(month)
     }
 
     private func selectTodayFromToolbar() {

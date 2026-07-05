@@ -9,6 +9,9 @@ struct CalendarHomeSplitView: View {
     let emptyStateDescription: String
 
     var body: some View {
+        let yearsRoute = router.currentRoute(on: .years)
+        let yearNumbers = years.map(\.lunarYearNumber)
+
         NavigationSplitView {
             List(selection: selection) {
                 Section("农历年") {
@@ -21,8 +24,8 @@ struct CalendarHomeSplitView: View {
             .navigationTitle("年份")
         } detail: {
             CalendarRouteDestinationView(
-                route: router.currentRoute(on: .years),
-                year: selectedYear,
+                route: yearsRoute,
+                year: year(for: yearsRoute),
                 months: months,
                 selectedMonthIndex: $router.selectedMonthIndex,
                 selectedDayIndex: $router.selectedDayIndex,
@@ -54,15 +57,11 @@ struct CalendarHomeSplitView: View {
         }
     }
 
-    private var yearNumbers: [Int] {
-        years.map(\.lunarYearNumber)
-    }
-
-    private var selectedYear: ChineseLunarYear? {
-        guard let selectedYearNumber = router.selectedYearNumber else {
+    private func year(for route: CalendarRoute?) -> ChineseLunarYear? {
+        guard let yearNumber = route?.lunarYearNumber else {
             return nil
         }
 
-        return years.first { $0.lunarYearNumber == selectedYearNumber }
+        return years.first { $0.lunarYearNumber == yearNumber }
     }
 }
