@@ -58,6 +58,8 @@ struct CalendarRouteDestinationView: View {
                 }
             case let .dynasty(dynastyID):
                 DynastyDetailView(dynastyID: dynastyID)
+            case let .emperor(emperorID):
+                EmperorDetailView(emperorID: emperorID)
             case nil:
                 ContentUnavailableView {
                     Label("Chinese Calendar", systemSymbol: .calendar)

@@ -47,7 +47,10 @@ struct DynastyDetailView: View {
                                 .bold()
 
                             ForEach(emperors, id: \.id) { emperor in
-                                EmperorSummaryRow(emperor: emperor)
+                                NavigationLink(value: CalendarRoute.emperor(emperor.id)) {
+                                    EmperorSummaryRow(emperor: emperor)
+                                }
+                                .buttonStyle(.plain)
                             }
                         }
                     }
