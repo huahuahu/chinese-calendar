@@ -1,17 +1,27 @@
 import ChineseCalendarPersistence
+import SFSafeSymbols
 import SwiftUI
 
 struct EmperorSummaryRow: View {
     let emperor: Emperor
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text(emperor.displayName)
-                .font(.headline)
+        HStack(spacing: 12) {
+            VStack(alignment: .leading, spacing: 4) {
+                Text(emperor.displayName)
+                    .font(.headline)
 
-            Text(subtitle)
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
+                Text(subtitle)
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+            }
+
+            Spacer(minLength: 12)
+
+            Image(systemSymbol: .chevronRight)
+                .font(.footnote)
+                .foregroundStyle(.tertiary)
+                .accessibilityHidden(true)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding()
