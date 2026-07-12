@@ -4,11 +4,17 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DEFAULT_WORKSPACE_PATH="$(cd "$SCRIPT_DIR/.." && pwd)"
-TRIGGER="${COPILOT_SCRIPT_TRIGGER:-manual}"
-WORKSPACE_PATH_INPUT="${COPILOT_WORKSPACE_PATH:-$DEFAULT_WORKSPACE_PATH}"
+
+if [[ -n "${CODEX_WORKTREE_PATH:-}" ]]; then
+    SETUP_CONTEXT="codex-worktree"
+    WORKSPACE_PATH_INPUT="$CODEX_WORKTREE_PATH"
+else
+    SETUP_CONTEXT="${COPILOT_SCRIPT_TRIGGER:-manual}"
+    WORKSPACE_PATH_INPUT="${COPILOT_WORKSPACE_PATH:-$DEFAULT_WORKSPACE_PATH}"
+fi
 
 if ! WORKSPACE_PATH="$(cd "$WORKSPACE_PATH_INPUT" 2>/dev/null && pwd -P)"; then
-    echo "error: COPILOT_WORKSPACE_PATH does not exist: $WORKSPACE_PATH_INPUT" >&2
+    echo "error: workspace path does not exist: $WORKSPACE_PATH_INPUT" >&2
     exit 2
 fi
 
@@ -21,13 +27,14 @@ exec > >(tee -a "$LOG_FILE") 2>&1
 echo
 date
 echo "Writing setup log to $LOG_FILE"
-echo "COPILOT_SCRIPT_TRIGGER=${TRIGGER}"
+echo "Setup context: $SETUP_CONTEXT"
+echo "Workspace path: $WORKSPACE_PATH"
 
-case "$TRIGGER" in
-    session.create | manual)
+case "$SETUP_CONTEXT" in
+    codex-worktree | session.create | manual)
         ;;
     *)
-        echo "Skipping setup for COPILOT_SCRIPT_TRIGGER=${TRIGGER}"
+        echo "Skipping setup for context: $SETUP_CONTEXT"
         exit 0
         ;;
 esac
@@ -35,23 +42,28 @@ esac
 cd "$WORKSPACE_PATH"
 
 if ! command -v xcodegen >/dev/null 2>&1; then
-    echo "xcodegen is required. Install it with: brew install xcodegen"
-    exit 1
+    echo "error: xcodegen is required. Install it with: brew install xcodegen" >&2
+    exit 127
 fi
 
 if ! command -v xcode-build-server >/dev/null 2>&1; then
-    echo "xcode-build-server is required. Install it with: brew install xcode-build-server"
-    exit 1
+    echo "error: xcode-build-server is required. Install it with: brew install xcode-build-server" >&2
+    exit 127
 fi
 
 echo "Generating ChineseCalendar.xcodeproj with XcodeGen..."
 xcodegen generate
 
+if [[ ! -d "$WORKSPACE_PATH/ChineseCalendar.xcodeproj" ]]; then
+    echo "error: XcodeGen did not generate ChineseCalendar.xcodeproj" >&2
+    exit 1
+fi
+
 echo "Generating buildServer.json with xcode-build-server..."
 ./Scripts/generate_buildserver_config.sh
 
 if [[ ! -f "$WORKSPACE_PATH/buildServer.json" ]]; then
-    echo "xcode-build-server did not generate buildServer.json" >&2
+    echo "error: xcode-build-server did not generate buildServer.json" >&2
     exit 1
 fi
 
@@ -59,3 +71,5 @@ echo "Generated buildServer.json at $WORKSPACE_PATH/buildServer.json"
 
 echo "Generating build index for VS Code navigation..."
 ./Scripts/generate_build_index.sh
+
+echo "Worktree setup completed successfully."
