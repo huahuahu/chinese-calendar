@@ -12,4 +12,4 @@
 --guardelse auto
 --header ignore
 --commas inline
---exclude .build,Packages,Data
+--exclude .build,Packages,Data,plugins

@@ -58,7 +58,7 @@ import Testing
     let router = CalendarRouter(
         selectedRoute: .lunarYear(2024),
         selectedMonthIndex: 24001,
-        selectedDayIndex: 2400101
+        selectedDayIndex: 2_400_101
     )
 
     router.selectYear(2025)
@@ -70,7 +70,7 @@ import Testing
 
 @MainActor
 @Test func selectingMonthUpdatesYearAndMonthTogether() {
-    let router = CalendarRouter(selectedRoute: .lunarYear(2024), selectedDayIndex: 2400101)
+    let router = CalendarRouter(selectedRoute: .lunarYear(2024), selectedDayIndex: 2_400_101)
 
     router.selectMonth(lunarYearNumber: 2025, monthIndex: 25006)
 
@@ -84,17 +84,17 @@ import Testing
     let router = CalendarRouter(
         selectedRoute: .lunarYear(2024),
         selectedMonthIndex: 24001,
-        selectedDayIndex: 2400101
+        selectedDayIndex: 2_400_101
     )
 
     router.selectToday(
-        CalendarTodaySelection(lunarYearNumber: 2026, lunarMonthIndex: 26005, dayIndex: 2600512),
+        CalendarTodaySelection(lunarYearNumber: 2026, lunarMonthIndex: 26005, dayIndex: 2_600_512),
         preferredYearNumber: 2025
     )
 
     #expect(router.currentRoute(on: .years) == .lunarYear(2026))
     #expect(router.selectedMonthIndex == 26005)
-    #expect(router.selectedDayIndex == 2600512)
+    #expect(router.selectedDayIndex == 2_600_512)
 }
 
 @MainActor
@@ -102,17 +102,17 @@ import Testing
     let router = CalendarRouter(
         selectedRoute: .lunarYear(2026),
         selectedMonthIndex: 26005,
-        selectedDayIndex: 2600501
+        selectedDayIndex: 2_600_501
     )
 
     router.selectToday(
-        CalendarTodaySelection(lunarYearNumber: 2026, lunarMonthIndex: 26005, dayIndex: 2600512),
+        CalendarTodaySelection(lunarYearNumber: 2026, lunarMonthIndex: 26005, dayIndex: 2_600_512),
         preferredYearNumber: 2026
     )
 
     #expect(router.currentRoute(on: .years) == .lunarYear(2026))
     #expect(router.selectedMonthIndex == 26005)
-    #expect(router.selectedDayIndex == 2600512)
+    #expect(router.selectedDayIndex == 2_600_512)
 }
 
 @MainActor
@@ -120,7 +120,7 @@ import Testing
     let router = CalendarRouter(
         selectedRoute: .lunarYear(2024),
         selectedMonthIndex: 24001,
-        selectedDayIndex: 2400101
+        selectedDayIndex: 2_400_101
     )
 
     router.selectToday(nil, preferredYearNumber: 2026)
