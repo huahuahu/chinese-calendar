@@ -1,0 +1,6 @@
+[marketplaces.chinese-date-local]
+source_type = "local"
+source = ".."
+
+[plugins."build-ios-apps@chinese-date-local"]
+enabled = true
