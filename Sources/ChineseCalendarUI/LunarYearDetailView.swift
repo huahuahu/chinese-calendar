@@ -290,8 +290,10 @@ struct LunarYearDetailView: View {
             0
         #endif
     }
+}
 
-    private static func gregorianDateComponents(for date: Date) -> DateComponents {
+private extension LunarYearDetailView {
+    static func gregorianDateComponents(for date: Date) -> DateComponents {
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = .autoupdatingCurrent
         return calendar.dateComponents([.year, .month, .day], from: date)

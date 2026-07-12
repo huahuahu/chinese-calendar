@@ -17,6 +17,7 @@ final class CalendarRouter {
             clearSelectedDayIfSelectedMonthChanged(from: oldValue, to: selectedMonthIndex)
         }
     }
+
     var selectedDayIndex: Int?
     var isYearPickerPresented = false
     var sheet: CalendarPresentationNode?
@@ -289,6 +290,7 @@ final class CalendarPresentationNode: Identifiable {
             clearSelectedDayIfSelectedMonthChanged(from: oldValue, to: selectedMonthIndex)
         }
     }
+
     var selectedDayIndex: Int?
     var sheet: CalendarPresentationNode?
     var fullScreen: CalendarPresentationNode?
