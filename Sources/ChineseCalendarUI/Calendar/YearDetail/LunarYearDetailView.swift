@@ -222,18 +222,17 @@ struct LunarYearDetailView: View {
             return (nil, nil)
         }
 
-        let previousMonth: ChineseLunarMonth?
-        if selectedMonthInCalendarIndex > calendarMonthsInOrder.startIndex {
-            previousMonth = calendarMonthsInOrder[calendarMonthsInOrder.index(before: selectedMonthInCalendarIndex)]
+        let previousMonth: ChineseLunarMonth? = if selectedMonthInCalendarIndex > calendarMonthsInOrder.startIndex {
+            calendarMonthsInOrder[calendarMonthsInOrder.index(before: selectedMonthInCalendarIndex)]
         } else {
-            previousMonth = nil
+            nil
         }
 
-        let nextMonth: ChineseLunarMonth?
-        if selectedMonthInCalendarIndex < calendarMonthsInOrder.index(before: calendarMonthsInOrder.endIndex) {
-            nextMonth = calendarMonthsInOrder[calendarMonthsInOrder.index(after: selectedMonthInCalendarIndex)]
+        let lastCalendarMonthIndex = calendarMonthsInOrder.index(before: calendarMonthsInOrder.endIndex)
+        let nextMonth: ChineseLunarMonth? = if selectedMonthInCalendarIndex < lastCalendarMonthIndex {
+            calendarMonthsInOrder[calendarMonthsInOrder.index(after: selectedMonthInCalendarIndex)]
         } else {
-            nextMonth = nil
+            nil
         }
 
         return (previousMonth, nextMonth)

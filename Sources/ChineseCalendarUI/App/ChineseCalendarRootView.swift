@@ -3,8 +3,8 @@ import SFSafeSymbols
 import SwiftData
 import SwiftUI
 
-@MainActor
 /// 应用根视图，负责准备日历数据并进入主浏览界面。
+@MainActor
 public struct ChineseCalendarRootView: View {
     @Environment(\.openWindow) private var openWindow
     @State private var coordinator: ChineseCalendarStoreCoordinator
