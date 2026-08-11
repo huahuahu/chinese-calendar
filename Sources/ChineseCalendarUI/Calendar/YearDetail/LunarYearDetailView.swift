@@ -1,4 +1,5 @@
 import ChineseCalendarCore
+import ChineseCalendarLogging
 import ChineseCalendarPersistence
 import SFSafeSymbols
 import SwiftData
@@ -89,7 +90,8 @@ struct LunarYearDetailView: View {
     }
 
     var body: some View {
-        let adjacentMonths = adjacentCalendarMonths
+        let selectedMonth = selectedMonth
+        let adjacentMonths = adjacentCalendarMonths(to: selectedMonth)
 
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
@@ -210,14 +212,17 @@ struct LunarYearDetailView: View {
         calendarMonths
     }
 
-    private var adjacentCalendarMonths: (previous: ChineseLunarMonth?, next: ChineseLunarMonth?) {
+    private func adjacentCalendarMonths(
+        to selectedMonth: ChineseLunarMonth?
+    ) -> (previous: ChineseLunarMonth?, next: ChineseLunarMonth?) {
         guard let selectedMonth else {
             return (nil, nil)
         }
 
-        guard let selectedMonthInCalendarIndex = calendarMonthsInOrder.firstIndex(where: {
-            $0.lunarMonthIndex == selectedMonth.lunarMonthIndex
-        })
+        guard let selectedMonthInCalendarIndex = calendarMonthsInOrder.binarySearchIndex(
+            of: selectedMonth.lunarMonthIndex,
+            by: \.lunarMonthIndex
+        )
         else {
             return (nil, nil)
         }
@@ -252,11 +257,21 @@ struct LunarYearDetailView: View {
                 return
             }
 
+            ChineseCalendarPerformanceSignposts.shared.beginMonthSwitch(
+                from: selectedMonth?.lunarMonthIndex,
+                to: month.lunarMonthIndex,
+                crossesYear: false
+            )
             selectedMonthIndex = month.lunarMonthIndex
             if selectedDayIndex != nil {
                 selectedDayIndex = nil
             }
         } else {
+            ChineseCalendarPerformanceSignposts.shared.beginMonthSwitch(
+                from: selectedMonth?.lunarMonthIndex,
+                to: month.lunarMonthIndex,
+                crossesYear: true
+            )
             selectMonth?(month)
         }
     }

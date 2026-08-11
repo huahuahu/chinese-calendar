@@ -1,4 +1,5 @@
 import ChineseCalendarCore
+import ChineseCalendarLogging
 import ChineseCalendarPersistence
 import Foundation
 import SFSafeSymbols
@@ -57,10 +58,16 @@ struct LunarMonthGrid: View {
     }
 
     var body: some View {
+        let todayDay = days.first(where: isToday)
+        let defaultSelectedDay = todayDay ?? days.first
+        let selectedDay = selectedDay(defaultingTo: defaultSelectedDay)
+        let effectiveSelectedDayIndex = selectedDay?.dayIndex
+        let todayDayIndex = todayDay?.dayIndex
+
         VStack(alignment: .leading, spacing: 16) {
             MonthSwitcher(
                 title: monthNavigationTitle,
-                subtitle: monthNavigationSubtitle,
+                subtitle: monthNavigationSubtitle(defaultsToToday: todayDay != nil),
                 months: months,
                 selectedMonth: month,
                 showYearPicker: showYearPicker,
@@ -106,8 +113,8 @@ struct LunarMonthGrid: View {
                             } label: {
                                 LunarDayGridCell(
                                     day: day,
-                                    isSelected: day.dayIndex == selectedDay?.dayIndex,
-                                    isToday: isToday(day)
+                                    isSelected: day.dayIndex == effectiveSelectedDayIndex,
+                                    isToday: day.dayIndex == todayDayIndex
                                 )
                             }
                             .buttonStyle(.plain)
@@ -126,9 +133,9 @@ struct LunarMonthGrid: View {
                 }
             }
         }
-        .onAppear(perform: selectDefaultDayIfNeeded)
+        .onAppear(perform: finishPendingMonthSwitch)
         .onChange(of: days.map(\.dayIndex)) {
-            selectDefaultDayIfNeeded()
+            finishPendingMonthSwitch()
         }
     }
 
@@ -136,16 +143,12 @@ struct LunarMonthGrid: View {
         [GridItem(.adaptive(minimum: 58), spacing: 8)]
     }
 
-    private var selectedDay: ChineseLunarDay? {
+    private func selectedDay(defaultingTo defaultSelectedDay: ChineseLunarDay?) -> ChineseLunarDay? {
         if let selectedDayIndex {
             return days.first { $0.dayIndex == selectedDayIndex } ?? defaultSelectedDay
         }
 
         return defaultSelectedDay
-    }
-
-    private var defaultSelectedDay: ChineseLunarDay? {
-        days.first(where: isToday) ?? days.first
     }
 
     private var monthNavigationTitle: String {
@@ -156,9 +159,9 @@ struct LunarMonthGrid: View {
         return "\(yearTitle) \(LunarMonthDisplay.title(for: month))"
     }
 
-    private var monthNavigationSubtitle: String {
+    private func monthNavigationSubtitle(defaultsToToday: Bool) -> String {
         if let civilDateRangeTitle {
-            let selectionText = defaultSelectedDay.map(isToday) == true ? "今天优先选中" : "默认选中初一"
+            let selectionText = defaultsToToday ? "今天优先选中" : "默认选中初一"
             return "\(civilDateRangeTitle) · \(selectionText)"
         }
 
@@ -218,7 +221,21 @@ struct LunarMonthGrid: View {
             }
         }
 
-        selectedDayIndex = defaultSelectedDay?.dayIndex
+        selectedDayIndex = days.first(where: isToday)?.dayIndex ?? days.first?.dayIndex
+    }
+
+    private func finishPendingMonthSwitch() {
+        let performanceSignposts = ChineseCalendarPerformanceSignposts.shared
+        performanceSignposts.monthDaysAvailable(
+            monthIndex: month.lunarMonthIndex,
+            dayCount: days.count
+        )
+        selectDefaultDayIfNeeded()
+        performanceSignposts.endMonthSwitch(
+            monthIndex: month.lunarMonthIndex,
+            dayCount: days.count,
+            selectedDayIndex: selectedDayIndex
+        )
     }
 
     private func isToday(_ day: ChineseLunarDay) -> Bool {

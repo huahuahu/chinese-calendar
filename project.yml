@@ -144,6 +144,8 @@ schemes:
         ChineseCalendar-iOS: all
     run:
       config: Debug
+      environmentVariables:
+        CHINESE_CALENDAR_PERFORMANCE_SIGNPOSTS: "1"
 
   ChineseCalendar-macOS:
     build:
@@ -151,3 +153,5 @@ schemes:
         ChineseCalendar-macOS: all
     run:
       config: Debug
+      environmentVariables:
+        CHINESE_CALENDAR_PERFORMANCE_SIGNPOSTS: "1"
