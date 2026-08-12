@@ -10,7 +10,7 @@ struct LunarYearDetailView: View {
     let year: ChineseLunarYear
     let calendarMonths: [ChineseLunarMonth]
     @Binding var selectedMonthIndex: Int?
-    @Binding var selectedDayIndex: Int?
+    let daySelection: CalendarDaySelection
     let canSelectPreviousYear: Bool
     let canSelectNextYear: Bool
     let selectPreviousYear: () -> Void
@@ -28,7 +28,7 @@ struct LunarYearDetailView: View {
         year: ChineseLunarYear,
         calendarMonths: [ChineseLunarMonth] = [],
         selectedMonthIndex: Binding<Int?>,
-        selectedDayIndex: Binding<Int?>,
+        daySelection: CalendarDaySelection,
         canSelectPreviousYear: Bool,
         canSelectNextYear: Bool,
         selectPreviousYear: @escaping () -> Void,
@@ -42,7 +42,7 @@ struct LunarYearDetailView: View {
         self.year = year
         self.calendarMonths = calendarMonths
         _selectedMonthIndex = selectedMonthIndex
-        _selectedDayIndex = selectedDayIndex
+        self.daySelection = daySelection
         self.canSelectPreviousYear = canSelectPreviousYear
         self.canSelectNextYear = canSelectNextYear
         self.selectPreviousYear = selectPreviousYear
@@ -104,7 +104,8 @@ struct LunarYearDetailView: View {
                         year: year,
                         months: monthsInYearStartOrder,
                         month: selectedMonth,
-                        selectedDayIndex: $selectedDayIndex,
+                        daySelection: daySelection,
+                        todayDayIndex: todayCivilDates.first?.dayIndex,
                         showYearPicker: showYearPicker,
                         canSelectPreviousMonth: canSelect(adjacentMonths.previous),
                         canSelectNextMonth: canSelect(adjacentMonths.next),
@@ -263,9 +264,6 @@ struct LunarYearDetailView: View {
                 crossesYear: false
             )
             selectedMonthIndex = month.lunarMonthIndex
-            if selectedDayIndex != nil {
-                selectedDayIndex = nil
-            }
         } else {
             ChineseCalendarPerformanceSignposts.shared.beginMonthSwitch(
                 from: selectedMonth?.lunarMonthIndex,

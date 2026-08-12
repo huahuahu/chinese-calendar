@@ -116,6 +116,33 @@ import Testing
 }
 
 @MainActor
+@Test func routerAndDaySelectionShareTheSameSelectedDay() {
+    let router = CalendarRouter(selectedDayIndex: 2_600_501)
+
+    #expect(router.daySelection.dayIndex == 2_600_501)
+
+    router.daySelection.dayIndex = 2_600_512
+    #expect(router.selectedDayIndex == 2_600_512)
+
+    router.selectedDayIndex = 2_600_513
+    #expect(router.daySelection.dayIndex == 2_600_513)
+}
+
+@MainActor
+@Test func presentedNodeClearsItsDaySelectionWhenMonthChanges() {
+    let node = CalendarPresentationNode(
+        route: .lunarYear(2026),
+        selectedMonthIndex: 26_005,
+        selectedDayIndex: 2_600_501
+    )
+
+    node.selectedMonthIndex = 26_006
+
+    #expect(node.selectedDayIndex == nil)
+    #expect(node.daySelection.dayIndex == nil)
+}
+
+@MainActor
 @Test func todaySelectionFallsBackToPreferredYearWhenDailyDataIsMissing() {
     let router = CalendarRouter(
         selectedRoute: .lunarYear(2024),

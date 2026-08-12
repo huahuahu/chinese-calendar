@@ -18,7 +18,11 @@ final class CalendarRouter {
         }
     }
 
-    var selectedDayIndex: Int?
+    let daySelection: CalendarDaySelection
+    var selectedDayIndex: Int? {
+        get { daySelection.dayIndex }
+        set { daySelection.dayIndex = newValue }
+    }
     var isYearPickerPresented = false
     var sheet: CalendarPresentationNode?
     var fullScreen: CalendarPresentationNode?
@@ -55,7 +59,7 @@ final class CalendarRouter {
         self.yearsPath = yearsPath ?? selectedRoute.map { [$0] } ?? []
         self.historyPath = historyPath
         self.selectedMonthIndex = selectedMonthIndex
-        self.selectedDayIndex = selectedDayIndex
+        daySelection = CalendarDaySelection(dayIndex: selectedDayIndex)
     }
 
     func path(for tab: CalendarTab) -> [CalendarRoute] {
@@ -291,7 +295,11 @@ final class CalendarPresentationNode: Identifiable {
         }
     }
 
-    var selectedDayIndex: Int?
+    let daySelection: CalendarDaySelection
+    var selectedDayIndex: Int? {
+        get { daySelection.dayIndex }
+        set { daySelection.dayIndex = newValue }
+    }
     var sheet: CalendarPresentationNode?
     var fullScreen: CalendarPresentationNode?
 
@@ -304,7 +312,7 @@ final class CalendarPresentationNode: Identifiable {
         self.route = route
         self.path = path
         self.selectedMonthIndex = selectedMonthIndex
-        self.selectedDayIndex = selectedDayIndex
+        daySelection = CalendarDaySelection(dayIndex: selectedDayIndex)
     }
 
     func push(_ route: CalendarRoute) {
