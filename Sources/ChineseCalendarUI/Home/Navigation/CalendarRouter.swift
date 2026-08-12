@@ -23,6 +23,7 @@ final class CalendarRouter {
         get { daySelection.dayIndex }
         set { daySelection.dayIndex = newValue }
     }
+
     var isYearPickerPresented = false
     var sheet: CalendarPresentationNode?
     var fullScreen: CalendarPresentationNode?
@@ -300,6 +301,7 @@ final class CalendarPresentationNode: Identifiable {
         get { daySelection.dayIndex }
         set { daySelection.dayIndex = newValue }
     }
+
     var sheet: CalendarPresentationNode?
     var fullScreen: CalendarPresentationNode?
 

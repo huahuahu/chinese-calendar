@@ -54,11 +54,13 @@ public final class ChineseCalendarPerformanceSignposts {
             }
 
             let id = signposter.makeSignpostID()
-            let sourceMonthIndex = sourceMonthIndex ?? -1
+            let source = sourceMonthIndex ?? -1
+            let target = targetMonthIndex
+            let crosses = crossesYear
             let state = signposter.beginInterval(
                 "Month Switch",
                 id: id,
-                "sourceMonthIndex: \(sourceMonthIndex, privacy: .public), targetMonthIndex: \(targetMonthIndex, privacy: .public), crossesYear: \(crossesYear, privacy: .public)"
+                "f: \(source, privacy: .public), t: \(target, privacy: .public), x: \(crosses, privacy: .public)"
             )
             activeMonthSwitch = ActiveMonthSwitch(
                 targetMonthIndex: targetMonthIndex,
@@ -98,11 +100,13 @@ public final class ChineseCalendarPerformanceSignposts {
                 return
             }
 
-            let selectedDayIndex = selectedDayIndex ?? -1
+            let month = monthIndex
+            let dayTotal = dayCount
+            let selectedDay = selectedDayIndex ?? -1
             signposter.endInterval(
                 "Month Switch",
                 activeMonthSwitch.state,
-                "monthIndex: \(monthIndex, privacy: .public), dayCount: \(dayCount, privacy: .public), selectedDayIndex: \(selectedDayIndex, privacy: .public), result: ready"
+                "m: \(month, privacy: .public), d: \(dayTotal, privacy: .public), s: \(selectedDay, privacy: .public)"
             )
             self.activeMonthSwitch = nil
         #endif

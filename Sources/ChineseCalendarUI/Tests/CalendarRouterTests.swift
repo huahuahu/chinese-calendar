@@ -132,11 +132,11 @@ import Testing
 @Test func presentedNodeClearsItsDaySelectionWhenMonthChanges() {
     let node = CalendarPresentationNode(
         route: .lunarYear(2026),
-        selectedMonthIndex: 26_005,
+        selectedMonthIndex: 26005,
         selectedDayIndex: 2_600_501
     )
 
-    node.selectedMonthIndex = 26_006
+    node.selectedMonthIndex = 26006
 
     #expect(node.selectedDayIndex == nil)
     #expect(node.daySelection.dayIndex == nil)
