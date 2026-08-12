@@ -1,4 +1,5 @@
 import ChineseCalendarCore
+import ChineseCalendarLogging
 import ChineseCalendarPersistence
 import SFSafeSymbols
 import SwiftData
@@ -9,7 +10,7 @@ struct LunarYearDetailView: View {
     let year: ChineseLunarYear
     let calendarMonths: [ChineseLunarMonth]
     @Binding var selectedMonthIndex: Int?
-    @Binding var selectedDayIndex: Int?
+    let daySelection: CalendarDaySelection
     let canSelectPreviousYear: Bool
     let canSelectNextYear: Bool
     let selectPreviousYear: () -> Void
@@ -27,7 +28,7 @@ struct LunarYearDetailView: View {
         year: ChineseLunarYear,
         calendarMonths: [ChineseLunarMonth] = [],
         selectedMonthIndex: Binding<Int?>,
-        selectedDayIndex: Binding<Int?>,
+        daySelection: CalendarDaySelection,
         canSelectPreviousYear: Bool,
         canSelectNextYear: Bool,
         selectPreviousYear: @escaping () -> Void,
@@ -41,7 +42,7 @@ struct LunarYearDetailView: View {
         self.year = year
         self.calendarMonths = calendarMonths
         _selectedMonthIndex = selectedMonthIndex
-        _selectedDayIndex = selectedDayIndex
+        self.daySelection = daySelection
         self.canSelectPreviousYear = canSelectPreviousYear
         self.canSelectNextYear = canSelectNextYear
         self.selectPreviousYear = selectPreviousYear
@@ -89,7 +90,8 @@ struct LunarYearDetailView: View {
     }
 
     var body: some View {
-        let adjacentMonths = adjacentCalendarMonths
+        let selectedMonth = selectedMonth
+        let adjacentMonths = adjacentCalendarMonths(to: selectedMonth)
 
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
@@ -102,7 +104,8 @@ struct LunarYearDetailView: View {
                         year: year,
                         months: monthsInYearStartOrder,
                         month: selectedMonth,
-                        selectedDayIndex: $selectedDayIndex,
+                        daySelection: daySelection,
+                        todayDayIndex: todayCivilDates.first?.dayIndex,
                         showYearPicker: showYearPicker,
                         canSelectPreviousMonth: canSelect(adjacentMonths.previous),
                         canSelectNextMonth: canSelect(adjacentMonths.next),
@@ -210,14 +213,17 @@ struct LunarYearDetailView: View {
         calendarMonths
     }
 
-    private var adjacentCalendarMonths: (previous: ChineseLunarMonth?, next: ChineseLunarMonth?) {
+    private func adjacentCalendarMonths(
+        to selectedMonth: ChineseLunarMonth?
+    ) -> (previous: ChineseLunarMonth?, next: ChineseLunarMonth?) {
         guard let selectedMonth else {
             return (nil, nil)
         }
 
-        guard let selectedMonthInCalendarIndex = calendarMonthsInOrder.firstIndex(where: {
-            $0.lunarMonthIndex == selectedMonth.lunarMonthIndex
-        })
+        guard let selectedMonthInCalendarIndex = calendarMonthsInOrder.binarySearchIndex(
+            of: selectedMonth.lunarMonthIndex,
+            by: \.lunarMonthIndex
+        )
         else {
             return (nil, nil)
         }
@@ -252,11 +258,18 @@ struct LunarYearDetailView: View {
                 return
             }
 
+            ChineseCalendarPerformanceSignposts.shared.beginMonthSwitch(
+                from: selectedMonth?.lunarMonthIndex,
+                to: month.lunarMonthIndex,
+                crossesYear: false
+            )
             selectedMonthIndex = month.lunarMonthIndex
-            if selectedDayIndex != nil {
-                selectedDayIndex = nil
-            }
         } else {
+            ChineseCalendarPerformanceSignposts.shared.beginMonthSwitch(
+                from: selectedMonth?.lunarMonthIndex,
+                to: month.lunarMonthIndex,
+                crossesYear: true
+            )
             selectMonth?(month)
         }
     }

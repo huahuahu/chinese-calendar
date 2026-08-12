@@ -8,7 +8,7 @@ struct CalendarRouteDestinationView: View {
     let year: ChineseLunarYear?
     let months: [ChineseLunarMonth]
     @Binding var selectedMonthIndex: Int?
-    @Binding var selectedDayIndex: Int?
+    let daySelection: CalendarDaySelection
     let canSelectPreviousYear: Bool
     let canSelectNextYear: Bool
     let selectPreviousYear: () -> Void
@@ -24,7 +24,7 @@ struct CalendarRouteDestinationView: View {
         year: ChineseLunarYear?,
         months: [ChineseLunarMonth] = [],
         selectedMonthIndex: Binding<Int?>,
-        selectedDayIndex: Binding<Int?>,
+        daySelection: CalendarDaySelection,
         canSelectPreviousYear: Bool,
         canSelectNextYear: Bool,
         selectPreviousYear: @escaping () -> Void,
@@ -39,7 +39,7 @@ struct CalendarRouteDestinationView: View {
         self.year = year
         self.months = months
         _selectedMonthIndex = selectedMonthIndex
-        _selectedDayIndex = selectedDayIndex
+        self.daySelection = daySelection
         self.canSelectPreviousYear = canSelectPreviousYear
         self.canSelectNextYear = canSelectNextYear
         self.selectPreviousYear = selectPreviousYear
@@ -60,7 +60,7 @@ struct CalendarRouteDestinationView: View {
                         year: year,
                         calendarMonths: months,
                         selectedMonthIndex: $selectedMonthIndex,
-                        selectedDayIndex: $selectedDayIndex,
+                        daySelection: daySelection,
                         canSelectPreviousYear: canSelectPreviousYear,
                         canSelectNextYear: canSelectNextYear,
                         selectPreviousYear: selectPreviousYear,

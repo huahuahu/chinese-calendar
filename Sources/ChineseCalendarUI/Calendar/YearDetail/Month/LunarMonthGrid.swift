@@ -1,6 +1,6 @@
 import ChineseCalendarCore
+import ChineseCalendarLogging
 import ChineseCalendarPersistence
-import Foundation
 import SFSafeSymbols
 import SwiftData
 import SwiftUI
@@ -16,36 +16,36 @@ struct LunarMonthGrid: View {
     let selectPreviousMonth: () -> Void
     let selectNextMonth: () -> Void
     let selectMonth: (ChineseLunarMonth) -> Void
+    let todayDayIndex: Int?
 
     @Environment(\.calendarStoreContentLevel) private var storeContentLevel
-    @Binding var selectedDayIndex: Int?
+    @Bindable var daySelection: CalendarDaySelection
     @Query private var days: [ChineseLunarDay]
-    private let todayComponents: DateComponents
 
     init(
         year: ChineseLunarYear,
         months: [ChineseLunarMonth],
         month: ChineseLunarMonth,
-        selectedDayIndex: Binding<Int?>,
+        daySelection: CalendarDaySelection,
+        todayDayIndex: Int?,
         showYearPicker: (() -> Void)? = nil,
         canSelectPreviousMonth: Bool,
         canSelectNextMonth: Bool,
         selectPreviousMonth: @escaping () -> Void,
         selectNextMonth: @escaping () -> Void,
-        selectMonth: @escaping (ChineseLunarMonth) -> Void,
-        today: Date = .now
+        selectMonth: @escaping (ChineseLunarMonth) -> Void
     ) {
         self.year = year
         self.months = months
         self.month = month
-        _selectedDayIndex = selectedDayIndex
+        self.daySelection = daySelection
+        self.todayDayIndex = todayDayIndex
         self.showYearPicker = showYearPicker
         self.canSelectPreviousMonth = canSelectPreviousMonth
         self.canSelectNextMonth = canSelectNextMonth
         self.selectPreviousMonth = selectPreviousMonth
         self.selectNextMonth = selectNextMonth
         self.selectMonth = selectMonth
-        todayComponents = Self.gregorianDateComponents(for: today)
 
         let lunarMonthIndex = month.lunarMonthIndex
         _days = Query(
@@ -57,10 +57,22 @@ struct LunarMonthGrid: View {
     }
 
     var body: some View {
+        let selectedDayIndex = daySelection.dayIndex
+        let todayDay = todayDayIndex.flatMap { todayDayIndex in
+            days.first { $0.dayIndex == todayDayIndex }
+        }
+        let defaultSelectedDay = todayDay ?? days.first
+        let selectedDay = selectedDay(
+            at: selectedDayIndex,
+            defaultingTo: defaultSelectedDay
+        )
+        let effectiveSelectedDayIndex = selectedDay?.dayIndex
+        let todayDayIndex = todayDay?.dayIndex
+
         VStack(alignment: .leading, spacing: 16) {
             MonthSwitcher(
                 title: monthNavigationTitle,
-                subtitle: monthNavigationSubtitle,
+                subtitle: monthNavigationSubtitle(defaultsToToday: todayDay != nil),
                 months: months,
                 selectedMonth: month,
                 showYearPicker: showYearPicker,
@@ -102,12 +114,12 @@ struct LunarMonthGrid: View {
                     LazyVGrid(columns: gridColumns, alignment: .leading, spacing: 8) {
                         ForEach(days, id: \.dayIndex) { day in
                             Button {
-                                selectedDayIndex = day.dayIndex
+                                daySelection.dayIndex = day.dayIndex
                             } label: {
                                 LunarDayGridCell(
                                     day: day,
-                                    isSelected: day.dayIndex == selectedDay?.dayIndex,
-                                    isToday: isToday(day)
+                                    isSelected: day.dayIndex == effectiveSelectedDayIndex,
+                                    isToday: day.dayIndex == todayDayIndex
                                 )
                             }
                             .buttonStyle(.plain)
@@ -126,9 +138,9 @@ struct LunarMonthGrid: View {
                 }
             }
         }
-        .onAppear(perform: selectDefaultDayIfNeeded)
+        .onAppear(perform: finishPendingMonthSwitch)
         .onChange(of: days.map(\.dayIndex)) {
-            selectDefaultDayIfNeeded()
+            finishPendingMonthSwitch()
         }
     }
 
@@ -136,16 +148,15 @@ struct LunarMonthGrid: View {
         [GridItem(.adaptive(minimum: 58), spacing: 8)]
     }
 
-    private var selectedDay: ChineseLunarDay? {
+    private func selectedDay(
+        at selectedDayIndex: Int?,
+        defaultingTo defaultSelectedDay: ChineseLunarDay?
+    ) -> ChineseLunarDay? {
         if let selectedDayIndex {
             return days.first { $0.dayIndex == selectedDayIndex } ?? defaultSelectedDay
         }
 
         return defaultSelectedDay
-    }
-
-    private var defaultSelectedDay: ChineseLunarDay? {
-        days.first(where: isToday) ?? days.first
     }
 
     private var monthNavigationTitle: String {
@@ -156,9 +167,9 @@ struct LunarMonthGrid: View {
         return "\(yearTitle) \(LunarMonthDisplay.title(for: month))"
     }
 
-    private var monthNavigationSubtitle: String {
+    private func monthNavigationSubtitle(defaultsToToday: Bool) -> String {
         if let civilDateRangeTitle {
-            let selectionText = defaultSelectedDay.map(isToday) == true ? "今天优先选中" : "默认选中初一"
+            let selectionText = defaultsToToday ? "今天优先选中" : "默认选中初一"
             return "\(civilDateRangeTitle) · \(selectionText)"
         }
 
@@ -208,39 +219,38 @@ struct LunarMonthGrid: View {
 
     private func selectDefaultDayIfNeeded() {
         guard !days.isEmpty else {
-            selectedDayIndex = nil
+            daySelection.dayIndex = nil
             return
         }
 
-        if let selectedDayIndex {
+        if let selectedDayIndex = daySelection.dayIndex {
             guard !days.contains(where: { $0.dayIndex == selectedDayIndex }) else {
                 return
             }
         }
 
-        selectedDayIndex = defaultSelectedDay?.dayIndex
+        let todayDayIndex = todayDayIndex.flatMap { todayDayIndex in
+            days.contains(where: { $0.dayIndex == todayDayIndex }) ? todayDayIndex : nil
+        }
+        daySelection.dayIndex = todayDayIndex ?? days.first?.dayIndex
     }
 
-    private func isToday(_ day: ChineseLunarDay) -> Bool {
-        guard let civilDate = day.calendarDay?.civilDate,
-              civilDate.calendarStyle == .gregorian
-        else {
-            return false
-        }
-
-        return civilDate.year == todayComponents.year
-            && civilDate.month == todayComponents.month
-            && civilDate.dayOfMonth == todayComponents.day
+    private func finishPendingMonthSwitch() {
+        let performanceSignposts = ChineseCalendarPerformanceSignposts.shared
+        performanceSignposts.monthDaysAvailable(
+            monthIndex: month.lunarMonthIndex,
+            dayCount: days.count
+        )
+        selectDefaultDayIfNeeded()
+        performanceSignposts.endMonthSwitch(
+            monthIndex: month.lunarMonthIndex,
+            dayCount: days.count,
+            selectedDayIndex: daySelection.dayIndex
+        )
     }
 
     private func fullCivilDateTitle(for civilDate: CivilDate) -> String {
         let prefix = civilDate.calendarStyle == .julian ? "儒略" : "公历"
         return "\(prefix) \(civilDate.year)年\(civilDate.month)月\(civilDate.dayOfMonth)日"
-    }
-
-    private static func gregorianDateComponents(for date: Date) -> DateComponents {
-        var calendar = Calendar(identifier: .gregorian)
-        calendar.timeZone = .autoupdatingCurrent
-        return calendar.dateComponents([.year, .month, .day], from: date)
     }
 }
