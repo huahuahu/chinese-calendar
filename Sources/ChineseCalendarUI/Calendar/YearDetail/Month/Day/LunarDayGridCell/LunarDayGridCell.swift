@@ -74,7 +74,8 @@ struct LunarDayGridCell: View {
     }
 
     private var accessibilityLabel: String {
-        [dayTitle, isToday ? "今天" : nil, daySubtitle, civilDateTitle]
+        let components: [String?] = [dayTitle, isToday ? "今天" : nil, daySubtitle, civilDateTitle]
+        return components
             .compactMap(\.self)
             .joined(separator: "，")
     }
