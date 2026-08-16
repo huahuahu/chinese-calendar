@@ -2,11 +2,13 @@ import ChineseCalendarPersistence
 import SFSafeSymbols
 import SwiftUI
 
+#if os(iOS)
 /// 供 iOS 的 CalendarHomeView 使用，以标签页组织日历、历史和设置界面。
 struct CalendarHomeTabView<BottomStatusBar: View>: View {
     @Bindable var coordinator: CalendarHomeCoordinator
     let emptyStateDescription: String
     let settingsCoordinator: ChineseCalendarStoreCoordinator?
+    let bottomStatusBarIsPresented: Bool
     let bottomStatusBar: () -> BottomStatusBar
 
     var body: some View {
@@ -17,7 +19,6 @@ struct CalendarHomeTabView<BottomStatusBar: View>: View {
                 calendarDestination(for: router.yearsRootDestination)
                     .calendarDestinations(emptyStateDescription: emptyStateDescription)
             }
-            .safeAreaInset(edge: .bottom, spacing: 0, content: bottomStatusBar)
             .tabItem {
                 Label(CalendarTab.years.title, systemSymbol: CalendarTab.years.systemSymbol)
             }
@@ -27,7 +28,6 @@ struct CalendarHomeTabView<BottomStatusBar: View>: View {
                 CalendarHistoryHomeView()
                     .calendarDestinations(emptyStateDescription: emptyStateDescription)
             }
-            .safeAreaInset(edge: .bottom, spacing: 0, content: bottomStatusBar)
             .tabItem {
                 Label(CalendarTab.history.title, systemSymbol: CalendarTab.history.systemSymbol)
             }
@@ -44,12 +44,13 @@ struct CalendarHomeTabView<BottomStatusBar: View>: View {
                     }
                 }
             }
-            .safeAreaInset(edge: .bottom, spacing: 0, content: bottomStatusBar)
             .tabItem {
                 Label(CalendarTab.settings.title, systemSymbol: CalendarTab.settings.systemSymbol)
             }
             .tag(CalendarTab.settings)
         }
+        .calendarTabViewBottomAccessory(isEnabled: bottomStatusBarIsPresented, content: bottomStatusBar)
+        .tabBarMinimizeBehavior(.onScrollDown)
         .background(.calendarSystemBackground)
     }
 
@@ -60,3 +61,4 @@ struct CalendarHomeTabView<BottomStatusBar: View>: View {
         )
     }
 }
+#endif
