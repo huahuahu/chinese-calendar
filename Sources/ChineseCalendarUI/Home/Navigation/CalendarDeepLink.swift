@@ -1,31 +1,5 @@
 import Foundation
 
-enum CalendarRoute: Hashable, Identifiable {
-    case lunarYear(Int)
-    case dynasty(String)
-    case emperor(String)
-
-    var id: String {
-        switch self {
-        case let .lunarYear(yearNumber):
-            "lunar-year-\(yearNumber)"
-        case let .dynasty(dynastyID):
-            "dynasty-\(dynastyID)"
-        case let .emperor(emperorID):
-            "emperor-\(emperorID)"
-        }
-    }
-
-    var lunarYearNumber: Int? {
-        switch self {
-        case let .lunarYear(yearNumber):
-            yearNumber
-        case .dynasty, .emperor:
-            nil
-        }
-    }
-}
-
 enum CalendarDeepLink: Equatable {
     case lunarYear(Int, monthIndex: Int? = nil)
     case dynasty(String)
@@ -41,7 +15,7 @@ enum CalendarDeepLinkParser {
         let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
         let queryItems = components?.queryItems ?? []
         let monthIndex = queryItems.intValue(for: "monthIndex") ?? queryItems.intValue(for: "month")
-        let parts = url.routeParts
+        let parts = url.destinationParts
 
         guard let firstPart = parts.first else {
             return nil
@@ -90,7 +64,7 @@ enum CalendarDeepLinkParser {
 }
 
 private extension URL {
-    var routeParts: [String] {
+    var destinationParts: [String] {
         var parts: [String] = []
 
         if let host, !host.isEmpty {

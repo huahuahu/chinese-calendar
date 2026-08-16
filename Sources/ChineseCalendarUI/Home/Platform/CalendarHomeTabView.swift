@@ -1,25 +1,21 @@
-import ChineseCalendarCore
 import ChineseCalendarPersistence
 import SFSafeSymbols
 import SwiftUI
 
 /// 供 iOS 的 CalendarHomeView 使用，以标签页组织日历、历史和设置界面。
 struct CalendarHomeTabView<BottomStatusBar: View>: View {
-    @Bindable var router: CalendarRouter
-    let years: [ChineseLunarYear]
-    let months: [ChineseLunarMonth]
+    @Bindable var coordinator: CalendarHomeCoordinator
     let emptyStateDescription: String
     let settingsCoordinator: ChineseCalendarStoreCoordinator?
-    let bottomStatusBarIsPresented: Bool
     let bottomStatusBar: () -> BottomStatusBar
 
     var body: some View {
+        @Bindable var router = coordinator.router
+
         TabView(selection: $router.selectedTab) {
-            NavigationStack {
-                calendarDestination(
-                    for: router.currentRoute(on: .years),
-                    year: selectedYear
-                )
+            NavigationStack(path: $router.yearsPath) {
+                calendarDestination(for: router.yearsRootDestination)
+                    .calendarDestinations(emptyStateDescription: emptyStateDescription)
             }
             .safeAreaInset(edge: .bottom, spacing: 0, content: bottomStatusBar)
             .tabItem {
@@ -29,7 +25,7 @@ struct CalendarHomeTabView<BottomStatusBar: View>: View {
 
             NavigationStack(path: $router.historyPath) {
                 CalendarHistoryHomeView()
-                    .navigationDestination(for: CalendarRoute.self, destination: destination)
+                    .calendarDestinations(emptyStateDescription: emptyStateDescription)
             }
             .safeAreaInset(edge: .bottom, spacing: 0, content: bottomStatusBar)
             .tabItem {
@@ -57,49 +53,10 @@ struct CalendarHomeTabView<BottomStatusBar: View>: View {
         .background(.calendarSystemBackground)
     }
 
-    private func destination(for route: CalendarRoute) -> some View {
-        calendarDestination(for: route, year: year(for: route))
-    }
-
-    private func calendarDestination(for route: CalendarRoute?, year: ChineseLunarYear?) -> some View {
-        CalendarRouteDestinationView(
-            route: route,
-            year: year,
-            months: months,
-            selectedMonthIndex: $router.selectedMonthIndex,
-            daySelection: router.daySelection,
-            canSelectPreviousYear: router.canSelectPreviousYear(availableYearNumbers: yearNumbers),
-            canSelectNextYear: router.canSelectNextYear(availableYearNumbers: yearNumbers),
-            selectPreviousYear: { router.selectPreviousYear(availableYearNumbers: yearNumbers) },
-            selectNextYear: { router.selectNextYear(availableYearNumbers: yearNumbers) },
-            showYearPicker: router.presentYearPicker,
-            selectMonth: { month in
-                router.selectMonth(
-                    lunarYearNumber: month.lunarYearNumber,
-                    monthIndex: month.lunarMonthIndex
-                )
-            },
-            selectToday: { todaySelection in
-                router.selectToday(todaySelection, preferredYearNumber: ChineseLunarCalendar.yearNumber())
-            },
-            bottomStatusBarIsPresented: bottomStatusBarIsPresented,
+    private func calendarDestination(for destination: CalendarDestination?) -> some View {
+        CalendarDestinationView(
+            destination: destination,
             emptyStateDescription: emptyStateDescription
         )
-    }
-
-    private var yearNumbers: [Int] {
-        years.map(\.lunarYearNumber)
-    }
-
-    private func year(for route: CalendarRoute?) -> ChineseLunarYear? {
-        guard let yearNumber = route?.lunarYearNumber else {
-            return nil
-        }
-
-        return years.first { $0.lunarYearNumber == yearNumber }
-    }
-
-    private var selectedYear: ChineseLunarYear? {
-        year(for: router.currentRoute(on: .years))
     }
 }

@@ -4,29 +4,31 @@ import Testing
 
 @MainActor
 @Test func defaultSelectionPrefersCurrentLunarYearWhenAvailable() {
-    let router = CalendarRouter()
+    let coordinator = CalendarHomeCoordinator()
 
-    let selectedYear = router.selectDefaultYearIfNeeded(
+    let selectedYear = coordinator.selectDefaultYearIfNeeded(
         availableYearNumbers: [2024, 2025, 2026],
         preferredYearNumber: 2025
     )
 
     #expect(selectedYear == 2025)
-    #expect(router.selectedRoute == .lunarYear(2025))
-    #expect(router.yearsPath == [.lunarYear(2025)])
+    #expect(coordinator.router.selectedDestination == .lunarYear(2025))
+    #expect(coordinator.router.yearsRootDestination == .lunarYear(2025))
+    #expect(coordinator.router.yearsPath.isEmpty)
 }
 
 @MainActor
 @Test func defaultSelectionKeepsExistingValidRoute() {
-    let router = CalendarRouter(selectedRoute: .lunarYear(2024))
+    let router = CalendarRouter(yearsRootDestination: .lunarYear(2024))
+    let coordinator = CalendarHomeCoordinator(router: router)
 
-    let selectedYear = router.selectDefaultYearIfNeeded(
+    let selectedYear = coordinator.selectDefaultYearIfNeeded(
         availableYearNumbers: [2024, 2025, 2026],
         preferredYearNumber: 2025
     )
 
     #expect(selectedYear == nil)
-    #expect(router.selectedRoute == .lunarYear(2024))
+    #expect(router.selectedDestination == .lunarYear(2024))
 }
 
 @MainActor
@@ -44,163 +46,154 @@ import Testing
 @Test func tabPathsDoNotPolluteEachOther() {
     let router = CalendarRouter()
 
+    router.setYearsRootDestination(.lunarYear(2024))
     router.push(.lunarYear(2025), on: .years)
     router.push(.dynasty("qin"), on: .history)
 
+    #expect(router.yearsRootDestination == .lunarYear(2024))
     #expect(router.yearsPath == [.lunarYear(2025)])
     #expect(router.historyPath == [.dynasty("qin")])
-    #expect(router.selectedRoute == .dynasty("qin"))
-    #expect(router.currentRoute(on: .years) == .lunarYear(2025))
+    #expect(router.selectedDestination == .dynasty("qin"))
+    #expect(router.currentDestination(on: .years) == .lunarYear(2025))
 }
 
 @MainActor
-@Test func changingSelectedYearClearsSelectedMonth() {
+@Test func changingYearsRootClearsItsPushPath() {
     let router = CalendarRouter(
-        selectedRoute: .lunarYear(2024),
+        yearsRootDestination: .lunarYear(2024),
+        yearsPath: [.lunarYear(2025)]
+    )
+
+    router.setYearsRootDestination(.lunarYear(2026))
+
+    #expect(router.yearsRootDestination == .lunarYear(2026))
+    #expect(router.yearsPath.isEmpty)
+    #expect(router.currentDestination(on: .years) == .lunarYear(2026))
+}
+
+@MainActor
+@Test func browseStateTreatsYearMonthAndDayAsPageState() {
+    let browseState = LunarCalendarBrowseState(
+        displayedYearNumber: 2024,
         selectedMonthIndex: 24001,
         selectedDayIndex: 2_400_101
     )
 
-    router.selectYear(2025)
+    browseState.selectYear(2025)
 
-    #expect(router.selectedRoute == .lunarYear(2025))
-    #expect(router.selectedMonthIndex == nil)
-    #expect(router.selectedDayIndex == nil)
+    #expect(browseState.displayedYearNumber == 2025)
+    #expect(browseState.selectedMonthIndex == nil)
+    #expect(browseState.daySelection.dayIndex == nil)
 }
 
 @MainActor
-@Test func selectingMonthUpdatesYearAndMonthTogether() {
-    let router = CalendarRouter(selectedRoute: .lunarYear(2024), selectedDayIndex: 2_400_101)
+@Test func browseStateCanMoveAcrossYearsWithoutChangingRouter() {
+    let router = CalendarRouter(yearsRootDestination: .lunarYear(2024))
+    let browseState = LunarCalendarBrowseState(
+        displayedYearNumber: 2024,
+        selectedDayIndex: 2_400_101
+    )
 
-    router.selectMonth(lunarYearNumber: 2025, monthIndex: 25006)
+    browseState.select(yearNumber: 2025, monthIndex: 25006)
 
-    #expect(router.currentRoute(on: .years) == .lunarYear(2025))
-    #expect(router.selectedMonthIndex == 25006)
-    #expect(router.selectedDayIndex == nil)
+    #expect(router.currentDestination(on: .years) == .lunarYear(2024))
+    #expect(browseState.displayedYearNumber == 2025)
+    #expect(browseState.selectedMonthIndex == 25006)
+    #expect(browseState.daySelection.dayIndex == nil)
 }
 
 @MainActor
-@Test func todaySelectionRoutesToResolvedDay() {
-    let router = CalendarRouter(
-        selectedRoute: .lunarYear(2024),
+@Test func browseStateCanSelectAnExactDay() {
+    let browseState = LunarCalendarBrowseState(
+        displayedYearNumber: 2024,
         selectedMonthIndex: 24001,
         selectedDayIndex: 2_400_101
     )
 
-    router.selectToday(
-        CalendarTodaySelection(lunarYearNumber: 2026, lunarMonthIndex: 26005, dayIndex: 2_600_512),
-        preferredYearNumber: 2025
+    browseState.select(
+        yearNumber: 2026,
+        monthIndex: 26005,
+        dayIndex: 2_600_512
     )
 
-    #expect(router.currentRoute(on: .years) == .lunarYear(2026))
-    #expect(router.selectedMonthIndex == 26005)
-    #expect(router.selectedDayIndex == 2_600_512)
+    #expect(browseState.displayedYearNumber == 2026)
+    #expect(browseState.selectedMonthIndex == 26005)
+    #expect(browseState.daySelection.dayIndex == 2_600_512)
 }
 
 @MainActor
-@Test func todaySelectionCanReselectDayWithinCurrentMonth() {
-    let router = CalendarRouter(
-        selectedRoute: .lunarYear(2026),
+@Test func browseStateClearsItsDaySelectionWhenMonthChanges() {
+    let browseState = LunarCalendarBrowseState(
+        displayedYearNumber: 2026,
         selectedMonthIndex: 26005,
         selectedDayIndex: 2_600_501
     )
 
-    router.selectToday(
-        CalendarTodaySelection(lunarYearNumber: 2026, lunarMonthIndex: 26005, dayIndex: 2_600_512),
-        preferredYearNumber: 2026
-    )
+    browseState.selectedMonthIndex = 26006
 
-    #expect(router.currentRoute(on: .years) == .lunarYear(2026))
-    #expect(router.selectedMonthIndex == 26005)
-    #expect(router.selectedDayIndex == 2_600_512)
+    #expect(browseState.daySelection.dayIndex == nil)
 }
 
 @MainActor
-@Test func routerAndDaySelectionShareTheSameSelectedDay() {
-    let router = CalendarRouter(selectedDayIndex: 2_600_501)
-
-    #expect(router.daySelection.dayIndex == 2_600_501)
-
-    router.daySelection.dayIndex = 2_600_512
-    #expect(router.selectedDayIndex == 2_600_512)
-
-    router.selectedDayIndex = 2_600_513
-    #expect(router.daySelection.dayIndex == 2_600_513)
-}
-
-@MainActor
-@Test func presentedNodeClearsItsDaySelectionWhenMonthChanges() {
-    let node = CalendarPresentationNode(
-        route: .lunarYear(2026),
-        selectedMonthIndex: 26005,
-        selectedDayIndex: 2_600_501
-    )
-
-    node.selectedMonthIndex = 26006
-
-    #expect(node.selectedDayIndex == nil)
-    #expect(node.daySelection.dayIndex == nil)
-}
-
-@MainActor
-@Test func todaySelectionFallsBackToPreferredYearWhenDailyDataIsMissing() {
-    let router = CalendarRouter(
-        selectedRoute: .lunarYear(2024),
-        selectedMonthIndex: 24001,
-        selectedDayIndex: 2_400_101
-    )
-
-    router.selectToday(nil, preferredYearNumber: 2026)
-
-    #expect(router.currentRoute(on: .years) == .lunarYear(2026))
-    #expect(router.selectedMonthIndex == nil)
-    #expect(router.selectedDayIndex == nil)
-}
-
-@MainActor
-@Test func yearPickerSelectionDismissesPicker() {
+@Test func yearPickerDestinationReturnsSelectionToItsPresenter() throws {
     let router = CalendarRouter()
+    var selectedYearNumber: Int?
+    let yearPicker = CalendarYearPickerDestination(
+        initialYearNumber: 2026,
+        onSelect: { selectedYearNumber = $0 }
+    )
 
-    router.presentYearPicker()
-    router.selectYearFromPicker(2026)
+    router.presentSheet(.yearPicker(yearPicker))
+    let presentation = try #require(router.sheet)
+    guard case let .yearPicker(presentedYearPicker) = presentation.destination else {
+        Issue.record("Expected a year picker destination")
+        return
+    }
+    presentedYearPicker.select(2025)
 
-    #expect(router.isYearPickerPresented == false)
-    #expect(router.currentRoute(on: .years) == .lunarYear(2026))
+    #expect(presentedYearPicker.id == yearPicker.id)
+    #expect(presentedYearPicker.initialYearNumber == 2026)
+    #expect(selectedYearNumber == 2025)
 }
 
 @MainActor
-@Test func adjacentYearSelectionUsesAvailableYearNumbers() {
-    let router = CalendarRouter(selectedRoute: .lunarYear(2025))
-    let years = [2024, 2025, 2026]
-
-    router.selectPreviousYear(availableYearNumbers: years)
-    #expect(router.currentRoute(on: .years) == .lunarYear(2024))
-
-    router.selectNextYear(availableYearNumbers: years)
-    #expect(router.currentRoute(on: .years) == .lunarYear(2025))
-}
-
-@MainActor
-@Test func rootPresentationCreatesPresentationNode() {
+@Test func yearPickerIsNestedUnderAnActivePresentation() throws {
     let router = CalendarRouter()
-
     router.presentSheet(.lunarYear(2025))
+    let parentSheet = try #require(router.sheet)
+
+    let yearPicker = CalendarYearPickerDestination(initialYearNumber: 2025) { _ in }
+    router.presentSheet(.yearPicker(yearPicker))
+
+    #expect(router.sheet === parentSheet)
+    #expect(parentSheet.sheet?.destination == .yearPicker(yearPicker))
+}
+
+@MainActor
+@Test func rootPresentationsCreatePresentationNodes() {
+    let sheetRouter = CalendarRouter()
+    let fullScreenRouter = CalendarRouter()
+
+    sheetRouter.presentSheet(.lunarYear(2025))
+    fullScreenRouter.presentFullScreen(.lunarYear(2026))
+
+    #expect(sheetRouter.sheet?.destination == .lunarYear(2025))
+    #expect(sheetRouter.sheet?.path.isEmpty == true)
+    #expect(fullScreenRouter.fullScreen?.destination == .lunarYear(2026))
+    #expect(fullScreenRouter.fullScreen?.path.isEmpty == true)
+}
+
+@MainActor
+@Test func fullScreenIsNestedUnderAnActivePresentation() throws {
+    let router = CalendarRouter()
+    router.presentSheet(.lunarYear(2025))
+    let parentSheet = try #require(router.sheet)
+
     router.presentFullScreen(.lunarYear(2026))
 
-    #expect(router.sheet?.route == .lunarYear(2025))
-    #expect(router.sheet?.path.isEmpty == true)
-    #expect(router.fullScreen?.route == .lunarYear(2026))
-    #expect(router.fullScreen?.path.isEmpty == true)
-}
-
-@MainActor
-@Test func routeIdentityIsIndependentFromPresentationStyle() {
-    let router = CalendarRouter()
-
-    router.selectYear(2025)
-    router.presentSheet(.lunarYear(2025))
-
-    #expect(router.currentRoute(on: .years) == router.sheet?.route)
+    #expect(router.fullScreen == nil)
+    #expect(router.sheet === parentSheet)
+    #expect(parentSheet.fullScreen?.destination == .lunarYear(2026))
 }
 
 @MainActor
@@ -225,74 +218,80 @@ import Testing
     parentSheet.dismissSheet()
 
     #expect(router.sheet === parentSheet)
-    #expect(router.sheet?.route == .lunarYear(2025))
+    #expect(router.sheet?.destination == .lunarYear(2025))
     #expect(parentSheet.sheet == nil)
 }
 
 @MainActor
 @Test func hotDeepLinkDismissesActivePresentationTreeBeforeRouting() {
-    let router = CalendarRouter(selectedRoute: .lunarYear(2024))
+    let router = CalendarRouter(yearsRootDestination: .lunarYear(2024))
+    let coordinator = CalendarHomeCoordinator(router: router)
     router.presentSheet(.lunarYear(2025))
 
-    router.openDeepLink(.lunarYear(2026, monthIndex: 26001))
+    coordinator.openDeepLink(.lunarYear(2026, monthIndex: 26001))
 
     #expect(router.sheet == nil)
     #expect(router.deferredDeepLink == .lunarYear(2026, monthIndex: 26001))
-    #expect(router.currentRoute(on: .years) == .lunarYear(2024))
+    #expect(router.currentDestination(on: .years) == .lunarYear(2024))
 
-    router.applyDeferredDeepLinkIfReady()
+    coordinator.applyDeferredDeepLinkIfReady()
 
     #expect(router.deferredDeepLink == nil)
-    #expect(router.currentRoute(on: .years) == .lunarYear(2026))
-    #expect(router.selectedMonthIndex == 26001)
+    #expect(router.currentDestination(on: .years) == .lunarYear(2026, monthIndex: 26001))
+    #expect(router.yearsRootDestination == .lunarYear(2026, monthIndex: 26001))
+    #expect(router.yearsPath.isEmpty)
 }
 
 @MainActor
 @Test func coldLaunchDeepLinkAppliesImmediately() {
-    let router = CalendarRouter()
+    let coordinator = CalendarHomeCoordinator()
 
-    router.openColdLaunchDeepLink(.lunarYear(2026, monthIndex: 26001))
+    coordinator.openColdLaunchDeepLink(.lunarYear(2026, monthIndex: 26001))
 
-    #expect(router.deferredDeepLink == nil)
-    #expect(router.currentRoute(on: .years) == .lunarYear(2026))
-    #expect(router.selectedMonthIndex == 26001)
+    #expect(coordinator.router.deferredDeepLink == nil)
+    #expect(coordinator.router.yearsRootDestination == .lunarYear(2026, monthIndex: 26001))
+    #expect(coordinator.router.yearsPath.isEmpty)
+    #expect(
+        coordinator.router.currentDestination(on: .years)
+            == .lunarYear(2026, monthIndex: 26001)
+    )
 }
 
 @MainActor
 @Test func dynastyDeepLinkSelectsHistoryTab() {
-    let router = CalendarRouter()
+    let coordinator = CalendarHomeCoordinator()
 
-    router.openColdLaunchDeepLink(.dynasty("qin"))
+    coordinator.openColdLaunchDeepLink(.dynasty("qin"))
 
-    #expect(router.selectedTab == .history)
-    #expect(router.historyPath == [.dynasty("qin")])
-    #expect(router.selectedMonthIndex == nil)
+    #expect(coordinator.router.selectedTab == .history)
+    #expect(coordinator.router.historyPath == [.dynasty("qin")])
 }
 
 @MainActor
-@Test func defaultSelectionDoesNotOverrideDynastyDeepLink() {
-    let router = CalendarRouter()
+@Test func defaultSelectionInitializesYearsRootWithoutOverridingDynastyDeepLink() {
+    let coordinator = CalendarHomeCoordinator()
 
-    router.openColdLaunchDeepLink(.dynasty("ming"))
-    let selectedYear = router.selectDefaultYearIfNeeded(
+    coordinator.openColdLaunchDeepLink(.dynasty("ming"))
+    let selectedYear = coordinator.selectDefaultYearIfNeeded(
         availableYearNumbers: [2024, 2025, 2026],
         preferredYearNumber: 2025
     )
 
-    #expect(selectedYear == nil)
-    #expect(router.selectedTab == .history)
-    #expect(router.historyPath == [.dynasty("ming")])
+    #expect(selectedYear == 2025)
+    #expect(coordinator.router.yearsRootDestination == .lunarYear(2025))
+    #expect(coordinator.router.yearsPath.isEmpty)
+    #expect(coordinator.router.selectedTab == .history)
+    #expect(coordinator.router.historyPath == [.dynasty("ming")])
 }
 
 @MainActor
 @Test func emperorDeepLinkSelectsHistoryTab() {
-    let router = CalendarRouter()
+    let coordinator = CalendarHomeCoordinator()
 
-    router.openColdLaunchDeepLink(.emperor("ming-taizu"))
+    coordinator.openColdLaunchDeepLink(.emperor("ming-taizu"))
 
-    #expect(router.selectedTab == .history)
-    #expect(router.historyPath == [.emperor("ming-taizu")])
-    #expect(router.selectedMonthIndex == nil)
+    #expect(coordinator.router.selectedTab == .history)
+    #expect(coordinator.router.historyPath == [.emperor("ming-taizu")])
 }
 
 @Test func parserSupportsYearURLs() throws {

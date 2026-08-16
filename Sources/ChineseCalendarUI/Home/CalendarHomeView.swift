@@ -8,8 +8,7 @@ import SwiftUI
 /// 显示在应用根视图中，负责组织日历主页、导航与平台布局。
 public struct CalendarHomeView<BottomStatusBar: View>: View {
     @Query(sort: \ChineseLunarYear.lunarYearNumber) private var years: [ChineseLunarYear]
-    @Query(sort: \ChineseLunarMonth.lunarMonthIndex) private var months: [ChineseLunarMonth]
-    @State private var router = CalendarRouter()
+    @State private var coordinator = CalendarHomeCoordinator()
     @State private var didOpenColdLaunchDeepLink = false
     private let settingsCoordinator: ChineseCalendarStoreCoordinator?
     private let bottomStatusBarIsPresented: Bool
@@ -26,43 +25,36 @@ public struct CalendarHomeView<BottomStatusBar: View>: View {
     }
 
     public var body: some View {
-        @Bindable var router = router
+        @Bindable var router = coordinator.router
 
         Group {
             #if os(iOS)
                 CalendarHomeTabView(
-                    router: router,
-                    years: years,
-                    months: months,
+                    coordinator: coordinator,
                     emptyStateDescription: emptyStateDescription,
                     settingsCoordinator: settingsCoordinator,
-                    bottomStatusBarIsPresented: bottomStatusBarIsPresented,
                     bottomStatusBar: bottomStatusBar
                 )
             #else
                 CalendarHomeSplitView(
-                    router: router,
+                    coordinator: coordinator,
                     years: years,
-                    months: months,
                     emptyStateDescription: emptyStateDescription
                 )
             #endif
         }
-        .sheet(isPresented: $router.isYearPickerPresented) {
-            CalendarYearPickerView(
-                years: years,
-                selectedYearNumber: router.selectedYearNumber,
-                selectYear: router.selectYearFromPicker,
-                dismiss: router.dismissYearPicker
-            )
-        }
-        .sheet(item: $router.sheet, onDismiss: router.applyDeferredDeepLinkIfReady) { node in
-            CalendarPresentationNodeView(node: node, years: years, months: months) {
+        .environment(router)
+        .environment(\.calendarBottomStatusBarIsPresented, bottomStatusBarIsPresented)
+        .sheet(item: $router.sheet, onDismiss: coordinator.applyDeferredDeepLinkIfReady) { node in
+            CalendarPresentationNodeView(node: node) {
                 router.dismissSheet()
             }
         }
-        .calendarFullScreenCover(item: $router.fullScreen, onDismiss: router.applyDeferredDeepLinkIfReady) { node in
-            CalendarPresentationNodeView(node: node, years: years, months: months) {
+        .calendarFullScreenCover(
+            item: $router.fullScreen,
+            onDismiss: coordinator.applyDeferredDeepLinkIfReady
+        ) { node in
+            CalendarPresentationNodeView(node: node) {
                 router.dismissFullScreen()
             }
         }
@@ -93,7 +85,7 @@ public struct CalendarHomeView<BottomStatusBar: View>: View {
             return
         }
 
-        if let selectedYearNumber = router.selectDefaultYearIfNeeded(
+        if let selectedYearNumber = coordinator.selectDefaultYearIfNeeded(
             availableYearNumbers: yearNumbers,
             preferredYearNumber: ChineseLunarCalendar.yearNumber()
         ) {
@@ -107,7 +99,7 @@ public struct CalendarHomeView<BottomStatusBar: View>: View {
         }
 
         didOpenColdLaunchDeepLink = true
-        router.openColdLaunchDeepLink(CalendarDeepLinkParser.deepLink(from: ProcessInfo.processInfo.arguments))
+        coordinator.openColdLaunchDeepLink(CalendarDeepLinkParser.deepLink(from: ProcessInfo.processInfo.arguments))
     }
 
     private func open(_ url: URL) {
@@ -115,7 +107,7 @@ public struct CalendarHomeView<BottomStatusBar: View>: View {
             return
         }
 
-        router.openDeepLink(deepLink)
+        coordinator.openDeepLink(deepLink)
     }
 }
 

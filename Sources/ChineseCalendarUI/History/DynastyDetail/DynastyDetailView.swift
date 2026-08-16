@@ -58,7 +58,7 @@ struct DynastyDetailView: View {
                                 .bold()
 
                             ForEach(emperors, id: \.id) { emperor in
-                                NavigationLink(value: CalendarRoute.emperor(emperor.id)) {
+                                NavigationLink(value: CalendarDestination.emperor(emperor.id)) {
                                     EmperorSummaryRow(emperor: emperor)
                                 }
                                 .buttonStyle(.plain)
