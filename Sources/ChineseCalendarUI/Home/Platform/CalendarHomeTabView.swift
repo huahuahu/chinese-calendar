@@ -50,7 +50,6 @@ struct CalendarHomeTabView<BottomStatusBar: View>: View {
             .tag(CalendarTab.settings)
         }
         .calendarTabViewBottomAccessory(isEnabled: bottomStatusBarIsPresented, content: bottomStatusBar)
-        .tabBarMinimizeBehavior(.onScrollDown)
         .background(.calendarSystemBackground)
     }
 
