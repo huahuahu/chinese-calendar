@@ -1,47 +1,18 @@
-import Foundation
 import Observation
 
 @MainActor
 @Observable
 final class CalendarRouter {
     var selectedTab: CalendarTab
-    var yearsPath: [CalendarRoute] {
-        didSet {
-            clearSelectedMonthIfSelectedYearChanged(from: oldValue, to: yearsPath)
-        }
-    }
-
-    var historyPath: [CalendarRoute]
-    var selectedMonthIndex: Int? {
-        didSet {
-            clearSelectedDayIfSelectedMonthChanged(from: oldValue, to: selectedMonthIndex)
-        }
-    }
-
-    let daySelection: CalendarDaySelection
-    var selectedDayIndex: Int? {
-        get { daySelection.dayIndex }
-        set { daySelection.dayIndex = newValue }
-    }
-
-    var isYearPickerPresented = false
+    var yearsRootDestination: CalendarDestination?
+    var yearsPath: [CalendarDestination]
+    var historyPath: [CalendarDestination]
     var sheet: CalendarPresentationNode?
     var fullScreen: CalendarPresentationNode?
     private(set) var deferredDeepLink: CalendarDeepLink?
 
-    var selectedRoute: CalendarRoute? {
-        get { currentRoute(on: selectedTab) }
-        set {
-            if let newValue {
-                setPath([newValue], for: selectedTab)
-            } else {
-                setPath([], for: selectedTab)
-            }
-        }
-    }
-
-    var selectedYearNumber: Int? {
-        currentRoute(on: .years)?.lunarYearNumber
+    var selectedDestination: CalendarDestination? {
+        currentDestination(on: selectedTab)
     }
 
     var hasActivePresentation: Bool {
@@ -50,20 +21,22 @@ final class CalendarRouter {
 
     init(
         selectedTab: CalendarTab = .years,
-        selectedRoute: CalendarRoute? = nil,
-        yearsPath: [CalendarRoute]? = nil,
-        historyPath: [CalendarRoute] = [],
-        selectedMonthIndex: Int? = nil,
-        selectedDayIndex: Int? = nil
+        yearsRootDestination: CalendarDestination? = nil,
+        yearsPath: [CalendarDestination] = [],
+        historyPath: [CalendarDestination] = []
     ) {
         self.selectedTab = selectedTab
-        self.yearsPath = yearsPath ?? selectedRoute.map { [$0] } ?? []
+        self.yearsRootDestination = yearsRootDestination
+        self.yearsPath = yearsPath
         self.historyPath = historyPath
-        self.selectedMonthIndex = selectedMonthIndex
-        daySelection = CalendarDaySelection(dayIndex: selectedDayIndex)
     }
 
-    func path(for tab: CalendarTab) -> [CalendarRoute] {
+    func setYearsRootDestination(_ destination: CalendarDestination?) {
+        yearsRootDestination = destination
+        yearsPath.removeAll()
+    }
+
+    func path(for tab: CalendarTab) -> [CalendarDestination] {
         switch tab {
         case .years:
             yearsPath
@@ -74,7 +47,7 @@ final class CalendarRouter {
         }
     }
 
-    func setPath(_ path: [CalendarRoute], for tab: CalendarTab) {
+    func setPath(_ path: [CalendarDestination], for tab: CalendarTab) {
         switch tab {
         case .years:
             yearsPath = path
@@ -85,123 +58,39 @@ final class CalendarRouter {
         }
     }
 
-    func currentRoute(on tab: CalendarTab) -> CalendarRoute? {
-        path(for: tab).last
+    func currentDestination(on tab: CalendarTab) -> CalendarDestination? {
+        switch tab {
+        case .years:
+            yearsPath.last ?? yearsRootDestination
+        case .history:
+            historyPath.last
+        case .settings:
+            nil
+        }
     }
 
-    func push(_ route: CalendarRoute, on tab: CalendarTab? = nil) {
+    func push(_ destination: CalendarDestination, on tab: CalendarTab? = nil) {
         let targetTab = tab ?? selectedTab
         selectedTab = targetTab
         var path = path(for: targetTab)
-        path.append(route)
+        path.append(destination)
         setPath(path, for: targetTab)
     }
 
-    func selectYear(_ yearNumber: Int, monthIndex: Int? = nil, dayIndex: Int? = nil) {
-        selectedTab = .years
-        setPath([.lunarYear(yearNumber)], for: .years)
-        selectedMonthIndex = monthIndex
-        selectedDayIndex = dayIndex
-    }
-
-    func selectMonth(lunarYearNumber: Int, monthIndex: Int) {
-        selectYear(lunarYearNumber, monthIndex: monthIndex)
-    }
-
-    func selectToday(_ todaySelection: CalendarTodaySelection?, preferredYearNumber: Int) {
-        guard let todaySelection else {
-            selectYear(preferredYearNumber)
-            return
+    func presentSheet(_ destination: CalendarDestination) {
+        if let presentationNode = frontmostPresentationNode {
+            presentationNode.presentSheet(destination)
+        } else {
+            sheet = CalendarPresentationNode(destination: destination)
         }
-
-        selectYear(
-            todaySelection.lunarYearNumber,
-            monthIndex: todaySelection.lunarMonthIndex,
-            dayIndex: todaySelection.dayIndex
-        )
     }
 
-    func selectToday(preferredYearNumber: Int) {
-        selectToday(nil, preferredYearNumber: preferredYearNumber)
-    }
-
-    func presentYearPicker() {
-        isYearPickerPresented = true
-    }
-
-    func dismissYearPicker() {
-        isYearPickerPresented = false
-    }
-
-    func selectYearFromPicker(_ yearNumber: Int) {
-        selectYear(yearNumber)
-        dismissYearPicker()
-    }
-
-    func selectDefaultYearIfNeeded(availableYearNumbers yearNumbers: [Int], preferredYearNumber: Int) -> Int? {
-        guard !yearNumbers.isEmpty else {
-            return nil
+    func presentFullScreen(_ destination: CalendarDestination) {
+        if let presentationNode = frontmostPresentationNode {
+            presentationNode.presentFullScreen(destination)
+        } else {
+            fullScreen = CalendarPresentationNode(destination: destination)
         }
-
-        if let selectedYearNumber, yearNumbers.contains(selectedYearNumber) {
-            return nil
-        }
-
-        if selectedRoute != nil, selectedYearNumber == nil {
-            return nil
-        }
-
-        let defaultYearNumber = yearNumbers.first { $0 == preferredYearNumber } ?? yearNumbers.last
-        guard let defaultYearNumber else {
-            return nil
-        }
-
-        selectYear(defaultYearNumber)
-        return defaultYearNumber
-    }
-
-    func canSelectPreviousYear(availableYearNumbers yearNumbers: [Int]) -> Bool {
-        guard let selectedYearIndex = selectedYearIndex(in: yearNumbers) else {
-            return false
-        }
-
-        return selectedYearIndex > yearNumbers.startIndex
-    }
-
-    func canSelectNextYear(availableYearNumbers yearNumbers: [Int]) -> Bool {
-        guard let selectedYearIndex = selectedYearIndex(in: yearNumbers) else {
-            return false
-        }
-
-        return selectedYearIndex < yearNumbers.index(before: yearNumbers.endIndex)
-    }
-
-    func selectPreviousYear(availableYearNumbers yearNumbers: [Int]) {
-        guard let selectedYearIndex = selectedYearIndex(in: yearNumbers),
-              selectedYearIndex > yearNumbers.startIndex
-        else {
-            return
-        }
-
-        selectYear(yearNumbers[yearNumbers.index(before: selectedYearIndex)])
-    }
-
-    func selectNextYear(availableYearNumbers yearNumbers: [Int]) {
-        guard let selectedYearIndex = selectedYearIndex(in: yearNumbers),
-              selectedYearIndex < yearNumbers.index(before: yearNumbers.endIndex)
-        else {
-            return
-        }
-
-        selectYear(yearNumbers[yearNumbers.index(after: selectedYearIndex)])
-    }
-
-    func presentSheet(_ route: CalendarRoute) {
-        sheet = CalendarPresentationNode(route: route)
-    }
-
-    func presentFullScreen(_ route: CalendarRoute) {
-        fullScreen = CalendarPresentationNode(route: route)
     }
 
     func dismissSheet() {
@@ -212,136 +101,62 @@ final class CalendarRouter {
         fullScreen = nil
     }
 
-    func openDeepLink(_ deepLink: CalendarDeepLink) {
-        if hasActivePresentation {
+    /// 返回 true 表示 deep link 已经立即改变导航；false 表示它正在等待 presentation 关闭。
+    func openDeepLink(_ deepLink: CalendarDeepLink) -> Bool {
+        guard !hasActivePresentation else {
             deferredDeepLink = deepLink
-            sheet = nil
-            fullScreen = nil
-            return
+            dismissSheet()
+            dismissFullScreen()
+            return false
         }
 
         apply(deepLink)
+        return true
     }
 
-    func openColdLaunchDeepLink(_ deepLink: CalendarDeepLink?) {
+    func openColdLaunchDeepLink(_ deepLink: CalendarDeepLink?) -> Bool {
         guard let deepLink else {
-            return
+            return false
         }
 
         apply(deepLink)
+        return true
     }
 
-    func applyDeferredDeepLinkIfReady() {
+    /// presentation 关闭后执行等待中的导航，并返回已应用的 deep link 供具体页面消费其输入。
+    func applyDeferredDeepLinkIfReady() -> CalendarDeepLink? {
         guard !hasActivePresentation, let deferredDeepLink else {
-            return
+            return nil
         }
 
         self.deferredDeepLink = nil
         apply(deferredDeepLink)
-    }
-
-    private func selectedYearIndex(in yearNumbers: [Int]) -> [Int].Index? {
-        guard let selectedYearNumber else {
-            return nil
-        }
-
-        return yearNumbers.firstIndex(of: selectedYearNumber)
+        return deferredDeepLink
     }
 
     private func apply(_ deepLink: CalendarDeepLink) {
         switch deepLink {
         case let .lunarYear(yearNumber, monthIndex):
-            dismissYearPicker()
-            selectYear(yearNumber, monthIndex: monthIndex)
+            selectedTab = .years
+            setYearsRootDestination(.lunarYear(yearNumber, monthIndex: monthIndex))
         case let .dynasty(dynastyID):
-            dismissYearPicker()
             selectedTab = .history
             setPath([.dynasty(dynastyID)], for: .history)
-            selectedMonthIndex = nil
         case let .emperor(emperorID):
-            dismissYearPicker()
             selectedTab = .history
             setPath([.emperor(emperorID)], for: .history)
-            selectedMonthIndex = nil
         }
     }
 
-    private func clearSelectedMonthIfSelectedYearChanged(from oldPath: [CalendarRoute], to newPath: [CalendarRoute]) {
-        guard oldPath.last?.lunarYearNumber != newPath.last?.lunarYearNumber else {
-            return
+    private var frontmostPresentationNode: CalendarPresentationNode? {
+        if let fullScreen {
+            return fullScreen.frontmostPresentationNode
         }
 
-        selectedMonthIndex = nil
-        selectedDayIndex = nil
-    }
-
-    private func clearSelectedDayIfSelectedMonthChanged(from oldMonthIndex: Int?, to newMonthIndex: Int?) {
-        guard oldMonthIndex != newMonthIndex else {
-            return
+        if let sheet {
+            return sheet.frontmostPresentationNode
         }
 
-        selectedDayIndex = nil
-    }
-}
-
-@MainActor
-@Observable
-final class CalendarPresentationNode: Identifiable {
-    let id = UUID()
-    let route: CalendarRoute
-    var path: [CalendarRoute]
-    var selectedMonthIndex: Int? {
-        didSet {
-            clearSelectedDayIfSelectedMonthChanged(from: oldValue, to: selectedMonthIndex)
-        }
-    }
-
-    let daySelection: CalendarDaySelection
-    var selectedDayIndex: Int? {
-        get { daySelection.dayIndex }
-        set { daySelection.dayIndex = newValue }
-    }
-
-    var sheet: CalendarPresentationNode?
-    var fullScreen: CalendarPresentationNode?
-
-    init(
-        route: CalendarRoute,
-        path: [CalendarRoute] = [],
-        selectedMonthIndex: Int? = nil,
-        selectedDayIndex: Int? = nil
-    ) {
-        self.route = route
-        self.path = path
-        self.selectedMonthIndex = selectedMonthIndex
-        daySelection = CalendarDaySelection(dayIndex: selectedDayIndex)
-    }
-
-    func push(_ route: CalendarRoute) {
-        path.append(route)
-    }
-
-    func presentSheet(_ route: CalendarRoute) {
-        sheet = CalendarPresentationNode(route: route)
-    }
-
-    func presentFullScreen(_ route: CalendarRoute) {
-        fullScreen = CalendarPresentationNode(route: route)
-    }
-
-    func dismissSheet() {
-        sheet = nil
-    }
-
-    func dismissFullScreen() {
-        fullScreen = nil
-    }
-
-    private func clearSelectedDayIfSelectedMonthChanged(from oldMonthIndex: Int?, to newMonthIndex: Int?) {
-        guard oldMonthIndex != newMonthIndex else {
-            return
-        }
-
-        selectedDayIndex = nil
+        return nil
     }
 }

@@ -53,7 +53,7 @@ struct CalendarHistoryHomeView: View {
             LazyVStack(alignment: .leading, spacing: 12) {
                 ForEach(periods, id: \.id) { period in
                     if let dynastyID = period.dynasty?.id {
-                        NavigationLink(value: CalendarRoute.dynasty(dynastyID)) {
+                        NavigationLink(value: CalendarDestination.dynasty(dynastyID)) {
                             OrthodoxPeriodRow(period: period)
                         }
                         .buttonStyle(.plain)

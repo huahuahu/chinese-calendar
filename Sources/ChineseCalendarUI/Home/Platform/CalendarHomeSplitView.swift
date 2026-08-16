@@ -4,66 +4,46 @@ import SwiftUI
 
 /// 供 macOS 的 CalendarHomeView 使用，以分栏方式组织年份与日历详情。
 struct CalendarHomeSplitView: View {
-    @Bindable var router: CalendarRouter
+    @Bindable var coordinator: CalendarHomeCoordinator
     let years: [ChineseLunarYear]
-    let months: [ChineseLunarMonth]
     let emptyStateDescription: String
 
     var body: some View {
+        @Bindable var router = coordinator.router
+
         NavigationSplitView {
             List(selection: selection) {
                 Section("农历年") {
                     ForEach(years, id: \.lunarYearNumber) { year in
                         LunarYearRow(year: year)
-                            .tag(CalendarRoute.lunarYear(year.lunarYearNumber))
+                            .tag(CalendarDestination.lunarYear(year.lunarYearNumber))
                     }
                 }
             }
             .navigationTitle("年份")
         } detail: {
-            CalendarRouteDestinationView(
-                route: router.currentRoute(on: .years),
-                year: selectedYear,
-                months: months,
-                selectedMonthIndex: $router.selectedMonthIndex,
-                daySelection: router.daySelection,
-                canSelectPreviousYear: router.canSelectPreviousYear(availableYearNumbers: yearNumbers),
-                canSelectNextYear: router.canSelectNextYear(availableYearNumbers: yearNumbers),
-                selectPreviousYear: { router.selectPreviousYear(availableYearNumbers: yearNumbers) },
-                selectNextYear: { router.selectNextYear(availableYearNumbers: yearNumbers) },
-                showYearPicker: nil,
-                selectMonth: { month in
-                    router.selectMonth(
-                        lunarYearNumber: month.lunarYearNumber,
-                        monthIndex: month.lunarMonthIndex
-                    )
-                },
-                selectToday: { todaySelection in
-                    router.selectToday(todaySelection, preferredYearNumber: ChineseLunarCalendar.yearNumber())
-                },
-                emptyStateDescription: emptyStateDescription
-            )
+            NavigationStack(path: $router.yearsPath) {
+                CalendarDestinationView(
+                    destination: router.yearsRootDestination,
+                    emptyStateDescription: emptyStateDescription
+                )
+                .calendarDestinations(emptyStateDescription: emptyStateDescription)
+            }
         }
     }
 
-    private var selection: Binding<CalendarRoute?> {
+    private var selection: Binding<CalendarDestination?> {
         Binding {
-            router.currentRoute(on: .years)
-        } set: { route in
-            router.selectedTab = .years
-            router.setPath(route.map { [$0] } ?? [], for: .years)
+            coordinator.router.yearsRootDestination?.lunarYearNumber.map {
+                .lunarYear($0)
+            }
+        } set: { destination in
+            guard case .lunarYear? = destination else {
+                coordinator.router.setYearsRootDestination(nil)
+                return
+            }
+
+            coordinator.router.setYearsRootDestination(destination)
         }
-    }
-
-    private var yearNumbers: [Int] {
-        years.map(\.lunarYearNumber)
-    }
-
-    private var selectedYear: ChineseLunarYear? {
-        guard let selectedYearNumber = router.selectedYearNumber else {
-            return nil
-        }
-
-        return years.first { $0.lunarYearNumber == selectedYearNumber }
     }
 }

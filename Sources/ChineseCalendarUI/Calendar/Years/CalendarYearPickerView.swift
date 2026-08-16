@@ -2,46 +2,38 @@ import ChineseCalendarPersistence
 import SFSafeSymbols
 import SwiftUI
 
-/// 由 CalendarHomeView 弹出，用于从完整年份列表中切换当前农历年。
+/// 显示可选农历年列表，由所在 NavigationStack 提供导航容器。
 struct CalendarYearPickerView: View {
     let years: [ChineseLunarYear]
     let selectedYearNumber: Int?
     let selectYear: (Int) -> Void
-    let dismiss: () -> Void
 
     var body: some View {
-        NavigationStack {
-            List {
-                Section("农历年") {
-                    ForEach(years, id: \.lunarYearNumber) { year in
-                        Button {
-                            selectYear(year.lunarYearNumber)
-                        } label: {
-                            HStack(spacing: 12) {
-                                LunarYearRow(year: year)
+        List {
+            Section("农历年") {
+                ForEach(years, id: \.lunarYearNumber) { year in
+                    Button {
+                        selectYear(year.lunarYearNumber)
+                    } label: {
+                        HStack(spacing: 12) {
+                            LunarYearRow(year: year)
 
-                                Spacer()
+                            Spacer()
 
-                                if year.lunarYearNumber == selectedYearNumber {
-                                    Image(systemSymbol: .checkmark)
-                                        .font(.headline)
-                                        .foregroundStyle(.tint)
-                                        .accessibilityHidden(true)
-                                }
+                            if year.lunarYearNumber == selectedYearNumber {
+                                Image(systemSymbol: .checkmark)
+                                    .font(.headline)
+                                    .foregroundStyle(.tint)
+                                    .accessibilityHidden(true)
                             }
-                            .contentShape(Rectangle())
                         }
-                        .buttonStyle(.plain)
-                        .accessibilityAddTraits(year.lunarYearNumber == selectedYearNumber ? .isSelected : [])
+                        .contentShape(Rectangle())
                     }
-                }
-            }
-            .navigationTitle("年份选择器")
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("关闭", action: dismiss)
+                    .buttonStyle(.plain)
+                    .accessibilityAddTraits(year.lunarYearNumber == selectedYearNumber ? .isSelected : [])
                 }
             }
         }
+        .navigationTitle("年份选择器")
     }
 }
