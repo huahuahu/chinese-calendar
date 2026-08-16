@@ -54,6 +54,21 @@ public struct CalendarSettingsView: View {
                 }
                 .disabled(coordinator.isClearingDownloadedData)
             }
+
+            #if DEBUG
+                Section("调试") {
+                    Button(
+                        "模拟完整数据下载",
+                        systemSymbol: .arrowDownCircle,
+                        action: startSimulatedFullStoreDownload
+                    )
+                    .disabled(!coordinator.canStartSimulatedFullStoreDownload)
+
+                    Text("只模拟下载进度，不访问网络、写入文件或替换日历数据库。")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                }
+            #endif
         }
         #if os(iOS)
         .navigationTitle("设置")
@@ -164,6 +179,12 @@ public struct CalendarSettingsView: View {
             }
         }
     }
+
+    #if DEBUG
+        private func startSimulatedFullStoreDownload() {
+            coordinator.startSimulatedFullStoreDownload()
+        }
+    #endif
 }
 
 private struct SettingsResultMessage: Identifiable {

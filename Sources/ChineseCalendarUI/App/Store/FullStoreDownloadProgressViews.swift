@@ -33,60 +33,62 @@ public struct FullStoreDownloadProgressWindow: View {
     }
 }
 
-/// 显示在 iOS 主界面底部，用于呈现可展开的完整数据下载进度。
-struct FullStoreDownloadBottomProgressView: View {
-    let progress: FullStoreDownloadProgress
+// 显示在 iOS 主界面底部，根据标签栏状态呈现完整数据下载进度。
+#if os(iOS)
+    struct FullStoreDownloadBottomProgressView: View {
+        let progress: FullStoreDownloadProgress
 
-    @State private var isExpanded = false
+        @Environment(\.tabViewBottomAccessoryPlacement) private var placement
 
-    var body: some View {
-        Button {
-            withAnimation(.snappy) {
-                isExpanded.toggle()
-            }
-        } label: {
-            VStack(alignment: .leading, spacing: 10) {
-                HStack(spacing: 10) {
-                    Image(systemSymbol: progress.systemSymbol)
-                        .font(.title3)
-                        .foregroundStyle(.tint)
-                        .frame(width: 24)
+        var body: some View {
+            Group {
+                if placement == .inline {
+                    HStack(spacing: 10) {
+                        Image(systemSymbol: progress.systemSymbol)
+                            .foregroundStyle(.tint)
 
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text(progress.title)
-                            .font(.callout.weight(.semibold))
                         ProgressView(value: progress.fractionCompleted)
+
+                        Text(progress.fractionCompleted, format: .percent.precision(.fractionLength(0)))
+                            .font(.footnote.monospacedDigit())
+                            .foregroundStyle(.secondary)
                     }
+                    .padding(.horizontal)
+                    .padding(.vertical, 8)
+                } else {
+                    VStack(alignment: .leading, spacing: 8) {
+                        HStack(spacing: 10) {
+                            Image(systemSymbol: progress.systemSymbol)
+                                .font(.title3)
+                                .foregroundStyle(.tint)
+                                .frame(width: 24)
 
-                    Text(progress.fractionCompleted, format: .percent.precision(.fractionLength(0)))
-                        .font(.footnote.monospacedDigit())
-                        .foregroundStyle(.secondary)
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(progress.title)
+                                    .font(.callout.weight(.semibold))
+                                ProgressView(value: progress.fractionCompleted)
+                            }
 
-                    Image(systemSymbol: .chevronUp)
-                        .font(.caption.weight(.semibold))
-                        .foregroundStyle(.secondary)
-                        .rotationEffect(isExpanded ? .zero : .degrees(180))
-                }
+                            Text(progress.fractionCompleted, format: .percent.precision(.fractionLength(0)))
+                                .font(.footnote.monospacedDigit())
+                                .foregroundStyle(.secondary)
+                        }
 
-                if isExpanded {
-                    Text(progress.detail)
-                        .font(.footnote)
-                        .foregroundStyle(.secondary)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .transition(.opacity.combined(with: .move(edge: .bottom)))
+                        Text(progress.detail)
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                    .padding(.horizontal)
+                    .padding(.vertical, 10)
                 }
             }
-            .contentShape(Rectangle())
+            .accessibilityElement(children: .combine)
+            .accessibilityLabel("\(progress.title)，\(progress.detail)")
+            .accessibilityValue(progress.fractionCompleted.formatted(.percent.precision(.fractionLength(0))))
         }
-        .buttonStyle(.plain)
-        .padding(.horizontal)
-        .padding(.vertical, 12)
-        .background(.bar)
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel("\(progress.title)，\(progress.detail)")
-        .accessibilityValue(progress.fractionCompleted.formatted(.percent.precision(.fractionLength(0))))
     }
-}
+#endif
 
 /// 显示在 macOS 主窗口状态栏中，用于概览完整数据下载进度。
 struct FullStoreDownloadMacStatusBar: View {

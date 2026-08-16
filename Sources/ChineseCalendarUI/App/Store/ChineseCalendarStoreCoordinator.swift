@@ -15,6 +15,11 @@ public final class ChineseCalendarStoreCoordinator {
     @ObservationIgnored private var fullStoreDownloadTask: Task<Void, Never>?
     @ObservationIgnored private var clearCompletedDownloadTask: Task<Void, Never>?
 
+    #if DEBUG
+        @ObservationIgnored private let fullStoreDownloadSimulator: FullStoreDownloadSimulator
+        private(set) var isSimulatingFullStoreDownload = false
+    #endif
+
     private let fullStoreConfiguration: FullSeedStoreConfig?
     private let seedStoreBundle: Bundle
 
@@ -24,7 +29,22 @@ public final class ChineseCalendarStoreCoordinator {
     ) {
         self.fullStoreConfiguration = fullStoreConfiguration
         self.seedStoreBundle = seedStoreBundle
+        #if DEBUG
+            fullStoreDownloadSimulator = FullStoreDownloadSimulator()
+        #endif
     }
+
+    #if DEBUG
+        init(
+            fullStoreConfiguration: FullSeedStoreConfig? = .fromBundle(),
+            seedStoreBundle: Bundle = .main,
+            fullStoreDownloadSimulator: FullStoreDownloadSimulator
+        ) {
+            self.fullStoreConfiguration = fullStoreConfiguration
+            self.seedStoreBundle = seedStoreBundle
+            self.fullStoreDownloadSimulator = fullStoreDownloadSimulator
+        }
+    #endif
 
     func prepareStoreIfNeeded() async {
         guard case .starting = state else {
@@ -70,6 +90,38 @@ public final class ChineseCalendarStoreCoordinator {
         fullStoreConfiguration != nil && contentLevel != .full && fullStoreDownloadTask == nil &&
             !isClearingDownloadedData
     }
+
+    #if DEBUG
+        var canStartSimulatedFullStoreDownload: Bool {
+            !isSimulatingFullStoreDownload && fullStoreDownloadTask == nil &&
+                fullStoreDownloadProgress == nil && !isClearingDownloadedData
+        }
+
+        @discardableResult
+        func startSimulatedFullStoreDownload() -> Bool {
+            guard canStartSimulatedFullStoreDownload else {
+                return false
+            }
+
+            downloadErrorMessage = nil
+            clearCompletedDownloadTask?.cancel()
+            isSimulatingFullStoreDownload = true
+            fullStoreDownloadTask = Task {
+                await simulateFullStoreDownload()
+            }
+            return true
+        }
+
+        func cancelSimulatedFullStoreDownload() async {
+            guard isSimulatingFullStoreDownload else {
+                return
+            }
+
+            let activeDownloadTask = fullStoreDownloadTask
+            activeDownloadTask?.cancel()
+            await activeDownloadTask?.value
+        }
+    #endif
 
     func dismissDownloadError() {
         downloadErrorMessage = nil
@@ -152,6 +204,28 @@ public final class ChineseCalendarStoreCoordinator {
             showDownloadErrorIfStoreRecovers(error.localizedDescription)
         }
     }
+
+    #if DEBUG
+        private func simulateFullStoreDownload() async {
+            do {
+                try await fullStoreDownloadSimulator.run { progress in
+                    fullStoreDownloadProgress = progress
+                }
+                fullStoreDownloadTask = nil
+                isSimulatingFullStoreDownload = false
+                clearCompletedDownloadProgressAfterDelay()
+            } catch {
+                fullStoreDownloadTask = nil
+                isSimulatingFullStoreDownload = false
+                fullStoreDownloadProgress = nil
+                guard !isCancellation(error) else {
+                    return
+                }
+
+                downloadErrorMessage = error.localizedDescription
+            }
+        }
+    #endif
 
     private func clearCompletedDownloadProgressAfterDelay() {
         clearCompletedDownloadTask?.cancel()

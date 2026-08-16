@@ -33,6 +33,7 @@ public struct CalendarHomeView<BottomStatusBar: View>: View {
                     coordinator: coordinator,
                     emptyStateDescription: emptyStateDescription,
                     settingsCoordinator: settingsCoordinator,
+                    bottomStatusBarIsPresented: bottomStatusBarIsPresented,
                     bottomStatusBar: bottomStatusBar
                 )
             #else
@@ -44,7 +45,6 @@ public struct CalendarHomeView<BottomStatusBar: View>: View {
             #endif
         }
         .environment(router)
-        .environment(\.calendarBottomStatusBarIsPresented, bottomStatusBarIsPresented)
         .sheet(item: $router.sheet, onDismiss: coordinator.applyDeferredDeepLinkIfReady) { node in
             CalendarPresentationNodeView(node: node) {
                 router.dismissSheet()

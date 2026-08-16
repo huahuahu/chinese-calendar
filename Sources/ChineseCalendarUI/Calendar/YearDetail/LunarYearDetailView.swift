@@ -15,7 +15,6 @@ struct LunarYearDetailView: View {
 
     @Environment(CalendarRouter.self) private var router
     @Environment(\.calendarStoreContentLevel) private var storeContentLevel
-    @Environment(\.calendarBottomStatusBarIsPresented) private var bottomStatusBarIsPresented
     @Query(sort: \ChineseLunarYear.lunarYearNumber) private var years: [ChineseLunarYear]
     @Query(sort: \ChineseLunarMonth.lunarMonthIndex) private var calendarMonths: [ChineseLunarMonth]
     @Query private var todayCivilDates: [CivilDate]
@@ -82,7 +81,6 @@ struct LunarYearDetailView: View {
                         }
                     }
                     .padding()
-                    .padding(.bottom, bottomStatusBarContentPadding)
                     .frame(maxWidth: 980, alignment: .leading)
                 }
             } else {
@@ -328,14 +326,6 @@ private extension LunarYearDetailView {
         }
 
         browseState.selectYear(yearNumber)
-    }
-
-    var bottomStatusBarContentPadding: CGFloat {
-        #if os(iOS)
-            bottomStatusBarIsPresented ? 120 : 0
-        #else
-            0
-        #endif
     }
 }
 
