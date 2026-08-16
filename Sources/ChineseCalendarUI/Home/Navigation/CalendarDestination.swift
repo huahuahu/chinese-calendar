@@ -25,5 +25,4 @@ enum CalendarDestination: Hashable, Identifiable {
             nil
         }
     }
-
 }

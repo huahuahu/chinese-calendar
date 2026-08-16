@@ -126,16 +126,18 @@ struct LunarYearDetailView: View {
             #endif
         }
     }
+}
 
-    private var displayedYear: ChineseLunarYear? {
+private extension LunarYearDetailView {
+    var displayedYear: ChineseLunarYear? {
         years.first { $0.lunarYearNumber == browseState.displayedYearNumber }
     }
 
-    private var displayedYearIndex: [ChineseLunarYear].Index? {
+    var displayedYearIndex: [ChineseLunarYear].Index? {
         years.firstIndex { $0.lunarYearNumber == browseState.displayedYearNumber }
     }
 
-    private var canSelectPreviousYear: Bool {
+    var canSelectPreviousYear: Bool {
         guard let displayedYearIndex else {
             return false
         }
@@ -143,7 +145,7 @@ struct LunarYearDetailView: View {
         return displayedYearIndex > years.startIndex
     }
 
-    private var canSelectNextYear: Bool {
+    var canSelectNextYear: Bool {
         guard let displayedYearIndex else {
             return false
         }
@@ -151,7 +153,7 @@ struct LunarYearDetailView: View {
         return displayedYearIndex < years.index(before: years.endIndex)
     }
 
-    private var selectedMonth: ChineseLunarMonth? {
+    var selectedMonth: ChineseLunarMonth? {
         guard let selectedMonthIndex = browseState.selectedMonthIndex else {
             return monthsInYearStartOrder.first
         }
@@ -160,12 +162,12 @@ struct LunarYearDetailView: View {
             ?? monthsInYearStartOrder.first
     }
 
-    private var monthsInYearStartOrder: [ChineseLunarMonth] {
+    var monthsInYearStartOrder: [ChineseLunarMonth] {
         // lunarMonthIndex 是连续时间轴，过滤后仍保留历史年首顺序。
         calendarMonths.filter { $0.lunarYearNumber == browseState.displayedYearNumber }
     }
 
-    private var todayMonthIndex: Int? {
+    var todayMonthIndex: Int? {
         guard let todaySelection,
               monthsInYearStartOrder.contains(where: { $0.lunarMonthIndex == todaySelection.lunarMonthIndex })
         else {
@@ -175,7 +177,7 @@ struct LunarYearDetailView: View {
         return todaySelection.lunarMonthIndex
     }
 
-    private var todaySelection: CalendarTodaySelection? {
+    var todaySelection: CalendarTodaySelection? {
         todayCivilDates
             .lazy
             .compactMap { civilDate -> CalendarTodaySelection? in
@@ -199,8 +201,9 @@ struct LunarYearDetailView: View {
             .first
     }
 
-    private func selectDefaultMonthIfNeeded() {
-        guard monthsInYearStartOrder.contains(where: { $0.lunarMonthIndex == browseState.selectedMonthIndex }) == false else {
+    func selectDefaultMonthIfNeeded() {
+        guard monthsInYearStartOrder.contains(where: { $0.lunarMonthIndex == browseState.selectedMonthIndex }) == false
+        else {
             return
         }
 
@@ -217,7 +220,7 @@ struct LunarYearDetailView: View {
         browseState.selectedMonthIndex = monthsInYearStartOrder.first?.lunarMonthIndex
     }
 
-    private func adjacentCalendarMonths(
+    func adjacentCalendarMonths(
         to selectedMonth: ChineseLunarMonth?
     ) -> (previous: ChineseLunarMonth?, next: ChineseLunarMonth?) {
         guard let selectedMonth else {
@@ -248,7 +251,7 @@ struct LunarYearDetailView: View {
         return (previousMonth, nextMonth)
     }
 
-    private func canSelect(_ month: ChineseLunarMonth?) -> Bool {
+    func canSelect(_ month: ChineseLunarMonth?) -> Bool {
         guard let month else {
             return false
         }
@@ -256,7 +259,7 @@ struct LunarYearDetailView: View {
         return years.contains { $0.lunarYearNumber == month.lunarYearNumber }
     }
 
-    private func selectMonthInCalendar(_ month: ChineseLunarMonth) {
+    func selectMonthInCalendar(_ month: ChineseLunarMonth) {
         let crossesYear = month.lunarYearNumber != browseState.displayedYearNumber
         guard crossesYear || browseState.selectedMonthIndex != month.lunarMonthIndex else {
             return
@@ -274,7 +277,7 @@ struct LunarYearDetailView: View {
         )
     }
 
-    private func selectMonthInCalendar(_ month: ChineseLunarMonth?) {
+    func selectMonthInCalendar(_ month: ChineseLunarMonth?) {
         guard let month else {
             return
         }
@@ -282,7 +285,7 @@ struct LunarYearDetailView: View {
         selectMonthInCalendar(month)
     }
 
-    private func selectPreviousYear() {
+    func selectPreviousYear() {
         guard let displayedYearIndex, displayedYearIndex > years.startIndex else {
             return
         }
@@ -290,7 +293,7 @@ struct LunarYearDetailView: View {
         selectYear(years[years.index(before: displayedYearIndex)].lunarYearNumber)
     }
 
-    private func selectNextYear() {
+    func selectNextYear() {
         guard let displayedYearIndex, displayedYearIndex < years.index(before: years.endIndex) else {
             return
         }
@@ -298,7 +301,7 @@ struct LunarYearDetailView: View {
         selectYear(years[years.index(after: displayedYearIndex)].lunarYearNumber)
     }
 
-    private func selectToday() {
+    func selectToday() {
         guard let todaySelection else {
             selectYear(ChineseLunarCalendar.yearNumber())
             return
@@ -311,7 +314,7 @@ struct LunarYearDetailView: View {
         )
     }
 
-    private func presentYearPicker() {
+    func presentYearPicker() {
         let yearPicker = CalendarYearPickerDestination(
             initialYearNumber: browseState.displayedYearNumber,
             onSelect: selectYear
@@ -319,7 +322,7 @@ struct LunarYearDetailView: View {
         router.presentSheet(.yearPicker(yearPicker))
     }
 
-    private func selectYear(_ yearNumber: Int) {
+    func selectYear(_ yearNumber: Int) {
         guard years.contains(where: { $0.lunarYearNumber == yearNumber }) else {
             return
         }
@@ -327,7 +330,7 @@ struct LunarYearDetailView: View {
         browseState.selectYear(yearNumber)
     }
 
-    private var bottomStatusBarContentPadding: CGFloat {
+    var bottomStatusBarContentPadding: CGFloat {
         #if os(iOS)
             bottomStatusBarIsPresented ? 120 : 0
         #else

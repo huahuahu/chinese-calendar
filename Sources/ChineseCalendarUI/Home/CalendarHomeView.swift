@@ -50,7 +50,10 @@ public struct CalendarHomeView<BottomStatusBar: View>: View {
                 router.dismissSheet()
             }
         }
-        .calendarFullScreenCover(item: $router.fullScreen, onDismiss: coordinator.applyDeferredDeepLinkIfReady) { node in
+        .calendarFullScreenCover(
+            item: $router.fullScreen,
+            onDismiss: coordinator.applyDeferredDeepLinkIfReady
+        ) { node in
             CalendarPresentationNodeView(node: node) {
                 router.dismissFullScreen()
             }
