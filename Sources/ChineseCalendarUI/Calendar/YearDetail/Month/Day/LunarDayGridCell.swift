@@ -8,47 +8,48 @@ struct LunarDayGridCell: View {
     let isSelected: Bool
     let isToday: Bool
 
+    @Environment(\.accessibilityDifferentiateWithoutColor)
+    private var differentiateWithoutColor
+
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
-            HStack(alignment: .firstTextBaseline) {
-                Text(dayTitle)
-                    .font(.headline)
-
-                Spacer(minLength: 4)
-
-                if isToday {
-                    Text("今日")
-                        .font(.caption)
-                        .bold()
-                        .padding(.horizontal, 6)
-                        .padding(.vertical, 2)
-                        .foregroundStyle(isSelected ? Color.accentColor : Color.white)
-                        .background(isSelected ? Color.white.opacity(0.86) : Color.accentColor, in: Capsule())
+            Text(dayTitle)
+                .font(.headline)
+                .lineLimit(1)
+                .padding(.horizontal, 6)
+                .padding(.vertical, 2)
+                .foregroundStyle(state.titleForegroundColor)
+                .background(state.titleBackgroundColor, in: Capsule())
+                .overlay {
+                    if showsTodayOutline {
+                        Capsule()
+                            .strokeBorder(Color.accentColor, lineWidth: 1)
+                    }
                 }
-            }
 
             Text(daySubtitle)
                 .font(.subheadline)
-                .foregroundStyle(isSelected ? Color.white.opacity(0.92) : Color.secondary)
+                .foregroundStyle(.secondary)
 
             Text(civilDateTitle)
                 .font(.subheadline)
-                .foregroundStyle(isSelected ? Color.white.opacity(0.84) : Color.secondary)
+                .foregroundStyle(.secondary)
         }
-        .foregroundStyle(isSelected ? Color.white : Color.primary)
+        .foregroundStyle(.primary)
         .padding(10)
         .frame(maxWidth: .infinity, minHeight: 72, alignment: .topLeading)
-        .background {
-            RoundedRectangle(cornerRadius: 18)
-                .fill(isSelected ? Color.accentColor : Color.clear)
-        }
         .background(.background, in: RoundedRectangle(cornerRadius: 18))
         .overlay {
             RoundedRectangle(cornerRadius: 18)
-                .strokeBorder(borderColor, lineWidth: borderWidth)
+                .strokeBorder(Color.primary.opacity(0.08), lineWidth: 1)
         }
-        .accessibilityElement(children: .combine)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(accessibilityLabel)
         .accessibilityAddTraits(isSelected ? .isSelected : [])
+    }
+
+    private var state: LunarDayGridCellState {
+        LunarDayGridCellState(isToday: isToday, isSelected: isSelected)
     }
 
     private var dayTitle: String {
@@ -72,19 +73,13 @@ struct LunarDayGridCell: View {
         )
     }
 
-    private var borderColor: Color {
-        if isSelected {
-            return Color.white.opacity(0.72)
-        }
-
-        if isToday {
-            return Color.accentColor
-        }
-
-        return Color.primary.opacity(0.08)
+    private var accessibilityLabel: String {
+        [dayTitle, isToday ? "今天" : nil, daySubtitle, civilDateTitle]
+            .compactMap { $0 }
+            .joined(separator: "，")
     }
 
-    private var borderWidth: CGFloat {
-        isSelected || isToday ? 1.5 : 1
+    private var showsTodayOutline: Bool {
+        differentiateWithoutColor && state == .today
     }
 }
