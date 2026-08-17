@@ -170,59 +170,6 @@ import Testing
 }
 
 @MainActor
-@Test func rootPresentationsCreatePresentationNodes() {
-    let sheetRouter = CalendarRouter()
-    let fullScreenRouter = CalendarRouter()
-
-    sheetRouter.presentSheet(.lunarYear(2025))
-    fullScreenRouter.presentFullScreen(.lunarYear(2026))
-
-    #expect(sheetRouter.sheet?.destination == .lunarYear(2025))
-    #expect(sheetRouter.sheet?.path.isEmpty == true)
-    #expect(fullScreenRouter.fullScreen?.destination == .lunarYear(2026))
-    #expect(fullScreenRouter.fullScreen?.path.isEmpty == true)
-}
-
-@MainActor
-@Test func fullScreenIsNestedUnderAnActivePresentation() throws {
-    let router = CalendarRouter()
-    router.presentSheet(.lunarYear(2025))
-    let parentSheet = try #require(router.sheet)
-
-    router.presentFullScreen(.lunarYear(2026))
-
-    #expect(router.fullScreen == nil)
-    #expect(router.sheet === parentSheet)
-    #expect(parentSheet.fullScreen?.destination == .lunarYear(2026))
-}
-
-@MainActor
-@Test func presentedNodeCanPushInsideItsOwnNavigationStack() {
-    let router = CalendarRouter()
-    router.presentSheet(.lunarYear(2025))
-
-    let sheet = router.sheet
-    sheet?.push(.lunarYear(2026))
-
-    #expect(router.yearsPath.isEmpty)
-    #expect(sheet?.path == [.lunarYear(2026)])
-}
-
-@MainActor
-@Test func closingNestedSheetReturnsToParentSheet() throws {
-    let router = CalendarRouter()
-    router.presentSheet(.lunarYear(2025))
-    let parentSheet = try #require(router.sheet)
-
-    parentSheet.presentSheet(.lunarYear(2026))
-    parentSheet.dismissSheet()
-
-    #expect(router.sheet === parentSheet)
-    #expect(router.sheet?.destination == .lunarYear(2025))
-    #expect(parentSheet.sheet == nil)
-}
-
-@MainActor
 @Test func hotDeepLinkDismissesActivePresentationTreeBeforeRouting() {
     let router = CalendarRouter(yearsRootDestination: .lunarYear(2024))
     let coordinator = CalendarHomeCoordinator(router: router)

@@ -2,6 +2,7 @@ import ChineseCalendarCore
 import ChineseCalendarLogging
 import ChineseCalendarPersistence
 import Foundation
+import NavigationCore
 import SwiftData
 import SwiftUI
 
@@ -25,7 +26,7 @@ public struct CalendarHomeView<BottomStatusBar: View>: View {
     }
 
     public var body: some View {
-        @Bindable var router = coordinator.router
+        @Bindable var navigation = coordinator.router.navigation
 
         Group {
             #if os(iOS)
@@ -44,19 +45,15 @@ public struct CalendarHomeView<BottomStatusBar: View>: View {
                 )
             #endif
         }
-        .environment(router)
-        .sheet(item: $router.sheet, onDismiss: coordinator.applyDeferredDeepLinkIfReady) { node in
-            CalendarPresentationNodeView(node: node) {
-                router.dismissSheet()
-            }
+        .environment(coordinator.router)
+        .sheet(item: $navigation.sheet, onDismiss: coordinator.applyDeferredDeepLinkIfReady) { node in
+            CalendarPresentationNodeView(node: node)
         }
-        .calendarFullScreenCover(
-            item: $router.fullScreen,
+        .navigationFullScreenCover(
+            item: $navigation.fullScreen,
             onDismiss: coordinator.applyDeferredDeepLinkIfReady
         ) { node in
-            CalendarPresentationNodeView(node: node) {
-                router.dismissFullScreen()
-            }
+            CalendarPresentationNodeView(node: node)
         }
         .task {
             openColdLaunchDeepLinkIfNeeded()

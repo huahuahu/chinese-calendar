@@ -36,6 +36,10 @@ let package = Package(
             targets: ["ChineseCalendarLogging"]
         ),
         .library(
+            name: "NavigationCore",
+            targets: ["NavigationCore"]
+        ),
+        .library(
             name: "ChineseCalendarUI",
             targets: ["ChineseCalendarUI"]
         )
@@ -56,6 +60,12 @@ let package = Package(
             path: "ChineseCalendarCore",
             exclude: ["Tests"],
             swiftSettings: nonisolatedSwiftSettings
+        ),
+        .target(
+            name: "NavigationCore",
+            dependencies: ["ChineseCalendarLogging"],
+            path: "NavigationCore",
+            swiftSettings: mainActorSwiftSettings
         ),
         .target(
             name: "ChineseCalendarData",
@@ -84,6 +94,7 @@ let package = Package(
                 "ChineseCalendarData",
                 "ChineseCalendarPersistence",
                 "ChineseCalendarLogging",
+                "NavigationCore",
                 .product(name: "SFSafeSymbols", package: "SFSafeSymbols")
             ],
             path: "ChineseCalendarUI",
@@ -107,6 +118,12 @@ let package = Package(
             dependencies: ["ChineseCalendarLogging"],
             path: "ChineseCalendarLogging/Tests",
             swiftSettings: nonisolatedSwiftSettings
+        ),
+        .testTarget(
+            name: "NavigationCoreTests",
+            dependencies: ["NavigationCore"],
+            path: "NavigationCoreTests",
+            swiftSettings: mainActorSwiftSettings
         ),
         .testTarget(
             name: "ChineseCalendarUITests",
