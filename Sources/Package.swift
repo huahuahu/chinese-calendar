@@ -65,6 +65,7 @@ let package = Package(
             name: "NavigationCore",
             dependencies: ["ChineseCalendarLogging"],
             path: "NavigationCore",
+            exclude: ["README.md"],
             swiftSettings: mainActorSwiftSettings
         ),
         .target(
