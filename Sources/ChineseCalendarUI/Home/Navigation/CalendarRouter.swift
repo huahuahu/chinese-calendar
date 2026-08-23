@@ -5,7 +5,6 @@ import Observation
 @Observable
 final class CalendarRouter {
     let navigation: NavigationRouter<CalendarTab, CalendarDestination>
-    private(set) var deferredDeepLink: CalendarDeepLink?
 
     var selectedTab: CalendarTab {
         get { navigation.selectedScope }
@@ -106,50 +105,28 @@ final class CalendarRouter {
         navigation.dismissFullScreen()
     }
 
-    /// 返回 true 表示 deep link 已经立即改变导航；false 表示它正在等待 presentation 关闭。
-    func openDeepLink(_ deepLink: CalendarDeepLink) -> Bool {
-        guard !hasActivePresentation else {
-            deferredDeepLink = deepLink
-            dismissSheet()
-            dismissFullScreen()
-            return false
-        }
-
-        apply(deepLink)
-        return true
+    func openDeepLink(_ deepLink: CalendarDeepLink) -> NavigationRequestResult {
+        navigation.submit(navigationRequest(for: deepLink))
     }
 
-    func openColdLaunchDeepLink(_ deepLink: CalendarDeepLink?) -> Bool {
+    func openColdLaunchDeepLink(_ deepLink: CalendarDeepLink?) -> NavigationRequestResult? {
         guard let deepLink else {
-            return false
-        }
-
-        apply(deepLink)
-        return true
-    }
-
-    /// presentation 关闭后执行等待中的导航，并返回已应用的 deep link 供具体页面消费其输入。
-    func applyDeferredDeepLinkIfReady() -> CalendarDeepLink? {
-        guard !hasActivePresentation, let deferredDeepLink else {
             return nil
         }
 
-        self.deferredDeepLink = nil
-        apply(deferredDeepLink)
-        return deferredDeepLink
+        return navigation.submit(navigationRequest(for: deepLink))
     }
 
-    private func apply(_ deepLink: CalendarDeepLink) {
+    private func navigationRequest(
+        for deepLink: CalendarDeepLink
+    ) -> NavigationRequest<CalendarTab, CalendarDestination> {
         switch deepLink {
         case let .lunarYear(yearNumber, monthIndex):
-            selectedTab = .years
-            setYearsRootDestination(.lunarYear(yearNumber, monthIndex: monthIndex))
+            .setRoot(.lunarYear(yearNumber, monthIndex: monthIndex), on: .years)
         case let .dynasty(dynastyID):
-            selectedTab = .history
-            setPath([.dynasty(dynastyID)], for: .history)
+            .replacePath([.dynasty(dynastyID)], on: .history)
         case let .emperor(emperorID):
-            selectedTab = .history
-            setPath([.emperor(emperorID)], for: .history)
+            .replacePath([.emperor(emperorID)], on: .history)
         }
     }
 }

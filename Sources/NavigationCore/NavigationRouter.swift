@@ -9,6 +9,8 @@ public final class NavigationRouter<Scope: Hashable, Destination: Hashable> {
     public var paths: [Scope: [Destination]]
     public var sheet: NavigationPresentationNode<Destination>?
     public var fullScreen: NavigationPresentationNode<Destination>?
+    public private(set) var deferredRequest: NavigationRequest<Scope, Destination>?
+    public private(set) var isAwaitingPresentationDismissal = false
 
     public init(
         selectedScope: Scope,
@@ -87,6 +89,51 @@ public final class NavigationRouter<Scope: Hashable, Destination: Hashable> {
         NavigationCoreLog.logger.debug("Dismissed root full screen")
     }
 
+    /// Applies a request immediately or defers it until the active presentation tree finishes dismissing.
+    @discardableResult
+    public func submit(_ request: NavigationRequest<Scope, Destination>) -> NavigationRequestResult {
+        guard !hasActivePresentation, !isAwaitingPresentationDismissal else {
+            deferredRequest = request
+            isAwaitingPresentationDismissal = true
+            dismissAllPresentations()
+            NavigationCoreLog.logger.debug("Deferred navigation request until presentations dismiss")
+            return .deferredUntilPresentationDismisses
+        }
+
+        apply(request)
+        return .applied
+    }
+
+    /// Applies the latest deferred request after the presentation host reports that dismissal completed.
+    @discardableResult
+    public func applyDeferredRequestIfReady() -> NavigationRequest<Scope, Destination>? {
+        guard
+            isAwaitingPresentationDismissal,
+            !hasActivePresentation,
+            let deferredRequest
+        else {
+            return nil
+        }
+
+        self.deferredRequest = nil
+        isAwaitingPresentationDismissal = false
+        apply(deferredRequest)
+        NavigationCoreLog.logger.debug("Applied deferred navigation request")
+        return deferredRequest
+    }
+
+    /// Removes every root presentation, which also releases each root's nested presentation tree.
+    public func dismissAllPresentations() {
+        let dismissedSheet = sheet != nil
+        let dismissedFullScreen = fullScreen != nil
+        sheet = nil
+        fullScreen = nil
+
+        if dismissedSheet || dismissedFullScreen {
+            NavigationCoreLog.logger.debug("Dismissed all presentation trees")
+        }
+    }
+
     public var frontmostPresentationNode: NavigationPresentationNode<Destination>? {
         if let fullScreen {
             return fullScreen.frontmostPresentationNode
@@ -97,5 +144,21 @@ public final class NavigationRouter<Scope: Hashable, Destination: Hashable> {
         }
 
         return nil
+    }
+
+    private func apply(_ request: NavigationRequest<Scope, Destination>) {
+        switch request {
+        case let .selectScope(scope):
+            selectedScope = scope
+            NavigationCoreLog.logger.debug("Selected navigation scope")
+        case let .setRoot(destination, scope):
+            selectedScope = scope
+            setRootDestination(destination, for: scope)
+        case let .replacePath(path, scope):
+            selectedScope = scope
+            setPath(path, for: scope)
+        case let .push(destination, scope):
+            push(destination, on: scope)
+        }
     }
 }

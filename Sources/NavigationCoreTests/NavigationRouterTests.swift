@@ -93,6 +93,88 @@ private enum TestDestination: Hashable {
 }
 
 @MainActor
+@Test func navigationRequestCasesUpdateTheirTargetScope() {
+    let router = NavigationRouter<TestScope, TestDestination>(
+        selectedScope: .primary,
+        rootDestinations: [.secondary: .first],
+        paths: [.secondary: [.second]]
+    )
+
+    #expect(router.submit(.selectScope(.secondary)) == .applied)
+    #expect(router.selectedScope == .secondary)
+
+    #expect(router.submit(.setRoot(.third, on: .secondary)) == .applied)
+    #expect(router.selectedScope == .secondary)
+    #expect(router.rootDestination(for: .secondary) == .third)
+    #expect(router.path(for: .secondary).isEmpty)
+
+    #expect(router.submit(.replacePath([.first, .second], on: .primary)) == .applied)
+    #expect(router.selectedScope == .primary)
+    #expect(router.path(for: .primary) == [.first, .second])
+
+    #expect(router.submit(.push(.third, on: .secondary)) == .applied)
+    #expect(router.selectedScope == .secondary)
+    #expect(router.path(for: .secondary) == [.third])
+}
+
+@MainActor
+@Test func requestDismissesPresentationTreeAndWaitsForDismissalCompletion() throws {
+    let router = NavigationRouter<TestScope, TestDestination>(
+        selectedScope: .primary,
+        rootDestinations: [.primary: .first]
+    )
+    router.presentSheet(.second)
+    let sheet = try #require(router.sheet)
+    sheet.presentFullScreen(.third)
+
+    let result = router.submit(.setRoot(.second, on: .secondary))
+
+    #expect(result == .deferredUntilPresentationDismisses)
+    #expect(router.sheet == nil)
+    #expect(router.fullScreen == nil)
+    #expect(router.isAwaitingPresentationDismissal)
+    #expect(router.deferredRequest == .setRoot(.second, on: .secondary))
+    #expect(router.selectedScope == .primary)
+    #expect(router.rootDestination(for: .primary) == .first)
+    #expect(router.rootDestination(for: .secondary) == nil)
+
+    let appliedRequest = router.applyDeferredRequestIfReady()
+
+    #expect(appliedRequest == .setRoot(.second, on: .secondary))
+    #expect(router.deferredRequest == nil)
+    #expect(!router.isAwaitingPresentationDismissal)
+    #expect(router.selectedScope == .secondary)
+    #expect(router.rootDestination(for: .secondary) == .second)
+}
+
+@MainActor
+@Test func latestRequestWinsWhilePresentationDismissalIsInProgress() {
+    let router = NavigationRouter<TestScope, TestDestination>(selectedScope: .primary)
+    router.presentFullScreen(.first)
+
+    #expect(router.submit(.push(.second, on: .primary)) == .deferredUntilPresentationDismisses)
+    #expect(router.submit(.replacePath([.third], on: .secondary)) == .deferredUntilPresentationDismisses)
+    #expect(router.path(for: .primary).isEmpty)
+    #expect(router.path(for: .secondary).isEmpty)
+    #expect(router.deferredRequest == .replacePath([.third], on: .secondary))
+
+    #expect(router.applyDeferredRequestIfReady() == .replacePath([.third], on: .secondary))
+    #expect(router.path(for: .primary).isEmpty)
+    #expect(router.path(for: .secondary) == [.third])
+}
+
+@MainActor
+@Test func applyingDeferredRequestIsIdempotent() {
+    let router = NavigationRouter<TestScope, TestDestination>(selectedScope: .primary)
+    router.presentSheet(.first)
+    router.submit(.push(.second, on: .primary))
+
+    #expect(router.applyDeferredRequestIfReady() == .push(.second, on: .primary))
+    #expect(router.applyDeferredRequestIfReady() == nil)
+    #expect(router.path(for: .primary) == [.second])
+}
+
+@MainActor
 @Test func presentationHostAcceptsAnArbitraryDestinationBuilder() {
     let node = NavigationPresentationNode(destination: TestDestination.first)
 

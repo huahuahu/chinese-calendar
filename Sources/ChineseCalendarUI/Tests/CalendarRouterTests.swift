@@ -178,12 +178,15 @@ import Testing
     coordinator.openDeepLink(.lunarYear(2026, monthIndex: 26001))
 
     #expect(router.sheet == nil)
-    #expect(router.deferredDeepLink == .lunarYear(2026, monthIndex: 26001))
+    #expect(
+        router.navigation.deferredRequest
+            == .setRoot(.lunarYear(2026, monthIndex: 26001), on: .years)
+    )
     #expect(router.currentDestination(on: .years) == .lunarYear(2024))
 
-    coordinator.applyDeferredDeepLinkIfReady()
+    router.navigation.applyDeferredRequestIfReady()
 
-    #expect(router.deferredDeepLink == nil)
+    #expect(router.navigation.deferredRequest == nil)
     #expect(router.currentDestination(on: .years) == .lunarYear(2026, monthIndex: 26001))
     #expect(router.yearsRootDestination == .lunarYear(2026, monthIndex: 26001))
     #expect(router.yearsPath.isEmpty)
@@ -195,7 +198,7 @@ import Testing
 
     coordinator.openColdLaunchDeepLink(.lunarYear(2026, monthIndex: 26001))
 
-    #expect(coordinator.router.deferredDeepLink == nil)
+    #expect(coordinator.router.navigation.deferredRequest == nil)
     #expect(coordinator.router.yearsRootDestination == .lunarYear(2026, monthIndex: 26001))
     #expect(coordinator.router.yearsPath.isEmpty)
     #expect(

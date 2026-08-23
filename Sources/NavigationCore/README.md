@@ -17,6 +17,8 @@
 ## 主要类型
 
 - `NavigationRouter<Scope, Destination>`：保存每个 scope 的 root 和独立 push path，并管理 root sheet/full-screen。
+- `NavigationRequest<Scope, Destination>`：描述选择 scope、替换 root/path 或 push 的强类型导航请求。
+- `NavigationRequestResult`：说明请求已立即执行，还是需要等待 presentation dismissal 完成。
 - `NavigationPresentationNode<Destination>`：表示一个拥有独立 push path 的 presentation，允许继续嵌套 sheet/full-screen。
 - `NavigationPresentationNodeView`：为 presentation 创建独立 `NavigationStack`，使用调用方提供的 destination builder 渲染 root 和 pushed destination，并递归承载子 presentation。
 - `navigationFullScreenCover`：iOS 使用 `fullScreenCover`，macOS 退化为 `sheet`。
@@ -75,6 +77,32 @@ struct PresentationContent: View {
 ```
 
 `NavigationPresentationNodeView` 会为每个 presented node 创建独立的 `NavigationStack`，并在该层注册调用方的 `Destination` 类型。presented node 的 push path 不会修改任何 root scope 的 path。
+
+## 外部导航请求与 presentation
+
+URL scheme、Universal Link、通知和启动参数的解析属于业务层。业务层把解析结果映射为 `NavigationRequest` 后交给 `NavigationRouter`，Core 只协调导航结构：
+
+```swift
+let request = NavigationRequest<AppSection, AppDestination>.setRoot(
+    .detail("external"),
+    on: .primary
+)
+let result = navigation.submit(request)
+```
+
+没有 presentation 时，请求会立即执行。如果 sheet 或 full-screen presentation 正在显示，`submit(_:)` 会清除整棵 presentation tree 并暂存请求，返回 `.deferredUntilPresentationDismisses`。在 dismissal 动画完成前继续提交请求时，最新请求覆盖旧请求。
+
+presentation host 必须在 `onDismiss` 中通知 Router；重复通知是幂等的：
+
+```swift
+.sheet(item: $navigation.sheet, onDismiss: {
+    _ = navigation.applyDeferredRequestIfReady()
+}) { node in
+    // Build presentation content.
+}
+```
+
+`NavigationCore` 不解析 URL，也不决定某种业务 deep link 对应哪个 scope 或 destination；这些映射仍由调用方负责。
 
 ## 测试
 

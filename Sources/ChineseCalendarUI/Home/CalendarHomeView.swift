@@ -46,12 +46,12 @@ public struct CalendarHomeView<BottomStatusBar: View>: View {
             #endif
         }
         .environment(coordinator.router)
-        .sheet(item: $navigation.sheet, onDismiss: coordinator.applyDeferredDeepLinkIfReady) { node in
+        .sheet(item: $navigation.sheet, onDismiss: applyDeferredNavigationRequestIfReady) { node in
             CalendarPresentationNodeView(node: node)
         }
         .navigationFullScreenCover(
             item: $navigation.fullScreen,
-            onDismiss: coordinator.applyDeferredDeepLinkIfReady
+            onDismiss: applyDeferredNavigationRequestIfReady
         ) { node in
             CalendarPresentationNodeView(node: node)
         }
@@ -105,6 +105,10 @@ public struct CalendarHomeView<BottomStatusBar: View>: View {
         }
 
         coordinator.openDeepLink(deepLink)
+    }
+
+    private func applyDeferredNavigationRequestIfReady() {
+        _ = coordinator.router.navigation.applyDeferredRequestIfReady()
     }
 }
 
