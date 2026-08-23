@@ -76,26 +76,23 @@ struct LunarMonthGrid: View {
         let todayDayIndex = todayDay?.dayIndex
 
         VStack(alignment: .leading, spacing: 16) {
-            ZStack {
-                MonthSwitcher(
-                    title: monthNavigationTitle,
-                    subtitle: monthNavigationSubtitle,
-                    months: months,
-                    selectedMonth: month,
-                    showYearPicker: showYearPicker,
-                    canSelectPreviousMonth: canSelectPreviousMonth,
-                    canSelectNextMonth: canSelectNextMonth,
-                    selectPreviousMonth: selectPreviousMonth,
-                    selectNextMonth: selectNextMonth,
-                    selectMonth: selectMonth
-                )
-                .padding()
-                .background(.background.secondary, in: RoundedRectangle(cornerRadius: 28))
-                .id(year.lunarYearNumber)
-                .transition(yearTransitionDirection.transition(reduceMotion: reduceMotion))
-            }
-            .clipped()
-            .animation(yearSelectionAnimation, value: year.lunarYearNumber)
+            MonthSwitcher(
+                title: monthNavigationTitle,
+                subtitle: monthNavigationSubtitle,
+                yearNumber: year.lunarYearNumber,
+                months: months,
+                selectedMonth: month,
+                showYearPicker: showYearPicker,
+                canSelectPreviousMonth: canSelectPreviousMonth,
+                canSelectNextMonth: canSelectNextMonth,
+                selectPreviousMonth: selectPreviousMonth,
+                selectNextMonth: selectNextMonth,
+                selectMonth: selectMonth,
+                yearTransitionDirection: yearTransitionDirection,
+                reduceMotion: reduceMotion
+            )
+            .padding()
+            .background(.background.secondary, in: RoundedRectangle(cornerRadius: 28))
 
             if days.isEmpty {
                 ContentUnavailableView(
@@ -158,10 +155,6 @@ struct LunarMonthGrid: View {
 
     private var gridColumns: [GridItem] {
         [GridItem(.adaptive(minimum: 58), spacing: 8)]
-    }
-
-    private var yearSelectionAnimation: Animation {
-        reduceMotion ? .easeInOut(duration: 0.2) : .smooth(duration: 0.35)
     }
 
     private func selectedDay(
