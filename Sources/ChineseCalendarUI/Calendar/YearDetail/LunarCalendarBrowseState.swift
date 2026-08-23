@@ -5,7 +5,11 @@ import Observation
 @Observable
 final class LunarCalendarBrowseState {
     private(set) var displayedYearNumber: Int
-    private(set) var yearTransitionDirection = LunarYearTransitionDirection.later
+    let yearTransitionContext = LunarYearTransitionContext()
+    var yearTransitionDirection: LunarYearTransitionDirection {
+        yearTransitionContext.direction
+    }
+
     var selectedMonthIndex: Int? {
         didSet {
             guard oldValue != selectedMonthIndex else {
@@ -41,7 +45,7 @@ final class LunarCalendarBrowseState {
             from: displayedYearNumber,
             to: yearNumber
         ) {
-            yearTransitionDirection = direction
+            yearTransitionContext.direction = direction
         }
 
         displayedYearNumber = yearNumber

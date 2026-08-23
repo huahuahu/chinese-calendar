@@ -77,7 +77,7 @@ struct LunarYearDetailView: View {
                                 selectPreviousMonth: { selectMonthInCalendar(adjacentMonths.previous) },
                                 selectNextMonth: { selectMonthInCalendar(adjacentMonths.next) },
                                 selectMonth: selectMonthInCalendar,
-                                yearTransitionDirection: browseState.yearTransitionDirection
+                                yearTransitionContext: browseState.yearTransitionContext
                             )
                         }
                     }

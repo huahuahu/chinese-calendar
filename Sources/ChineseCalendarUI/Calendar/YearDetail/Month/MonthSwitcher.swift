@@ -16,7 +16,7 @@ struct MonthSwitcher: View {
     let selectPreviousMonth: () -> Void
     let selectNextMonth: () -> Void
     let selectMonth: (ChineseLunarMonth) -> Void
-    let yearTransitionDirection: LunarYearTransitionDirection
+    let yearTransitionContext: LunarYearTransitionContext
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
@@ -64,7 +64,13 @@ struct MonthSwitcher: View {
     }
 
     private var yearTransition: AnyTransition {
-        yearTransitionDirection.transition(reduceMotion: reduceMotion)
+        guard !reduceMotion else {
+            return .opacity
+        }
+
+        return AnyTransition(
+            LunarYearContextualTransition(context: yearTransitionContext)
+        )
     }
 
     private var yearSelectionAnimation: Animation {

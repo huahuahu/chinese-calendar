@@ -127,9 +127,11 @@ import Testing
 @MainActor
 @Test func browseStateTracksDirectionForEveryYearChangingSelection() {
     let browseState = LunarCalendarBrowseState(displayedYearNumber: 2026)
+    let transitionContext = browseState.yearTransitionContext
 
     browseState.select(yearNumber: 2025, monthIndex: 25012)
     #expect(browseState.yearTransitionDirection == .earlier)
+    #expect(browseState.yearTransitionContext === transitionContext)
 
     browseState.select(
         yearNumber: 2027,
@@ -137,6 +139,7 @@ import Testing
         dayIndex: 2_700_101
     )
     #expect(browseState.yearTransitionDirection == .later)
+    #expect(browseState.yearTransitionContext === transitionContext)
 }
 
 @MainActor
