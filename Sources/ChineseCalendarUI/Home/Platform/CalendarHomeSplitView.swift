@@ -23,11 +23,11 @@ struct CalendarHomeSplitView: View {
             .navigationTitle("年份")
         } detail: {
             NavigationStack(path: $router.yearsPath) {
-                CalendarDestinationView(
+                CalendarDestinationRootView(
                     destination: router.yearsRootDestination,
                     emptyStateDescription: emptyStateDescription
                 )
-                .calendarDestinations(emptyStateDescription: emptyStateDescription)
+                .calendarDestinations()
             }
         }
     }

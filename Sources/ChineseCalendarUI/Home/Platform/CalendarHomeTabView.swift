@@ -16,8 +16,11 @@ import SwiftUI
 
             TabView(selection: $router.selectedTab) {
                 NavigationStack(path: $router.yearsPath) {
-                    calendarDestination(for: router.yearsRootDestination)
-                        .calendarDestinations(emptyStateDescription: emptyStateDescription)
+                    CalendarDestinationRootView(
+                        destination: router.yearsRootDestination,
+                        emptyStateDescription: emptyStateDescription
+                    )
+                    .calendarDestinations()
                 }
                 .tabItem {
                     Label(CalendarTab.years.title, systemSymbol: CalendarTab.years.systemSymbol)
@@ -26,7 +29,7 @@ import SwiftUI
 
                 NavigationStack(path: $router.historyPath) {
                     CalendarHistoryHomeView()
-                        .calendarDestinations(emptyStateDescription: emptyStateDescription)
+                        .calendarDestinations()
                 }
                 .tabItem {
                     Label(CalendarTab.history.title, systemSymbol: CalendarTab.history.systemSymbol)
@@ -51,13 +54,6 @@ import SwiftUI
             }
             .calendarTabViewBottomAccessory(isEnabled: bottomStatusBarIsPresented, content: bottomStatusBar)
             .background(.calendarSystemBackground)
-        }
-
-        private func calendarDestination(for destination: CalendarDestination?) -> some View {
-            CalendarDestinationView(
-                destination: destination,
-                emptyStateDescription: emptyStateDescription
-            )
         }
     }
 #endif
