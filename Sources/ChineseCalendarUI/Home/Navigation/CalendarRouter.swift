@@ -11,10 +11,6 @@ final class CalendarRouter {
         set { navigation.selectedScope = newValue }
     }
 
-    var yearsRootDestination: CalendarDestination? {
-        navigation.rootDestination(for: .years)
-    }
-
     var yearsPath: [CalendarDestination] {
         get { navigation.path(for: .years) }
         set { navigation.setPath(newValue, for: .years) }
@@ -45,21 +41,13 @@ final class CalendarRouter {
 
     init(
         selectedTab: CalendarTab = .years,
-        yearsRootDestination: CalendarDestination? = nil,
         yearsPath: [CalendarDestination] = [],
         historyPath: [CalendarDestination] = []
     ) {
-        var roots: [CalendarTab: CalendarDestination] = [:]
-        roots[.years] = yearsRootDestination
         navigation = NavigationRouter(
             selectedScope: selectedTab,
-            rootDestinations: roots,
             paths: [.years: yearsPath, .history: historyPath]
         )
-    }
-
-    func setYearsRootDestination(_ destination: CalendarDestination?) {
-        navigation.setRootDestination(destination, for: .years)
     }
 
     func path(for tab: CalendarTab) -> [CalendarDestination] {
@@ -122,7 +110,7 @@ final class CalendarRouter {
     ) -> NavigationRequest<CalendarTab, CalendarDestination> {
         switch deepLink {
         case let .lunarYear(yearNumber, monthIndex):
-            .setRoot(.lunarYear(yearNumber, monthIndex: monthIndex), on: .years)
+            .replacePath([.lunarYear(yearNumber, monthIndex: monthIndex)], on: .years)
         case let .dynasty(dynastyID):
             .replacePath([.dynasty(dynastyID)], on: .history)
         case let .emperor(emperorID):

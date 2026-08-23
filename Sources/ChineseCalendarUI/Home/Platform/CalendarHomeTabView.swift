@@ -1,3 +1,4 @@
+import ChineseCalendarCore
 import ChineseCalendarPersistence
 import SFSafeSymbols
 import SwiftUI
@@ -6,7 +7,6 @@ import SwiftUI
     /// 供 iOS 的 CalendarHomeView 使用，以标签页组织日历、历史和设置界面。
     struct CalendarHomeTabView<BottomStatusBar: View>: View {
         @Bindable var coordinator: CalendarHomeCoordinator
-        let emptyStateDescription: String
         let settingsCoordinator: ChineseCalendarStoreCoordinator?
         let bottomStatusBarIsPresented: Bool
         let bottomStatusBar: () -> BottomStatusBar
@@ -16,11 +16,8 @@ import SwiftUI
 
             TabView(selection: $router.selectedTab) {
                 NavigationStack(path: $router.yearsPath) {
-                    CalendarDestinationRootView(
-                        destination: router.yearsRootDestination,
-                        emptyStateDescription: emptyStateDescription
-                    )
-                    .calendarDestinations()
+                    LunarYearDetailView(initialYearNumber: ChineseLunarCalendar.yearNumber())
+                        .calendarDestinations()
                 }
                 .tabItem {
                     Label(CalendarTab.years.title, systemSymbol: CalendarTab.years.systemSymbol)

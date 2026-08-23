@@ -1,5 +1,4 @@
 import ChineseCalendarCore
-import ChineseCalendarLogging
 import ChineseCalendarPersistence
 import Foundation
 import NavigationCore
@@ -32,7 +31,6 @@ public struct CalendarHomeView<BottomStatusBar: View>: View {
             #if os(iOS)
                 CalendarHomeTabView(
                     coordinator: coordinator,
-                    emptyStateDescription: emptyStateDescription,
                     settingsCoordinator: settingsCoordinator,
                     bottomStatusBarIsPresented: bottomStatusBarIsPresented,
                     bottomStatusBar: bottomStatusBar
@@ -40,8 +38,7 @@ public struct CalendarHomeView<BottomStatusBar: View>: View {
             #else
                 CalendarHomeSplitView(
                     coordinator: coordinator,
-                    years: years,
-                    emptyStateDescription: emptyStateDescription
+                    years: years
                 )
             #endif
         }
@@ -57,36 +54,9 @@ public struct CalendarHomeView<BottomStatusBar: View>: View {
         }
         .task {
             openColdLaunchDeepLinkIfNeeded()
-            selectDefaultYearIfNeeded()
-        }
-        .onChange(of: years.map(\.lunarYearNumber)) {
-            selectDefaultYearIfNeeded()
         }
         .onOpenURL { url in
             open(url)
-        }
-    }
-
-    private var emptyStateDescription: String {
-        if years.isEmpty {
-            return "正在加载 SwiftData 日历数据。"
-        }
-
-        return "请选择一个农历年。"
-    }
-
-    private func selectDefaultYearIfNeeded() {
-        let yearNumbers = years.map(\.lunarYearNumber)
-        guard !yearNumbers.isEmpty else {
-            ChineseCalendarLog.ui.debug("CalendarHomeView is waiting for SwiftData years")
-            return
-        }
-
-        if let selectedYearNumber = coordinator.selectDefaultYearIfNeeded(
-            availableYearNumbers: yearNumbers,
-            preferredYearNumber: ChineseLunarCalendar.yearNumber()
-        ) {
-            ChineseCalendarLog.ui.info("Selected default lunar year \(selectedYearNumber)")
         }
     }
 
