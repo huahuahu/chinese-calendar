@@ -5,7 +5,7 @@ import Observation
 @Observable
 public final class NavigationRouter<Scope: Hashable, Destination: Hashable> {
     public var selectedScope: Scope
-    public var rootDestinations: [Scope: Destination]
+    public private(set) var rootDestinations: [Scope: Destination]
     public var paths: [Scope: [Destination]]
     public var sheet: NavigationPresentationNode<Destination>?
     public var fullScreen: NavigationPresentationNode<Destination>?
