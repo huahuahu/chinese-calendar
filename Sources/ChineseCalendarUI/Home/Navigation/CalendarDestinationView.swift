@@ -1,10 +1,8 @@
-import SFSafeSymbols
 import SwiftUI
 
 /// 供导航容器使用，将 CalendarDestination 分发到对应页面。
 struct CalendarDestinationView: View {
-    let destination: CalendarDestination?
-    let emptyStateDescription: String
+    let destination: CalendarDestination
 
     var body: some View {
         Group {
@@ -22,12 +20,6 @@ struct CalendarDestinationView: View {
                 EmperorDetailView(emperorID: emperorID)
             case let .yearPicker(yearPicker):
                 CalendarYearPickerDestinationView(destination: yearPicker)
-            case nil:
-                ContentUnavailableView {
-                    Label("Chinese Calendar", systemSymbol: .calendar)
-                } description: {
-                    Text(emptyStateDescription)
-                }
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)

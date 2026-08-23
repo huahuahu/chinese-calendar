@@ -6,7 +6,6 @@ import SwiftUI
 struct CalendarHomeSplitView: View {
     @Bindable var coordinator: CalendarHomeCoordinator
     let years: [ChineseLunarYear]
-    let emptyStateDescription: String
 
     var body: some View {
         @Bindable var router = coordinator.router
@@ -23,27 +22,27 @@ struct CalendarHomeSplitView: View {
             .navigationTitle("年份")
         } detail: {
             NavigationStack(path: $router.yearsPath) {
-                CalendarDestinationView(
-                    destination: router.yearsRootDestination,
-                    emptyStateDescription: emptyStateDescription
-                )
-                .calendarDestinations(emptyStateDescription: emptyStateDescription)
+                LunarYearDetailView(initialYearNumber: ChineseLunarCalendar.yearNumber())
+                    .calendarDestinations()
             }
         }
     }
 
     private var selection: Binding<CalendarDestination?> {
         Binding {
-            coordinator.router.yearsRootDestination?.lunarYearNumber.map {
-                .lunarYear($0)
-            }
+            coordinator.router.currentDestination(on: .years)
+                ?? .lunarYear(ChineseLunarCalendar.yearNumber())
         } set: { destination in
-            guard case .lunarYear? = destination else {
-                coordinator.router.setYearsRootDestination(nil)
+            guard case let .lunarYear(yearNumber, _, _)? = destination else {
+                coordinator.router.setPath([], for: .years)
                 return
             }
 
-            coordinator.router.setYearsRootDestination(destination)
+            if yearNumber == ChineseLunarCalendar.yearNumber() {
+                coordinator.router.setPath([], for: .years)
+            } else {
+                coordinator.router.setPath([.lunarYear(yearNumber)], for: .years)
+            }
         }
     }
 }

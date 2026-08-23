@@ -57,6 +57,7 @@ This repository hosts a Swift project for browsing the traditional Chinese calen
 - Project-local skill: `./.agents/skills/publish-full-seed-store`
 - Project-local skill: `./.agents/skills/worktree-cleanup`
 - Project-local skill: `./.agents/skills/cleaning-merged-pr-worktrees`
+- Project-local skill: `./.agents/skills/screen-flow-prototype`
 
 ## Apple Documentation
 

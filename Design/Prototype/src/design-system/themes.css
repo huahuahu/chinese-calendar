@@ -1,0 +1,23 @@
+[data-theme='dark'] {
+  --color-accent: #0a84ff;
+  --color-accent-strong: #409cff;
+  --color-accent-soft: #173b60;
+  --color-canvas: #111114;
+  --color-surface: #1c1c1e;
+  --color-surface-secondary: #2c2c2e;
+  --color-text: #ffffff;
+  --color-text-secondary: #98989d;
+  --color-separator: rgb(255 255 255 / 10%);
+  --color-shadow: rgb(0 0 0 / 42%);
+}
+
+[data-size='compact'] {
+  --phone-width: 320px;
+  --phone-height: 680px;
+  --font-size-body: 0.82rem;
+  --font-size-title: 1.25rem;
+  --font-size-display: 1.7rem;
+  --space-4: 13px;
+  --space-5: 19px;
+  --radius-large: 23px;
+}
