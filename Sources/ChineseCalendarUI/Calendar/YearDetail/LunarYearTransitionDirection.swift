@@ -10,4 +10,14 @@ enum LunarYearTransitionDirection: Equatable {
 
         self = newYearNumber > oldYearNumber ? .later : .earlier
     }
+
+    /// 返回进入目标年份时应展示的边界月份。
+    func destinationMonthIndex(in chronologicalMonthIndices: [Int]) -> Int? {
+        switch self {
+        case .earlier:
+            chronologicalMonthIndices.last
+        case .later:
+            chronologicalMonthIndices.first
+        }
+    }
 }

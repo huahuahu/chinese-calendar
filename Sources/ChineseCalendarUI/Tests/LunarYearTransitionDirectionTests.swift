@@ -19,4 +19,21 @@ struct LunarYearTransitionDirectionTests {
         #expect(LunarYearTransitionDirection(from: -1, to: 1) == .later)
         #expect(LunarYearTransitionDirection(from: 1, to: -1) == .earlier)
     }
+
+    @Test func laterYearStartsAtItsFirstMonth() {
+        let direction = LunarYearTransitionDirection.later
+
+        #expect(direction.destinationMonthIndex(in: [26001, 26002, 26012]) == 26001)
+    }
+
+    @Test func earlierYearStartsAtItsLastMonth() {
+        let direction = LunarYearTransitionDirection.earlier
+
+        #expect(direction.destinationMonthIndex(in: [26001, 26002, 26012]) == 26012)
+    }
+
+    @Test func aYearWithoutMonthsHasNoDestinationMonth() {
+        #expect(LunarYearTransitionDirection.later.destinationMonthIndex(in: []) == nil)
+        #expect(LunarYearTransitionDirection.earlier.destinationMonthIndex(in: []) == nil)
+    }
 }
