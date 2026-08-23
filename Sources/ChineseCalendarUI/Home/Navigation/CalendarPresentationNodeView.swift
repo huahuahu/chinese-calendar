@@ -7,15 +7,12 @@ struct CalendarPresentationNodeView: View {
 
     var body: some View {
         NavigationCore.NavigationPresentationNodeView(node: node) { destination, dismiss in
-            CalendarDestinationView(
-                destination: destination,
-                emptyStateDescription: "请选择一个农历年。"
-            )
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("关闭", action: dismiss)
+            CalendarDestinationView(destination: destination)
+                .toolbar {
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button("关闭", action: dismiss)
+                    }
                 }
-            }
         }
     }
 }

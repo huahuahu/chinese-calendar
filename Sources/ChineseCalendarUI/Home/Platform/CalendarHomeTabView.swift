@@ -1,3 +1,4 @@
+import ChineseCalendarCore
 import ChineseCalendarPersistence
 import SFSafeSymbols
 import SwiftUI
@@ -6,7 +7,6 @@ import SwiftUI
     /// 供 iOS 的 CalendarHomeView 使用，以标签页组织日历、历史和设置界面。
     struct CalendarHomeTabView<BottomStatusBar: View>: View {
         @Bindable var coordinator: CalendarHomeCoordinator
-        let emptyStateDescription: String
         let settingsCoordinator: ChineseCalendarStoreCoordinator?
         let bottomStatusBarIsPresented: Bool
         let bottomStatusBar: () -> BottomStatusBar
@@ -16,8 +16,8 @@ import SwiftUI
 
             TabView(selection: $router.selectedTab) {
                 NavigationStack(path: $router.yearsPath) {
-                    calendarDestination(for: router.yearsRootDestination)
-                        .calendarDestinations(emptyStateDescription: emptyStateDescription)
+                    LunarYearDetailView(initialYearNumber: ChineseLunarCalendar.yearNumber())
+                        .calendarDestinations()
                 }
                 .tabItem {
                     Label(CalendarTab.years.title, systemSymbol: CalendarTab.years.systemSymbol)
@@ -26,7 +26,7 @@ import SwiftUI
 
                 NavigationStack(path: $router.historyPath) {
                     CalendarHistoryHomeView()
-                        .calendarDestinations(emptyStateDescription: emptyStateDescription)
+                        .calendarDestinations()
                 }
                 .tabItem {
                     Label(CalendarTab.history.title, systemSymbol: CalendarTab.history.systemSymbol)
@@ -51,13 +51,6 @@ import SwiftUI
             }
             .calendarTabViewBottomAccessory(isEnabled: bottomStatusBarIsPresented, content: bottomStatusBar)
             .background(.calendarSystemBackground)
-        }
-
-        private func calendarDestination(for destination: CalendarDestination?) -> some View {
-            CalendarDestinationView(
-                destination: destination,
-                emptyStateDescription: emptyStateDescription
-            )
         }
     }
 #endif
