@@ -95,6 +95,7 @@ struct LunarMonthGrid: View {
                 .transition(yearTransitionDirection.transition(reduceMotion: reduceMotion))
             }
             .clipped()
+            .animation(yearSelectionAnimation, value: year.lunarYearNumber)
 
             if days.isEmpty {
                 ContentUnavailableView(
@@ -157,6 +158,10 @@ struct LunarMonthGrid: View {
 
     private var gridColumns: [GridItem] {
         [GridItem(.adaptive(minimum: 58), spacing: 8)]
+    }
+
+    private var yearSelectionAnimation: Animation {
+        reduceMotion ? .easeInOut(duration: 0.2) : .smooth(duration: 0.35)
     }
 
     private func selectedDay(

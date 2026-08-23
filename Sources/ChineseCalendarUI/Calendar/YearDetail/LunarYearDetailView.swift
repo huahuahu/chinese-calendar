@@ -335,13 +335,7 @@ private extension LunarYearDetailView {
         }
 
         yearTransitionDirection = direction
-        withAnimation(yearSelectionAnimation) {
-            browseState.selectYear(yearNumber)
-        }
-    }
-
-    var yearSelectionAnimation: Animation {
-        accessibilityReduceMotion ? .easeInOut(duration: 0.2) : .smooth(duration: 0.35)
+        browseState.selectYear(yearNumber)
     }
 }
 
