@@ -8,7 +8,7 @@ import Testing
         (-1, "公元前 2 年"),
         (0, "公元前 1 年"),
         (1, "公元 1 年"),
-        (2026, "公元 2026 年"),
+        (2026, "公元 2026 年")
     ]
 )
 func yearTitleUsesHistoricalEra(lunarYearNumber: Int, expectedTitle: String) {
