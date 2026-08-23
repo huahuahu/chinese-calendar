@@ -20,7 +20,11 @@ public enum LunarMonthSize: Int, Codable, CaseIterable, Sendable {
 
 public enum LunarCalendarFormatting {
     public static func yearTitle(lunarYearNumber: Int) -> String {
-        "农历 \(lunarYearNumber) 年"
+        if lunarYearNumber > 0 {
+            "公元 \(lunarYearNumber) 年"
+        } else {
+            "公元前 \(1 - lunarYearNumber) 年"
+        }
     }
 
     public static func yearSubtitle(stemIndex: Int, branchIndex: Int) -> String {

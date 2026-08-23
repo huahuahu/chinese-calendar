@@ -1,6 +1,20 @@
 @testable import ChineseCalendarCore
 import Testing
 
+@Test(
+    "年份标题将天文学纪年转换为没有公元 0 年的历史纪年",
+    arguments: [
+        (-220, "公元前 221 年"),
+        (-1, "公元前 2 年"),
+        (0, "公元前 1 年"),
+        (1, "公元 1 年"),
+        (2026, "公元 2026 年"),
+    ]
+)
+func yearTitleUsesHistoricalEra(lunarYearNumber: Int, expectedTitle: String) {
+    #expect(LunarCalendarFormatting.yearTitle(lunarYearNumber: lunarYearNumber) == expectedTitle)
+}
+
 @Test func monthTitleIncludesLunarMonthSizeWhenKnown() {
     #expect(LunarCalendarFormatting.monthTitle(monthNumberInYear: 8, isLeapMonth: true, dayCount: 30) == "闰八月大")
     #expect(LunarCalendarFormatting.monthTitle(monthNumberInYear: 8, isLeapMonth: false, dayCount: 29) == "八月小")
