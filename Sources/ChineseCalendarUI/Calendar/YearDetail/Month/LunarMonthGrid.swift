@@ -20,6 +20,7 @@ struct LunarMonthGrid: View {
     let yearTransitionContext: LunarYearTransitionContext
 
     @Environment(\.calendarStoreContentLevel) private var storeContentLevel
+    @Environment(\.locale) private var locale
     @Bindable var daySelection: CalendarDaySelection
     @Query private var days: [ChineseLunarDay]
 
@@ -185,13 +186,17 @@ struct LunarMonthGrid: View {
     }
 
     private var civilDateRangeTitle: String? {
-        guard let firstCivilDate = days.first?.calendarDay?.civilDate,
-              let lastCivilDate = days.last?.calendarDay?.civilDate
+        guard let firstJulianDayNumber = days.first?.calendarDay?.julianDayNumber,
+              let lastJulianDayNumber = days.last?.calendarDay?.julianDayNumber
         else {
             return nil
         }
 
-        return "\(fullCivilDateTitle(for: firstCivilDate)) - \(fullCivilDateTitle(for: lastCivilDate))"
+        return LunarCalendarFormatting.civilDateRangeTitle(
+            fromJulianDayNumber: firstJulianDayNumber,
+            throughJulianDayNumber: lastJulianDayNumber,
+            locale: locale
+        )
     }
 
     private var emptyStateTitle: String {
@@ -215,7 +220,7 @@ struct LunarMonthGrid: View {
     private var emptyStateDescription: String {
         switch storeContentLevel {
         case .base:
-            "当前内置数据只包含年份和月份；下载完整数据后会显示每日干支和对应公历日期。"
+            "当前内置数据只包含年份和月份；下载完整数据后会显示每日干支和对应民用日期。"
         case .full:
             "这个月份暂时没有可显示的日级记录。"
         }
@@ -251,11 +256,6 @@ struct LunarMonthGrid: View {
             dayCount: days.count,
             selectedDayIndex: daySelection.dayIndex
         )
-    }
-
-    private func fullCivilDateTitle(for civilDate: CivilDate) -> String {
-        let prefix = civilDate.calendarStyle == .julian ? "儒略" : "公历"
-        return "\(prefix) \(civilDate.year)年\(civilDate.month)月\(civilDate.dayOfMonth)日"
     }
 
     static func monthNavigationSubtitle(

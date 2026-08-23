@@ -8,6 +8,8 @@ struct SelectedLunarDayDetailCard: View {
     let month: ChineseLunarMonth
     let contentLevel: ChineseCalendarSeedStoreContentLevel
 
+    @Environment(\.locale) private var locale
+
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             HStack(alignment: .top, spacing: 16) {
@@ -72,24 +74,22 @@ struct SelectedLunarDayDetailCard: View {
     }
 
     private var civilDateFactTitle: String {
-        day.calendarDay?.civilDate?.calendarStyle == .julian ? "儒略表达" : "公历表达"
+        "民用日期"
     }
 
     private var civilDateValue: String {
-        guard let civilDate = day.calendarDay?.civilDate else {
-            return "-"
-        }
-
-        return "\(civilDate.year).\(civilDate.month).\(civilDate.dayOfMonth)"
+        fullCivilDateTitle
     }
 
     private var fullCivilDateTitle: String {
-        guard let civilDate = day.calendarDay?.civilDate else {
+        guard let julianDayNumber = day.calendarDay?.julianDayNumber else {
             return "-"
         }
 
-        let prefix = civilDate.calendarStyle == .julian ? "儒略" : "公历"
-        return "\(prefix) \(civilDate.year)年\(civilDate.month)月\(civilDate.dayOfMonth)日"
+        return LunarCalendarFormatting.fullCivilDateTitle(
+            julianDayNumber: julianDayNumber,
+            locale: locale
+        )
     }
 
     private var contentLevelTitle: String {

@@ -67,7 +67,7 @@ struct FullStoreDownloadProgress: Equatable {
         case .installing:
             "正在替换本地数据存储。"
         case .completed:
-            "现在可以浏览每日干支和对应公历日期。"
+            "现在可以浏览每日干支和对应民用日期。"
         }
     }
 

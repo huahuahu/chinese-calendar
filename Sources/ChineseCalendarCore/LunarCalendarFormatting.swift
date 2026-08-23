@@ -19,6 +19,10 @@ public enum LunarMonthSize: Int, Codable, CaseIterable, Sendable {
 }
 
 public enum LunarCalendarFormatting {
+    private static let unixEpochJulianDayNumber = 2_440_588
+    private static let secondsPerDay: TimeInterval = 86400
+    private static let secondsFromMidnightToNoon: TimeInterval = 43200
+
     public static func yearTitle(lunarYearNumber: Int) -> String {
         if lunarYearNumber > 0 {
             "公元 \(lunarYearNumber) 年"
@@ -72,19 +76,88 @@ public enum LunarCalendarFormatting {
     }
 
     public static func civilDateTitle(
-        year: Int,
-        month: Int,
-        dayOfMonth: Int,
-        isJulianCalendar: Bool
+        julianDayNumber: Int,
+        locale: Locale
     ) -> String {
-        let dateText = month == 1 && dayOfMonth == 1
-            ? "\(year)/\(month)/\(dayOfMonth)"
-            : "\(month)/\(dayOfMonth)"
+        let date = civilDate(fromJulianDayNumber: julianDayNumber)
+        let components = gregorianCalendar.dateComponents([.era, .month, .day], from: date)
 
-        return isJulianCalendar ? "儒略 \(dateText)" : dateText
+        if components.era == 0 || (components.month == 1 && components.day == 1) {
+            return fullCivilDateTitle(julianDayNumber: julianDayNumber, locale: locale)
+        }
+
+        return date.formatted(
+            Date.FormatStyle(locale: locale, calendar: gregorianCalendar, timeZone: .gmt)
+                .month(.defaultDigits)
+                .day()
+        )
+    }
+
+    public static func fullCivilDateTitle(
+        julianDayNumber: Int,
+        locale: Locale
+    ) -> String {
+        let date = civilDate(fromJulianDayNumber: julianDayNumber)
+        let style = Date.FormatStyle(
+            date: .numeric,
+            time: .omitted,
+            locale: locale,
+            calendar: gregorianCalendar,
+            timeZone: .gmt
+        )
+
+        guard gregorianCalendar.component(.era, from: date) == 0 else {
+            return date.formatted(style)
+        }
+
+        return date.formatted(style.era(.wide))
+    }
+
+    public static func civilDateRangeTitle(
+        fromJulianDayNumber startJulianDayNumber: Int,
+        throughJulianDayNumber endJulianDayNumber: Int,
+        locale: Locale
+    ) -> String {
+        let startDate = civilDate(fromJulianDayNumber: startJulianDayNumber)
+        let endDate = civilDate(fromJulianDayNumber: endJulianDayNumber)
+        let includesBeforeCommonEra = gregorianCalendar.component(.era, from: startDate) == 0
+            || gregorianCalendar.component(.era, from: endDate) == 0
+
+        if includesBeforeCommonEra {
+            // IntervalFormatStyle has no era option, so use a localized interval skeleton for BCE dates.
+            let formatter = DateIntervalFormatter()
+            formatter.locale = locale
+            formatter.calendar = gregorianCalendar
+            formatter.timeZone = .gmt
+            formatter.dateTemplate = "GyMd"
+            return formatter.string(from: startDate, to: endDate)
+        }
+
+        let style = Date.IntervalFormatStyle(
+            date: .numeric,
+            time: .omitted,
+            locale: locale,
+            calendar: gregorianCalendar,
+            timeZone: .gmt
+        )
+        return style.format(startDate ..< endDate)
+    }
+
+    /// Converts an absolute JDN to a `Date` anchored at noon UTC, keeping it away from time-zone boundaries.
+    public static func civilDate(fromJulianDayNumber julianDayNumber: Int) -> Date {
+        let daysSinceUnixEpoch = TimeInterval(julianDayNumber - unixEpochJulianDayNumber)
+        return Date(
+            timeIntervalSince1970: daysSinceUnixEpoch * secondsPerDay + secondsFromMidnightToNoon
+        )
     }
 
     private static func sexagenaryName(stemIndex: Int, branchIndex: Int) -> String {
         SexagenaryName(stemIndex: stemIndex, branchIndex: branchIndex).chineseName
+    }
+
+    private static var gregorianCalendar: Calendar {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = .gmt
+        return calendar
     }
 }
