@@ -14,7 +14,6 @@ struct LunarYearDetailView: View {
     @State private var browseState: LunarCalendarBrowseState
 
     @Environment(CalendarRouter.self) private var router
-    @Environment(\.accessibilityReduceMotion) private var accessibilityReduceMotion
     @Environment(\.calendarStoreContentLevel) private var storeContentLevel
     @Query(sort: \ChineseLunarYear.lunarYearNumber) private var years: [ChineseLunarYear]
     @Query(sort: \ChineseLunarMonth.lunarMonthIndex) private var calendarMonths: [ChineseLunarMonth]
@@ -78,8 +77,7 @@ struct LunarYearDetailView: View {
                                 selectPreviousMonth: { selectMonthInCalendar(adjacentMonths.previous) },
                                 selectNextMonth: { selectMonthInCalendar(adjacentMonths.next) },
                                 selectMonth: selectMonthInCalendar,
-                                yearTransitionDirection: browseState.yearTransitionDirection,
-                                reduceMotion: accessibilityReduceMotion
+                                yearTransitionDirection: browseState.yearTransitionDirection
                             )
                         }
                     }

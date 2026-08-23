@@ -18,7 +18,6 @@ struct LunarMonthGrid: View {
     let selectMonth: (ChineseLunarMonth) -> Void
     let todayDayIndex: Int?
     let yearTransitionDirection: LunarYearTransitionDirection
-    let reduceMotion: Bool
 
     @Environment(\.calendarStoreContentLevel) private var storeContentLevel
     @Bindable var daySelection: CalendarDaySelection
@@ -36,8 +35,7 @@ struct LunarMonthGrid: View {
         selectPreviousMonth: @escaping () -> Void,
         selectNextMonth: @escaping () -> Void,
         selectMonth: @escaping (ChineseLunarMonth) -> Void,
-        yearTransitionDirection: LunarYearTransitionDirection,
-        reduceMotion: Bool
+        yearTransitionDirection: LunarYearTransitionDirection
     ) {
         self.year = year
         self.months = months
@@ -51,7 +49,6 @@ struct LunarMonthGrid: View {
         self.selectNextMonth = selectNextMonth
         self.selectMonth = selectMonth
         self.yearTransitionDirection = yearTransitionDirection
-        self.reduceMotion = reduceMotion
 
         let lunarMonthIndex = month.lunarMonthIndex
         _days = Query(
@@ -88,8 +85,7 @@ struct LunarMonthGrid: View {
                 selectPreviousMonth: selectPreviousMonth,
                 selectNextMonth: selectNextMonth,
                 selectMonth: selectMonth,
-                yearTransitionDirection: yearTransitionDirection,
-                reduceMotion: reduceMotion
+                yearTransitionDirection: yearTransitionDirection
             )
             .padding()
             .background(.background.secondary, in: RoundedRectangle(cornerRadius: 28))

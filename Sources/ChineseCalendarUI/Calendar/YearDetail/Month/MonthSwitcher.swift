@@ -17,7 +17,8 @@ struct MonthSwitcher: View {
     let selectNextMonth: () -> Void
     let selectMonth: (ChineseLunarMonth) -> Void
     let yearTransitionDirection: LunarYearTransitionDirection
-    let reduceMotion: Bool
+
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
