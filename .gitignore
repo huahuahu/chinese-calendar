@@ -35,3 +35,8 @@ Apps/Shared/Resources/ChineseCalendarSeedStore.bundle/*
 !Apps/Shared/Resources/ChineseCalendarSeedStore.bundle/ChineseCalendar.sqlite
 !Apps/Shared/Resources/ChineseCalendarSeedStore.bundle/manifest.json
 Data/Processed/remote_full_seed_store/
+
+# Web prototype
+Design/Prototype/node_modules/
+Design/Prototype/dist/
+Design/Prototype/*.tsbuildinfo

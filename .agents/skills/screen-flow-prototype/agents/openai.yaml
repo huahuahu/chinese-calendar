@@ -1,0 +1,4 @@
+interface:
+  display_name: "页面流程原型"
+  short_description: "用真实界面、状态变体与控件连线制作可交互页面流程原型"
+  default_prompt: "使用 $screen-flow-prototype 根据真实产品界面创建或更新页面流程原型。"
