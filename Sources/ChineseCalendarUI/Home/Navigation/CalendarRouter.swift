@@ -1,22 +1,46 @@
+import NavigationCore
 import Observation
 
 @MainActor
 @Observable
 final class CalendarRouter {
-    var selectedTab: CalendarTab
-    var yearsRootDestination: CalendarDestination?
-    var yearsPath: [CalendarDestination]
-    var historyPath: [CalendarDestination]
-    var sheet: CalendarPresentationNode?
-    var fullScreen: CalendarPresentationNode?
-    private(set) var deferredDeepLink: CalendarDeepLink?
+    let navigation: NavigationRouter<CalendarTab, CalendarDestination>
+
+    var selectedTab: CalendarTab {
+        get { navigation.selectedScope }
+        set { navigation.selectedScope = newValue }
+    }
+
+    var yearsRootDestination: CalendarDestination? {
+        navigation.rootDestination(for: .years)
+    }
+
+    var yearsPath: [CalendarDestination] {
+        get { navigation.path(for: .years) }
+        set { navigation.setPath(newValue, for: .years) }
+    }
+
+    var historyPath: [CalendarDestination] {
+        get { navigation.path(for: .history) }
+        set { navigation.setPath(newValue, for: .history) }
+    }
+
+    var sheet: CalendarPresentationNode? {
+        get { navigation.sheet }
+        set { navigation.sheet = newValue }
+    }
+
+    var fullScreen: CalendarPresentationNode? {
+        get { navigation.fullScreen }
+        set { navigation.fullScreen = newValue }
+    }
 
     var selectedDestination: CalendarDestination? {
         currentDestination(on: selectedTab)
     }
 
     var hasActivePresentation: Bool {
-        sheet != nil || fullScreen != nil
+        navigation.hasActivePresentation
     }
 
     init(
@@ -25,138 +49,84 @@ final class CalendarRouter {
         yearsPath: [CalendarDestination] = [],
         historyPath: [CalendarDestination] = []
     ) {
-        self.selectedTab = selectedTab
-        self.yearsRootDestination = yearsRootDestination
-        self.yearsPath = yearsPath
-        self.historyPath = historyPath
+        var roots: [CalendarTab: CalendarDestination] = [:]
+        roots[.years] = yearsRootDestination
+        navigation = NavigationRouter(
+            selectedScope: selectedTab,
+            rootDestinations: roots,
+            paths: [.years: yearsPath, .history: historyPath]
+        )
     }
 
     func setYearsRootDestination(_ destination: CalendarDestination?) {
-        yearsRootDestination = destination
-        yearsPath.removeAll()
+        navigation.setRootDestination(destination, for: .years)
     }
 
     func path(for tab: CalendarTab) -> [CalendarDestination] {
-        switch tab {
-        case .years:
-            yearsPath
-        case .history:
-            historyPath
-        case .settings:
-            []
-        }
+        tab == .settings ? [] : navigation.path(for: tab)
     }
 
     func setPath(_ path: [CalendarDestination], for tab: CalendarTab) {
         switch tab {
         case .years:
-            yearsPath = path
+            navigation.setPath(path, for: .years)
         case .history:
-            historyPath = path
+            navigation.setPath(path, for: .history)
         case .settings:
             break
         }
     }
 
     func currentDestination(on tab: CalendarTab) -> CalendarDestination? {
-        switch tab {
-        case .years:
-            yearsPath.last ?? yearsRootDestination
-        case .history:
-            historyPath.last
-        case .settings:
-            nil
-        }
+        tab == .settings ? nil : navigation.currentDestination(on: tab)
     }
 
     func push(_ destination: CalendarDestination, on tab: CalendarTab? = nil) {
         let targetTab = tab ?? selectedTab
-        selectedTab = targetTab
-        var path = path(for: targetTab)
-        path.append(destination)
-        setPath(path, for: targetTab)
+        guard targetTab != .settings else {
+            return
+        }
+        navigation.push(destination, on: targetTab)
     }
 
     func presentSheet(_ destination: CalendarDestination) {
-        if let presentationNode = frontmostPresentationNode {
-            presentationNode.presentSheet(destination)
-        } else {
-            sheet = CalendarPresentationNode(destination: destination)
-        }
+        navigation.presentSheet(destination)
     }
 
     func presentFullScreen(_ destination: CalendarDestination) {
-        if let presentationNode = frontmostPresentationNode {
-            presentationNode.presentFullScreen(destination)
-        } else {
-            fullScreen = CalendarPresentationNode(destination: destination)
-        }
+        navigation.presentFullScreen(destination)
     }
 
     func dismissSheet() {
-        sheet = nil
+        navigation.dismissSheet()
     }
 
     func dismissFullScreen() {
-        fullScreen = nil
+        navigation.dismissFullScreen()
     }
 
-    /// 返回 true 表示 deep link 已经立即改变导航；false 表示它正在等待 presentation 关闭。
-    func openDeepLink(_ deepLink: CalendarDeepLink) -> Bool {
-        guard !hasActivePresentation else {
-            deferredDeepLink = deepLink
-            dismissSheet()
-            dismissFullScreen()
-            return false
-        }
-
-        apply(deepLink)
-        return true
+    func openDeepLink(_ deepLink: CalendarDeepLink) -> NavigationRequestResult {
+        navigation.submit(navigationRequest(for: deepLink))
     }
 
-    func openColdLaunchDeepLink(_ deepLink: CalendarDeepLink?) -> Bool {
+    func openColdLaunchDeepLink(_ deepLink: CalendarDeepLink?) -> NavigationRequestResult? {
         guard let deepLink else {
-            return false
-        }
-
-        apply(deepLink)
-        return true
-    }
-
-    /// presentation 关闭后执行等待中的导航，并返回已应用的 deep link 供具体页面消费其输入。
-    func applyDeferredDeepLinkIfReady() -> CalendarDeepLink? {
-        guard !hasActivePresentation, let deferredDeepLink else {
             return nil
         }
 
-        self.deferredDeepLink = nil
-        apply(deferredDeepLink)
-        return deferredDeepLink
+        return navigation.submit(navigationRequest(for: deepLink))
     }
 
-    private func apply(_ deepLink: CalendarDeepLink) {
+    private func navigationRequest(
+        for deepLink: CalendarDeepLink
+    ) -> NavigationRequest<CalendarTab, CalendarDestination> {
         switch deepLink {
         case let .lunarYear(yearNumber, monthIndex):
-            selectedTab = .years
-            setYearsRootDestination(.lunarYear(yearNumber, monthIndex: monthIndex))
+            .setRoot(.lunarYear(yearNumber, monthIndex: monthIndex), on: .years)
         case let .dynasty(dynastyID):
-            selectedTab = .history
-            setPath([.dynasty(dynastyID)], for: .history)
+            .replacePath([.dynasty(dynastyID)], on: .history)
         case let .emperor(emperorID):
-            selectedTab = .history
-            setPath([.emperor(emperorID)], for: .history)
+            .replacePath([.emperor(emperorID)], on: .history)
         }
-    }
-
-    private var frontmostPresentationNode: CalendarPresentationNode? {
-        if let fullScreen {
-            return fullScreen.frontmostPresentationNode
-        }
-
-        if let sheet {
-            return sheet.frontmostPresentationNode
-        }
-
-        return nil
     }
 }

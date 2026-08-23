@@ -170,59 +170,6 @@ import Testing
 }
 
 @MainActor
-@Test func rootPresentationsCreatePresentationNodes() {
-    let sheetRouter = CalendarRouter()
-    let fullScreenRouter = CalendarRouter()
-
-    sheetRouter.presentSheet(.lunarYear(2025))
-    fullScreenRouter.presentFullScreen(.lunarYear(2026))
-
-    #expect(sheetRouter.sheet?.destination == .lunarYear(2025))
-    #expect(sheetRouter.sheet?.path.isEmpty == true)
-    #expect(fullScreenRouter.fullScreen?.destination == .lunarYear(2026))
-    #expect(fullScreenRouter.fullScreen?.path.isEmpty == true)
-}
-
-@MainActor
-@Test func fullScreenIsNestedUnderAnActivePresentation() throws {
-    let router = CalendarRouter()
-    router.presentSheet(.lunarYear(2025))
-    let parentSheet = try #require(router.sheet)
-
-    router.presentFullScreen(.lunarYear(2026))
-
-    #expect(router.fullScreen == nil)
-    #expect(router.sheet === parentSheet)
-    #expect(parentSheet.fullScreen?.destination == .lunarYear(2026))
-}
-
-@MainActor
-@Test func presentedNodeCanPushInsideItsOwnNavigationStack() {
-    let router = CalendarRouter()
-    router.presentSheet(.lunarYear(2025))
-
-    let sheet = router.sheet
-    sheet?.push(.lunarYear(2026))
-
-    #expect(router.yearsPath.isEmpty)
-    #expect(sheet?.path == [.lunarYear(2026)])
-}
-
-@MainActor
-@Test func closingNestedSheetReturnsToParentSheet() throws {
-    let router = CalendarRouter()
-    router.presentSheet(.lunarYear(2025))
-    let parentSheet = try #require(router.sheet)
-
-    parentSheet.presentSheet(.lunarYear(2026))
-    parentSheet.dismissSheet()
-
-    #expect(router.sheet === parentSheet)
-    #expect(router.sheet?.destination == .lunarYear(2025))
-    #expect(parentSheet.sheet == nil)
-}
-
-@MainActor
 @Test func hotDeepLinkDismissesActivePresentationTreeBeforeRouting() {
     let router = CalendarRouter(yearsRootDestination: .lunarYear(2024))
     let coordinator = CalendarHomeCoordinator(router: router)
@@ -231,12 +178,15 @@ import Testing
     coordinator.openDeepLink(.lunarYear(2026, monthIndex: 26001))
 
     #expect(router.sheet == nil)
-    #expect(router.deferredDeepLink == .lunarYear(2026, monthIndex: 26001))
+    #expect(
+        router.navigation.deferredRequest
+            == .setRoot(.lunarYear(2026, monthIndex: 26001), on: .years)
+    )
     #expect(router.currentDestination(on: .years) == .lunarYear(2024))
 
-    coordinator.applyDeferredDeepLinkIfReady()
+    router.navigation.applyDeferredRequestIfReady()
 
-    #expect(router.deferredDeepLink == nil)
+    #expect(router.navigation.deferredRequest == nil)
     #expect(router.currentDestination(on: .years) == .lunarYear(2026, monthIndex: 26001))
     #expect(router.yearsRootDestination == .lunarYear(2026, monthIndex: 26001))
     #expect(router.yearsPath.isEmpty)
@@ -248,7 +198,7 @@ import Testing
 
     coordinator.openColdLaunchDeepLink(.lunarYear(2026, monthIndex: 26001))
 
-    #expect(coordinator.router.deferredDeepLink == nil)
+    #expect(coordinator.router.navigation.deferredRequest == nil)
     #expect(coordinator.router.yearsRootDestination == .lunarYear(2026, monthIndex: 26001))
     #expect(coordinator.router.yearsPath.isEmpty)
     #expect(

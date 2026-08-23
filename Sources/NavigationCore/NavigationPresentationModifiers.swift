@@ -1,8 +1,8 @@
 import SwiftUI
 
-extension View {
+public extension View {
     @ViewBuilder
-    func calendarFullScreenCover<Item: Identifiable>(
+    func navigationFullScreenCover<Item: Identifiable>(
         item: Binding<Item?>,
         onDismiss: (() -> Void)? = nil,
         @ViewBuilder content: @escaping (Item) -> some View

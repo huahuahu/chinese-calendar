@@ -44,8 +44,4 @@ final class CalendarHomeCoordinator {
     func openColdLaunchDeepLink(_ deepLink: CalendarDeepLink?) {
         _ = router.openColdLaunchDeepLink(deepLink)
     }
-
-    func applyDeferredDeepLinkIfReady() {
-        _ = router.applyDeferredDeepLinkIfReady()
-    }
 }
