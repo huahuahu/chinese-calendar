@@ -12,7 +12,6 @@ struct LunarYearDetailView: View {
     let initialDayIndex: Int?
 
     @State private var browseState: LunarCalendarBrowseState
-    @State private var yearTransitionDirection = LunarYearTransitionDirection.later
 
     @Environment(CalendarRouter.self) private var router
     @Environment(\.accessibilityReduceMotion) private var accessibilityReduceMotion
@@ -79,7 +78,7 @@ struct LunarYearDetailView: View {
                                 selectPreviousMonth: { selectMonthInCalendar(adjacentMonths.previous) },
                                 selectNextMonth: { selectMonthInCalendar(adjacentMonths.next) },
                                 selectMonth: selectMonthInCalendar,
-                                yearTransitionDirection: yearTransitionDirection,
+                                yearTransitionDirection: browseState.yearTransitionDirection,
                                 reduceMotion: accessibilityReduceMotion
                             )
                         }
@@ -326,15 +325,11 @@ private extension LunarYearDetailView {
 
     func selectYear(_ yearNumber: Int) {
         guard years.contains(where: { $0.lunarYearNumber == yearNumber }),
-              let direction = LunarYearTransitionDirection(
-                  from: browseState.displayedYearNumber,
-                  to: yearNumber
-              )
+              browseState.displayedYearNumber != yearNumber
         else {
             return
         }
 
-        yearTransitionDirection = direction
         browseState.selectYear(yearNumber)
     }
 }
