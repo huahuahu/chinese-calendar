@@ -4,41 +4,56 @@ import SwiftUI
 
 /// 显示可选农历年列表，由所在 NavigationStack 提供导航容器。
 struct CalendarYearPickerView: View {
-    let years: [ChineseLunarYear]
     let selectedYearNumber: Int?
     let selectYear: (Int) -> Void
 
+    private let yearSections: [CalendarYearSection]
+    private let availableYearNumbers: [Int]
     @State private var hasResolvedInitialScrollTarget = false
+
+    init(
+        years: [ChineseLunarYear],
+        selectedYearNumber: Int?,
+        selectYear: @escaping (Int) -> Void
+    ) {
+        self.selectedYearNumber = selectedYearNumber
+        self.selectYear = selectYear
+        yearSections = CalendarYearSection.sections(for: years)
+        availableYearNumbers = years.map(\.lunarYearNumber)
+    }
 
     var body: some View {
         ScrollViewReader { proxy in
             List {
-                Section("农历年") {
-                    ForEach(years, id: \.lunarYearNumber) { year in
-                        Button {
-                            selectYear(year.lunarYearNumber)
-                        } label: {
-                            HStack(spacing: 12) {
-                                LunarYearRow(year: year)
+                ForEach(yearSections) { section in
+                    Section(section.title) {
+                        ForEach(section.years, id: \.lunarYearNumber) { year in
+                            Button {
+                                selectYear(year.lunarYearNumber)
+                            } label: {
+                                HStack(spacing: 12) {
+                                    LunarYearRow(year: year)
 
-                                Spacer()
+                                    Spacer()
 
-                                if year.lunarYearNumber == selectedYearNumber {
-                                    Image(systemSymbol: .checkmark)
-                                        .font(.headline)
-                                        .foregroundStyle(.tint)
-                                        .accessibilityHidden(true)
+                                    if year.lunarYearNumber == selectedYearNumber {
+                                        Image(systemSymbol: .checkmark)
+                                            .font(.headline)
+                                            .foregroundStyle(.tint)
+                                            .accessibilityHidden(true)
+                                    }
                                 }
+                                .contentShape(Rectangle())
                             }
-                            .contentShape(Rectangle())
+                            .buttonStyle(.plain)
+                            .id(year.lunarYearNumber)
+                            .accessibilityAddTraits(year.lunarYearNumber == selectedYearNumber ? .isSelected : [])
                         }
-                        .buttonStyle(.plain)
-                        .id(year.lunarYearNumber)
-                        .accessibilityAddTraits(year.lunarYearNumber == selectedYearNumber ? .isSelected : [])
                     }
+                    .sectionIndexLabel(section.indexTitle)
                 }
             }
-            .onChange(of: years.map(\.lunarYearNumber), initial: true) {
+            .onChange(of: availableYearNumbers, initial: true) {
                 positionInitiallyIfNeeded(using: proxy)
             }
         }
@@ -68,7 +83,6 @@ struct CalendarYearPickerView: View {
             return
         }
 
-        let availableYearNumbers = years.map(\.lunarYearNumber)
         guard !availableYearNumbers.isEmpty else {
             return
         }
