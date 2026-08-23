@@ -47,6 +47,7 @@ import Testing
     browseState.selectYear(2025)
 
     #expect(browseState.displayedYearNumber == 2025)
+    #expect(browseState.yearTransitionDirection == .later)
     #expect(browseState.selectedMonthIndex == nil)
     #expect(browseState.daySelection.dayIndex == nil)
 }
@@ -63,6 +64,7 @@ import Testing
 
     #expect(router.currentDestination(on: .years) == nil)
     #expect(browseState.displayedYearNumber == 2025)
+    #expect(browseState.yearTransitionDirection == .later)
     #expect(browseState.selectedMonthIndex == 25006)
     #expect(browseState.daySelection.dayIndex == nil)
 }
@@ -82,8 +84,37 @@ import Testing
     )
 
     #expect(browseState.displayedYearNumber == 2026)
+    #expect(browseState.yearTransitionDirection == .later)
     #expect(browseState.selectedMonthIndex == 26005)
     #expect(browseState.daySelection.dayIndex == 2_600_512)
+}
+
+@MainActor
+@Test func browseStateTracksDirectionForEveryYearChangingSelection() {
+    let browseState = LunarCalendarBrowseState(displayedYearNumber: 2026)
+    let transitionContext = browseState.yearTransitionContext
+
+    browseState.select(yearNumber: 2025, monthIndex: 25012)
+    #expect(browseState.yearTransitionDirection == .earlier)
+    #expect(browseState.yearTransitionContext === transitionContext)
+
+    browseState.select(
+        yearNumber: 2027,
+        monthIndex: 27001,
+        dayIndex: 2_700_101
+    )
+    #expect(browseState.yearTransitionDirection == .later)
+    #expect(browseState.yearTransitionContext === transitionContext)
+}
+
+@MainActor
+@Test func sameYearMonthSelectionKeepsTheLastYearTransitionDirection() {
+    let browseState = LunarCalendarBrowseState(displayedYearNumber: 2026)
+    browseState.selectYear(2025)
+
+    browseState.select(yearNumber: 2025, monthIndex: 25006)
+
+    #expect(browseState.yearTransitionDirection == .earlier)
 }
 
 @MainActor

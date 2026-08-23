@@ -76,7 +76,8 @@ struct LunarYearDetailView: View {
                                 canSelectNextMonth: canSelect(adjacentMonths.next),
                                 selectPreviousMonth: { selectMonthInCalendar(adjacentMonths.previous) },
                                 selectNextMonth: { selectMonthInCalendar(adjacentMonths.next) },
-                                selectMonth: selectMonthInCalendar
+                                selectMonth: selectMonthInCalendar,
+                                yearTransitionContext: browseState.yearTransitionContext
                             )
                         }
                     }
@@ -321,11 +322,25 @@ private extension LunarYearDetailView {
     }
 
     func selectYear(_ yearNumber: Int) {
-        guard years.contains(where: { $0.lunarYearNumber == yearNumber }) else {
+        guard years.contains(where: { $0.lunarYearNumber == yearNumber }),
+              let direction = LunarYearTransitionDirection(
+                  from: browseState.displayedYearNumber,
+                  to: yearNumber
+              )
+        else {
             return
         }
 
-        browseState.selectYear(yearNumber)
+        let destinationMonthIndices = calendarMonths.lazy
+            .filter { $0.lunarYearNumber == yearNumber }
+            .map(\.lunarMonthIndex)
+
+        browseState.select(
+            yearNumber: yearNumber,
+            monthIndex: direction.destinationMonthIndex(
+                in: Array(destinationMonthIndices)
+            )
+        )
     }
 }
 
