@@ -23,7 +23,7 @@ public enum LunarCalendarFormatting {
         if lunarYearNumber > 0 {
             "公元 \(lunarYearNumber) 年"
         } else {
-            "公元前 \(1 - lunarYearNumber) 年"
+            "公元前 \(lunarYearNumber.magnitude + 1) 年"
         }
     }
 
