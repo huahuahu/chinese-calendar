@@ -4,10 +4,11 @@
 
 ## 启动与构建
 
-需要 Node.js 20.19+ 或 22.12+。
+项目固定使用 Node.js 24；进入目录后可通过 `nvm use` 读取 `.nvmrc`。
 
 ```bash
 cd Design/Prototype
+nvm use
 npm install
 npm run dev
 ```
