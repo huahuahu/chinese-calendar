@@ -17,6 +17,8 @@ struct LunarMonthGrid: View {
     let selectNextMonth: () -> Void
     let selectMonth: (ChineseLunarMonth) -> Void
     let todayDayIndex: Int?
+    let yearTransitionDirection: LunarYearTransitionDirection
+    let reduceMotion: Bool
 
     @Environment(\.calendarStoreContentLevel) private var storeContentLevel
     @Bindable var daySelection: CalendarDaySelection
@@ -33,7 +35,9 @@ struct LunarMonthGrid: View {
         canSelectNextMonth: Bool,
         selectPreviousMonth: @escaping () -> Void,
         selectNextMonth: @escaping () -> Void,
-        selectMonth: @escaping (ChineseLunarMonth) -> Void
+        selectMonth: @escaping (ChineseLunarMonth) -> Void,
+        yearTransitionDirection: LunarYearTransitionDirection,
+        reduceMotion: Bool
     ) {
         self.year = year
         self.months = months
@@ -46,6 +50,8 @@ struct LunarMonthGrid: View {
         self.selectPreviousMonth = selectPreviousMonth
         self.selectNextMonth = selectNextMonth
         self.selectMonth = selectMonth
+        self.yearTransitionDirection = yearTransitionDirection
+        self.reduceMotion = reduceMotion
 
         let lunarMonthIndex = month.lunarMonthIndex
         _days = Query(
@@ -70,20 +76,25 @@ struct LunarMonthGrid: View {
         let todayDayIndex = todayDay?.dayIndex
 
         VStack(alignment: .leading, spacing: 16) {
-            MonthSwitcher(
-                title: monthNavigationTitle,
-                subtitle: monthNavigationSubtitle,
-                months: months,
-                selectedMonth: month,
-                showYearPicker: showYearPicker,
-                canSelectPreviousMonth: canSelectPreviousMonth,
-                canSelectNextMonth: canSelectNextMonth,
-                selectPreviousMonth: selectPreviousMonth,
-                selectNextMonth: selectNextMonth,
-                selectMonth: selectMonth
-            )
-            .padding()
-            .background(.background.secondary, in: RoundedRectangle(cornerRadius: 28))
+            ZStack {
+                MonthSwitcher(
+                    title: monthNavigationTitle,
+                    subtitle: monthNavigationSubtitle,
+                    months: months,
+                    selectedMonth: month,
+                    showYearPicker: showYearPicker,
+                    canSelectPreviousMonth: canSelectPreviousMonth,
+                    canSelectNextMonth: canSelectNextMonth,
+                    selectPreviousMonth: selectPreviousMonth,
+                    selectNextMonth: selectNextMonth,
+                    selectMonth: selectMonth
+                )
+                .padding()
+                .background(.background.secondary, in: RoundedRectangle(cornerRadius: 28))
+                .id(year.lunarYearNumber)
+                .transition(yearTransitionDirection.transition(reduceMotion: reduceMotion))
+            }
+            .clipped()
 
             if days.isEmpty {
                 ContentUnavailableView(

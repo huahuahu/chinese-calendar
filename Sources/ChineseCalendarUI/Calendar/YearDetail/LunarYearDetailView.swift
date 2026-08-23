@@ -12,8 +12,10 @@ struct LunarYearDetailView: View {
     let initialDayIndex: Int?
 
     @State private var browseState: LunarCalendarBrowseState
+    @State private var yearTransitionDirection = LunarYearTransitionDirection.later
 
     @Environment(CalendarRouter.self) private var router
+    @Environment(\.accessibilityReduceMotion) private var accessibilityReduceMotion
     @Environment(\.calendarStoreContentLevel) private var storeContentLevel
     @Query(sort: \ChineseLunarYear.lunarYearNumber) private var years: [ChineseLunarYear]
     @Query(sort: \ChineseLunarMonth.lunarMonthIndex) private var calendarMonths: [ChineseLunarMonth]
@@ -76,7 +78,9 @@ struct LunarYearDetailView: View {
                                 canSelectNextMonth: canSelect(adjacentMonths.next),
                                 selectPreviousMonth: { selectMonthInCalendar(adjacentMonths.previous) },
                                 selectNextMonth: { selectMonthInCalendar(adjacentMonths.next) },
-                                selectMonth: selectMonthInCalendar
+                                selectMonth: selectMonthInCalendar,
+                                yearTransitionDirection: yearTransitionDirection,
+                                reduceMotion: accessibilityReduceMotion
                             )
                         }
                     }
@@ -321,11 +325,23 @@ private extension LunarYearDetailView {
     }
 
     func selectYear(_ yearNumber: Int) {
-        guard years.contains(where: { $0.lunarYearNumber == yearNumber }) else {
+        guard years.contains(where: { $0.lunarYearNumber == yearNumber }),
+              let direction = LunarYearTransitionDirection(
+                  from: browseState.displayedYearNumber,
+                  to: yearNumber
+              )
+        else {
             return
         }
 
-        browseState.selectYear(yearNumber)
+        yearTransitionDirection = direction
+        withAnimation(yearSelectionAnimation) {
+            browseState.selectYear(yearNumber)
+        }
+    }
+
+    var yearSelectionAnimation: Animation {
+        accessibilityReduceMotion ? .easeInOut(duration: 0.2) : .smooth(duration: 0.35)
     }
 }
 
