@@ -19,8 +19,6 @@ struct MonthSwitcher: View {
     let yearTransitionDirection: LunarYearTransitionDirection
     let reduceMotion: Bool
 
-    @State private var scrollPosition: Int?
-
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack(alignment: .center, spacing: 10) {
@@ -51,31 +49,11 @@ struct MonthSwitcher: View {
             }
 
             ZStack(alignment: .leading) {
-                ScrollView(.horizontal) {
-                    HStack(spacing: 8) {
-                        ForEach(months, id: \.lunarMonthIndex) { month in
-                            Button {
-                                selectMonth(month)
-                            } label: {
-                                Text(LunarMonthDisplay.title(for: month))
-                                    .padding(.horizontal, 12)
-                                    .padding(.vertical, 8)
-                                    .frame(minWidth: 76, minHeight: 44)
-                            }
-                            .id(month.lunarMonthIndex)
-                            .buttonStyle(.bordered)
-                            .controlSize(.regular)
-                            .tint(month.lunarMonthIndex == selectedMonth.lunarMonthIndex ? .accentColor : nil)
-                        }
-                    }
-                    .scrollTargetLayout()
-                }
-                .scrollIndicators(.hidden)
-                .scrollPosition(id: $scrollPosition, anchor: .center)
-                .onAppear(perform: scrollToSelectedMonth)
-                .onChange(of: selectedMonth.lunarMonthIndex) {
-                    scrollToSelectedMonth()
-                }
+                LunarMonthStrip(
+                    months: months,
+                    selectedMonth: selectedMonth,
+                    selectMonth: selectMonth
+                )
                 .id(yearNumber)
                 .transition(yearTransition)
             }
@@ -116,9 +94,5 @@ struct MonthSwitcher: View {
                 .foregroundStyle(.secondary)
         }
         .accessibilityElement(children: .combine)
-    }
-
-    private func scrollToSelectedMonth() {
-        scrollPosition = selectedMonth.lunarMonthIndex
     }
 }
