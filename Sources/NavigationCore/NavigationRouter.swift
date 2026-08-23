@@ -55,7 +55,8 @@ public final class NavigationRouter<Scope: Hashable, Destination: Hashable> {
         let targetScope = scope ?? selectedScope
         selectedScope = targetScope
         paths[targetScope, default: []].append(destination)
-        NavigationCoreLog.logger.debug("Pushed destination; scope path count: \(self.paths[targetScope]?.count ?? 0)")
+        let pathCount = paths[targetScope]?.count ?? 0
+        NavigationCoreLog.logger.debug("Pushed destination; scope path count: \(pathCount)")
     }
 
     public func presentSheet(_ destination: Destination) {

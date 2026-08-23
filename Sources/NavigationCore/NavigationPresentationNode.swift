@@ -23,7 +23,8 @@ public final class NavigationPresentationNode<Destination: Hashable>: Identifiab
 
     public func push(_ destination: Destination) {
         path.append(destination)
-        NavigationCoreLog.logger.debug("Pushed destination; presentation path count: \(self.path.count)")
+        let pathCount = path.count
+        NavigationCoreLog.logger.debug("Pushed destination; presentation path count: \(pathCount)")
     }
 
     public func presentSheet(_ destination: Destination) {

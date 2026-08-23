@@ -11,11 +11,11 @@ struct CalendarPresentationNodeView: View {
                 destination: destination,
                 emptyStateDescription: "请选择一个农历年。"
             )
-                .toolbar {
-                    ToolbarItem(placement: .cancellationAction) {
-                        Button("关闭", action: dismiss)
-                    }
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("关闭", action: dismiss)
                 }
+            }
         }
     }
 }
