@@ -72,7 +72,7 @@ struct LunarMonthGrid: View {
         VStack(alignment: .leading, spacing: 16) {
             MonthSwitcher(
                 title: monthNavigationTitle,
-                subtitle: monthNavigationSubtitle(defaultsToToday: todayDay != nil),
+                subtitle: monthNavigationSubtitle,
                 months: months,
                 selectedMonth: month,
                 showYearPicker: showYearPicker,
@@ -167,16 +167,15 @@ struct LunarMonthGrid: View {
         return "\(yearTitle) \(LunarMonthDisplay.title(for: month))"
     }
 
-    private func monthNavigationSubtitle(defaultsToToday: Bool) -> String {
-        if let civilDateRangeTitle {
-            let selectionText = defaultsToToday ? "今天优先选中" : "默认选中初一"
-            return "\(civilDateRangeTitle) · \(selectionText)"
-        }
-
-        return LunarCalendarFormatting.monthSubtitle(
+    private var monthNavigationSubtitle: String {
+        let fallback = LunarCalendarFormatting.monthSubtitle(
             dayCount: month.dayCount,
             stemIndex: month.monthStemIndex,
             branchIndex: month.monthBranchIndex
+        )
+        return Self.monthNavigationSubtitle(
+            civilDateRangeTitle: civilDateRangeTitle,
+            fallback: fallback
         )
     }
 
@@ -229,10 +228,10 @@ struct LunarMonthGrid: View {
             }
         }
 
-        let todayDayIndex = todayDayIndex.flatMap { todayDayIndex in
-            days.contains(where: { $0.dayIndex == todayDayIndex }) ? todayDayIndex : nil
-        }
-        daySelection.dayIndex = todayDayIndex ?? days.first?.dayIndex
+        daySelection.dayIndex = Self.defaultDayIndex(
+            in: days.map(\.dayIndex),
+            todayDayIndex: todayDayIndex
+        )
     }
 
     private func finishPendingMonthSwitch() {
@@ -252,5 +251,20 @@ struct LunarMonthGrid: View {
     private func fullCivilDateTitle(for civilDate: CivilDate) -> String {
         let prefix = civilDate.calendarStyle == .julian ? "儒略" : "公历"
         return "\(prefix) \(civilDate.year)年\(civilDate.month)月\(civilDate.dayOfMonth)日"
+    }
+
+    static func monthNavigationSubtitle(
+        civilDateRangeTitle: String?,
+        fallback: String
+    ) -> String {
+        civilDateRangeTitle ?? fallback
+    }
+
+    static func defaultDayIndex(in dayIndices: [Int], todayDayIndex: Int?) -> Int? {
+        if let todayDayIndex, dayIndices.contains(todayDayIndex) {
+            return todayDayIndex
+        }
+
+        return dayIndices.first
     }
 }
