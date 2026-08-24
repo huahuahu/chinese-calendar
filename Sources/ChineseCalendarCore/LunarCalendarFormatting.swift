@@ -19,9 +19,23 @@ public enum LunarMonthSize: Int, Codable, CaseIterable, Sendable {
 }
 
 public enum LunarCalendarFormatting {
+    /// 按标准 JDN 约定，1970-01-01 的 UTC 正午对应 JDN 2,440,588。
     private static let unixEpochJulianDayNumber = 2_440_588
-    private static let secondsPerDay: TimeInterval = 86400
-    private static let secondsFromMidnightToNoon: TimeInterval = 43200
+
+    /// 用 Gregorian Calendar 构造按日偏移的 UTC 正午锚点，避免手工换算秒数。
+    private static let unixEpochNoonUTC: Date = {
+        var components = DateComponents()
+        components.timeZone = .gmt
+        components.year = 1970
+        components.month = 1
+        components.day = 1
+        components.hour = 12
+
+        guard let date = gregorianCalendar.date(from: components) else {
+            preconditionFailure("无法构造 Unix epoch 的 UTC 正午日期")
+        }
+        return date
+    }()
 
     public static func yearTitle(lunarYearNumber: Int) -> String {
         if lunarYearNumber > 0 {
@@ -82,6 +96,7 @@ public enum LunarCalendarFormatting {
         let date = civilDate(fromJulianDayNumber: julianDayNumber)
         let components = gregorianCalendar.dateComponents([.era, .month, .day], from: date)
 
+        // 公元前日期必须带纪元；民用年的首日补全年份，其他网格日期只显示本地化月日。
         if components.era == 0 || (components.month == 1 && components.day == 1) {
             return fullCivilDateTitle(julianDayNumber: julianDayNumber, locale: locale)
         }
@@ -143,12 +158,17 @@ public enum LunarCalendarFormatting {
         return style.format(startDate ..< endDate)
     }
 
-    /// Converts an absolute JDN to a `Date` anchored at noon UTC, keeping it away from time-zone boundaries.
+    /// 将绝对 JDN 转为 UTC 正午 `Date`，避免日期落在用户时区的日界线附近。
     public static func civilDate(fromJulianDayNumber julianDayNumber: Int) -> Date {
-        let daysSinceUnixEpoch = TimeInterval(julianDayNumber - unixEpochJulianDayNumber)
-        return Date(
-            timeIntervalSince1970: daysSinceUnixEpoch * secondsPerDay + secondsFromMidnightToNoon
-        )
+        let daysSinceUnixEpoch = julianDayNumber - unixEpochJulianDayNumber
+        guard let date = gregorianCalendar.date(
+            byAdding: .day,
+            value: daysSinceUnixEpoch,
+            to: unixEpochNoonUTC
+        ) else {
+            preconditionFailure("无法将 JDN \(julianDayNumber) 转换为 Foundation Date")
+        }
+        return date
     }
 
     private static func sexagenaryName(stemIndex: Int, branchIndex: Int) -> String {
