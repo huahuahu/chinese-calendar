@@ -96,7 +96,8 @@ public enum LunarCalendarFormatting {
         let date = civilDate(fromJulianDayNumber: julianDayNumber)
         let components = gregorianCalendar.dateComponents([.era, .month, .day], from: date)
 
-        // 公元前日期必须带纪元；民用年的首日补全年份，其他网格日期只显示本地化月日。
+        // 沿用原有网格规则：每个公历年的首日显示完整日期，用于标记年份切换；
+        // 公元前日期若缺少纪元会产生年代歧义，因此始终显示包含纪元的完整日期。
         if components.era == 0 || (components.month == 1 && components.day == 1) {
             return fullCivilDateTitle(julianDayNumber: julianDayNumber, locale: locale)
         }
@@ -139,7 +140,7 @@ public enum LunarCalendarFormatting {
             || gregorianCalendar.component(.era, from: endDate) == 0
 
         if includesBeforeCommonEra {
-            // IntervalFormatStyle has no era option, so use a localized interval skeleton for BCE dates.
+            // IntervalFormatStyle 不支持指定纪元，因此公元前区间使用包含纪元的本地化日期骨架。
             let formatter = DateIntervalFormatter()
             formatter.locale = locale
             formatter.calendar = gregorianCalendar
@@ -155,7 +156,7 @@ public enum LunarCalendarFormatting {
             calendar: gregorianCalendar,
             timeZone: .gmt
         )
-        return style.format(startDate ..< endDate)
+        return (startDate ..< endDate).formatted(style)
     }
 
     /// 将绝对 JDN 转为 UTC 正午 `Date`，避免日期落在用户时区的日界线附近。
