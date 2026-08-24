@@ -9,6 +9,21 @@ struct LunarMonthStrip: View {
 
     @State private var scrollPosition: Int?
 
+    init(
+        months: [ChineseLunarMonth],
+        selectedMonth: ChineseLunarMonth,
+        selectMonth: @escaping (ChineseLunarMonth) -> Void
+    ) {
+        self.months = months
+        self.selectedMonth = selectedMonth
+        self.selectMonth = selectMonth
+        _scrollPosition = State(
+            initialValue: Self.initialScrollPosition(
+                selectedMonthIndex: selectedMonth.lunarMonthIndex
+            )
+        )
+    }
+
     var body: some View {
         ScrollView(.horizontal) {
             HStack(spacing: 8) {
@@ -38,5 +53,9 @@ struct LunarMonthStrip: View {
 
     private func scrollToSelectedMonth() {
         scrollPosition = selectedMonth.lunarMonthIndex
+    }
+
+    static func initialScrollPosition(selectedMonthIndex: Int) -> Int {
+        selectedMonthIndex
     }
 }

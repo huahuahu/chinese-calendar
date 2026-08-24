@@ -131,7 +131,7 @@ import Testing
 }
 
 @MainActor
-@Test func yearPickerDestinationReturnsSelectionToItsPresenter() throws {
+@Test func yearPickerDestinationDefersSelectionUntilDismissalCompletes() throws {
     let router = CalendarRouter()
     var selectedYearNumber: Int?
     let yearPicker = CalendarYearPickerDestination(
@@ -145,11 +145,18 @@ import Testing
         Issue.record("Expected a year picker destination")
         return
     }
-    presentedYearPicker.select(2025)
+    presentedYearPicker.prepareSelection(2025)
 
     #expect(presentedYearPicker.id == yearPicker.id)
     #expect(presentedYearPicker.initialYearNumber == 2026)
+    #expect(selectedYearNumber == nil)
+
+    presentedYearPicker.commitSelectionIfNeeded()
     #expect(selectedYearNumber == 2025)
+
+    selectedYearNumber = nil
+    presentedYearPicker.commitSelectionIfNeeded()
+    #expect(selectedYearNumber == nil)
 }
 
 @MainActor

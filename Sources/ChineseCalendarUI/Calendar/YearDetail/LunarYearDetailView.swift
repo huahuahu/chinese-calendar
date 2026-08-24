@@ -162,8 +162,7 @@ private extension LunarYearDetailView {
     }
 
     var monthsInYearStartOrder: [ChineseLunarMonth] {
-        // lunarMonthIndex 是连续时间轴，过滤后仍保留历史年首顺序。
-        calendarMonths.filter { $0.lunarYearNumber == browseState.displayedYearNumber }
+        displayedYear?.months.sorted { $0.lunarMonthIndex < $1.lunarMonthIndex } ?? []
     }
 
     var todayMonthIndex: Int? {
@@ -322,7 +321,7 @@ private extension LunarYearDetailView {
     }
 
     func selectYear(_ yearNumber: Int) {
-        guard years.contains(where: { $0.lunarYearNumber == yearNumber }),
+        guard let destinationYear = years.first(where: { $0.lunarYearNumber == yearNumber }),
               let direction = LunarYearTransitionDirection(
                   from: browseState.displayedYearNumber,
                   to: yearNumber
@@ -331,15 +330,26 @@ private extension LunarYearDetailView {
             return
         }
 
-        let destinationMonthIndices = calendarMonths.lazy
-            .filter { $0.lunarYearNumber == yearNumber }
+        let destinationMonthIndices = destinationYear.months
             .map(\.lunarMonthIndex)
+            .sorted()
+        let destinationMonthIndex = direction.destinationMonthIndex(
+            in: destinationMonthIndices
+        )
+
+        guard let destinationMonthIndex else {
+            return
+        }
+
+        ChineseCalendarPerformanceSignposts.shared.beginMonthSwitch(
+            from: selectedMonth?.lunarMonthIndex,
+            to: destinationMonthIndex,
+            crossesYear: true
+        )
 
         browseState.select(
             yearNumber: yearNumber,
-            monthIndex: direction.destinationMonthIndex(
-                in: Array(destinationMonthIndices)
-            )
+            monthIndex: destinationMonthIndex
         )
     }
 }

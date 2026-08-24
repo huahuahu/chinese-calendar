@@ -1,6 +1,10 @@
 @testable import ChineseCalendarUI
 import Testing
 
+@Test func monthStripStartsAtSelectedMonth() {
+    #expect(LunarMonthStrip.initialScrollPosition(selectedMonthIndex: 26012) == 26012)
+}
+
 @Test func monthNavigationSubtitleShowsOnlyCivilDateRangeWhenAvailable() {
     let dateRange = "儒略 -220年1月1日 - 儒略 -220年1月27日"
 

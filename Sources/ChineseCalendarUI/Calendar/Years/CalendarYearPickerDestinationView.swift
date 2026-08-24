@@ -14,10 +14,11 @@ struct CalendarYearPickerDestinationView: View {
             selectedYearNumber: destination.initialYearNumber,
             selectYear: selectYear
         )
+        .onDisappear(perform: destination.commitSelectionIfNeeded)
     }
 
     private func selectYear(_ yearNumber: Int) {
-        destination.select(yearNumber)
+        destination.prepareSelection(yearNumber)
         dismiss()
     }
 }

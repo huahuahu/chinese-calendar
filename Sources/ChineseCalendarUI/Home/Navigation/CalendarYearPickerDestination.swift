@@ -4,7 +4,7 @@ import Foundation
 struct CalendarYearPickerDestination: Hashable, Identifiable {
     let id: UUID
     let initialYearNumber: Int?
-    private let onSelect: (Int) -> Void
+    private let selection: CalendarYearPickerSelection
 
     init(
         id: UUID = UUID(),
@@ -13,7 +13,7 @@ struct CalendarYearPickerDestination: Hashable, Identifiable {
     ) {
         self.id = id
         self.initialYearNumber = initialYearNumber
-        self.onSelect = onSelect
+        selection = CalendarYearPickerSelection(onSelect: onSelect)
     }
 
     static func == (lhs: Self, rhs: Self) -> Bool {
@@ -24,7 +24,11 @@ struct CalendarYearPickerDestination: Hashable, Identifiable {
         hasher.combine(id)
     }
 
-    func select(_ yearNumber: Int) {
-        onSelect(yearNumber)
+    func prepareSelection(_ yearNumber: Int) {
+        selection.prepare(yearNumber)
+    }
+
+    func commitSelectionIfNeeded() {
+        selection.commitIfNeeded()
     }
 }
