@@ -2,7 +2,7 @@
 import Testing
 
 @Test func monthNavigationSubtitleShowsOnlyCivilDateRangeWhenAvailable() {
-    let dateRange = "儒略 -220年1月1日 - 儒略 -220年1月27日"
+    let dateRange = "公元前 221-01-01 – 221-01-28"
 
     let subtitle = LunarMonthGrid.monthNavigationSubtitle(
         civilDateRangeTitle: dateRange,
