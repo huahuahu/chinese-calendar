@@ -126,7 +126,7 @@ public enum LunarCalendarFormatting {
             return date.formatted(style)
         }
 
-        return date.formatted(style.era(.wide))
+        return date.formatted(style.era())
     }
 
     public static func civilDateRangeTitle(
@@ -159,7 +159,7 @@ public enum LunarCalendarFormatting {
         return (startDate ..< endDate).formatted(style)
     }
 
-    /// 将绝对 JDN 转为 UTC 正午 `Date`，避免日期落在用户时区的日界线附近。
+    /// 将整数 JDN 转为其对应的 UTC 正午；这符合 JDN 的日界线定义，并避免把纯日期锚定在午夜边界。
     public static func civilDate(fromJulianDayNumber julianDayNumber: Int) -> Date {
         let daysSinceUnixEpoch = julianDayNumber - unixEpochJulianDayNumber
         guard let date = gregorianCalendar.date(

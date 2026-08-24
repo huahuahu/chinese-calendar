@@ -74,7 +74,7 @@ struct SelectedLunarDayDetailCard: View {
     }
 
     private var civilDateFactTitle: String {
-        "民用日期"
+        "对应日期"
     }
 
     private var civilDateValue: String {
