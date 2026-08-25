@@ -1,6 +1,7 @@
 import ChineseCalendarCore
 import ChineseCalendarLogging
 import ChineseCalendarPersistence
+import Combine
 import SFSafeSymbols
 import SwiftData
 import SwiftUI
@@ -92,10 +93,16 @@ struct LunarYearDetailView: View {
                 refreshToday()
             }
         }
-        .onReceive(NotificationCenter.default.publisher(for: .NSCalendarDayChanged)) { _ in
+        .onReceive(
+            NotificationCenter.default.publisher(for: .NSCalendarDayChanged)
+                .receive(on: RunLoop.main)
+        ) { _ in
             refreshToday()
         }
-        .onReceive(NotificationCenter.default.publisher(for: .NSSystemTimeZoneDidChange)) { _ in
+        .onReceive(
+            NotificationCenter.default.publisher(for: .NSSystemTimeZoneDidChange)
+                .receive(on: RunLoop.main)
+        ) { _ in
             refreshToday()
         }
         .navigationTitle("日历")
