@@ -25,8 +25,12 @@ import Testing
 
 @Test func defaultDaySelectionPrefersTodayWhenItBelongsToTheMonth() {
     let selectedDayIndex = LunarMonthGrid.defaultDayIndex(
-        in: [101, 102, 103],
-        todayDayIndex: 102
+        in: [
+            (dayIndex: 101, julianDayNumber: 2_461_041),
+            (dayIndex: 102, julianDayNumber: 2_461_042),
+            (dayIndex: 103, julianDayNumber: 2_461_043)
+        ],
+        todayJulianDayNumber: 2_461_042
     )
 
     #expect(selectedDayIndex == 102)
@@ -34,8 +38,12 @@ import Testing
 
 @Test func defaultDaySelectionUsesFirstDayWhenTodayIsOutsideTheMonth() {
     let selectedDayIndex = LunarMonthGrid.defaultDayIndex(
-        in: [101, 102, 103],
-        todayDayIndex: 999
+        in: [
+            (dayIndex: 101, julianDayNumber: 2_461_041),
+            (dayIndex: 102, julianDayNumber: 2_461_042),
+            (dayIndex: 103, julianDayNumber: 2_461_043)
+        ],
+        todayJulianDayNumber: 2_461_099
     )
 
     #expect(selectedDayIndex == 101)
@@ -44,7 +52,7 @@ import Testing
 @Test func defaultDaySelectionIsNilForAnEmptyMonth() {
     let selectedDayIndex = LunarMonthGrid.defaultDayIndex(
         in: [],
-        todayDayIndex: 102
+        todayJulianDayNumber: 2_461_042
     )
 
     #expect(selectedDayIndex == nil)
