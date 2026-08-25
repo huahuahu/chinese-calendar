@@ -5,6 +5,7 @@ import Observation
 @Observable
 final class CalendarRouter {
     let navigation: NavigationRouter<CalendarTab, CalendarDestination>
+    @ObservationIgnored private var actionAfterPresentationDismissal: (() -> Void)?
 
     var selectedTab: CalendarTab {
         get { navigation.selectedScope }
@@ -91,6 +92,23 @@ final class CalendarRouter {
 
     func dismissFullScreen() {
         navigation.dismissFullScreen()
+    }
+
+    func dismissFrontmostSheet(afterDismissal action: @escaping () -> Void) {
+        actionAfterPresentationDismissal = action
+        guard navigation.dismissFrontmostSheet() else {
+            actionAfterPresentationDismissal = nil
+            action()
+            return
+        }
+    }
+
+    func presentationDidDismiss() {
+        _ = navigation.applyDeferredRequestIfReady()
+
+        let action = actionAfterPresentationDismissal
+        actionAfterPresentationDismissal = nil
+        action?()
     }
 
     func openDeepLink(_ deepLink: CalendarDeepLink) -> NavigationRequestResult {

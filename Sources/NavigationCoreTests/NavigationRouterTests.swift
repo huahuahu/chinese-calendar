@@ -93,6 +93,22 @@ private enum TestDestination: Hashable {
 }
 
 @MainActor
+@Test func dismissingFrontmostSheetKeepsItsParentPresentation() throws {
+    let router = NavigationRouter<TestScope, TestDestination>(selectedScope: .primary)
+    router.presentSheet(.first)
+    let parent = try #require(router.sheet)
+    parent.presentFullScreen(.second)
+    let fullScreen = try #require(parent.fullScreen)
+    fullScreen.presentSheet(.third)
+
+    #expect(router.dismissFrontmostSheet())
+
+    #expect(router.sheet === parent)
+    #expect(parent.fullScreen === fullScreen)
+    #expect(fullScreen.sheet == nil)
+}
+
+@MainActor
 @Test func navigationRequestCasesUpdateTheirTargetScope() {
     let router = NavigationRouter<TestScope, TestDestination>(
         selectedScope: .primary,

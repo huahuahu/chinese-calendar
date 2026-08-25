@@ -16,7 +16,6 @@ struct LunarYearDetailView: View {
     @Environment(CalendarRouter.self) private var router
     @Environment(\.calendarStoreContentLevel) private var storeContentLevel
     @Query(sort: \ChineseLunarYear.lunarYearNumber) private var years: [ChineseLunarYear]
-    @Query(sort: \ChineseLunarMonth.lunarMonthIndex) private var calendarMonths: [ChineseLunarMonth]
     @Query private var todayCivilDates: [CivilDate]
 
     init(
@@ -162,8 +161,11 @@ private extension LunarYearDetailView {
     }
 
     var monthsInYearStartOrder: [ChineseLunarMonth] {
-        // lunarMonthIndex 是连续时间轴，过滤后仍保留历史年首顺序。
-        calendarMonths.filter { $0.lunarYearNumber == browseState.displayedYearNumber }
+        guard let displayedYear else {
+            return []
+        }
+
+        return chronologicalMonths(in: displayedYear)
     }
 
     var todayMonthIndex: Int? {
@@ -184,10 +186,7 @@ private extension LunarYearDetailView {
                     return nil
                 }
 
-                let lunarYearNumber = lunarDay.chineseLunarMonth?.lunarYearNumber
-                    ?? calendarMonths.first { $0.lunarMonthIndex == lunarDay.lunarMonthIndex }?.lunarYearNumber
-
-                guard let lunarYearNumber else {
+                guard let lunarYearNumber = lunarDay.chineseLunarMonth?.lunarYearNumber else {
                     return nil
                 }
 
@@ -226,23 +225,27 @@ private extension LunarYearDetailView {
             return (nil, nil)
         }
 
-        guard let selectedMonthInCalendarIndex = calendarMonths.binarySearchIndex(
-            of: selectedMonth.lunarMonthIndex,
-            by: \.lunarMonthIndex
-        )
+        let months = monthsInYearStartOrder
+        guard let selectedMonthIndex = months.firstIndex(where: {
+            $0.lunarMonthIndex == selectedMonth.lunarMonthIndex
+        })
         else {
             return (nil, nil)
         }
 
-        let previousMonth: ChineseLunarMonth? = if selectedMonthInCalendarIndex > calendarMonths.startIndex {
-            calendarMonths[calendarMonths.index(before: selectedMonthInCalendarIndex)]
+        let previousMonth: ChineseLunarMonth? = if selectedMonthIndex > months.startIndex {
+            months[months.index(before: selectedMonthIndex)]
+        } else if let displayedYearIndex, displayedYearIndex > years.startIndex {
+            chronologicalMonths(in: years[years.index(before: displayedYearIndex)]).last
         } else {
             nil
         }
 
-        let lastCalendarMonthIndex = calendarMonths.index(before: calendarMonths.endIndex)
-        let nextMonth: ChineseLunarMonth? = if selectedMonthInCalendarIndex < lastCalendarMonthIndex {
-            calendarMonths[calendarMonths.index(after: selectedMonthInCalendarIndex)]
+        let lastMonthIndex = months.index(before: months.endIndex)
+        let nextMonth: ChineseLunarMonth? = if selectedMonthIndex < lastMonthIndex {
+            months[months.index(after: selectedMonthIndex)]
+        } else if let displayedYearIndex, displayedYearIndex < years.index(before: years.endIndex) {
+            chronologicalMonths(in: years[years.index(after: displayedYearIndex)]).first
         } else {
             nil
         }
@@ -322,7 +325,7 @@ private extension LunarYearDetailView {
     }
 
     func selectYear(_ yearNumber: Int) {
-        guard years.contains(where: { $0.lunarYearNumber == yearNumber }),
+        guard let destinationYear = years.first(where: { $0.lunarYearNumber == yearNumber }),
               let direction = LunarYearTransitionDirection(
                   from: browseState.displayedYearNumber,
                   to: yearNumber
@@ -331,8 +334,7 @@ private extension LunarYearDetailView {
             return
         }
 
-        let destinationMonthIndices = calendarMonths.lazy
-            .filter { $0.lunarYearNumber == yearNumber }
+        let destinationMonthIndices = chronologicalMonths(in: destinationYear)
             .map(\.lunarMonthIndex)
 
         browseState.select(
@@ -341,6 +343,10 @@ private extension LunarYearDetailView {
                 in: Array(destinationMonthIndices)
             )
         )
+    }
+
+    func chronologicalMonths(in year: ChineseLunarYear) -> [ChineseLunarMonth] {
+        year.months.sorted { $0.lunarMonthIndex < $1.lunarMonthIndex }
     }
 }
 

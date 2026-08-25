@@ -4,13 +4,16 @@ import SwiftUI
 public struct NavigationPresentationNodeView<Destination: Hashable, DestinationContent: View>: View {
     @Environment(\.dismiss) private var dismiss
     @Bindable private var node: NavigationPresentationNode<Destination>
+    private let onDismiss: () -> Void
     private let destinationContent: (Destination, @escaping () -> Void) -> DestinationContent
 
     public init(
         node: NavigationPresentationNode<Destination>,
+        onDismiss: @escaping () -> Void = {},
         @ViewBuilder destinationContent: @escaping (Destination, @escaping () -> Void) -> DestinationContent
     ) {
         self.node = node
+        self.onDismiss = onDismiss
         self.destinationContent = destinationContent
     }
 
@@ -25,11 +28,19 @@ public struct NavigationPresentationNodeView<Destination: Hashable, DestinationC
                 }
             }
         }
-        .sheet(item: $node.sheet) { child in
-            NavigationPresentationNodeView(node: child, destinationContent: destinationContent)
+        .sheet(item: $node.sheet, onDismiss: onDismiss) { child in
+            NavigationPresentationNodeView(
+                node: child,
+                onDismiss: onDismiss,
+                destinationContent: destinationContent
+            )
         }
-        .navigationFullScreenCover(item: $node.fullScreen) { child in
-            NavigationPresentationNodeView(node: child, destinationContent: destinationContent)
+        .navigationFullScreenCover(item: $node.fullScreen, onDismiss: onDismiss) { child in
+            NavigationPresentationNodeView(
+                node: child,
+                onDismiss: onDismiss,
+                destinationContent: destinationContent
+            )
         }
     }
 }

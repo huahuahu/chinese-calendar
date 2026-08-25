@@ -89,6 +89,26 @@ public final class NavigationRouter<Scope: Hashable, Destination: Hashable> {
         NavigationCoreLog.logger.debug("Dismissed root full screen")
     }
 
+    /// Dismisses the frontmost sheet without removing its parent presentation.
+    @discardableResult
+    public func dismissFrontmostSheet() -> Bool {
+        if let fullScreen, fullScreen.dismissFrontmostSheet() {
+            return true
+        }
+
+        guard let sheet else {
+            return false
+        }
+
+        if sheet.dismissFrontmostSheet() {
+            return true
+        }
+
+        self.sheet = nil
+        NavigationCoreLog.logger.debug("Dismissed frontmost root sheet")
+        return true
+    }
+
     /// Applies a request immediately or defers it until the active presentation tree finishes dismissing.
     @discardableResult
     public func submit(_ request: NavigationRequest<Scope, Destination>) -> NavigationRequestResult {
