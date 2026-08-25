@@ -9,7 +9,7 @@ struct CalendarPresentationNodeView: View {
     var body: some View {
         NavigationCore.NavigationPresentationNodeView(
             node: node,
-            onDismiss: router.presentationDidDismiss
+            onChildDismiss: router.presentationSubtreeDidDismiss
         ) { destination, dismiss in
             CalendarDestinationView(destination: destination)
                 .toolbar {

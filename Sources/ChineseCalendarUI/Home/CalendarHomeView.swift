@@ -43,13 +43,13 @@ public struct CalendarHomeView<BottomStatusBar: View>: View {
             #endif
         }
         .environment(coordinator.router)
-        .sheet(item: $navigation.sheet, onDismiss: coordinator.router.presentationDidDismiss) { node in
+        .sheet(item: $navigation.sheet, onDismiss: coordinator.router.presentationHostDidDismiss) { node in
             CalendarPresentationNodeView(node: node)
                 .environment(coordinator.router)
         }
         .navigationFullScreenCover(
             item: $navigation.fullScreen,
-            onDismiss: coordinator.router.presentationDidDismiss
+            onDismiss: coordinator.router.presentationHostDidDismiss
         ) { node in
             CalendarPresentationNodeView(node: node)
                 .environment(coordinator.router)

@@ -103,9 +103,17 @@ final class CalendarRouter {
         }
     }
 
-    func presentationDidDismiss() {
+    func presentationHostDidDismiss() {
         _ = navigation.applyDeferredRequestIfReady()
 
+        runActionAfterPresentationDismissal()
+    }
+
+    func presentationSubtreeDidDismiss() {
+        runActionAfterPresentationDismissal()
+    }
+
+    private func runActionAfterPresentationDismissal() {
         let action = actionAfterPresentationDismissal
         actionAfterPresentationDismissal = nil
         action?()
