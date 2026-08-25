@@ -18,6 +18,8 @@ struct LunarMonthGrid: View {
     let selectMonth: (ChineseLunarMonth) -> Void
     let todayDayIndex: Int?
     let yearTransitionContext: LunarYearTransitionContext
+    let yearTransitionPreparationMonthIndex: Int?
+    let completeYearTransitionPreparation: (Int) -> Void
 
     @Environment(\.calendarStoreContentLevel) private var storeContentLevel
     @Bindable var daySelection: CalendarDaySelection
@@ -35,7 +37,9 @@ struct LunarMonthGrid: View {
         selectPreviousMonth: @escaping () -> Void,
         selectNextMonth: @escaping () -> Void,
         selectMonth: @escaping (ChineseLunarMonth) -> Void,
-        yearTransitionContext: LunarYearTransitionContext
+        yearTransitionContext: LunarYearTransitionContext,
+        yearTransitionPreparationMonthIndex: Int?,
+        completeYearTransitionPreparation: @escaping (Int) -> Void
     ) {
         self.year = year
         self.months = months
@@ -49,6 +53,8 @@ struct LunarMonthGrid: View {
         self.selectNextMonth = selectNextMonth
         self.selectMonth = selectMonth
         self.yearTransitionContext = yearTransitionContext
+        self.yearTransitionPreparationMonthIndex = yearTransitionPreparationMonthIndex
+        self.completeYearTransitionPreparation = completeYearTransitionPreparation
 
         let lunarMonthIndex = month.lunarMonthIndex
         _days = Query(
@@ -85,7 +91,9 @@ struct LunarMonthGrid: View {
                 selectPreviousMonth: selectPreviousMonth,
                 selectNextMonth: selectNextMonth,
                 selectMonth: selectMonth,
-                yearTransitionContext: yearTransitionContext
+                yearTransitionContext: yearTransitionContext,
+                yearTransitionPreparationMonthIndex: yearTransitionPreparationMonthIndex,
+                completeYearTransitionPreparation: completeYearTransitionPreparation
             )
             .padding()
             .background(.background.secondary, in: RoundedRectangle(cornerRadius: 28))

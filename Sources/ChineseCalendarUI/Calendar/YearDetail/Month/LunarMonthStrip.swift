@@ -6,7 +6,10 @@ struct LunarMonthStrip: View {
     let months: [ChineseLunarMonth]
     let selectedMonth: ChineseLunarMonth
     let selectMonth: (ChineseLunarMonth) -> Void
+    let yearTransitionPreparationMonthIndex: Int?
+    let completeYearTransitionPreparation: (Int) -> Void
 
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var scrollPosition: Int?
 
     var body: some View {
@@ -34,9 +37,32 @@ struct LunarMonthStrip: View {
         .onChange(of: selectedMonth.lunarMonthIndex, initial: true) {
             scrollToSelectedMonth()
         }
+        .onChange(of: yearTransitionPreparationMonthIndex) {
+            prepareForYearTransitionIfNeeded()
+        }
     }
 
     private func scrollToSelectedMonth() {
         scrollPosition = selectedMonth.lunarMonthIndex
+    }
+
+    private func prepareForYearTransitionIfNeeded() {
+        guard let yearTransitionPreparationMonthIndex else {
+            return
+        }
+
+        guard scrollPosition != yearTransitionPreparationMonthIndex,
+              !reduceMotion
+        else {
+            scrollPosition = yearTransitionPreparationMonthIndex
+            completeYearTransitionPreparation(yearTransitionPreparationMonthIndex)
+            return
+        }
+
+        withAnimation(.smooth(duration: 0.25)) {
+            scrollPosition = yearTransitionPreparationMonthIndex
+        } completion: {
+            completeYearTransitionPreparation(yearTransitionPreparationMonthIndex)
+        }
     }
 }
