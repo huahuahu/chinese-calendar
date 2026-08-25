@@ -1,5 +1,6 @@
 import ChineseCalendarPersistence
 @testable import ChineseCalendarUI
+import CoreGraphics
 import Testing
 
 @Test(
@@ -99,7 +100,7 @@ func yearPickerMapsYearsToSignedCenturies(lunarYearNumber: Int, expectedCentury:
 )
 func yearPickerSectionIndexMapsVerticalOffsets(verticalOffset: Double, expectedIndex: Int) {
     let index = CalendarYearSectionIndex.sectionIndex(
-        at: verticalOffset,
+        at: CGFloat(verticalOffset),
         indexHeight: 100,
         sectionCount: 4
     )
