@@ -19,24 +19,6 @@ public enum LunarMonthSize: Int, Codable, CaseIterable, Sendable {
 }
 
 public enum LunarCalendarFormatting {
-    /// 按标准 JDN 约定，1970-01-01 的 UTC 正午对应 JDN 2,440,588。
-    private static let unixEpochJulianDayNumber = 2_440_588
-
-    /// 用 Gregorian Calendar 构造按日偏移的 UTC 正午锚点，避免手工换算秒数。
-    private static let unixEpochNoonUTC: Date = {
-        var components = DateComponents()
-        components.timeZone = .gmt
-        components.year = 1970
-        components.month = 1
-        components.day = 1
-        components.hour = 12
-
-        guard let date = gregorianCalendar.date(from: components) else {
-            preconditionFailure("无法构造 Unix epoch 的 UTC 正午日期")
-        }
-        return date
-    }()
-
     public static func yearTitle(lunarYearNumber: Int) -> String {
         if lunarYearNumber > 0 {
             "公元 \(lunarYearNumber) 年"
@@ -161,15 +143,7 @@ public enum LunarCalendarFormatting {
 
     /// 将整数 JDN 转为其对应的 UTC 正午；这符合 JDN 的日界线定义，并避免把纯日期锚定在午夜边界。
     public static func civilDate(fromJulianDayNumber julianDayNumber: Int) -> Date {
-        let daysSinceUnixEpoch = julianDayNumber - unixEpochJulianDayNumber
-        guard let date = gregorianCalendar.date(
-            byAdding: .day,
-            value: daysSinceUnixEpoch,
-            to: unixEpochNoonUTC
-        ) else {
-            preconditionFailure("无法将 JDN \(julianDayNumber) 转换为 Foundation Date")
-        }
-        return date
+        JulianDayNumber.dateAtNoonUTC(for: julianDayNumber)
     }
 
     private static func sexagenaryName(stemIndex: Int, branchIndex: Int) -> String {

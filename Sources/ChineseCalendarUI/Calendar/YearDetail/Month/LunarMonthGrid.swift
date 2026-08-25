@@ -16,7 +16,7 @@ struct LunarMonthGrid: View {
     let selectPreviousMonth: () -> Void
     let selectNextMonth: () -> Void
     let selectMonth: (ChineseLunarMonth) -> Void
-    let todayDayIndex: Int?
+    let todayJulianDayNumber: Int
     let yearTransitionContext: LunarYearTransitionContext
 
     @Environment(\.calendarStoreContentLevel) private var storeContentLevel
@@ -29,7 +29,7 @@ struct LunarMonthGrid: View {
         months: [ChineseLunarMonth],
         month: ChineseLunarMonth,
         daySelection: CalendarDaySelection,
-        todayDayIndex: Int?,
+        todayJulianDayNumber: Int,
         showYearPicker: (() -> Void)? = nil,
         canSelectPreviousMonth: Bool,
         canSelectNextMonth: Bool,
@@ -42,7 +42,7 @@ struct LunarMonthGrid: View {
         self.months = months
         self.month = month
         self.daySelection = daySelection
-        self.todayDayIndex = todayDayIndex
+        self.todayJulianDayNumber = todayJulianDayNumber
         self.showYearPicker = showYearPicker
         self.canSelectPreviousMonth = canSelectPreviousMonth
         self.canSelectNextMonth = canSelectNextMonth
@@ -62,16 +62,13 @@ struct LunarMonthGrid: View {
 
     var body: some View {
         let selectedDayIndex = daySelection.dayIndex
-        let todayDay = todayDayIndex.flatMap { todayDayIndex in
-            days.first { $0.dayIndex == todayDayIndex }
-        }
+        let todayDay = days.first { $0.calendarDay?.julianDayNumber == todayJulianDayNumber }
         let defaultSelectedDay = todayDay ?? days.first
         let selectedDay = selectedDay(
             at: selectedDayIndex,
             defaultingTo: defaultSelectedDay
         )
         let effectiveSelectedDayIndex = selectedDay?.dayIndex
-        let todayDayIndex = todayDay?.dayIndex
 
         VStack(alignment: .leading, spacing: 16) {
             MonthSwitcher(
@@ -125,7 +122,7 @@ struct LunarMonthGrid: View {
                                 LunarDayGridCell(
                                     day: day,
                                     isSelected: day.dayIndex == effectiveSelectedDayIndex,
-                                    isToday: day.dayIndex == todayDayIndex
+                                    isToday: day.calendarDay?.julianDayNumber == todayJulianDayNumber
                                 )
                             }
                             .buttonStyle(.plain)
@@ -147,6 +144,9 @@ struct LunarMonthGrid: View {
         .onAppear(perform: finishPendingMonthSwitch)
         .onChange(of: days.map(\.dayIndex)) {
             finishPendingMonthSwitch()
+        }
+        .onChange(of: todayJulianDayNumber) {
+            selectDefaultDayIfNeeded()
         }
     }
 
@@ -239,8 +239,13 @@ struct LunarMonthGrid: View {
         }
 
         daySelection.dayIndex = Self.defaultDayIndex(
-            in: days.map(\.dayIndex),
-            todayDayIndex: todayDayIndex
+            in: days.map { day in
+                (
+                    dayIndex: day.dayIndex,
+                    julianDayNumber: day.calendarDay?.julianDayNumber
+                )
+            },
+            todayJulianDayNumber: todayJulianDayNumber
         )
     }
 
@@ -265,11 +270,15 @@ struct LunarMonthGrid: View {
         civilDateRangeTitle ?? fallback
     }
 
-    static func defaultDayIndex(in dayIndices: [Int], todayDayIndex: Int?) -> Int? {
-        if let todayDayIndex, dayIndices.contains(todayDayIndex) {
-            return todayDayIndex
+    static func defaultDayIndex(
+        in days: [(dayIndex: Int, julianDayNumber: Int?)],
+        todayJulianDayNumber: Int?
+    ) -> Int? {
+        guard let todayJulianDayNumber else {
+            return days.first?.dayIndex
         }
 
-        return dayIndices.first
+        return days.first(where: { $0.julianDayNumber == todayJulianDayNumber })?.dayIndex
+            ?? days.first?.dayIndex
     }
 }
