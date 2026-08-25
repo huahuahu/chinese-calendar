@@ -1,6 +1,7 @@
 import ChineseCalendarCore
 import ChineseCalendarLogging
 import ChineseCalendarPersistence
+import Combine
 import SFSafeSymbols
 import SwiftData
 import SwiftUI
@@ -12,17 +13,19 @@ struct LunarYearDetailView: View {
     let initialDayIndex: Int?
 
     @State private var browseState: LunarCalendarBrowseState
+    @State private var todayJulianDayNumber = JulianDayNumber.forLocalGregorianDate(containing: .now)
+    @State private var todaySelection: CalendarTodaySelection?
 
     @Environment(CalendarRouter.self) private var router
     @Environment(\.calendarStoreContentLevel) private var storeContentLevel
+    @Environment(\.modelContext) private var modelContext
+    @Environment(\.scenePhase) private var scenePhase
     @Query(sort: \ChineseLunarYear.lunarYearNumber) private var years: [ChineseLunarYear]
-    @Query private var todayCivilDates: [CivilDate]
 
     init(
         initialYearNumber: Int,
         initialMonthIndex: Int? = nil,
-        initialDayIndex: Int? = nil,
-        today: Date = .now
+        initialDayIndex: Int? = nil
     ) {
         self.initialYearNumber = initialYearNumber
         self.initialMonthIndex = initialMonthIndex
@@ -33,21 +36,6 @@ struct LunarYearDetailView: View {
                 selectedMonthIndex: initialMonthIndex,
                 selectedDayIndex: initialDayIndex
             )
-        )
-
-        let todayComponents = Self.gregorianDateComponents(for: today)
-        let todayYear = todayComponents.year ?? 0
-        let todayMonth = todayComponents.month ?? 0
-        let todayDay = todayComponents.day ?? 0
-        let gregorianCalendarStyle = CivilCalendarStyle.gregorian.rawValue
-        _todayCivilDates = Query(
-            filter: #Predicate<CivilDate> { civilDate in
-                civilDate.year == todayYear
-                    && civilDate.month == todayMonth
-                    && civilDate.dayOfMonth == todayDay
-                    && civilDate.calendarStyleRawValue == gregorianCalendarStyle
-            },
-            sort: \CivilDate.dayIndex
         )
     }
 
@@ -69,7 +57,7 @@ struct LunarYearDetailView: View {
                                 months: monthsInYearStartOrder,
                                 month: selectedMonth,
                                 daySelection: browseState.daySelection,
-                                todayDayIndex: todayCivilDates.first?.dayIndex,
+                                todayJulianDayNumber: todayJulianDayNumber,
                                 showYearPicker: presentYearPicker,
                                 canSelectPreviousMonth: canSelect(adjacentMonths.previous),
                                 canSelectNextMonth: canSelect(adjacentMonths.next),
@@ -92,15 +80,29 @@ struct LunarYearDetailView: View {
             }
         }
         .background(.calendarSystemBackground)
-        .onAppear(perform: selectDefaultMonthIfNeeded)
+        .onAppear(perform: refreshToday)
         .onChange(of: browseState.displayedYearNumber) {
             selectDefaultMonthIfNeeded()
         }
-        .onChange(of: todayCivilDates.map(\.dayIndex)) {
-            selectDefaultMonthIfNeeded()
-        }
         .onChange(of: storeContentLevel) {
-            selectDefaultMonthIfNeeded()
+            refreshToday()
+        }
+        .onChange(of: scenePhase) {
+            if scenePhase == .active {
+                refreshToday()
+            }
+        }
+        .onReceive(
+            NotificationCenter.default.publisher(for: .NSCalendarDayChanged)
+                .receive(on: RunLoop.main)
+        ) { _ in
+            refreshToday()
+        }
+        .onReceive(
+            NotificationCenter.default.publisher(for: .NSSystemTimeZoneDidChange)
+                .receive(on: RunLoop.main)
+        ) { _ in
+            refreshToday()
         }
         .navigationTitle("日历")
         .toolbar {
@@ -178,25 +180,65 @@ private extension LunarYearDetailView {
         return todaySelection.lunarMonthIndex
     }
 
-    var todaySelection: CalendarTodaySelection? {
-        todayCivilDates
-            .lazy
-            .compactMap { civilDate -> CalendarTodaySelection? in
-                guard let lunarDay = civilDate.calendarDay?.chineseLunarDay else {
-                    return nil
-                }
+    func refreshToday() {
+        let julianDayNumber = JulianDayNumber.forLocalGregorianDate(containing: .now)
+        todayJulianDayNumber = julianDayNumber
+        todaySelection = loadTodaySelection(julianDayNumber: julianDayNumber)
+        selectDefaultMonthIfNeeded()
+    }
 
-                guard let lunarYearNumber = lunarDay.chineseLunarMonth?.lunarYearNumber else {
-                    return nil
-                }
-
-                return CalendarTodaySelection(
-                    lunarYearNumber: lunarYearNumber,
-                    lunarMonthIndex: lunarDay.lunarMonthIndex,
-                    dayIndex: lunarDay.dayIndex
-                )
+    func loadTodaySelection(julianDayNumber: Int) -> CalendarTodaySelection? {
+        var descriptor = FetchDescriptor<CalendarDay>(
+            predicate: #Predicate<CalendarDay> { calendarDay in
+                calendarDay.julianDayNumber == julianDayNumber
             }
-            .first
+        )
+        descriptor.fetchLimit = 1
+        descriptor.relationshipKeyPathsForPrefetching = [\.chineseLunarDay]
+
+        let calendarDay: CalendarDay
+        do {
+            guard let fetchedCalendarDay = try modelContext.fetch(descriptor).first else {
+                return nil
+            }
+            calendarDay = fetchedCalendarDay
+        } catch {
+            ChineseCalendarLog.ui.error("无法按 JDN 查询今天：\(error.localizedDescription)")
+            return nil
+        }
+
+        guard let lunarDay = calendarDay.chineseLunarDay else {
+            return nil
+        }
+
+        let lunarYearNumber = lunarDay.chineseLunarMonth?.lunarYearNumber
+            ?? loadLunarYearNumber(lunarMonthIndex: lunarDay.lunarMonthIndex)
+
+        guard let lunarYearNumber else {
+            return nil
+        }
+
+        return CalendarTodaySelection(
+            lunarYearNumber: lunarYearNumber,
+            lunarMonthIndex: lunarDay.lunarMonthIndex,
+            dayIndex: lunarDay.dayIndex
+        )
+    }
+
+    func loadLunarYearNumber(lunarMonthIndex: Int) -> Int? {
+        var descriptor = FetchDescriptor<ChineseLunarMonth>(
+            predicate: #Predicate<ChineseLunarMonth> { month in
+                month.lunarMonthIndex == lunarMonthIndex
+            }
+        )
+        descriptor.fetchLimit = 1
+
+        do {
+            return try modelContext.fetch(descriptor).first?.lunarYearNumber
+        } catch {
+            ChineseCalendarLog.ui.error("无法按月份索引查询今天所属农历年：\(error.localizedDescription)")
+            return nil
+        }
     }
 
     func selectDefaultMonthIfNeeded() {
@@ -304,6 +346,7 @@ private extension LunarYearDetailView {
     }
 
     func selectToday() {
+        refreshToday()
         guard let todaySelection else {
             selectYear(ChineseLunarCalendar.yearNumber())
             return
@@ -347,13 +390,5 @@ private extension LunarYearDetailView {
 
     func chronologicalMonths(in year: ChineseLunarYear) -> [ChineseLunarMonth] {
         year.months.sorted { $0.lunarMonthIndex < $1.lunarMonthIndex }
-    }
-}
-
-private extension LunarYearDetailView {
-    static func gregorianDateComponents(for date: Date) -> DateComponents {
-        var calendar = Calendar(identifier: .gregorian)
-        calendar.timeZone = .autoupdatingCurrent
-        return calendar.dateComponents([.year, .month, .day], from: date)
     }
 }
