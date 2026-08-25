@@ -202,8 +202,12 @@ private extension LunarYearDetailView {
             return nil
         }
 
+        let fallbackMonthIndex = calendarMonths.binarySearchIndex(
+            of: lunarDay.lunarMonthIndex,
+            by: \.lunarMonthIndex
+        )
         let lunarYearNumber = lunarDay.chineseLunarMonth?.lunarYearNumber
-            ?? calendarMonths.first { $0.lunarMonthIndex == lunarDay.lunarMonthIndex }?.lunarYearNumber
+            ?? fallbackMonthIndex.map { calendarMonths[$0].lunarYearNumber }
 
         guard let lunarYearNumber else {
             return nil
