@@ -2,6 +2,7 @@ name: ChineseCalendar
 
 options:
   createIntermediateGroups: true
+  developmentLanguage: zh-Hans
   groupSortPosition: top
   # Work around XcodeGen 2.45.x omitting local package backlinks:
   # https://github.com/yonaskolb/XcodeGen/issues/1549
@@ -71,6 +72,8 @@ targets:
       path: Apps/iOSApp/Info.plist
       properties:
         CFBundleDisplayName: Chinese Calendar
+        CFBundleLocalizations:
+          - zh-Hans
         ChineseCalendarFullSeedStoreManifestURL: https://github.com/huahuahu/chinese-calendar/releases/download/full-seed-store-2026.06.28/ChineseCalendarFullSeedStoreManifest.json
         CFBundleURLTypes:
           - CFBundleURLName: com.tiger.suzhou.ChineseCalendar
@@ -129,6 +132,8 @@ targets:
       path: Apps/macOSApp/Info.plist
       properties:
         CFBundleDisplayName: Chinese Calendar
+        CFBundleLocalizations:
+          - zh-Hans
         ChineseCalendarFullSeedStoreManifestURL: https://github.com/huahuahu/chinese-calendar/releases/download/full-seed-store-2026.06.28/ChineseCalendarFullSeedStoreManifest.json
         LSApplicationCategoryType: public.app-category.reference
         CFBundleURLTypes:
@@ -144,6 +149,8 @@ schemes:
         ChineseCalendar-iOS: all
     run:
       config: Debug
+      language: zh-Hans
+      region: CN
       environmentVariables:
         CHINESE_CALENDAR_PERFORMANCE_SIGNPOSTS: "1"
 

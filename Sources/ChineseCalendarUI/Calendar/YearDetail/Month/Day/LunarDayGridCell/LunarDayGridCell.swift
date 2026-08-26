@@ -10,6 +10,7 @@ struct LunarDayGridCell: View {
 
     @Environment(\.accessibilityDifferentiateWithoutColor)
     private var differentiateWithoutColor
+    @Environment(\.locale) private var locale
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
@@ -61,15 +62,13 @@ struct LunarDayGridCell: View {
     }
 
     private var civilDateTitle: String {
-        guard let civilDate = day.calendarDay?.civilDate else {
+        guard let julianDayNumber = day.calendarDay?.julianDayNumber else {
             return "-"
         }
 
         return LunarCalendarFormatting.civilDateTitle(
-            year: civilDate.year,
-            month: civilDate.month,
-            dayOfMonth: civilDate.dayOfMonth,
-            isJulianCalendar: civilDate.calendarStyle == .julian
+            julianDayNumber: julianDayNumber,
+            locale: locale
         )
     }
 

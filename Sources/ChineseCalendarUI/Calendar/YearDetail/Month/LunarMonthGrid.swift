@@ -16,12 +16,13 @@ struct LunarMonthGrid: View {
     let selectPreviousMonth: () -> Void
     let selectNextMonth: () -> Void
     let selectMonth: (ChineseLunarMonth) -> Void
-    let todayDayIndex: Int?
+    let todayJulianDayNumber: Int
     let yearTransitionContext: LunarYearTransitionContext
     let yearTransitionPreparationMonthIndex: Int?
     let completeYearTransitionPreparation: (Int) -> Void
 
     @Environment(\.calendarStoreContentLevel) private var storeContentLevel
+    @Environment(\.locale) private var locale
     @Bindable var daySelection: CalendarDaySelection
     @Query private var days: [ChineseLunarDay]
 
@@ -30,7 +31,7 @@ struct LunarMonthGrid: View {
         months: [ChineseLunarMonth],
         month: ChineseLunarMonth,
         daySelection: CalendarDaySelection,
-        todayDayIndex: Int?,
+        todayJulianDayNumber: Int,
         showYearPicker: (() -> Void)? = nil,
         canSelectPreviousMonth: Bool,
         canSelectNextMonth: Bool,
@@ -45,7 +46,7 @@ struct LunarMonthGrid: View {
         self.months = months
         self.month = month
         self.daySelection = daySelection
-        self.todayDayIndex = todayDayIndex
+        self.todayJulianDayNumber = todayJulianDayNumber
         self.showYearPicker = showYearPicker
         self.canSelectPreviousMonth = canSelectPreviousMonth
         self.canSelectNextMonth = canSelectNextMonth
@@ -67,16 +68,13 @@ struct LunarMonthGrid: View {
 
     var body: some View {
         let selectedDayIndex = daySelection.dayIndex
-        let todayDay = todayDayIndex.flatMap { todayDayIndex in
-            days.first { $0.dayIndex == todayDayIndex }
-        }
+        let todayDay = days.first { $0.calendarDay?.julianDayNumber == todayJulianDayNumber }
         let defaultSelectedDay = todayDay ?? days.first
         let selectedDay = selectedDay(
             at: selectedDayIndex,
             defaultingTo: defaultSelectedDay
         )
         let effectiveSelectedDayIndex = selectedDay?.dayIndex
-        let todayDayIndex = todayDay?.dayIndex
 
         VStack(alignment: .leading, spacing: 16) {
             MonthSwitcher(
@@ -132,7 +130,7 @@ struct LunarMonthGrid: View {
                                 LunarDayGridCell(
                                     day: day,
                                     isSelected: day.dayIndex == effectiveSelectedDayIndex,
-                                    isToday: day.dayIndex == todayDayIndex
+                                    isToday: day.calendarDay?.julianDayNumber == todayJulianDayNumber
                                 )
                             }
                             .buttonStyle(.plain)
@@ -154,6 +152,9 @@ struct LunarMonthGrid: View {
         .onAppear(perform: finishPendingMonthSwitch)
         .onChange(of: days.map(\.dayIndex)) {
             finishPendingMonthSwitch()
+        }
+        .onChange(of: todayJulianDayNumber) {
+            selectDefaultDayIfNeeded()
         }
     }
 
@@ -193,13 +194,17 @@ struct LunarMonthGrid: View {
     }
 
     private var civilDateRangeTitle: String? {
-        guard let firstCivilDate = days.first?.calendarDay?.civilDate,
-              let lastCivilDate = days.last?.calendarDay?.civilDate
+        guard let firstJulianDayNumber = days.first?.calendarDay?.julianDayNumber,
+              let lastJulianDayNumber = days.last?.calendarDay?.julianDayNumber
         else {
             return nil
         }
 
-        return "\(fullCivilDateTitle(for: firstCivilDate)) - \(fullCivilDateTitle(for: lastCivilDate))"
+        return LunarCalendarFormatting.civilDateRangeTitle(
+            fromJulianDayNumber: firstJulianDayNumber,
+            throughJulianDayNumber: lastJulianDayNumber,
+            locale: locale
+        )
     }
 
     private var emptyStateTitle: String {
@@ -223,7 +228,7 @@ struct LunarMonthGrid: View {
     private var emptyStateDescription: String {
         switch storeContentLevel {
         case .base:
-            "当前内置数据只包含年份和月份；下载完整数据后会显示每日干支和对应公历日期。"
+            "当前内置数据只包含年份和月份；下载完整数据后会显示每日干支和对应民用日期。"
         case .full:
             "这个月份暂时没有可显示的日级记录。"
         }
@@ -242,8 +247,13 @@ struct LunarMonthGrid: View {
         }
 
         daySelection.dayIndex = Self.defaultDayIndex(
-            in: days.map(\.dayIndex),
-            todayDayIndex: todayDayIndex
+            in: days.map { day in
+                (
+                    dayIndex: day.dayIndex,
+                    julianDayNumber: day.calendarDay?.julianDayNumber
+                )
+            },
+            todayJulianDayNumber: todayJulianDayNumber
         )
     }
 
@@ -260,12 +270,9 @@ struct LunarMonthGrid: View {
             selectedDayIndex: daySelection.dayIndex
         )
     }
+}
 
-    private func fullCivilDateTitle(for civilDate: CivilDate) -> String {
-        let prefix = civilDate.calendarStyle == .julian ? "儒略" : "公历"
-        return "\(prefix) \(civilDate.year)年\(civilDate.month)月\(civilDate.dayOfMonth)日"
-    }
-
+extension LunarMonthGrid {
     static func monthNavigationSubtitle(
         civilDateRangeTitle: String?,
         fallback: String
@@ -273,11 +280,15 @@ struct LunarMonthGrid: View {
         civilDateRangeTitle ?? fallback
     }
 
-    static func defaultDayIndex(in dayIndices: [Int], todayDayIndex: Int?) -> Int? {
-        if let todayDayIndex, dayIndices.contains(todayDayIndex) {
-            return todayDayIndex
+    static func defaultDayIndex(
+        in days: [(dayIndex: Int, julianDayNumber: Int?)],
+        todayJulianDayNumber: Int?
+    ) -> Int? {
+        guard let todayJulianDayNumber else {
+            return days.first?.dayIndex
         }
 
-        return dayIndices.first
+        return days.first(where: { $0.julianDayNumber == todayJulianDayNumber })?.dayIndex
+            ?? days.first?.dayIndex
     }
 }
