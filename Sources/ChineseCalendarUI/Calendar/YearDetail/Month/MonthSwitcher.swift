@@ -17,6 +17,8 @@ struct MonthSwitcher: View {
     let selectNextMonth: () -> Void
     let selectMonth: (ChineseLunarMonth) -> Void
     let yearTransitionContext: LunarYearTransitionContext
+    let yearTransitionPreparationMonthIndex: Int?
+    let completeYearTransitionPreparation: (Int) -> Void
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
@@ -53,7 +55,9 @@ struct MonthSwitcher: View {
                 LunarMonthStrip(
                     months: months,
                     selectedMonth: selectedMonth,
-                    selectMonth: selectMonth
+                    selectMonth: selectMonth,
+                    yearTransitionPreparationMonthIndex: yearTransitionPreparationMonthIndex,
+                    completeYearTransitionPreparation: completeYearTransitionPreparation
                 )
                 .id(yearNumber)
                 .transition(yearTransition)

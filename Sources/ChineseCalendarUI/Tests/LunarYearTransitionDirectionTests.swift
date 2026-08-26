@@ -20,6 +20,18 @@ struct LunarYearTransitionDirectionTests {
         #expect(LunarYearTransitionDirection(from: 1, to: -1) == .earlier)
     }
 
+    @Test func laterYearLeavesFromTheCurrentYearsLastMonth() {
+        let direction = LunarYearTransitionDirection.later
+
+        #expect(direction.sourceMonthIndex(in: [26001, 26002, 26012]) == 26012)
+    }
+
+    @Test func earlierYearLeavesFromTheCurrentYearsFirstMonth() {
+        let direction = LunarYearTransitionDirection.earlier
+
+        #expect(direction.sourceMonthIndex(in: [26001, 26002, 26012]) == 26001)
+    }
+
     @Test func laterYearStartsAtItsFirstMonth() {
         let direction = LunarYearTransitionDirection.later
 
@@ -35,5 +47,10 @@ struct LunarYearTransitionDirectionTests {
     @Test func aYearWithoutMonthsHasNoDestinationMonth() {
         #expect(LunarYearTransitionDirection.later.destinationMonthIndex(in: []) == nil)
         #expect(LunarYearTransitionDirection.earlier.destinationMonthIndex(in: []) == nil)
+    }
+
+    @Test func aYearWithoutMonthsHasNoSourceMonth() {
+        #expect(LunarYearTransitionDirection.later.sourceMonthIndex(in: []) == nil)
+        #expect(LunarYearTransitionDirection.earlier.sourceMonthIndex(in: []) == nil)
     }
 }

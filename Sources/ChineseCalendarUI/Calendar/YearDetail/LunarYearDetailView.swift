@@ -13,6 +13,7 @@ struct LunarYearDetailView: View {
     let initialDayIndex: Int?
 
     @State private var browseState: LunarCalendarBrowseState
+    @State private var pendingYearTransition: LunarYearTransitionRequest?
     @State private var todayJulianDayNumber = JulianDayNumber.forLocalGregorianDate(containing: .now)
     @State private var todaySelection: CalendarTodaySelection?
 
@@ -64,7 +65,9 @@ struct LunarYearDetailView: View {
                                 selectPreviousMonth: { selectMonthInCalendar(adjacentMonths.previous) },
                                 selectNextMonth: { selectMonthInCalendar(adjacentMonths.next) },
                                 selectMonth: selectMonthInCalendar,
-                                yearTransitionContext: browseState.yearTransitionContext
+                                yearTransitionContext: browseState.yearTransitionContext,
+                                yearTransitionPreparationMonthIndex: pendingYearTransition?.sourceMonthIndex,
+                                completeYearTransitionPreparation: completeYearTransitionPreparation
                             )
                         }
                     }
@@ -315,6 +318,7 @@ private extension LunarYearDetailView {
             crossesYear: crossesYear
         )
 
+        pendingYearTransition = nil
         browseState.select(
             yearNumber: month.lunarYearNumber,
             monthIndex: month.lunarMonthIndex
@@ -346,7 +350,9 @@ private extension LunarYearDetailView {
     }
 
     func selectToday() {
+        pendingYearTransition = nil
         refreshToday()
+
         guard let todaySelection else {
             selectYear(ChineseLunarCalendar.yearNumber())
             return
@@ -380,11 +386,42 @@ private extension LunarYearDetailView {
         let destinationMonthIndices = chronologicalMonths(in: destinationYear)
             .map(\.lunarMonthIndex)
 
-        browseState.select(
-            yearNumber: yearNumber,
-            monthIndex: direction.destinationMonthIndex(
-                in: Array(destinationMonthIndices)
+        let destinationMonthIndex = direction.destinationMonthIndex(
+            in: Array(destinationMonthIndices)
+        )
+        let sourceMonthIndices = monthsInYearStartOrder.map(\.lunarMonthIndex)
+
+        guard let sourceMonthIndex = direction.sourceMonthIndex(
+            in: sourceMonthIndices
+        ) else {
+            pendingYearTransition = nil
+            browseState.select(
+                yearNumber: yearNumber,
+                monthIndex: destinationMonthIndex
             )
+            return
+        }
+
+        pendingYearTransition = LunarYearTransitionRequest(
+            sourceYearNumber: browseState.displayedYearNumber,
+            sourceMonthIndex: sourceMonthIndex,
+            destinationYearNumber: yearNumber,
+            destinationMonthIndex: destinationMonthIndex
+        )
+    }
+
+    func completeYearTransitionPreparation(_ sourceMonthIndex: Int) {
+        guard let pendingYearTransition,
+              pendingYearTransition.sourceMonthIndex == sourceMonthIndex,
+              pendingYearTransition.sourceYearNumber == browseState.displayedYearNumber
+        else {
+            return
+        }
+
+        self.pendingYearTransition = nil
+        browseState.select(
+            yearNumber: pendingYearTransition.destinationYearNumber,
+            monthIndex: pendingYearTransition.destinationMonthIndex
         )
     }
 
