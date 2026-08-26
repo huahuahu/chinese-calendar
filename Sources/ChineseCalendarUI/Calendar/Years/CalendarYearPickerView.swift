@@ -36,6 +36,7 @@ struct CalendarYearPickerView: View {
                             Text(section.title)
                                 .font(.footnote)
                                 .foregroundStyle(.secondary)
+                                .accessibilityAddTraits(.isHeader)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .padding(.horizontal)
                                 .padding(.vertical, 8)
