@@ -9,6 +9,7 @@ struct CalendarYearPickerView: View {
     private let yearSections: [CalendarYearSection]
     private let items: [CalendarYearPickerItem]
     private let availableYearNumbers: [Int]
+    @ScaledMetric(relativeTo: .caption2) private var sectionIndexWidth: CGFloat = 24
     @State private var hasResolvedInitialScrollTarget = false
     @State private var scrollPosition: CalendarYearPickerItem.ID?
 
@@ -54,13 +55,14 @@ struct CalendarYearPickerView: View {
                 }
                 .scrollTargetLayout()
             }
-            .contentMargins(.trailing, CalendarYearSectionIndex.width, for: .scrollContent)
+            .contentMargins(.trailing, sectionIndexWidth, for: .scrollContent)
             .scrollPosition(id: $scrollPosition, anchor: .center)
             .onChange(of: availableYearNumbers, initial: true) {
                 positionInitiallyIfNeeded()
             }
 
             CalendarYearSectionIndex(
+                width: sectionIndexWidth,
                 sections: yearSections,
                 currentSectionID: scrollPosition?.sectionID
                     ?? selectedYearNumber.map(CalendarYearSection.signedCentury(lunarYearNumber:)),

@@ -2,17 +2,17 @@ import SwiftUI
 
 /// 显示在年份滚动视图右侧的轻量世纪索引。
 struct CalendarYearSectionIndex: View {
-    static let width: CGFloat = 24
-
+    let width: CGFloat
     let sections: [CalendarYearSection]
     let currentSectionID: Int?
     let selectSection: (CalendarYearSection) -> Void
 
+    @ScaledMetric(relativeTo: .caption2) private var rowHeight: CGFloat = 13
     @State private var activeSectionID: Int?
 
     var body: some View {
         GeometryReader { geometry in
-            let indexHeight = min(geometry.size.height, CGFloat(sections.count) * 13)
+            let indexHeight = min(geometry.size.height, CGFloat(sections.count) * rowHeight)
 
             VStack(spacing: 0) {
                 ForEach(sections) { section in
@@ -29,13 +29,12 @@ struct CalendarYearSectionIndex: View {
                         )
                 }
             }
-            .frame(width: Self.width, height: indexHeight)
+            .frame(width: width, height: indexHeight)
             .contentShape(Rectangle())
             .gesture(sectionSelectionGesture(indexHeight: indexHeight))
-            .position(x: Self.width / 2, y: geometry.size.height / 2)
+            .position(x: width / 2, y: geometry.size.height / 2)
         }
-        .frame(width: Self.width)
-        .dynamicTypeSize(.xSmall ... .large)
+        .frame(width: width)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("世纪索引")
         .accessibilityValue(currentSectionTitle ?? "未选择世纪")
