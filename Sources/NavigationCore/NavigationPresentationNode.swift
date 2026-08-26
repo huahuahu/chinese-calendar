@@ -47,26 +47,6 @@ public final class NavigationPresentationNode<Destination: Hashable>: Identifiab
         NavigationCoreLog.logger.debug("Dismissed nested full screen")
     }
 
-    /// Dismisses the frontmost sheet in this presentation subtree.
-    @discardableResult
-    public func dismissFrontmostSheet() -> Bool {
-        if let fullScreen, fullScreen.dismissFrontmostSheet() {
-            return true
-        }
-
-        guard let sheet else {
-            return false
-        }
-
-        if sheet.dismissFrontmostSheet() {
-            return true
-        }
-
-        self.sheet = nil
-        NavigationCoreLog.logger.debug("Dismissed frontmost nested sheet")
-        return true
-    }
-
     public var frontmostPresentationNode: NavigationPresentationNode {
         if let fullScreen {
             return fullScreen.frontmostPresentationNode

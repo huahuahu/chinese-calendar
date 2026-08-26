@@ -153,56 +153,6 @@ import Testing
 }
 
 @MainActor
-@Test func yearPickerSelectionRunsAfterItsSheetFinishesDismissing() {
-    let router = CalendarRouter()
-    var selectedYearNumber: Int?
-    let yearPicker = CalendarYearPickerDestination(initialYearNumber: 2026) {
-        selectedYearNumber = $0
-    }
-    router.presentSheet(.yearPicker(yearPicker))
-
-    router.dismissFrontmostSheet(afterDismissal: {
-        yearPicker.select(2027)
-    })
-
-    #expect(router.sheet == nil)
-    #expect(selectedYearNumber == nil)
-
-    router.presentationHostDidDismiss()
-
-    #expect(selectedYearNumber == 2027)
-}
-
-@MainActor
-@Test func nestedDismissalDoesNotApplyDeferredNavigationBeforeRootHostDismisses() throws {
-    let router = CalendarRouter(yearsPath: [.lunarYear(2024)])
-    router.presentSheet(.lunarYear(2025))
-    let parentSheet = try #require(router.sheet)
-    parentSheet.presentSheet(.dynasty("qin"))
-
-    #expect(
-        router.openDeepLink(.lunarYear(2026, monthIndex: 26001))
-            == .deferredUntilPresentationDismisses
-    )
-    #expect(router.sheet == nil)
-
-    router.presentationSubtreeDidDismiss()
-
-    #expect(router.navigation.isAwaitingPresentationDismissal)
-    #expect(
-        router.navigation.deferredRequest
-            == .replacePath([.lunarYear(2026, monthIndex: 26001)], on: .years)
-    )
-    #expect(router.yearsPath == [.lunarYear(2024)])
-
-    router.presentationHostDidDismiss()
-
-    #expect(!router.navigation.isAwaitingPresentationDismissal)
-    #expect(router.navigation.deferredRequest == nil)
-    #expect(router.yearsPath == [.lunarYear(2026, monthIndex: 26001)])
-}
-
-@MainActor
 @Test func yearPickerIsNestedUnderAnActivePresentation() throws {
     let router = CalendarRouter()
     router.presentSheet(.lunarYear(2025))

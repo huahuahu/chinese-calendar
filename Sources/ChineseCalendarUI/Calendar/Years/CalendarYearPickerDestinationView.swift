@@ -5,7 +5,7 @@ import SwiftUI
 /// 显示年份选择 destination，并将选择结果返回给发起选择的页面。
 struct CalendarYearPickerDestinationView: View {
     @Query(sort: \ChineseLunarYear.lunarYearNumber) private var years: [ChineseLunarYear]
-    @Environment(CalendarRouter.self) private var router
+    @Environment(\.dismiss) private var dismiss
     let destination: CalendarYearPickerDestination
 
     var body: some View {
@@ -17,8 +17,7 @@ struct CalendarYearPickerDestinationView: View {
     }
 
     private func selectYear(_ yearNumber: Int) {
-        router.dismissFrontmostSheet(afterDismissal: {
-            destination.select(yearNumber)
-        })
+        destination.select(yearNumber)
+        dismiss()
     }
 }
