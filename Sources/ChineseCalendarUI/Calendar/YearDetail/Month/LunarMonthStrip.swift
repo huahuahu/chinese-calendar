@@ -12,27 +12,48 @@ struct LunarMonthStrip: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var scrollPosition: Int?
 
+    init(
+        months: [ChineseLunarMonth],
+        selectedMonth: ChineseLunarMonth,
+        selectMonth: @escaping (ChineseLunarMonth) -> Void,
+        yearTransitionPreparationMonthIndex: Int?,
+        completeYearTransitionPreparation: @escaping (Int) -> Void
+    ) {
+        self.months = months
+        self.selectedMonth = selectedMonth
+        self.selectMonth = selectMonth
+        self.yearTransitionPreparationMonthIndex = yearTransitionPreparationMonthIndex
+        self.completeYearTransitionPreparation = completeYearTransitionPreparation
+        _scrollPosition = State(initialValue: selectedMonth.lunarMonthIndex)
+    }
+
     var body: some View {
         ScrollView(.horizontal) {
             HStack(spacing: 8) {
                 ForEach(months, id: \.lunarMonthIndex) { month in
-                    Button {
-                        selectMonth(month)
-                    } label: {
-                        Text(LunarMonthDisplay.title(for: month))
-                            .padding(.horizontal, 12)
-                            .padding(.vertical, 8)
-                            .frame(minWidth: 76, minHeight: 44)
+                    VStack(spacing: 0) {
+                        Button {
+                            selectMonth(month)
+                        } label: {
+                            Text(LunarMonthDisplay.title(for: month))
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 8)
+                                .frame(minWidth: 76, minHeight: 44)
+                        }
+                        .buttonStyle(.bordered)
+                        .controlSize(.regular)
+                        .tint(month.lunarMonthIndex == selectedMonth.lunarMonthIndex ? .accentColor : nil)
+                        .accessibilityAddTraits(
+                            month.lunarMonthIndex == selectedMonth.lunarMonthIndex ? .isSelected : []
+                        )
                     }
                     .id(month.lunarMonthIndex)
-                    .buttonStyle(.bordered)
-                    .controlSize(.regular)
-                    .tint(month.lunarMonthIndex == selectedMonth.lunarMonthIndex ? .accentColor : nil)
                 }
             }
             .scrollTargetLayout()
         }
         .scrollIndicators(.hidden)
+        .defaultScrollAnchor(initialScrollAnchor, for: .initialOffset)
         .scrollPosition(id: $scrollPosition, anchor: .center)
         .onChange(of: selectedMonth.lunarMonthIndex, initial: true) {
             scrollToSelectedMonth()
@@ -40,6 +61,18 @@ struct LunarMonthStrip: View {
         .onChange(of: yearTransitionPreparationMonthIndex) {
             prepareForYearTransitionIfNeeded()
         }
+    }
+
+    private var initialScrollAnchor: UnitPoint {
+        if selectedMonth.lunarMonthIndex == months.last?.lunarMonthIndex {
+            return .trailing
+        }
+
+        if selectedMonth.lunarMonthIndex == months.first?.lunarMonthIndex {
+            return .leading
+        }
+
+        return .center
     }
 
     private func scrollToSelectedMonth() {
