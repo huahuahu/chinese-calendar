@@ -386,9 +386,7 @@ private extension LunarYearDetailView {
         let destinationMonthIndices = chronologicalMonths(in: destinationYear)
             .map(\.lunarMonthIndex)
 
-        let destinationMonthIndex = direction.destinationMonthIndex(
-            in: Array(destinationMonthIndices)
-        )
+        let destinationMonthIndex = direction.destinationMonthIndex(in: destinationMonthIndices)
         let sourceMonthIndices = monthsInYearStartOrder.map(\.lunarMonthIndex)
 
         guard let sourceMonthIndex = direction.sourceMonthIndex(

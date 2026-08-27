@@ -43,6 +43,9 @@ struct LunarMonthStrip: View {
                         .buttonStyle(.bordered)
                         .controlSize(.regular)
                         .tint(month.lunarMonthIndex == selectedMonth.lunarMonthIndex ? .accentColor : nil)
+                        .accessibilityAddTraits(
+                            month.lunarMonthIndex == selectedMonth.lunarMonthIndex ? .isSelected : []
+                        )
                     }
                     .id(month.lunarMonthIndex)
                 }
