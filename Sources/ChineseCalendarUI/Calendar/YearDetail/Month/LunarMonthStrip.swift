@@ -31,18 +31,20 @@ struct LunarMonthStrip: View {
         ScrollView(.horizontal) {
             HStack(spacing: 8) {
                 ForEach(months, id: \.lunarMonthIndex) { month in
-                    Button {
-                        selectMonth(month)
-                    } label: {
-                        Text(LunarMonthDisplay.title(for: month))
-                            .padding(.horizontal, 12)
-                            .padding(.vertical, 8)
-                            .frame(minWidth: 76, minHeight: 44)
+                    VStack(spacing: 0) {
+                        Button {
+                            selectMonth(month)
+                        } label: {
+                            Text(LunarMonthDisplay.title(for: month))
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 8)
+                                .frame(minWidth: 76, minHeight: 44)
+                        }
+                        .buttonStyle(.bordered)
+                        .controlSize(.regular)
+                        .tint(month.lunarMonthIndex == selectedMonth.lunarMonthIndex ? .accentColor : nil)
                     }
                     .id(month.lunarMonthIndex)
-                    .buttonStyle(.bordered)
-                    .controlSize(.regular)
-                    .tint(month.lunarMonthIndex == selectedMonth.lunarMonthIndex ? .accentColor : nil)
                 }
             }
             .scrollTargetLayout()

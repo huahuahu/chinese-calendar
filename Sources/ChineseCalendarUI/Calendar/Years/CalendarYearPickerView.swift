@@ -1,4 +1,5 @@
 import ChineseCalendarPersistence
+import SFSafeSymbols
 import SwiftUI
 
 /// 显示可选农历年列表，由所在 NavigationStack 提供导航容器。
@@ -7,11 +8,8 @@ struct CalendarYearPickerView: View {
     let selectYear: (Int) -> Void
 
     private let yearSections: [CalendarYearSection]
-    private let items: [CalendarYearPickerItem]
     private let availableYearNumbers: [Int]
-    @ScaledMetric(relativeTo: .caption2) private var sectionIndexWidth: CGFloat = 24
     @State private var hasResolvedInitialScrollTarget = false
-    @State private var scrollPosition: CalendarYearPickerItem.ID?
 
     init(
         years: [ChineseLunarYear],
@@ -20,56 +18,48 @@ struct CalendarYearPickerView: View {
     ) {
         self.selectedYearNumber = selectedYearNumber
         self.selectYear = selectYear
-        let yearSections = CalendarYearSection.sections(for: years)
-        self.yearSections = yearSections
-        items = CalendarYearPickerItem.items(for: yearSections)
+        yearSections = CalendarYearSection.sections(for: years)
         availableYearNumbers = years.map(\.lunarYearNumber)
-        _scrollPosition = State(initialValue: nil)
     }
 
     var body: some View {
-        ZStack(alignment: .trailing) {
-            ScrollView {
-                LazyVStack(spacing: 0) {
-                    ForEach(items) { item in
-                        switch item {
-                        case let .section(section):
-                            Text(section.title)
-                                .font(.footnote)
-                                .foregroundStyle(.secondary)
-                                .accessibilityAddTraits(.isHeader)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding(.horizontal)
-                                .padding(.vertical, 8)
-                                .background(.background)
-                        case let .year(year):
-                            CalendarYearPickerRow(
-                                year: year,
-                                isSelected: year.lunarYearNumber == selectedYearNumber,
-                                selectYear: {
+        ScrollViewReader { proxy in
+            List {
+                ForEach(yearSections) { section in
+                    Section(section.title) {
+                        ForEach(section.years, id: \.lunarYearNumber) { year in
+                            VStack(spacing: 0) {
+                                Button {
                                     selectYear(year.lunarYearNumber)
+                                } label: {
+                                    HStack(spacing: 12) {
+                                        LunarYearRow(year: year)
+
+                                        Spacer()
+
+                                        if year.lunarYearNumber == selectedYearNumber {
+                                            Image(systemSymbol: .checkmark)
+                                                .font(.headline)
+                                                .foregroundStyle(.tint)
+                                                .accessibilityHidden(true)
+                                        }
+                                    }
+                                    .contentShape(Rectangle())
                                 }
-                            )
+                                .buttonStyle(.plain)
+                                .accessibilityAddTraits(
+                                    year.lunarYearNumber == selectedYearNumber ? .isSelected : []
+                                )
+                            }
+                            .id(year.lunarYearNumber)
                         }
                     }
+                    .sectionIndexLabel(section.indexTitle)
                 }
-                .scrollTargetLayout()
             }
-            .contentMargins(.trailing, sectionIndexWidth, for: .scrollContent)
-            .scrollPosition(id: $scrollPosition, anchor: .center)
             .onChange(of: availableYearNumbers, initial: true) {
-                positionInitiallyIfNeeded()
+                positionInitiallyIfNeeded(using: proxy)
             }
-
-            CalendarYearSectionIndex(
-                width: sectionIndexWidth,
-                sections: yearSections,
-                currentSectionID: scrollPosition?.sectionID
-                    ?? selectedYearNumber.map(CalendarYearSection.signedCentury(lunarYearNumber:)),
-                selectSection: { section in
-                    scrollPosition = .section(section.id)
-                }
-            )
         }
         .navigationTitle("年份选择器")
     }
@@ -87,7 +77,7 @@ struct CalendarYearPickerView: View {
         return selectedYearNumber
     }
 
-    private func positionInitiallyIfNeeded() {
+    private func positionInitiallyIfNeeded(using proxy: ScrollViewProxy) {
         guard !hasResolvedInitialScrollTarget else {
             return
         }
@@ -110,6 +100,6 @@ struct CalendarYearPickerView: View {
         }
 
         hasResolvedInitialScrollTarget = true
-        scrollPosition = .year(target)
+        proxy.scrollTo(target, anchor: .center)
     }
 }

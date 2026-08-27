@@ -1,6 +1,5 @@
 import ChineseCalendarPersistence
 @testable import ChineseCalendarUI
-import CoreGraphics
 import Testing
 
 @Test(
@@ -42,22 +41,6 @@ func yearPickerMapsYearsToSignedCenturies(lunarYearNumber: Int, expectedCentury:
     #expect(sections.flatMap(\.years).map(\.lunarYearNumber) == yearNumbers)
 }
 
-@Test func yearPickerBuildsDirectScrollTargetsForSectionHeadersAndYears() {
-    let years = [100, 101].map {
-        ChineseLunarYear(lunarYearNumber: $0, yearStemIndex: 0, yearBranchIndex: 0)
-    }
-
-    let items = CalendarYearPickerItem.items(for: CalendarYearSection.sections(for: years))
-
-    #expect(items.map(\.id) == [
-        .section(1),
-        .year(100),
-        .section(2),
-        .year(101)
-    ])
-    #expect(CalendarYearPickerItem.ID.year(2026).sectionID == 21)
-}
-
 @Test func yearPickerInitialScrollTargetFindsSelectedYear() {
     let target = CalendarYearPickerView.initialScrollTarget(
         selectedYearNumber: 2026,
@@ -83,32 +66,4 @@ func yearPickerMapsYearsToSignedCenturies(lunarYearNumber: Int, expectedCentury:
     )
 
     #expect(target == nil)
-}
-
-@Test(
-    "世纪索引将触点限制并映射到对应分区",
-    arguments: [
-        (-10, 0),
-        (0, 0),
-        (24, 0),
-        (25, 1),
-        (74, 2),
-        (75, 3),
-        (100, 3),
-        (110, 3)
-    ]
-)
-func yearPickerSectionIndexMapsVerticalOffsets(verticalOffset: Double, expectedIndex: Int) {
-    let index = CalendarYearSectionIndex.sectionIndex(
-        at: CGFloat(verticalOffset),
-        indexHeight: 100,
-        sectionCount: 4
-    )
-
-    #expect(index == expectedIndex)
-}
-
-@Test func yearPickerSectionIndexRejectsEmptyGeometryOrSections() {
-    #expect(CalendarYearSectionIndex.sectionIndex(at: 0, indexHeight: 0, sectionCount: 4) == nil)
-    #expect(CalendarYearSectionIndex.sectionIndex(at: 0, indexHeight: 100, sectionCount: 0) == nil)
 }
