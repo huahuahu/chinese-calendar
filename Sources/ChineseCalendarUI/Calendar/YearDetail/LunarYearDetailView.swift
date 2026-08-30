@@ -53,22 +53,30 @@ struct LunarYearDetailView: View {
                                 Label("没有月份数据", systemSymbol: .calendarBadgeExclamationmark)
                             }
                         } else if let selectedMonth {
-                            LunarMonthGrid(
-                                year: year,
-                                months: monthsInYearStartOrder,
-                                month: selectedMonth,
-                                daySelection: browseState.daySelection,
-                                todayJulianDayNumber: todayJulianDayNumber,
-                                showYearPicker: presentYearPicker,
-                                canSelectPreviousMonth: canSelect(adjacentMonths.previous),
-                                canSelectNextMonth: canSelect(adjacentMonths.next),
-                                selectPreviousMonth: { selectMonthInCalendar(adjacentMonths.previous) },
-                                selectNextMonth: { selectMonthInCalendar(adjacentMonths.next) },
-                                selectMonth: selectMonthInCalendar,
-                                yearTransitionContext: browseState.yearTransitionContext,
-                                yearTransitionPreparationMonthIndex: pendingYearTransition?.sourceMonthIndex,
-                                completeYearTransitionPreparation: completeYearTransitionPreparation
-                            )
+                            VStack(alignment: .leading, spacing: 16) {
+                                MonthSwitcher(
+                                    year: year,
+                                    months: monthsInYearStartOrder,
+                                    selectedMonth: selectedMonth,
+                                    showYearPicker: presentYearPicker,
+                                    canSelectPreviousMonth: canSelect(adjacentMonths.previous),
+                                    canSelectNextMonth: canSelect(adjacentMonths.next),
+                                    selectPreviousMonth: { selectMonthInCalendar(adjacentMonths.previous) },
+                                    selectNextMonth: { selectMonthInCalendar(adjacentMonths.next) },
+                                    selectMonth: selectMonthInCalendar,
+                                    yearTransitionContext: browseState.yearTransitionContext,
+                                    yearTransitionPreparationMonthIndex: pendingYearTransition?.sourceMonthIndex,
+                                    completeYearTransitionPreparation: completeYearTransitionPreparation
+                                )
+                                .padding()
+                                .background(.background.secondary, in: RoundedRectangle(cornerRadius: 28))
+
+                                LunarMonthGrid(
+                                    month: selectedMonth,
+                                    daySelection: browseState.daySelection,
+                                    todayJulianDayNumber: todayJulianDayNumber
+                                )
+                            }
                         }
                     }
                     .padding()

@@ -3,11 +3,12 @@ import ChineseCalendarPersistence
 import SFSafeSymbols
 import SwiftUI
 
-/// 显示在 LunarMonthGrid 顶部，用于切换当前查看的农历月份。
+/// 显示在 LunarYearDetailView 中，用于切换当前查看的农历月份。
 struct MonthSwitcher: View {
-    let title: String
-    let subtitle: String
-    let yearNumber: Int
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.locale) private var locale
+
+    let year: ChineseLunarYear
     let months: [ChineseLunarMonth]
     let selectedMonth: ChineseLunarMonth
     let showYearPicker: (() -> Void)?
@@ -19,8 +20,6 @@ struct MonthSwitcher: View {
     let yearTransitionContext: LunarYearTransitionContext
     let yearTransitionPreparationMonthIndex: Int?
     let completeYearTransitionPreparation: (Int) -> Void
-
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -35,11 +34,11 @@ struct MonthSwitcher: View {
 
                 ZStack(alignment: .leading) {
                     titleContent
-                        .id(yearNumber)
+                        .id(year.lunarYearNumber)
                         .transition(yearTransition)
                 }
                 .clipped()
-                .animation(yearSelectionAnimation, value: yearNumber)
+                .animation(yearSelectionAnimation, value: year.lunarYearNumber)
                 .frame(maxWidth: .infinity, alignment: .leading)
 
                 Button("下个月", systemSymbol: .chevronRight, action: selectNextMonth)
@@ -59,12 +58,47 @@ struct MonthSwitcher: View {
                     yearTransitionPreparationMonthIndex: yearTransitionPreparationMonthIndex,
                     completeYearTransitionPreparation: completeYearTransitionPreparation
                 )
-                .id(yearNumber)
+                .id(year.lunarYearNumber)
                 .transition(yearTransition)
             }
             .clipped()
-            .animation(yearSelectionAnimation, value: yearNumber)
+            .animation(yearSelectionAnimation, value: year.lunarYearNumber)
         }
+    }
+
+    private var monthNavigationTitle: String {
+        let yearTitle = LunarCalendarFormatting.yearSubtitle(
+            stemIndex: year.yearStemIndex,
+            branchIndex: year.yearBranchIndex
+        )
+        return "\(yearTitle) \(LunarMonthDisplay.title(for: selectedMonth))"
+    }
+
+    private var monthNavigationSubtitle: String {
+        let fallback = LunarCalendarFormatting.monthSubtitle(
+            dayCount: selectedMonth.dayCount,
+            stemIndex: selectedMonth.monthStemIndex,
+            branchIndex: selectedMonth.monthBranchIndex
+        )
+        return Self.monthNavigationSubtitle(
+            civilDateRangeTitle: civilDateRangeTitle,
+            fallback: fallback
+        )
+    }
+
+    private var civilDateRangeTitle: String? {
+        let days = selectedMonth.days.sorted { $0.dayNumberInMonth < $1.dayNumberInMonth }
+        guard let firstJulianDayNumber = days.first?.calendarDay?.julianDayNumber,
+              let lastJulianDayNumber = days.last?.calendarDay?.julianDayNumber
+        else {
+            return nil
+        }
+
+        return LunarCalendarFormatting.civilDateRangeTitle(
+            fromJulianDayNumber: firstJulianDayNumber,
+            throughJulianDayNumber: lastJulianDayNumber,
+            locale: locale
+        )
     }
 
     private var yearTransition: AnyTransition {
@@ -97,13 +131,22 @@ struct MonthSwitcher: View {
 
     private var monthTitleContent: some View {
         VStack(alignment: .leading, spacing: 4) {
-            Text(title)
+            Text(monthNavigationTitle)
                 .font(.title2)
                 .bold()
-            Text(subtitle)
+            Text(monthNavigationSubtitle)
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
         }
         .accessibilityElement(children: .combine)
+    }
+}
+
+extension MonthSwitcher {
+    static func monthNavigationSubtitle(
+        civilDateRangeTitle: String?,
+        fallback: String
+    ) -> String {
+        civilDateRangeTitle ?? fallback
     }
 }

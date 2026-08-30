@@ -1,61 +1,27 @@
-import ChineseCalendarCore
 import ChineseCalendarLogging
 import ChineseCalendarPersistence
 import SFSafeSymbols
 import SwiftData
 import SwiftUI
 
-/// 显示在 LunarYearDetailView 中，用于浏览当前月份的日期网格与选中日详情。
+/// 显示指定农历月的日期网格与选中日详情。
 struct LunarMonthGrid: View {
-    let year: ChineseLunarYear
-    let months: [ChineseLunarMonth]
-    let month: ChineseLunarMonth
-    let showYearPicker: (() -> Void)?
-    let canSelectPreviousMonth: Bool
-    let canSelectNextMonth: Bool
-    let selectPreviousMonth: () -> Void
-    let selectNextMonth: () -> Void
-    let selectMonth: (ChineseLunarMonth) -> Void
-    let todayJulianDayNumber: Int
-    let yearTransitionContext: LunarYearTransitionContext
-    let yearTransitionPreparationMonthIndex: Int?
-    let completeYearTransitionPreparation: (Int) -> Void
-
     @Environment(\.calendarStoreContentLevel) private var storeContentLevel
-    @Environment(\.locale) private var locale
+
+    let month: ChineseLunarMonth
+    let todayJulianDayNumber: Int
+
     @Bindable var daySelection: CalendarDaySelection
     @Query private var days: [ChineseLunarDay]
 
     init(
-        year: ChineseLunarYear,
-        months: [ChineseLunarMonth],
         month: ChineseLunarMonth,
         daySelection: CalendarDaySelection,
-        todayJulianDayNumber: Int,
-        showYearPicker: (() -> Void)? = nil,
-        canSelectPreviousMonth: Bool,
-        canSelectNextMonth: Bool,
-        selectPreviousMonth: @escaping () -> Void,
-        selectNextMonth: @escaping () -> Void,
-        selectMonth: @escaping (ChineseLunarMonth) -> Void,
-        yearTransitionContext: LunarYearTransitionContext,
-        yearTransitionPreparationMonthIndex: Int?,
-        completeYearTransitionPreparation: @escaping (Int) -> Void
+        todayJulianDayNumber: Int
     ) {
-        self.year = year
-        self.months = months
         self.month = month
         self.daySelection = daySelection
         self.todayJulianDayNumber = todayJulianDayNumber
-        self.showYearPicker = showYearPicker
-        self.canSelectPreviousMonth = canSelectPreviousMonth
-        self.canSelectNextMonth = canSelectNextMonth
-        self.selectPreviousMonth = selectPreviousMonth
-        self.selectNextMonth = selectNextMonth
-        self.selectMonth = selectMonth
-        self.yearTransitionContext = yearTransitionContext
-        self.yearTransitionPreparationMonthIndex = yearTransitionPreparationMonthIndex
-        self.completeYearTransitionPreparation = completeYearTransitionPreparation
 
         let lunarMonthIndex = month.lunarMonthIndex
         _days = Query(
@@ -77,25 +43,6 @@ struct LunarMonthGrid: View {
         let effectiveSelectedDayIndex = selectedDay?.dayIndex
 
         VStack(alignment: .leading, spacing: 16) {
-            MonthSwitcher(
-                title: monthNavigationTitle,
-                subtitle: monthNavigationSubtitle,
-                yearNumber: year.lunarYearNumber,
-                months: months,
-                selectedMonth: month,
-                showYearPicker: showYearPicker,
-                canSelectPreviousMonth: canSelectPreviousMonth,
-                canSelectNextMonth: canSelectNextMonth,
-                selectPreviousMonth: selectPreviousMonth,
-                selectNextMonth: selectNextMonth,
-                selectMonth: selectMonth,
-                yearTransitionContext: yearTransitionContext,
-                yearTransitionPreparationMonthIndex: yearTransitionPreparationMonthIndex,
-                completeYearTransitionPreparation: completeYearTransitionPreparation
-            )
-            .padding()
-            .background(.background.secondary, in: RoundedRectangle(cornerRadius: 28))
-
             if days.isEmpty {
                 ContentUnavailableView(
                     label: {
@@ -173,40 +120,6 @@ struct LunarMonthGrid: View {
         return defaultSelectedDay
     }
 
-    private var monthNavigationTitle: String {
-        let yearTitle = LunarCalendarFormatting.yearSubtitle(
-            stemIndex: year.yearStemIndex,
-            branchIndex: year.yearBranchIndex
-        )
-        return "\(yearTitle) \(LunarMonthDisplay.title(for: month))"
-    }
-
-    private var monthNavigationSubtitle: String {
-        let fallback = LunarCalendarFormatting.monthSubtitle(
-            dayCount: month.dayCount,
-            stemIndex: month.monthStemIndex,
-            branchIndex: month.monthBranchIndex
-        )
-        return Self.monthNavigationSubtitle(
-            civilDateRangeTitle: civilDateRangeTitle,
-            fallback: fallback
-        )
-    }
-
-    private var civilDateRangeTitle: String? {
-        guard let firstJulianDayNumber = days.first?.calendarDay?.julianDayNumber,
-              let lastJulianDayNumber = days.last?.calendarDay?.julianDayNumber
-        else {
-            return nil
-        }
-
-        return LunarCalendarFormatting.civilDateRangeTitle(
-            fromJulianDayNumber: firstJulianDayNumber,
-            throughJulianDayNumber: lastJulianDayNumber,
-            locale: locale
-        )
-    }
-
     private var emptyStateTitle: String {
         switch storeContentLevel {
         case .base:
@@ -273,13 +186,6 @@ struct LunarMonthGrid: View {
 }
 
 extension LunarMonthGrid {
-    static func monthNavigationSubtitle(
-        civilDateRangeTitle: String?,
-        fallback: String
-    ) -> String {
-        civilDateRangeTitle ?? fallback
-    }
-
     static func defaultDayIndex(
         in days: [(dayIndex: Int, julianDayNumber: Int?)],
         todayJulianDayNumber: Int?
