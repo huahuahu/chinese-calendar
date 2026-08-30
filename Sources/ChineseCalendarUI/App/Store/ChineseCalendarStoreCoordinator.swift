@@ -186,7 +186,7 @@ public final class ChineseCalendarStoreCoordinator {
                     state = .ready(
                         container: container,
                         contentLevel: .full,
-                        identityToken: result.manifest.datasetVersion
+                        identityToken: result.manifest.artifactVersion ?? result.manifest.datasetVersion
                     )
                     fullStoreDownloadTask = nil
                     clearCompletedDownloadProgressAfterDelay()

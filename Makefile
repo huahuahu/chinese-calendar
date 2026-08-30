@@ -13,7 +13,7 @@ help:
 	@echo "  make lint                  Run SwiftLint"
 	@echo "  make ci                    Run local CI checks"
 	@echo "  make build-apps            Build iOS and macOS app targets"
-	@echo "  make seed-store            Rebuild SwiftData seed store if needed"
+	@echo "  make seed-store            Build/update the versioned SwiftData seed store artifact"
 	@echo "  make validate-data-schemas Validate generated data schema artifacts"
 
 xcodeproj:

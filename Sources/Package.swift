@@ -86,6 +86,7 @@ let package = Package(
                 "ChineseCalendarLogging"
             ],
             path: "ChineseCalendarPersistence",
+            exclude: ["Tests"],
             swiftSettings: nonisolatedSwiftSettings
         ),
         .target(
@@ -118,6 +119,12 @@ let package = Package(
             name: "ChineseCalendarLoggingTests",
             dependencies: ["ChineseCalendarLogging"],
             path: "ChineseCalendarLogging/Tests",
+            swiftSettings: nonisolatedSwiftSettings
+        ),
+        .testTarget(
+            name: "ChineseCalendarPersistenceTests",
+            dependencies: ["ChineseCalendarPersistence"],
+            path: "ChineseCalendarPersistence/Tests",
             swiftSettings: nonisolatedSwiftSettings
         ),
         .testTarget(

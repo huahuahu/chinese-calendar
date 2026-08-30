@@ -1,5 +1,7 @@
 {
   "artifact" : "swiftdata_import",
+  "artifactVersion" : "9a74a4f445f3b549ed4bf79a9f0e1511e552b3bf15c27008a0285dc0cb149156",
+  "datasetVersion" : "83cf6bfb03abac883492e52f7e1152947233a9cc03f1614d9162413c5fa5e737",
   "dynastyArtifact" : {
     "artifact" : "dynasty_periods",
     "generatedAt" : "2026-06-28T08:56:12.613Z",
@@ -21,6 +23,8 @@
   "endDayIndex" : 884255,
   "endYear" : 2200,
   "generatedAt" : "2026-05-31T05:31:26.411Z",
+  "schemaVersion" : "1.2.0",
+  "seedRecipeVersion" : 1,
   "seedStoreBuilder" : "Scripts/BuildChineseCalendarSeedStore",
   "seedStoreContentLevel" : "base",
   "seedStoreFormatVersion" : 4,

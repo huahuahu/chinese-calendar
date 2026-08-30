@@ -35,13 +35,24 @@ Installed shared store:
   manifest.json
 ```
 
-`manifest.json` is compared at launch. If the App Group copy is missing, the bundled base store is installed. If the installed copy is already a `full` store, the bundled base store never replaces it.
+At launch, the bundled and installed manifests are compared by `artifactVersion`. Provenance-only fields such as `generatedAt` do not trigger a reinstall. If the App Group copy is missing, the bundled base store is installed. If the installed copy is already a `full` store, the bundled base store never replaces it.
+
+The stable identity fields are:
+
+- `datasetVersion`: SHA-256 of the semantic JSONL inputs in stable filename order;
+- `schemaVersion`: the explicit `ChineseCalendarModelSchema` version;
+- `seedStoreFormatVersion`: the SQLite publishing format version;
+- `seedRecipeVersion`: explicitly incremented when generation rules change semantically;
+- `artifactVersion`: SHA-256 of the four values above plus `seedStoreContentLevel`.
+
+Timestamps and source-audit provenance are retained for diagnosis, but are excluded from both hashes.
 
 Remote full-store manifest:
 
 ```json
 {
-  "datasetVersion": "2026.05.30",
+  "datasetVersion": "<sha256>",
+  "artifactVersion": "<sha256>",
   "schemaVersion": "1.2.0",
   "seedStoreContentLevel": "full",
   "seedStoreFormatVersion": 4,
@@ -56,31 +67,36 @@ Configure the remote manifest URL with either the `ChineseCalendarFullSeedStoreM
 
 ## Build The Seed Store
 
-Generate the resource bundle from the JSONL import artifact:
+Generate or update the version-controlled base resource bundle from the JSONL import artifact:
 
 ```bash
-swift run -c release --package-path Scripts/BuildChineseCalendarSeedStore ChineseCalendarSeedStoreBuilder \
-  --input Data/Processed/swiftdata_import \
-  --output Apps/Shared/Resources/ChineseCalendarSeedStore.bundle \
-  --content-level base \
-  --save-interval 5000
+make seed-store
 ```
 
-Xcode targets also run this command automatically before building if `ChineseCalendar.sqlite` is missing from the resource bundle, or if the bundled store is not the expected base-store format. The builder checkpoints WAL content back into the main database, switches the seed store to DELETE journal mode, and removes SQLite sidecar files so the bundled seed store stays as a single SQLite file.
+This is the only normal entry point that writes `Apps/Shared/Resources/ChineseCalendarSeedStore.bundle`. It calculates the current identity first and skips generation when `artifactVersion` already matches. The builder checkpoints WAL content back into the main database, switches the seed store to DELETE journal mode, and removes SQLite sidecar files so the bundled seed store stays as a single SQLite file.
+
+Ordinary iOS and macOS Xcode builds run `validate_seed_store.sh`. The phase recalculates the base identity, fails with a `make seed-store` instruction when the committed artifact is stale, and writes only a DerivedData stamp when validation succeeds. It never rewrites the tracked SQLite or manifest.
 
 The processed import directory under `Data/Processed/swiftdata_import` keeps JSONL import data, a compact manifest, and a separate `dynasty_source_audit.json` for dynasty import audit details. The resource-bundle manifest is intentionally slim: it keeps only runtime install/version fields, coverage counts, and compact provenance. Dynasty and orthodox-period records are read from the SwiftData SQLite tables, not duplicated in manifests.
 
-To build a remote full store, use a separate output directory:
+To build a remote full store, calculate a full identity first and use a separate output directory:
 
 ```bash
+identity_file="$(mktemp)"
+node Scripts/BuildChineseCalendarSeedStore/seed_store_identity.mjs \
+  --input Data/Processed/swiftdata_import \
+  --content-level full \
+  --output "$identity_file"
 swift run -c release --package-path Scripts/BuildChineseCalendarSeedStore ChineseCalendarSeedStoreBuilder \
   --input Data/Processed/swiftdata_import \
   --output Data/Processed/remote_full_seed_store \
   --content-level full \
+  --identity-file "$identity_file" \
   --save-interval 5000
+rm -f "$identity_file"
 ```
 
-Publish the full `ChineseCalendar.sqlite` plus a remote manifest that includes its byte count and SHA-256 digest. The app downloads the SQLite file into a staging directory, verifies it, opens it with SwiftData once, then atomically installs it into the App Group store directory.
+Full identities additionally cover every `calendar_days/**/*.jsonl` file. Publish the full `ChineseCalendar.sqlite` plus a remote manifest that includes its `artifactVersion`, byte count, and SQLite SHA-256 digest. The app downloads the SQLite file into a staging directory, verifies it, opens it with SwiftData once, then atomically installs it into the App Group store directory.
 
 The source artifact is intentionally still kept under `Data/Processed/swiftdata_import`. The generated `.sqlite` file is an app resource, not source data.
 
