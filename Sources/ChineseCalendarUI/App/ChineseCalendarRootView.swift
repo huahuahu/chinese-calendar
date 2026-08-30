@@ -88,7 +88,7 @@ public struct ChineseCalendarRootView: View {
     }
 
     private func startFullStoreDownload() {
-        _ = coordinator.startFullStoreDownload()
+        coordinator.startFullStoreDownload()
     }
 }
 

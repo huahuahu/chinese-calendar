@@ -12,9 +12,16 @@ resolve_ios_simulator_destination() {
 
     if [[ -z "$simulator_id" ]]; then
         simulator_id="$(awk '
-            /^-- iOS / { in_ios=1; next }
-            /^-- / { in_ios=0 }
-            in_ios && match($0, /\(([0-9A-F-]+)\)/) { print substr($0, RSTART + 1, RLENGTH - 2); exit }
+            /^-- iOS / {
+                split($3, version, ".")
+                in_supported_ios = version[1] + 0 >= 26
+                next
+            }
+            /^-- / { in_supported_ios=0 }
+            in_supported_ios && match($0, /\(([0-9A-F-]+)\)/) {
+                print substr($0, RSTART + 1, RLENGTH - 2)
+                exit
+            }
         ' <<<"$devices_output")"
     fi
 
