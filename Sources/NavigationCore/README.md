@@ -14,14 +14,14 @@
 
 不得在此模块中引入具体业务模型、页面或路由规则。日志也只记录 push、present、dismiss 和 path count 等结构事件，不记录或解析 destination 内容。
 
-## 主要类型
+## 主要类型与 API
 
 - `NavigationRouter<Scope, Destination>`：保存每个 scope 的 root 和独立 push path，并管理 root sheet/full-screen。
 - `NavigationRequest<Scope, Destination>`：描述选择 scope、替换 root/path 或 push 的强类型导航请求。
 - `NavigationRequestResult`：说明请求已立即执行，还是需要等待 presentation dismissal 完成。
 - `NavigationPresentationNode<Destination>`：表示一个拥有独立 push path 的 presentation，允许继续嵌套 sheet/full-screen。
 - `NavigationPresentationNodeView`：为 presentation 创建独立 `NavigationStack`，使用调用方提供的 destination builder 渲染 root 和 pushed destination，并递归承载子 presentation。
-- `navigationFullScreenCover`：iOS 使用 `fullScreenCover`，macOS 退化为 `sheet`。
+- `navigationFullScreenCover`：使用 `fullScreenCover` 承载全屏 presentation。
 
 ## 基本用法
 

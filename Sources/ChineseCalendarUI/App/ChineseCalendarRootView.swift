@@ -6,7 +6,6 @@ import SwiftUI
 /// 应用根视图，负责准备日历数据并进入主浏览界面。
 @MainActor
 public struct ChineseCalendarRootView: View {
-    @Environment(\.openWindow) private var openWindow
     @State private var coordinator: ChineseCalendarStoreCoordinator
 
     public init(coordinator: ChineseCalendarStoreCoordinator) {
@@ -48,31 +47,20 @@ public struct ChineseCalendarRootView: View {
         .calendarColorSchemePreference()
     }
 
-    @ViewBuilder
     private func readyCalendarHome(
         container: ModelContainer,
         contentLevel: ChineseCalendarSeedStoreContentLevel,
         identityToken: String?
     ) -> some View {
-        #if os(iOS)
-            CalendarHomeView(
-                settingsCoordinator: coordinator,
-                bottomStatusBarIsPresented: bottomStatusBarIsPresented(contentLevel: contentLevel)
-            ) {
-                bottomStatusBar(contentLevel: contentLevel)
-            }
-            .environment(\.calendarStoreContentLevel, contentLevel)
-            .modelContainer(container)
-            .id(coordinator.storeIdentity(contentLevel: contentLevel, identityToken: identityToken))
-        #else
-            CalendarHomeView(settingsCoordinator: coordinator)
-                .environment(\.calendarStoreContentLevel, contentLevel)
-                .modelContainer(container)
-                .id(coordinator.storeIdentity(contentLevel: contentLevel, identityToken: identityToken))
-                .safeAreaInset(edge: .bottom) {
-                    bottomStatusBar(contentLevel: contentLevel)
-                }
-        #endif
+        CalendarHomeView(
+            settingsCoordinator: coordinator,
+            bottomStatusBarIsPresented: bottomStatusBarIsPresented(contentLevel: contentLevel)
+        ) {
+            bottomStatusBar(contentLevel: contentLevel)
+        }
+        .environment(\.calendarStoreContentLevel, contentLevel)
+        .modelContainer(container)
+        .id(coordinator.storeIdentity(contentLevel: contentLevel, identityToken: identityToken))
     }
 
     private func bottomStatusBarIsPresented(contentLevel: ChineseCalendarSeedStoreContentLevel) -> Bool {
@@ -93,26 +81,14 @@ public struct ChineseCalendarRootView: View {
     @ViewBuilder
     private func bottomStatusBar(contentLevel: ChineseCalendarSeedStoreContentLevel) -> some View {
         if let progress = coordinator.fullStoreDownloadProgress {
-            #if os(iOS)
-                FullStoreDownloadBottomProgressView(progress: progress)
-            #else
-                FullStoreDownloadMacStatusBar(progress: progress, openProgressWindow: openDownloadProgressWindow)
-            #endif
+            FullStoreDownloadBottomProgressView(progress: progress)
         } else if coordinator.canDownloadFullStore(contentLevel: contentLevel) {
             FullStoreDownloadBanner(action: startFullStoreDownload)
         }
     }
 
     private func startFullStoreDownload() {
-        if coordinator.startFullStoreDownload() {
-            openDownloadProgressWindow()
-        }
-    }
-
-    private func openDownloadProgressWindow() {
-        #if os(macOS)
-            openWindow(id: FullStoreDownloadProgressWindow.sceneID)
-        #endif
+        coordinator.startFullStoreDownload()
     }
 }
 
