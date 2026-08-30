@@ -6,27 +6,40 @@
 
 ## 运行
 
-从仓库根目录执行：
+生成或更新随 App 发布的 base store 时，从仓库根目录执行唯一的写入入口：
 
 ```bash
+make seed-store
+```
+
+脚本先计算稳定的内容身份；已提交 manifest 的 `artifactVersion` 一致时直接退出，不以 mtime 判断。需要直接调用底层 builder（例如生成 full store）时，必须先生成 identity 文件：
+
+```bash
+identity_file="$(mktemp)"
+node Scripts/BuildChineseCalendarSeedStore/seed_store_identity.mjs \
+  --input Data/Processed/swiftdata_import \
+  --content-level full \
+  --output "$identity_file"
 swift run -c release --package-path Scripts/BuildChineseCalendarSeedStore ChineseCalendarSeedStoreBuilder \
   --input Data/Processed/swiftdata_import \
-  --output Apps/Shared/Resources/ChineseCalendarSeedStore.bundle \
-  --content-level base \
+  --output Data/Processed/remote_full_seed_store \
+  --content-level full \
+  --identity-file "$identity_file" \
   --save-interval 5000
+rm -f "$identity_file"
 ```
 
-默认参数等价于：
+普通 Xcode build 只运行 `validate_seed_store.sh`。它会校验 committed artifact，stale 时提示执行 `make seed-store`，成功时只更新 DerivedData stamp，不写仓库中的 SQLite 或 manifest。
 
-```bash
-swift run --package-path Scripts/BuildChineseCalendarSeedStore ChineseCalendarSeedStoreBuilder \
-  --input ../../Data/Processed/swiftdata_import \
-  --output ../../Apps/Shared/Resources/ChineseCalendarSeedStore.bundle \
-  --content-level base \
-  --save-interval 2000
-```
+## 工件身份
 
-注意默认路径是相对脚本包目录设计的；从仓库根目录运行时建议显式传 `--input` 和 `--output`。
+- `datasetVersion`：按稳定文件名顺序覆盖实际导入 JSONL 的 SHA-256；
+- `schemaVersion`：`ChineseCalendarModelSchema.versionIdentifier`；
+- `seedStoreFormatVersion`：发布格式版本；
+- `seedRecipeVersion`：生成规则语义变化时显式递增；
+- `artifactVersion`：上述字段与 `seedStoreContentLevel` 的组合 SHA-256。
+
+`generatedAt`、`rawFetchedAt` 等 provenance 不参与身份计算。base identity 覆盖 builder 实际读取的全部十个 JSONL；full identity 还覆盖 `calendar_days` 下全部日级 JSONL。
 
 ## 参数
 
@@ -34,6 +47,7 @@ swift run --package-path Scripts/BuildChineseCalendarSeedStore ChineseCalendarSe
 --input <path>          SwiftData import JSONL 目录
 --output <path>         输出的 resource bundle 目录
 --content-level <level> 输出内容级别：base 或 full，默认 base
+--identity-file <path>  seed_store_identity.mjs 生成的身份文件，必填
 --keep-output           不删除整个 output 目录，只清理旧 SQLite store 文件
 --save-interval <count> 每导入多少条日数据保存一次，必须为正整数
 --help                  打印帮助
@@ -59,6 +73,9 @@ Data/Processed/swiftdata_import/
   chinese_lunar_months.jsonl
   chinese_date_expressions.jsonl
   dynasties.jsonl
+  emperors.jsonl
+  emperor_reign_segments.jsonl
+  reign_eras.jsonl
   dynasty_source_audit.json
   orthodox_traditions.jsonl
   orthodox_boundaries.jsonl
@@ -74,9 +91,12 @@ Data/Processed/swiftdata_import/
 3. `CalendarDay` + `CivilDate` + `ChineseLunarDay`
 4. `ChineseDateExpression`
 5. `Dynasty`
-6. `OrthodoxTradition`
-7. `OrthodoxBoundary`
-8. `OrthodoxPeriod`
+6. `Emperor`
+7. `EmperorReignSegment`
+8. `ReignEra`
+9. `OrthodoxTradition`
+10. `OrthodoxBoundary`
+11. `OrthodoxPeriod`
 
 `full` 模式下，日数据按 civil year 分目录读取，并按目录名数字升序导入。`base` 模式会跳过第 3 步，但仍会导入农历年、农历月、朝代和正统时期数据。
 

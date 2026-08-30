@@ -5,6 +5,7 @@ import SwiftData
 
 public struct FullSeedStoreManifest: Decodable, Sendable {
     public let datasetVersion: String
+    public let artifactVersion: String?
     public let schemaVersion: String
     public let seedStoreContentLevel: ChineseCalendarSeedStoreContentLevel
     public let seedStoreFormatVersion: Int
@@ -15,6 +16,7 @@ public struct FullSeedStoreManifest: Decodable, Sendable {
 
     public init(
         datasetVersion: String,
+        artifactVersion: String? = nil,
         schemaVersion: String,
         seedStoreContentLevel: ChineseCalendarSeedStoreContentLevel,
         seedStoreFormatVersion: Int,
@@ -24,6 +26,7 @@ public struct FullSeedStoreManifest: Decodable, Sendable {
         downloadURL: URL
     ) {
         self.datasetVersion = datasetVersion
+        self.artifactVersion = artifactVersion
         self.schemaVersion = schemaVersion
         self.seedStoreContentLevel = seedStoreContentLevel
         self.seedStoreFormatVersion = seedStoreFormatVersion
@@ -79,7 +82,7 @@ public enum ChineseCalendarFullSeedStoreInstallError: Error, LocalizedError {
 }
 
 public actor ChineseCalendarFullSeedStoreInstaller {
-    private static let supportedSchemaVersion = "1.2.0"
+    private static let supportedSchemaVersion = ChineseCalendarModelSchema.versionIdentifier
 
     private let configuration: FullSeedStoreConfig
     private let appGroupIdentifier: String
@@ -387,7 +390,7 @@ private extension ChineseCalendarFullSeedStoreInstaller {
         to storeDirectory: URL
     ) throws {
         let manifestURL = storeDirectory.appendingPathComponent(ChineseCalendarSeedStore.manifestFileName)
-        let data: [String: Any] = [
+        var data: [String: Any] = [
             "datasetVersion": manifest.datasetVersion,
             "schemaVersion": manifest.schemaVersion,
             "seedStoreContentLevel": manifest.seedStoreContentLevel.rawValue,
@@ -398,6 +401,9 @@ private extension ChineseCalendarFullSeedStoreInstaller {
             "downloadURL": manifest.downloadURL.absoluteString,
             "installedAt": ISO8601DateFormatter().string(from: Date())
         ]
+        if let artifactVersion = manifest.artifactVersion {
+            data["artifactVersion"] = artifactVersion
+        }
         var encodedData = try JSONSerialization.data(
             withJSONObject: data,
             options: [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]

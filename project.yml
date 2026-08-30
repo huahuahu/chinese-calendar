@@ -36,25 +36,28 @@ targets:
       - package: ChineseCalendarPackage
         product: ChineseCalendarPersistence
     preBuildScripts:
-      - name: Generate SwiftData Seed Store
+      - name: Validate SwiftData Seed Store
         script: |
           set -euo pipefail
-          "$SRCROOT/Scripts/BuildChineseCalendarSeedStore/generate_seed_store_if_needed.sh"
+          "$SRCROOT/Scripts/BuildChineseCalendarSeedStore/validate_seed_store.sh" "$SCRIPT_OUTPUT_FILE_0"
         inputFiles:
-          - "$(SRCROOT)/Scripts/BuildChineseCalendarSeedStore/generate_seed_store_if_needed.sh"
-          - "$(SRCROOT)/Scripts/BuildChineseCalendarSeedStore/Package.swift"
-          - "$(SRCROOT)/Scripts/BuildChineseCalendarSeedStore/Sources/ChineseCalendarSeedStoreBuilder/main.swift"
-          - "$(SRCROOT)/Data/Processed/swiftdata_import/manifest.json"
+          - "$(SRCROOT)/Scripts/BuildChineseCalendarSeedStore/validate_seed_store.sh"
+          - "$(SRCROOT)/Scripts/BuildChineseCalendarSeedStore/seed_store_identity.mjs"
+          - "$(SRCROOT)/Sources/ChineseCalendarPersistence/PersistenceSupport.swift"
           - "$(SRCROOT)/Data/Processed/swiftdata_import/chinese_lunar_years.jsonl"
           - "$(SRCROOT)/Data/Processed/swiftdata_import/chinese_lunar_months.jsonl"
           - "$(SRCROOT)/Data/Processed/swiftdata_import/chinese_date_expressions.jsonl"
           - "$(SRCROOT)/Data/Processed/swiftdata_import/dynasties.jsonl"
+          - "$(SRCROOT)/Data/Processed/swiftdata_import/emperors.jsonl"
+          - "$(SRCROOT)/Data/Processed/swiftdata_import/emperor_reign_segments.jsonl"
+          - "$(SRCROOT)/Data/Processed/swiftdata_import/reign_eras.jsonl"
           - "$(SRCROOT)/Data/Processed/swiftdata_import/orthodox_boundaries.jsonl"
           - "$(SRCROOT)/Data/Processed/swiftdata_import/orthodox_periods.jsonl"
           - "$(SRCROOT)/Data/Processed/swiftdata_import/orthodox_traditions.jsonl"
-        outputFiles:
           - "$(SRCROOT)/Apps/Shared/Resources/ChineseCalendarSeedStore.bundle/ChineseCalendar.sqlite"
           - "$(SRCROOT)/Apps/Shared/Resources/ChineseCalendarSeedStore.bundle/manifest.json"
+        outputFiles:
+          - "$(DERIVED_FILE_DIR)/ChineseCalendarSeedStore.validated"
     settings:
       base:
         PRODUCT_NAME: Chinese Calendar
@@ -103,25 +106,28 @@ targets:
       - package: ChineseCalendarPackage
         product: ChineseCalendarPersistence
     preBuildScripts:
-      - name: Generate SwiftData Seed Store
+      - name: Validate SwiftData Seed Store
         script: |
           set -euo pipefail
-          "$SRCROOT/Scripts/BuildChineseCalendarSeedStore/generate_seed_store_if_needed.sh"
+          "$SRCROOT/Scripts/BuildChineseCalendarSeedStore/validate_seed_store.sh" "$SCRIPT_OUTPUT_FILE_0"
         inputFiles:
-          - "$(SRCROOT)/Scripts/BuildChineseCalendarSeedStore/generate_seed_store_if_needed.sh"
-          - "$(SRCROOT)/Scripts/BuildChineseCalendarSeedStore/Package.swift"
-          - "$(SRCROOT)/Scripts/BuildChineseCalendarSeedStore/Sources/ChineseCalendarSeedStoreBuilder/main.swift"
-          - "$(SRCROOT)/Data/Processed/swiftdata_import/manifest.json"
+          - "$(SRCROOT)/Scripts/BuildChineseCalendarSeedStore/validate_seed_store.sh"
+          - "$(SRCROOT)/Scripts/BuildChineseCalendarSeedStore/seed_store_identity.mjs"
+          - "$(SRCROOT)/Sources/ChineseCalendarPersistence/PersistenceSupport.swift"
           - "$(SRCROOT)/Data/Processed/swiftdata_import/chinese_lunar_years.jsonl"
           - "$(SRCROOT)/Data/Processed/swiftdata_import/chinese_lunar_months.jsonl"
           - "$(SRCROOT)/Data/Processed/swiftdata_import/chinese_date_expressions.jsonl"
           - "$(SRCROOT)/Data/Processed/swiftdata_import/dynasties.jsonl"
+          - "$(SRCROOT)/Data/Processed/swiftdata_import/emperors.jsonl"
+          - "$(SRCROOT)/Data/Processed/swiftdata_import/emperor_reign_segments.jsonl"
+          - "$(SRCROOT)/Data/Processed/swiftdata_import/reign_eras.jsonl"
           - "$(SRCROOT)/Data/Processed/swiftdata_import/orthodox_boundaries.jsonl"
           - "$(SRCROOT)/Data/Processed/swiftdata_import/orthodox_periods.jsonl"
           - "$(SRCROOT)/Data/Processed/swiftdata_import/orthodox_traditions.jsonl"
-        outputFiles:
           - "$(SRCROOT)/Apps/Shared/Resources/ChineseCalendarSeedStore.bundle/ChineseCalendar.sqlite"
           - "$(SRCROOT)/Apps/Shared/Resources/ChineseCalendarSeedStore.bundle/manifest.json"
+        outputFiles:
+          - "$(DERIVED_FILE_DIR)/ChineseCalendarSeedStore.validated"
     settings:
       base:
         PRODUCT_NAME: Chinese Calendar

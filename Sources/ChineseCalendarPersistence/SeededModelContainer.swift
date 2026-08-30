@@ -177,12 +177,7 @@ public enum ChineseCalendarModelContainerFactory {
             return nil
         }
 
-        let data = try Data(contentsOf: manifestURL)
-        guard let manifest = try JSONSerialization.jsonObject(with: data) as? [String: Any] else {
-            return nil
-        }
-
-        return manifest["datasetVersion"] as? String ?? manifest["generatedAt"] as? String
+        return try seedStoreIdentityToken(at: manifestURL)
     }
 
     private static func installSeedStoreIfNeeded(
@@ -235,7 +230,7 @@ public enum ChineseCalendarModelContainerFactory {
         return storeURL
     }
 
-    private static func shouldInstallSeedStore(
+    static func shouldInstallSeedStore(
         seedDirectory: URL,
         storeDirectory: URL,
         fileManager: FileManager
@@ -263,7 +258,31 @@ public enum ChineseCalendarModelContainerFactory {
             return false
         }
 
-        return try Data(contentsOf: seedManifestURL) != Data(contentsOf: installedManifestURL)
+        guard let seedArtifactVersion = try seedStoreArtifactVersion(at: seedManifestURL) else {
+            ChineseCalendarLog.persistence.error(
+                "Bundled seed store manifest has no artifactVersion; keeping the installed store"
+            )
+            return false
+        }
+
+        return try seedStoreArtifactVersion(at: installedManifestURL) != seedArtifactVersion
+    }
+
+    static func seedStoreIdentityToken(at manifestURL: URL) throws -> String? {
+        let manifest = try seedStoreManifest(at: manifestURL)
+        return manifest["artifactVersion"] as? String ?? manifest["datasetVersion"] as? String
+    }
+
+    private static func seedStoreArtifactVersion(at manifestURL: URL) throws -> String? {
+        try seedStoreManifest(at: manifestURL)["artifactVersion"] as? String
+    }
+
+    private static func seedStoreManifest(at manifestURL: URL) throws -> [String: Any] {
+        let data = try Data(contentsOf: manifestURL)
+        guard let manifest = try JSONSerialization.jsonObject(with: data) as? [String: Any] else {
+            return [:]
+        }
+        return manifest
     }
 
     private static func seedStoreContentLevel(at manifestURL: URL) throws -> ChineseCalendarSeedStoreContentLevel? {

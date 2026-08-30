@@ -15,6 +15,7 @@ private struct SeedStoreBuilderOptions {
     let inputURL: URL
     let outputURL: URL
     let contentLevel: SeedStoreContentLevel
+    let identityFileURL: URL
     let resetOutput: Bool
     let saveInterval: Int
 
@@ -22,6 +23,7 @@ private struct SeedStoreBuilderOptions {
         var inputPath = "../../Data/Processed/swiftdata_import"
         var outputPath = "../../Apps/Shared/Resources/ChineseCalendarSeedStore.bundle"
         var contentLevel = SeedStoreContentLevel.base
+        var identityFilePath: String?
         var resetOutput = true
         var saveInterval = 2000
 
@@ -39,6 +41,8 @@ private struct SeedStoreBuilderOptions {
                     throw SeedStoreBuilderError.invalidArgument("--content-level must be base or full.")
                 }
                 contentLevel = parsedLevel
+            case "--identity-file":
+                identityFilePath = try Self.value(after: argument, in: arguments, at: &index)
             case "--keep-output":
                 resetOutput = false
             case "--save-interval":
@@ -59,6 +63,12 @@ private struct SeedStoreBuilderOptions {
 
         inputURL = URL(fileURLWithPath: inputPath).standardizedFileURL
         outputURL = URL(fileURLWithPath: outputPath).standardizedFileURL
+        guard let identityFilePath else {
+            throw SeedStoreBuilderError.invalidArgument(
+                "--identity-file is required. Generate it with seed_store_identity.mjs."
+            )
+        }
+        identityFileURL = URL(fileURLWithPath: identityFilePath).standardizedFileURL
         self.contentLevel = contentLevel
         self.resetOutput = resetOutput
         self.saveInterval = saveInterval
@@ -85,20 +95,28 @@ private struct SeedStoreBuilderOptions {
       --input <path>          SwiftData import JSONL directory. Default: ../../Data/Processed/swiftdata_import
       --output <path>         Output resource bundle directory. Default: ../../Apps/Shared/Resources/ChineseCalendarSeedStore.bundle
       --content-level <level> Store content to build: base or full. Default: base
+      --identity-file <path>  Calculated dataset and artifact identity JSON. Required
       --keep-output           Do not delete the existing output directory before building.
       --save-interval <count> Save after this many day bundles. Default: 2000
       --help                  Show this help text.
     """
 }
 
-private enum SeedStoreContentLevel: String {
+private enum SeedStoreContentLevel: String, Decodable {
     case base
     case full
 }
 
-private struct SeedStoreBuilder {
-    private static let seedStoreFormatVersion = 4
+private struct SeedStoreArtifactIdentity: Decodable {
+    let datasetVersion: String
+    let schemaVersion: String
+    let seedStoreFormatVersion: Int
+    let seedStoreContentLevel: SeedStoreContentLevel
+    let seedRecipeVersion: Int
+    let artifactVersion: String
+}
 
+private struct SeedStoreBuilder {
     private let options: SeedStoreBuilderOptions
     private let decoder = JSONDecoder()
     private let fileManager = FileManager.default
@@ -108,6 +126,8 @@ private struct SeedStoreBuilder {
     }
 
     func build() throws {
+        let identity = try loadIdentity()
+
         if options.resetOutput {
             try? fileManager.removeItem(at: options.outputURL)
         }
@@ -138,8 +158,28 @@ private struct SeedStoreBuilder {
         }
 
         try finalizeSQLiteStore(at: storeURL)
-        try copyManifest()
+        try copyManifest(identity: identity)
         log("Seed store written to \(options.outputURL.path)")
+    }
+
+    private func loadIdentity() throws -> SeedStoreArtifactIdentity {
+        let data = try Data(contentsOf: options.identityFileURL)
+        let identity = try decoder.decode(SeedStoreArtifactIdentity.self, from: data)
+
+        guard identity.seedStoreContentLevel == options.contentLevel else {
+            throw SeedStoreBuilderError.identityContentLevelMismatch(
+                identity.seedStoreContentLevel.rawValue,
+                expected: options.contentLevel.rawValue
+            )
+        }
+        guard identity.schemaVersion == ChineseCalendarModelSchema.versionIdentifier else {
+            throw SeedStoreBuilderError.identitySchemaVersionMismatch(
+                identity.schemaVersion,
+                expected: ChineseCalendarModelSchema.versionIdentifier
+            )
+        }
+
+        return identity
     }
 
     private func importLunarYears(into container: ModelContainer) throws {
@@ -615,7 +655,7 @@ private struct SeedStoreBuilder {
         }
     }
 
-    private func copyManifest() throws {
+    private func copyManifest(identity: SeedStoreArtifactIdentity) throws {
         let sourceURL = options.inputURL.appendingPathComponent(ChineseCalendarSeedStore.manifestFileName)
         let destinationURL = options.outputURL.appendingPathComponent(ChineseCalendarSeedStore.manifestFileName)
 
@@ -629,9 +669,13 @@ private struct SeedStoreBuilder {
         }
 
         var runtimeManifest = runtimeSeedStoreManifest(from: manifest)
+        runtimeManifest["datasetVersion"] = identity.datasetVersion
+        runtimeManifest["schemaVersion"] = identity.schemaVersion
+        runtimeManifest["seedStoreFormatVersion"] = identity.seedStoreFormatVersion
+        runtimeManifest["seedRecipeVersion"] = identity.seedRecipeVersion
+        runtimeManifest["artifactVersion"] = identity.artifactVersion
         runtimeManifest["seedStoreBuilder"] = "Scripts/BuildChineseCalendarSeedStore"
         runtimeManifest["seedStoreContentLevel"] = options.contentLevel.rawValue
-        runtimeManifest["seedStoreFormatVersion"] = Self.seedStoreFormatVersion
         runtimeManifest["seedStoreHistoryPurged"] = true
         runtimeManifest["seedStoreRelationshipsLinked"] = true
 
@@ -757,6 +801,8 @@ private enum SeedStoreBuilderError: Error, LocalizedError {
     case missingReference(String)
     case unusedDateExpressions(String)
     case duplicateRecord(String, String)
+    case identityContentLevelMismatch(String, expected: String)
+    case identitySchemaVersionMismatch(String, expected: String)
 
     var errorDescription: String? {
         switch self {
@@ -776,6 +822,10 @@ private enum SeedStoreBuilderError: Error, LocalizedError {
             "Unused ChineseDateExpression records: \(ids)."
         case let .duplicateRecord(entity, id):
             "Duplicate \(entity) record id: \(id)."
+        case let .identityContentLevelMismatch(contentLevel, expected):
+            "Seed store identity content level \(contentLevel) does not match requested level \(expected)."
+        case let .identitySchemaVersionMismatch(version, expected):
+            "Seed store identity schema version \(version) does not match model schema version \(expected)."
         }
     }
 }
