@@ -15,8 +15,7 @@ let package = Package(
     name: "ChineseCalendarSources",
     defaultLocalization: "en",
     platforms: [
-        .iOS(.v26),
-        .macOS(.v26)
+        .iOS(.v26)
     ],
     products: [
         .library(
@@ -97,7 +96,11 @@ let package = Package(
                 "ChineseCalendarPersistence",
                 "ChineseCalendarLogging",
                 "NavigationCore",
-                .product(name: "SFSafeSymbols", package: "SFSafeSymbols")
+                .product(
+                    name: "SFSafeSymbols",
+                    package: "SFSafeSymbols",
+                    condition: .when(platforms: [.iOS])
+                )
             ],
             path: "ChineseCalendarUI",
             exclude: ["Tests"],

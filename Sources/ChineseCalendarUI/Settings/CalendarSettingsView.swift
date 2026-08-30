@@ -2,7 +2,7 @@ import ChineseCalendarPersistence
 import SFSafeSymbols
 import SwiftUI
 
-/// 显示在设置标签页或 macOS 设置场景中，用于管理外观与本地数据。
+/// 显示在设置标签页中，用于管理外观与本地数据。
 public struct CalendarSettingsView: View {
     private let coordinator: ChineseCalendarStoreCoordinator
     private let showsDoneButton: Bool
@@ -70,7 +70,6 @@ public struct CalendarSettingsView: View {
                 }
             #endif
         }
-        #if os(iOS)
         .navigationTitle("设置")
         .toolbar {
             if showsDoneButton {
@@ -81,7 +80,6 @@ public struct CalendarSettingsView: View {
                 }
             }
         }
-        #endif
         .confirmationDialog(
             "清空已下载数据？",
             isPresented: $isConfirmingClear,

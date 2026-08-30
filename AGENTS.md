@@ -1,10 +1,10 @@
 # AGENTS.md
 
-This repository hosts a Swift project for browsing the traditional Chinese calendar on iOS and macOS.
+This repository hosts a Swift project for browsing the traditional Chinese calendar on iOS.
 
 ## Goals
 
-- Build a shared Swift codebase for iOS and macOS.
+- Build a Swift codebase for iOS.
 - Import Chinese calendar source data from [ytliu0/ChineseCalendar](https://github.com/ytliu0/ChineseCalendar).
 - Present historical calendar data in a clean browsing experience.
 
@@ -15,7 +15,6 @@ This repository hosts a Swift project for browsing the traditional Chinese calen
 - `Sources/ChineseCalendarData`: Data loading and repository abstractions.
 - `Sources/ChineseCalendarUI`: Shared SwiftUI views.
 - `Apps/iOSApp`: iOS app entry point and app-specific code.
-- `Apps/macOSApp`: macOS app entry point and app-specific code.
 - `Data/Raw`: Downloaded upstream source data.
 - `Data/Processed`: Normalized app-ready data artifacts.
 - `Scripts/ImportChineseCalendar`: Import and transformation scripts.
@@ -24,7 +23,7 @@ This repository hosts a Swift project for browsing the traditional Chinese calen
 
 - Prefer keeping business logic in shared package targets instead of app targets.
 - Treat `ChineseCalendarCore` as the source of truth for domain models.
-- Keep platform-specific UI behavior in `Apps/iOSApp` and `Apps/macOSApp` only when sharing is not practical.
+- Keep app-specific UI behavior in `Apps/iOSApp` only when it does not belong in the shared package targets.
 - Store fetched upstream files in `Data/Raw` and generated artifacts in `Data/Processed`.
 - Make small, reviewable commits.
 - Do not use `git commit --amend` when changing or committing work; create a new commit instead.

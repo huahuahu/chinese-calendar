@@ -106,24 +106,9 @@ struct LunarYearDetailView: View {
         }
         .navigationTitle("日历")
         .toolbar {
-            #if os(iOS)
-                ToolbarItem(placement: .primaryAction) {
-                    Button("今天", action: selectToday)
-                }
-            #else
-                ToolbarItemGroup(placement: .primaryAction) {
-                    Button("今天", action: selectToday)
-                        .help("回到今天")
-
-                    Button("上一年", systemSymbol: .chevronLeft, action: selectPreviousYear)
-                        .disabled(!canSelectPreviousYear)
-                        .help("切换到上一年")
-
-                    Button("下一年", systemSymbol: .chevronRight, action: selectNextYear)
-                        .disabled(!canSelectNextYear)
-                        .help("切换到下一年")
-                }
-            #endif
+            ToolbarItem(placement: .primaryAction) {
+                Button("今天", action: selectToday)
+            }
         }
     }
 }
@@ -135,22 +120,6 @@ private extension LunarYearDetailView {
 
     var displayedYearIndex: [ChineseLunarYear].Index? {
         years.firstIndex { $0.lunarYearNumber == yearNumber }
-    }
-
-    var canSelectPreviousYear: Bool {
-        guard let displayedYearIndex else {
-            return false
-        }
-
-        return displayedYearIndex > years.startIndex
-    }
-
-    var canSelectNextYear: Bool {
-        guard let displayedYearIndex else {
-            return false
-        }
-
-        return displayedYearIndex < years.index(before: years.endIndex)
     }
 
     var selectedMonth: ChineseLunarMonth? {
@@ -328,22 +297,6 @@ private extension LunarYearDetailView {
         }
 
         selectMonthInCalendar(month)
-    }
-
-    func selectPreviousYear() {
-        guard let displayedYearIndex, displayedYearIndex > years.startIndex else {
-            return
-        }
-
-        selectYear(years[years.index(before: displayedYearIndex)].lunarYearNumber)
-    }
-
-    func selectNextYear() {
-        guard let displayedYearIndex, displayedYearIndex < years.index(before: years.endIndex) else {
-            return
-        }
-
-        selectYear(years[years.index(after: displayedYearIndex)].lunarYearNumber)
     }
 
     func selectToday() {

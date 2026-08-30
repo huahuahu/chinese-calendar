@@ -1,13 +1,10 @@
 import ChineseCalendarCore
-import ChineseCalendarPersistence
 import Foundation
 import NavigationCore
-import SwiftData
 import SwiftUI
 
 /// 显示在应用根视图中，负责组织日历主页、导航与平台布局。
 public struct CalendarHomeView<BottomStatusBar: View>: View {
-    @Query(sort: \ChineseLunarYear.lunarYearNumber) private var years: [ChineseLunarYear]
     @State private var coordinator = CalendarHomeCoordinator()
     @State private var didOpenColdLaunchDeepLink = false
     private let settingsCoordinator: ChineseCalendarStoreCoordinator?
@@ -27,21 +24,12 @@ public struct CalendarHomeView<BottomStatusBar: View>: View {
     public var body: some View {
         @Bindable var navigation = coordinator.router.navigation
 
-        Group {
-            #if os(iOS)
-                CalendarHomeTabView(
-                    coordinator: coordinator,
-                    settingsCoordinator: settingsCoordinator,
-                    bottomStatusBarIsPresented: bottomStatusBarIsPresented,
-                    bottomStatusBar: bottomStatusBar
-                )
-            #else
-                CalendarHomeSplitView(
-                    coordinator: coordinator,
-                    years: years
-                )
-            #endif
-        }
+        CalendarHomeTabView(
+            coordinator: coordinator,
+            settingsCoordinator: settingsCoordinator,
+            bottomStatusBarIsPresented: bottomStatusBarIsPresented,
+            bottomStatusBar: bottomStatusBar
+        )
         .environment(coordinator.router)
         .sheet(item: $navigation.sheet, onDismiss: applyDeferredNavigationRequestIfReady) { node in
             CalendarPresentationNodeView(node: node)

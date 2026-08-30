@@ -1,19 +1,19 @@
 # Chinese-date
 
-Swift project for exploring the traditional Chinese calendar on iOS and macOS.
+Swift project for exploring the traditional Chinese calendar on iOS.
 
 ## Quality Gates
 
 - `./Scripts/format.sh`: formats the Swift codebase with SwiftFormat.
 - `./Scripts/format.sh --check`: verifies formatting without changing files.
 - `./Scripts/lint.sh`: runs SwiftLint in strict mode.
-- `./Scripts/test.sh`: runs the Swift Package test suite in `Sources`.
+- `./Scripts/test.sh`: runs the package test suite on iOS Simulator.
 - `./Scripts/ci.sh`: runs format check, lint, and tests in the same order as CI.
 
 ## CI
 
 GitHub Actions runs on pushes to `main`, pull requests, and manual dispatch.
-The workflow runs on `macos-26` with Xcode 26.4.1, checks formatting, runs linting, and executes `swift test --package-path Sources`.
+The workflow runs on a macOS build host with Xcode 26.5, checks formatting, runs linting, and executes the test suite on iOS Simulator.
 `swiftformat` and `swiftlint` are installed from pinned GitHub Release versions declared in the workflow, so the CI toolchain stays reproducible.
 
 ## Local Tooling

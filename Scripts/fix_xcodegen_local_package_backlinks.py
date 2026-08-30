@@ -27,6 +27,7 @@ IOS_TEST_TARGETS = [
     "ChineseCalendarCoreTests",
     "ChineseCalendarDataTests",
     "ChineseCalendarLoggingTests",
+    "NavigationCoreTests",
     "ChineseCalendarUITests",
 ]
 

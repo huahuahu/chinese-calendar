@@ -94,7 +94,6 @@ show_ios_build_settings
 show_generated_ios_target_metadata
 show_generated_ios_scheme
 show_destinations "ChineseCalendar-iOS" -sdk iphonesimulator
-show_destinations "ChineseCalendar-macOS"
 
 IOS_DESTINATION="$(resolve_ios_simulator_destination)"
 show_section "Selected iOS simulator destination"
@@ -106,17 +105,6 @@ xcodebuild \
     -sdk iphonesimulator \
     -configuration Debug \
     -destination "$IOS_DESTINATION,arch=arm64" \
-    ARCHS=arm64 \
-    ONLY_ACTIVE_ARCH=YES \
-    CODE_SIGNING_ALLOWED=NO \
-    CODE_SIGNING_REQUIRED=NO \
-    build
-
-xcodebuild \
-    -project ChineseCalendar.xcodeproj \
-    -scheme ChineseCalendar-macOS \
-    -configuration Debug \
-    -destination 'platform=macOS,arch=arm64' \
     ARCHS=arm64 \
     ONLY_ACTIVE_ARCH=YES \
     CODE_SIGNING_ALLOWED=NO \

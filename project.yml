@@ -88,72 +88,6 @@ targets:
               - chinese-calendar
         UILaunchScreen: {}
 
-  ChineseCalendar-macOS:
-    type: application
-    platform: macOS
-    deploymentTarget: "26.0"
-    sources:
-      - path: Apps/macOSApp/Sources
-      - path: Apps/Shared/Resources/ChineseCalendarSeedStore.bundle
-        buildPhase: resources
-      - path: Apps/Shared/Resources/chinese-date-icon.icon
-        buildPhase: resources
-    dependencies:
-      - package: ChineseCalendarPackage
-        product: ChineseCalendarLogging
-      - package: ChineseCalendarPackage
-        product: ChineseCalendarUI
-      - package: ChineseCalendarPackage
-        product: ChineseCalendarPersistence
-    preBuildScripts:
-      - name: Validate SwiftData Seed Store
-        script: |
-          set -euo pipefail
-          "$SRCROOT/Scripts/BuildChineseCalendarSeedStore/validate_seed_store.sh" "$SCRIPT_OUTPUT_FILE_0"
-        inputFiles:
-          - "$(SRCROOT)/Scripts/BuildChineseCalendarSeedStore/validate_seed_store.sh"
-          - "$(SRCROOT)/Scripts/BuildChineseCalendarSeedStore/seed_store_identity.mjs"
-          - "$(SRCROOT)/Sources/ChineseCalendarPersistence/PersistenceSupport.swift"
-          - "$(SRCROOT)/Data/Processed/swiftdata_import/chinese_lunar_years.jsonl"
-          - "$(SRCROOT)/Data/Processed/swiftdata_import/chinese_lunar_months.jsonl"
-          - "$(SRCROOT)/Data/Processed/swiftdata_import/chinese_date_expressions.jsonl"
-          - "$(SRCROOT)/Data/Processed/swiftdata_import/dynasties.jsonl"
-          - "$(SRCROOT)/Data/Processed/swiftdata_import/emperors.jsonl"
-          - "$(SRCROOT)/Data/Processed/swiftdata_import/emperor_reign_segments.jsonl"
-          - "$(SRCROOT)/Data/Processed/swiftdata_import/reign_eras.jsonl"
-          - "$(SRCROOT)/Data/Processed/swiftdata_import/orthodox_boundaries.jsonl"
-          - "$(SRCROOT)/Data/Processed/swiftdata_import/orthodox_periods.jsonl"
-          - "$(SRCROOT)/Data/Processed/swiftdata_import/orthodox_traditions.jsonl"
-          - "$(SRCROOT)/Apps/Shared/Resources/ChineseCalendarSeedStore.bundle/ChineseCalendar.sqlite"
-          - "$(SRCROOT)/Apps/Shared/Resources/ChineseCalendarSeedStore.bundle/manifest.json"
-        outputFiles:
-          - "$(DERIVED_FILE_DIR)/ChineseCalendarSeedStore.validated"
-    settings:
-      base:
-        PRODUCT_NAME: Chinese Calendar
-        PRODUCT_BUNDLE_IDENTIFIER: com.tiger.suzhou.ChineseCalendar
-        ASSETCATALOG_COMPILER_APPICON_NAME: chinese-date-icon
-        SWIFT_VERSION: 6.0
-        SWIFT_DEFAULT_ACTOR_ISOLATION: MainActor
-        CODE_SIGN_STYLE: Automatic
-        DEVELOPMENT_TEAM: F29WG8477A
-        CODE_SIGN_ENTITLEMENTS: Apps/macOSApp/ChineseCalendar-macOS.entitlements
-        MARKETING_VERSION: 1.0
-        CURRENT_PROJECT_VERSION: 1
-    info:
-      path: Apps/macOSApp/Info.plist
-      properties:
-        CFBundleDisplayName: Chinese Calendar
-        CFBundleLocalizations:
-          - zh-Hans
-        ChineseCalendarFullSeedStoreManifestURL: https://github.com/huahuahu/chinese-calendar/releases/download/full-seed-store-2026.06.28/ChineseCalendarFullSeedStoreManifest.json
-        LSApplicationCategoryType: public.app-category.reference
-        CFBundleURLTypes:
-          - CFBundleURLName: com.tiger.suzhou.ChineseCalendar
-            CFBundleURLSchemes:
-              - chinesecalendar
-              - chinese-calendar
-
 schemes:
   ChineseCalendar-iOS:
     build:
@@ -163,14 +97,5 @@ schemes:
       config: Debug
       language: zh-Hans
       region: CN
-      environmentVariables:
-        CHINESE_CALENDAR_PERFORMANCE_SIGNPOSTS: "1"
-
-  ChineseCalendar-macOS:
-    build:
-      targets:
-        ChineseCalendar-macOS: all
-    run:
-      config: Debug
       environmentVariables:
         CHINESE_CALENDAR_PERFORMANCE_SIGNPOSTS: "1"
