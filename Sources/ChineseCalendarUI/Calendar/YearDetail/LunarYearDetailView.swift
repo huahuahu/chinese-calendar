@@ -6,38 +6,27 @@ import SFSafeSymbols
 import SwiftData
 import SwiftUI
 
-/// 从目的地提供的初始日期开始，在页面内部浏览农历年、月与日。
+/// 以所选农历年为业务输入，在显式页面状态中浏览月与日。
 struct LunarYearDetailView: View {
-    let initialYearNumber: Int
-    let initialMonthIndex: Int?
-    let initialDayIndex: Int?
-
-    @State private var browseState: LunarCalendarBrowseState
-    @State private var pendingYearTransition: LunarYearTransitionRequest?
-    @State private var todayJulianDayNumber = JulianDayNumber.forLocalGregorianDate(containing: .now)
-    @State private var todaySelection: CalendarTodaySelection?
-
     @Environment(CalendarRouter.self) private var router
     @Environment(\.calendarStoreContentLevel) private var storeContentLevel
     @Environment(\.modelContext) private var modelContext
     @Environment(\.scenePhase) private var scenePhase
     @Query(sort: \ChineseLunarYear.lunarYearNumber) private var years: [ChineseLunarYear]
 
+    let yearNumber: Int
+
+    @Bindable private var browseState: LunarCalendarBrowseState
+    @State private var pendingYearTransition: LunarYearTransitionRequest?
+    @State private var todayJulianDayNumber = JulianDayNumber.forLocalGregorianDate(containing: .now)
+    @State private var todaySelection: CalendarTodaySelection?
+
     init(
-        initialYearNumber: Int,
-        initialMonthIndex: Int? = nil,
-        initialDayIndex: Int? = nil
+        yearNumber: Int,
+        browseState: LunarCalendarBrowseState
     ) {
-        self.initialYearNumber = initialYearNumber
-        self.initialMonthIndex = initialMonthIndex
-        self.initialDayIndex = initialDayIndex
-        _browseState = State(
-            initialValue: LunarCalendarBrowseState(
-                displayedYearNumber: initialYearNumber,
-                selectedMonthIndex: initialMonthIndex,
-                selectedDayIndex: initialDayIndex
-            )
-        )
+        self.yearNumber = yearNumber
+        self.browseState = browseState
     }
 
     var body: some View {
@@ -92,7 +81,7 @@ struct LunarYearDetailView: View {
         }
         .background(.calendarSystemBackground)
         .onAppear(perform: refreshToday)
-        .onChange(of: browseState.displayedYearNumber) {
+        .onChange(of: yearNumber) {
             selectDefaultMonthIfNeeded()
         }
         .onChange(of: storeContentLevel) {
@@ -141,11 +130,11 @@ struct LunarYearDetailView: View {
 
 private extension LunarYearDetailView {
     var displayedYear: ChineseLunarYear? {
-        years.first { $0.lunarYearNumber == browseState.displayedYearNumber }
+        years.first { $0.lunarYearNumber == yearNumber }
     }
 
     var displayedYearIndex: [ChineseLunarYear].Index? {
-        years.firstIndex { $0.lunarYearNumber == browseState.displayedYearNumber }
+        years.firstIndex { $0.lunarYearNumber == yearNumber }
     }
 
     var canSelectPreviousYear: Bool {
@@ -315,7 +304,7 @@ private extension LunarYearDetailView {
     }
 
     func selectMonthInCalendar(_ month: ChineseLunarMonth) {
-        let crossesYear = month.lunarYearNumber != browseState.displayedYearNumber
+        let crossesYear = month.lunarYearNumber != yearNumber
         guard crossesYear || browseState.selectedMonthIndex != month.lunarMonthIndex else {
             return
         }
@@ -375,7 +364,7 @@ private extension LunarYearDetailView {
 
     func presentYearPicker() {
         let yearPicker = CalendarYearPickerDestination(
-            initialYearNumber: browseState.displayedYearNumber,
+            initialYearNumber: yearNumber,
             onSelect: selectYear
         )
         router.presentSheet(.yearPicker(yearPicker))
@@ -384,7 +373,7 @@ private extension LunarYearDetailView {
     func selectYear(_ yearNumber: Int) {
         guard let destinationYear = years.first(where: { $0.lunarYearNumber == yearNumber }),
               let direction = LunarYearTransitionDirection(
-                  from: browseState.displayedYearNumber,
+                  from: self.yearNumber,
                   to: yearNumber
               )
         else {
@@ -409,7 +398,7 @@ private extension LunarYearDetailView {
         }
 
         pendingYearTransition = LunarYearTransitionRequest(
-            sourceYearNumber: browseState.displayedYearNumber,
+            sourceYearNumber: self.yearNumber,
             sourceMonthIndex: sourceMonthIndex,
             destinationYearNumber: yearNumber,
             destinationMonthIndex: destinationMonthIndex
@@ -419,7 +408,7 @@ private extension LunarYearDetailView {
     func completeYearTransitionPreparation(_ sourceMonthIndex: Int) {
         guard let pendingYearTransition,
               pendingYearTransition.sourceMonthIndex == sourceMonthIndex,
-              pendingYearTransition.sourceYearNumber == browseState.displayedYearNumber
+              pendingYearTransition.sourceYearNumber == yearNumber
         else {
             return
         }

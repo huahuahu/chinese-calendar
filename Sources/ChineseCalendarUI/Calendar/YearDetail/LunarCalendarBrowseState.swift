@@ -5,6 +5,7 @@ import Observation
 @Observable
 final class LunarCalendarBrowseState {
     private(set) var displayedYearNumber: Int
+    private var hasAppliedInitialLanding = false
     let yearTransitionContext = LunarYearTransitionContext()
     var yearTransitionDirection: LunarYearTransitionDirection {
         yearTransitionContext.direction
@@ -22,14 +23,22 @@ final class LunarCalendarBrowseState {
 
     let daySelection: CalendarDaySelection
 
-    init(
-        displayedYearNumber: Int,
-        selectedMonthIndex: Int? = nil,
-        selectedDayIndex: Int? = nil
-    ) {
+    init(displayedYearNumber: Int) {
         self.displayedYearNumber = displayedYearNumber
-        self.selectedMonthIndex = selectedMonthIndex
-        daySelection = CalendarDaySelection(dayIndex: selectedDayIndex)
+        daySelection = CalendarDaySelection()
+    }
+
+    /// 只在页面首次进入时应用导航地址，避免 View 重建覆盖后续浏览状态。
+    func applyInitialLanding(
+        monthIndex: Int?,
+        dayIndex: Int?
+    ) {
+        guard !hasAppliedInitialLanding else {
+            return
+        }
+
+        hasAppliedInitialLanding = true
+        select(monthIndex: monthIndex, dayIndex: dayIndex)
     }
 
     func selectYear(_ yearNumber: Int) {
