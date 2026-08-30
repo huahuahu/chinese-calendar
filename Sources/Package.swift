@@ -16,7 +16,7 @@ let package = Package(
     defaultLocalization: "en",
     platforms: [
         .iOS(.v26),
-        // Host-only support for Scripts/BuildChineseCalendarSeedStore.
+        // Deployment floor for macOS host tools selecting Core/Persistence; UI remains iOS-only.
         .macOS(.v26)
     ],
     products: [
