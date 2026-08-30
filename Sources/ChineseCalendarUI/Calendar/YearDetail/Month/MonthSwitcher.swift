@@ -143,13 +143,13 @@ struct MonthSwitcher: View {
 extension MonthSwitcher {
     static func julianDayRange(in julianDayNumbers: [Int?]) -> ClosedRange<Int>? {
         let availableJulianDayNumbers = julianDayNumbers.compactMap(\.self)
-        guard let firstJulianDayNumber = availableJulianDayNumbers.min(),
-              let lastJulianDayNumber = availableJulianDayNumbers.max()
+        guard let minimumJulianDayNumber = availableJulianDayNumbers.min(),
+              let maximumJulianDayNumber = availableJulianDayNumbers.max()
         else {
             return nil
         }
 
-        return firstJulianDayNumber ... lastJulianDayNumber
+        return minimumJulianDayNumber ... maximumJulianDayNumber
     }
 
     static func monthNavigationSubtitle(
