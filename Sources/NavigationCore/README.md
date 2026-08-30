@@ -14,7 +14,7 @@
 
 不得在此模块中引入具体业务模型、页面或路由规则。日志也只记录 push、present、dismiss 和 path count 等结构事件，不记录或解析 destination 内容。
 
-## 主要类型
+## 主要类型与 API
 
 - `NavigationRouter<Scope, Destination>`：保存每个 scope 的 root 和独立 push path，并管理 root sheet/full-screen。
 - `NavigationRequest<Scope, Destination>`：描述选择 scope、替换 root/path 或 push 的强类型导航请求。
