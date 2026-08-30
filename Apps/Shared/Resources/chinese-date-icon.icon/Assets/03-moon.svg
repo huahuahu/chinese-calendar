@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1024"
+     height="1024"
+     viewBox="0 0 1024 1024">
+  <title>历字印章最终版月牙图层</title>
+  <desc>日上月下布局中的右下月牙，月光薰衣草色 #D8CCFF，透明背景。</desc>
+  <path fill="#D8CCFF" d="
+  M 695 654
+C 759 662 806 710 806 769
+C 806 829 764 878 702 890
+C 736 860 756 817 756 769
+C 756 718 733 679 695 654
+Z
+"/>
+</svg>
