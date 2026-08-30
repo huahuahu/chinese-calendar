@@ -8,10 +8,10 @@ struct CalendarDestinationView: View {
         Group {
             switch destination {
             case let .lunarYear(yearNumber, monthIndex, dayIndex):
-                LunarYearDetailView(
-                    initialYearNumber: yearNumber,
-                    initialMonthIndex: monthIndex,
-                    initialDayIndex: dayIndex
+                LunarYearDestinationView(
+                    yearNumber: yearNumber,
+                    monthIndex: monthIndex,
+                    dayIndex: dayIndex
                 )
                 .id(destination)
             case let .dynasty(dynastyID):

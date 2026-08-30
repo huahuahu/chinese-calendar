@@ -16,7 +16,7 @@ import SwiftUI
 
             TabView(selection: $router.selectedTab) {
                 NavigationStack(path: $router.yearsPath) {
-                    LunarYearDetailView(initialYearNumber: ChineseLunarCalendar.yearNumber())
+                    LunarYearDestinationView(yearNumber: ChineseLunarCalendar.yearNumber())
                         .calendarDestinations()
                 }
                 .tabItem {

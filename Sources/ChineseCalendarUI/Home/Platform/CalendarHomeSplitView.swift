@@ -22,7 +22,7 @@ struct CalendarHomeSplitView: View {
             .navigationTitle("年份")
         } detail: {
             NavigationStack(path: $router.yearsPath) {
-                LunarYearDetailView(initialYearNumber: ChineseLunarCalendar.yearNumber())
+                LunarYearDestinationView(yearNumber: ChineseLunarCalendar.yearNumber())
                     .calendarDestinations()
             }
         }

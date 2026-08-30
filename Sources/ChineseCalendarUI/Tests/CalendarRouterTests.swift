@@ -38,10 +38,10 @@ import Testing
 
 @MainActor
 @Test func browseStateTreatsYearMonthAndDayAsPageState() {
-    let browseState = LunarCalendarBrowseState(
-        displayedYearNumber: 2024,
-        selectedMonthIndex: 24001,
-        selectedDayIndex: 2_400_101
+    let browseState = LunarCalendarBrowseState(displayedYearNumber: 2024)
+    browseState.applyInitialLanding(
+        monthIndex: 24001,
+        dayIndex: 2_400_101
     )
 
     browseState.selectYear(2025)
@@ -55,10 +55,8 @@ import Testing
 @MainActor
 @Test func browseStateCanMoveAcrossYearsWithoutChangingRouter() {
     let router = CalendarRouter()
-    let browseState = LunarCalendarBrowseState(
-        displayedYearNumber: 2024,
-        selectedDayIndex: 2_400_101
-    )
+    let browseState = LunarCalendarBrowseState(displayedYearNumber: 2024)
+    browseState.applyInitialLanding(monthIndex: nil, dayIndex: 2_400_101)
 
     browseState.select(yearNumber: 2025, monthIndex: 25006)
 
@@ -71,10 +69,10 @@ import Testing
 
 @MainActor
 @Test func browseStateCanSelectAnExactDay() {
-    let browseState = LunarCalendarBrowseState(
-        displayedYearNumber: 2024,
-        selectedMonthIndex: 24001,
-        selectedDayIndex: 2_400_101
+    let browseState = LunarCalendarBrowseState(displayedYearNumber: 2024)
+    browseState.applyInitialLanding(
+        monthIndex: 24001,
+        dayIndex: 2_400_101
     )
 
     browseState.select(
@@ -119,10 +117,10 @@ import Testing
 
 @MainActor
 @Test func browseStateClearsItsDaySelectionWhenMonthChanges() {
-    let browseState = LunarCalendarBrowseState(
-        displayedYearNumber: 2026,
-        selectedMonthIndex: 26005,
-        selectedDayIndex: 2_600_501
+    let browseState = LunarCalendarBrowseState(displayedYearNumber: 2026)
+    browseState.applyInitialLanding(
+        monthIndex: 26005,
+        dayIndex: 2_600_501
     )
 
     browseState.selectedMonthIndex = 26006
