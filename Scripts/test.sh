@@ -41,7 +41,9 @@ xcodebuild \
     -scheme ChineseCalendar-iOS \
     -sdk iphonesimulator \
     -configuration Debug \
-    -destination "$IOS_DESTINATION" \
+    -destination "$IOS_DESTINATION,arch=arm64" \
+    ARCHS=arm64 \
+    ONLY_ACTIVE_ARCH=YES \
     CODE_SIGNING_ALLOWED=NO \
     CODE_SIGNING_REQUIRED=NO \
     test
