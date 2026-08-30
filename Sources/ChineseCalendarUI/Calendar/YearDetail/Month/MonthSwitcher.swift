@@ -87,16 +87,14 @@ struct MonthSwitcher: View {
     }
 
     private var civilDateRangeTitle: String? {
-        let days = selectedMonth.days.sorted { $0.dayNumberInMonth < $1.dayNumberInMonth }
-        guard let firstJulianDayNumber = days.first?.calendarDay?.julianDayNumber,
-              let lastJulianDayNumber = days.last?.calendarDay?.julianDayNumber
-        else {
+        let julianDayNumbers = selectedMonth.days.map { $0.calendarDay?.julianDayNumber }
+        guard let julianDayRange = Self.julianDayRange(in: julianDayNumbers) else {
             return nil
         }
 
         return LunarCalendarFormatting.civilDateRangeTitle(
-            fromJulianDayNumber: firstJulianDayNumber,
-            throughJulianDayNumber: lastJulianDayNumber,
+            fromJulianDayNumber: julianDayRange.lowerBound,
+            throughJulianDayNumber: julianDayRange.upperBound,
             locale: locale
         )
     }
@@ -143,6 +141,17 @@ struct MonthSwitcher: View {
 }
 
 extension MonthSwitcher {
+    static func julianDayRange(in julianDayNumbers: [Int?]) -> ClosedRange<Int>? {
+        let availableJulianDayNumbers = julianDayNumbers.compactMap(\.self)
+        guard let firstJulianDayNumber = availableJulianDayNumbers.min(),
+              let lastJulianDayNumber = availableJulianDayNumbers.max()
+        else {
+            return nil
+        }
+
+        return firstJulianDayNumber ... lastJulianDayNumber
+    }
+
     static func monthNavigationSubtitle(
         civilDateRangeTitle: String?,
         fallback: String
