@@ -4,3 +4,7 @@ source = ".."
 
 [plugins."build-ios-apps@chinese-date-local"]
 enabled = true
+
+[mcp_servers.xcode]
+command = "xcrun"
+args = ["mcpbridge"]

@@ -13,5 +13,5 @@ setupPreferences:
 sessionDefaults:
   projectPath: ChineseCalendar.xcodeproj
   scheme: ChineseCalendar-iOS
-  simulatorId: 1B15591D-3AA6-444E-A025-F3CF34308855
-  simulatorName: chinesedate iPhone 17 Pro Max
+  simulatorId: 16A9CAA7-45CE-46D5-8915-F61531FC617C
+  simulatorName: chinesedate iPhone 18 Pro Max (885f)
