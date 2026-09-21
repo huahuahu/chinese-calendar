@@ -3,104 +3,117 @@ import SFSafeSymbols
 import SwiftData
 import SwiftUI
 
-/// 显示在朝代路由目的地中，用于展示朝代概况、边界比较和皇帝列表。
+/// 朝代资料枢纽；通过稳定 ID 保留进入本页的正统时期上下文。
 struct DynastyDetailView: View {
-    @Query private var dynasties: [Dynasty]
-    @Query private var orthodoxPeriods: [OrthodoxPeriod]
+    // swiftformat:disable:next enumNamespaces
+    private struct Constants {
+        static let factCardSpacing: CGFloat = 8
+        static let horizontalPadding: CGFloat = 18
+        static let contentVerticalPadding: CGFloat = 12
+        static let maximumContentWidth: CGFloat = 760
+    }
 
-    init(dynastyID: String) {
-        let dynastyID = dynastyID
-        _dynasties = Query(
-            filter: #Predicate<Dynasty> { dynasty in
-                dynasty.id == dynastyID
-            }
-        )
-        _orthodoxPeriods = Query(
+    @Query private var periods: [OrthodoxPeriod]
+
+    init(orthodoxPeriodID: String) {
+        let orthodoxPeriodID = orthodoxPeriodID
+        _periods = Query(
             filter: #Predicate<OrthodoxPeriod> { period in
-                period.dynastyID == dynastyID
-            },
-            sort: \OrthodoxPeriod.sequenceIndex
+                period.id == orthodoxPeriodID
+            }
         )
     }
 
     var body: some View {
-        if let dynasty {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 24) {
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text(dynasty.name)
-                            .font(.largeTitle)
-                            .bold()
+        pageContent
+    }
 
-                        if let note = dynasty.note {
-                            Text(note)
-                                .font(.callout)
-                                .foregroundStyle(.secondary)
-                        }
-                    }
-
-                    LazyVGrid(columns: columns, alignment: .leading, spacing: 12) {
-                        DynastyFactCard(title: "皇帝", value: "\(emperors.count) 位")
-                        DynastyFactCard(title: "年号", value: "\(reignEraCount) 个")
-                        DynastyFactCard(title: "正统期", value: orthodoxPeriodCountText)
-                        DynastyFactCard(title: "短名", value: dynasty.shortName ?? dynasty.name)
-                    }
-
-                    DynastyBoundaryComparisonView(
-                        dynasty: dynasty,
-                        orthodoxPeriods: orthodoxPeriods
-                    )
-
-                    if !emperors.isEmpty {
-                        VStack(alignment: .leading, spacing: 12) {
-                            Text("皇帝")
-                                .font(.title2)
-                                .bold()
-
-                            ForEach(emperors, id: \.id) { emperor in
-                                NavigationLink(value: CalendarDestination.emperor(emperor.id)) {
-                                    EmperorSummaryRow(emperor: emperor)
-                                }
-                                .buttonStyle(.plain)
-                            }
-                        }
-                    }
-                }
-                .padding()
-                .frame(maxWidth: 760, alignment: .leading)
-            }
-            .background(.calendarSystemBackground)
-            .navigationTitle(dynasty.shortName ?? dynasty.name)
+    @ViewBuilder
+    private var pageContent: some View {
+        if let period = periods.first, let dynasty = period.dynasty {
+            dynastyOverviewPage(dynasty: dynasty, period: period)
         } else {
-            ContentUnavailableView {
-                Label("没有找到朝代", systemSymbol: .buildingColumns)
-            } description: {
-                Text("这个朝代记录不在当前 SwiftData store 中。")
-            }
+            missingDynastyState
         }
     }
 
-    private var columns: [GridItem] {
-        [GridItem(.adaptive(minimum: 140), spacing: 12)]
+    private func dynastyOverviewPage(
+        dynasty: Dynasty,
+        period: OrthodoxPeriod
+    ) -> some View {
+        ScrollView {
+            factCardList(dynasty: dynasty, period: period)
+        }
+        .navigationTitle(dynasty.shortName ?? dynasty.name)
+        #if os(iOS)
+            .navigationBarTitleDisplayMode(.inline)
+        #endif
     }
 
-    private var dynasty: Dynasty? {
-        dynasties.first
+    private func factCardList(
+        dynasty: Dynasty,
+        period: OrthodoxPeriod
+    ) -> some View {
+        LazyVStack(alignment: .leading, spacing: Constants.factCardSpacing) {
+            ForEach(factCardModels(dynasty: dynasty, period: period)) { model in
+                DynastyFactCard(model: model)
+            }
+        }
+        .padding(.horizontal, Constants.horizontalPadding)
+        .padding(.vertical, Constants.contentVerticalPadding)
+        .frame(maxWidth: Constants.maximumContentWidth, alignment: .leading)
     }
 
-    private var emperors: [Emperor] {
-        dynasty?.emperors.sorted {
-            ($0.sequenceIndex, $0.id) < ($1.sequenceIndex, $1.id)
-        } ?? []
+    private var missingDynastyState: some View {
+        ContentUnavailableView {
+            Label("没有找到朝代", systemSymbol: .buildingColumns)
+        } description: {
+            Text("对应的朝代或正统期记录不在当前 SwiftData store 中。")
+        }
     }
 
-    private var reignEraCount: Int {
-        emperors.reduce(0) { count, emperor in
+    private func factCardModels(
+        dynasty: Dynasty,
+        period: OrthodoxPeriod
+    ) -> [DynastyFactCardModel] {
+        let dynastyName = dynasty.shortName ?? dynasty.name
+        let emperorCount = dynasty.emperors.count
+        let reignEraCount = dynasty.emperors.reduce(0) { count, emperor in
             count + emperor.reignEras.count
         }
-    }
+        let spanYears = HistoryDateRangeFormatter.dynastySpanYears(
+            start: period.startBoundary?.date,
+            end: period.endBoundary?.date
+        )
 
-    private var orthodoxPeriodCountText: String {
-        orthodoxPeriods.isEmpty ? "暂无" : "\(orthodoxPeriods.count) 段"
+        return [
+            DynastyFactCardModel(
+                value: "\(emperorCount)",
+                unit: "位皇帝",
+                accessibilityLabel: "查看\(dynastyName)朝 \(emperorCount) 位皇帝",
+                destination: .emperorList(dynastyID: dynasty.id)
+            ),
+            DynastyFactCardModel(
+                value: "\(reignEraCount)",
+                unit: "个年号",
+                accessibilityLabel: "查看\(dynastyName)朝 \(reignEraCount) 个年号",
+                destination: .reignEraList(dynastyID: dynasty.id)
+            ),
+            DynastyFactCardModel(
+                value: spanYears.map(String.init) ?? "国祚暂无",
+                unit: spanYears == nil ? "" : "年",
+                accessibilityLabel: spanYears.map {
+                    "查看\(dynastyName)朝国祚与起讫，共 \($0) 年"
+                } ?? "查看\(dynastyName)朝国祚与起讫，国祚暂无",
+                destination: .dynastySpan(orthodoxPeriodID: period.id)
+            )
+        ]
     }
+}
+
+#Preview {
+    NavigationStack {
+        DynastyDetailView(orthodoxPeriodID: HistoryPreviewData.orthodoxPeriodID)
+    }
+    .modelContainer(HistoryPreviewData.container)
 }

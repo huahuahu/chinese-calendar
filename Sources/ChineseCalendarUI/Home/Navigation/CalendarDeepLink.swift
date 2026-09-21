@@ -2,7 +2,7 @@ import Foundation
 
 enum CalendarDeepLink: Equatable {
     case lunarYear(Int, monthIndex: Int? = nil)
-    case dynasty(String)
+    case dynasty(orthodoxPeriodID: String)
     case emperor(String)
 }
 
@@ -33,7 +33,7 @@ enum CalendarDeepLinkParser {
                 return nil
             }
 
-            return .dynasty(parts[1])
+            return .dynasty(orthodoxPeriodID: parts[1])
         case "emperor":
             guard parts.count >= 2 else {
                 return nil

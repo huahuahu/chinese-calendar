@@ -3,10 +3,17 @@ import SwiftUI
 
 /// 显示在边界比较行中，用于呈现单一日期来源的边界值。
 struct DynastyBoundaryComparisonCell: View {
+    // swiftformat:disable:next enumNamespaces
+    private struct Constants {
+        static let contentSpacing: CGFloat = 4
+        static let horizontalPadding: CGFloat = 12
+        static let verticalPadding: CGFloat = 12
+    }
+
     let date: ChineseDateExpression?
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
+        VStack(alignment: .leading, spacing: Constants.contentSpacing) {
             Text(primaryText)
                 .font(.headline)
                 .bold()
@@ -15,8 +22,8 @@ struct DynastyBoundaryComparisonCell: View {
                 .font(.caption)
                 .foregroundStyle(.secondary)
         }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 12)
+        .padding(.horizontal, Constants.horizontalPadding)
+        .padding(.vertical, Constants.verticalPadding)
         .frame(maxWidth: .infinity, alignment: .leading)
         .accessibilityElement(children: .combine)
     }
@@ -60,4 +67,11 @@ struct DynastyBoundaryComparisonCell: View {
             return "精度未知"
         }
     }
+}
+
+#Preview {
+    let sample = HistoryPreviewData.makeSample()
+
+    DynastyBoundaryComparisonCell(date: sample.dynasty.claimedStartDate)
+        .padding()
 }

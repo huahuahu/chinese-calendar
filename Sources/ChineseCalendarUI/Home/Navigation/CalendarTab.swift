@@ -15,7 +15,7 @@ enum CalendarTab: Hashable, CaseIterable, Identifiable {
         case .years:
             "日历"
         case .history:
-            "历史"
+            "朝代"
         case .settings:
             "设置"
         }

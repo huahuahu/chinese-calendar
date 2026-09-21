@@ -1,24 +1,26 @@
 :root {
   /* Colors */
-  --color-accent: #0a84ff;
-  --color-accent-strong: #0070e0;
-  --color-accent-soft: #d8ebff;
-  --color-canvas: #e9e9ed;
-  --color-surface: #ffffff;
-  --color-surface-secondary: #f2f2f7;
-  --color-text: #000000;
-  --color-text-secondary: #8e8e93;
-  --color-separator: rgb(60 60 67 / 16%);
-  --color-shadow: rgb(0 0 0 / 14%);
+  --color-accent: #b44234;
+  --color-accent-strong: #913128;
+  --color-accent-soft: #f5dfda;
+  --color-canvas: #e9e4dc;
+  --color-surface: #fffdf9;
+  --color-surface-secondary: #f4f0e9;
+  --color-text: #211d19;
+  --color-text-secondary: #746d65;
+  --color-separator: rgb(71 58 47 / 14%);
+  --color-shadow: rgb(67 45 31 / 15%);
+  --color-ink-soft: #e9e1d7;
+  --color-jade: #58776b;
 
   /* Typography */
-  --font-family: ui-rounded, "SF Pro Rounded", "PingFang SC", system-ui, sans-serif;
+  --font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", system-ui, sans-serif;
   --font-size-caption: 0.72rem;
   --font-size-body: 0.9rem;
   --font-size-title: 1.45rem;
   --font-size-display: 2rem;
   --font-weight-medium: 600;
-  --font-weight-bold: 750;
+  --font-weight-bold: 720;
 
   /* Spacing */
   --space-1: 4px;

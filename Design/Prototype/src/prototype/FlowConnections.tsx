@@ -13,15 +13,29 @@ interface ConnectionGeometry extends PrototypeTransition {
 }
 
 const targetOffsets: Record<string, number> = {
-  'select-date': 0.54,
-  'close-year-picker': 0.3,
-  'open-year-picker': 0.23,
-  'select-year': 0.62,
+  'open-dynasty': 0.3,
+  'back-history': 0.72,
+  'open-emperors': 0.28,
+  'back-emperors': 0.58,
+  'open-eras': 0.32,
+  'back-eras': 0.66,
+  'open-span': 0.32,
+  'back-span': 0.66,
+  'open-era': 0.34,
+  'back-era-list': 0.68,
 }
 
 const labelOffsets: Record<string, number> = {
-  'open-year-picker': 22,
-  'close-year-picker': -34,
+  'open-dynasty': -34,
+  'back-history': 40,
+  'open-emperors': -34,
+  'back-emperors': 38,
+  'open-eras': -36,
+  'back-eras': 40,
+  'open-span': -34,
+  'back-span': 40,
+  'open-era': -36,
+  'back-era-list': 40,
 }
 
 export function FlowConnections({
@@ -42,25 +56,17 @@ export function FlowConnections({
       const boardRect = board.getBoundingClientRect()
       const next = navigationFlow.flatMap((transition): ConnectionGeometry[] => {
         const source = board.querySelector<HTMLElement>(`[data-transition-id="${transition.id}"]`)
-        const targetSelector = transition.targetType === 'state'
-          ? `[data-state-id="${transition.target}"]`
-          : `[data-screen-id="${transition.target}"]`
+        const targetSelector = `[data-screen-id="${transition.target}"]`
         const target = board.querySelector<HTMLElement>(targetSelector)
         if (!source || !target) return []
 
         const sourceRect = source.getBoundingClientRect()
         const targetRect = target.getBoundingClientRect()
-        const isState = transition.targetType === 'state'
         const pointsRight = targetRect.left > sourceRect.left
-        const sourceX = (isState ? sourceRect.left + sourceRect.width / 2 : pointsRight ? sourceRect.right : sourceRect.left) - boardRect.left
-        const sourceY = (isState ? sourceRect.bottom : sourceRect.top + sourceRect.height / 2) - boardRect.top
-        const targetX = (isState ? targetRect.left + targetRect.width / 2 : pointsRight ? targetRect.left : targetRect.right) - boardRect.left
-        const targetY = (isState ? targetRect.top : targetRect.top + targetRect.height * (targetOffsets[transition.id] ?? 0.5)) - boardRect.top
-        const routeX = isState
-          ? transition.id === 'select-today'
-            ? Math.max(sourceX, targetX) + 92
-            : Math.min(sourceX, targetX) - 44
-          : undefined
+        const sourceX = (pointsRight ? sourceRect.right : sourceRect.left) - boardRect.left
+        const sourceY = sourceRect.top + sourceRect.height / 2 - boardRect.top
+        const targetX = (pointsRight ? targetRect.left : targetRect.right) - boardRect.left
+        const targetY = targetRect.top + targetRect.height * (targetOffsets[transition.id] ?? 0.5) - boardRect.top
 
         return [{
           ...transition,
@@ -68,10 +74,9 @@ export function FlowConnections({
           sourceY,
           targetX,
           targetY,
-          labelX: isState ? (routeX ?? sourceX) + (transition.id === 'select-today' ? 58 : 62) : (sourceX + targetX) / 2,
+          labelX: (sourceX + targetX) / 2,
           labelY: (sourceY + targetY) / 2 + (labelOffsets[transition.id] ?? 0),
-          orientation: isState ? 'vertical' : 'horizontal',
-          routeX,
+          orientation: 'horizontal',
         }]
       })
       setConnections(next)
@@ -117,7 +122,7 @@ export function FlowConnections({
         const labelWidth = Math.max(96, label.length * 11)
         return (
           <g key={connection.id} className={`flow-connection flow-connection--${connection.presentation}`}>
-            <path d={path} markerEnd={`url(#flow-arrow-${connection.presentation === 'sheet' || connection.presentation === 'dismiss' ? 'sheet' : 'solid'})`} />
+            <path d={path} markerEnd="url(#flow-arrow-solid)" />
             <circle cx={connection.sourceX} cy={connection.sourceY} r="5" />
             <g transform={`translate(${connection.labelX}, ${connection.labelY})`} className="flow-connection__label">
               <rect x={-labelWidth / 2} y="-14" width={labelWidth} height="28" rx="14" />

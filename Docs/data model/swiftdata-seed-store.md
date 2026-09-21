@@ -35,7 +35,9 @@ Installed shared store:
   manifest.json
 ```
 
-At launch, the bundled and installed manifests are compared by `artifactVersion`. Provenance-only fields such as `generatedAt` do not trigger a reinstall. If the App Group copy is missing, the bundled base store is installed. If the installed copy is already a `full` store, the bundled base store never replaces it.
+At launch, the bundled and installed manifests are compared by `artifactVersion`. Provenance-only fields such as `generatedAt` do not trigger a reinstall. If the App Group copy is missing, the bundled base store is installed. An installed `full` store is handled by schema compatibility instead of `artifactVersion` alone.
+
+A downloaded `full` store is preserved while its `schemaVersion` matches the app, even if the bundled base store has a different `artifactVersion`. An incompatible full store is replaced with the bundled base store so the read-only database never requires an in-place migration.
 
 The stable identity fields are:
 
@@ -75,7 +77,7 @@ make seed-store
 
 This is the only normal entry point that writes `Apps/Shared/Resources/ChineseCalendarSeedStore.bundle`. It calculates the current identity first and skips generation when `artifactVersion` already matches. The builder checkpoints WAL content back into the main database, switches the seed store to DELETE journal mode, and removes SQLite sidecar files so the bundled seed store stays as a single SQLite file.
 
-Ordinary iOS and macOS Xcode builds run `validate_seed_store.sh`. The phase recalculates the base identity, fails with a `make seed-store` instruction when the committed artifact is stale, and writes only a DerivedData stamp when validation succeeds. It never rewrites the tracked SQLite or manifest.
+Ordinary iOS Xcode builds run `validate_seed_store.sh`. The phase recalculates the base identity, fails with a `make seed-store` instruction when the committed artifact is stale, and writes only a DerivedData stamp when validation succeeds. It never rewrites the tracked SQLite or manifest.
 
 The processed import directory under `Data/Processed/swiftdata_import` keeps JSONL import data, a compact manifest, and a separate `dynasty_source_audit.json` for dynasty import audit details. The resource-bundle manifest is intentionally slim: it keeps only runtime install/version fields, coverage counts, and compact provenance. Dynasty and orthodox-period records are read from the SwiftData SQLite tables, not duplicated in manifests.
 

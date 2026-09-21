@@ -6,10 +6,10 @@ import Testing
 @Test func pushUpdatesSelectedTabPath() {
     let router = CalendarRouter()
 
-    router.push(.dynasty("qin"), on: .history)
+    router.push(.dynasty(orthodoxPeriodID: "qin-period"), on: .history)
 
     #expect(router.selectedTab == .history)
-    #expect(router.historyPath == [.dynasty("qin")])
+    #expect(router.historyPath == [.dynasty(orthodoxPeriodID: "qin-period")])
     #expect(router.yearsPath.isEmpty)
 }
 
@@ -18,12 +18,57 @@ import Testing
     let router = CalendarRouter()
 
     router.push(.lunarYear(2025), on: .years)
-    router.push(.dynasty("qin"), on: .history)
+    router.push(.dynasty(orthodoxPeriodID: "qin-period"), on: .history)
 
     #expect(router.yearsPath == [.lunarYear(2025)])
-    #expect(router.historyPath == [.dynasty("qin")])
-    #expect(router.selectedDestination == .dynasty("qin"))
+    #expect(router.historyPath == [.dynasty(orthodoxPeriodID: "qin-period")])
+    #expect(router.selectedDestination == .dynasty(orthodoxPeriodID: "qin-period"))
     #expect(router.currentDestination(on: .years) == .lunarYear(2025))
+}
+
+@MainActor
+@Test func historyRoutePreservesOrthodoxPeriodIdentity() {
+    let router = CalendarRouter(selectedTab: .history)
+    let destination = CalendarDestination.dynasty(orthodoxPeriodID: "orthodox-ming")
+
+    router.push(destination)
+
+    #expect(router.historyPath == [destination])
+    #expect(destination.id == "dynasty-orthodox-ming")
+}
+
+@MainActor
+@Test func historyPathPushPopAndTabRestorationKeepIndependentDestinations() {
+    let dynasty = CalendarDestination.dynasty(orthodoxPeriodID: "orthodox-ming")
+    let emperorList = CalendarDestination.emperorList(dynastyID: "ming")
+    let router = CalendarRouter(selectedTab: .history)
+
+    router.push(dynasty)
+    router.push(emperorList)
+    router.selectedTab = .years
+    router.push(.lunarYear(2026), on: .years)
+    router.selectedTab = .history
+
+    #expect(router.historyPath == [dynasty, emperorList])
+    #expect(router.currentDestination(on: .history) == emperorList)
+
+    router.historyPath.removeLast()
+
+    #expect(router.historyPath == [dynasty])
+    #expect(router.currentDestination(on: .history) == dynasty)
+    #expect(router.yearsPath == [.lunarYear(2026)])
+}
+
+@Test func historyDestinationIDsIncludeEveryStableRecordID() {
+    #expect(
+        CalendarDestination.dynastySpan(
+            orthodoxPeriodID: "orthodox-ming"
+        ).id == "dynasty-span-orthodox-ming"
+    )
+    #expect(
+        CalendarDestination.reignEra(reignEraID: "ming-era-yongle").id
+            == "reign-era-ming-era-yongle"
+    )
 }
 
 @MainActor
@@ -203,10 +248,13 @@ import Testing
 @Test func dynastyDeepLinkSelectsHistoryTab() {
     let coordinator = CalendarHomeCoordinator()
 
-    coordinator.openColdLaunchDeepLink(.dynasty("qin"))
+    coordinator.openColdLaunchDeepLink(.dynasty(orthodoxPeriodID: "qin-period"))
 
     #expect(coordinator.router.selectedTab == .history)
-    #expect(coordinator.router.historyPath == [.dynasty("qin")])
+    #expect(
+        coordinator.router.historyPath
+            == [.dynasty(orthodoxPeriodID: "qin-period")]
+    )
 }
 
 @MainActor
@@ -226,9 +274,12 @@ import Testing
 }
 
 @Test func parserSupportsDynastyURLs() throws {
-    let url = try #require(URL(string: "chinesecalendar://dynasty/qin"))
+    let url = try #require(URL(string: "chinesecalendar://dynasty/qin-period"))
 
-    #expect(CalendarDeepLinkParser.deepLink(from: url) == .dynasty("qin"))
+    #expect(
+        CalendarDeepLinkParser.deepLink(from: url)
+            == .dynasty(orthodoxPeriodID: "qin-period")
+    )
 }
 
 @Test func parserSupportsEmperorURLs() throws {

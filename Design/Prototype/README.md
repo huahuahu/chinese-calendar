@@ -1,6 +1,6 @@
 # 中华历 iOS 网页原型
 
-这是用于规划中华历 iOS 视觉语言、页面结构和导航流程的代码驱动原型。它与 `Apps/` 中的真实 App、`Sources/` 中的共享 Swift Package 相互独立，不参与 Xcode 构建，也不替代 Simulator、Dynamic Type、VoiceOver 或 Safe Area 验证。
+这是用于规划中华历 iOS 视觉语言、页面结构和导航流程的代码驱动原型。原型现已新增第二个 Tab 的重构流程：从朝代目录进入朝代详情，再分别查看帝王、年号和朝代起讫资料。它与 `Apps/` 中的真实 App、`Sources/` 中的共享 Swift Package 相互独立，不参与 Xcode 构建，也不替代 Simulator、Dynamic Type、VoiceOver 或 Safe Area 验证。
 
 ## 启动与构建
 
@@ -24,10 +24,13 @@ npm run preview
 
 ## 当前能力
 
-- 在同一流程画布中同时查看日历月格、同页选中日状态和年份选择器。
-- 点击农历日会更新同一日历页面的选中状态；点击年份标题打开年份选择器；选择年份或关闭 sheet 后返回日历页。
+- 在同一流程画布中查看朝代目录、朝代详情、帝王列表、年号列表、朝代起讫与大事、年号详情六个真实 Screen。
+- 朝代详情是资料枢纽；“16 位皇帝”“17 个年号”“276 年”三个统计项都是独立的可点击入口。
+- 帝王列表呈现 16 位皇帝及 17 段纪年的对应关系；年号列表包含 17 个完整样例，点击任一年号进入详情。
+- 朝代起讫页面分别说明自称边界、正统期和关键边界事件，不把年精度补成具体日期。
+- 用 `push` 和 `pop` 连线标明前进及返回关系，连线从真实按钮边界动态测量。
+- 使用仓库已处理数据中的明朝皇帝、年号、使用年份和沿革说明作为原型样例。
 - 在浅色/深色主题与紧凑/常规画板之间切换。
-- 连线直接从页面内的真实触发按钮指向目标页面或页面状态，并区分 `state`、`sheet` 和 `dismiss`。
 - 颜色、字体、间距、圆角和阴影由 CSS Variables 集中管理。
 
 ## 目录职责
@@ -43,7 +46,7 @@ src/
 └── prototype/              # 原型工作台、画板状态和页面编排
 ```
 
-组件命名尽量对应 SwiftUI 中的职责，例如 `CalendarHomeScreen` 对应日历首页，`YearPickerScreen` 对应 `CalendarYearPickerView`，`NavigationBar` 和 `Card` 是跨页面复用组件。网页原型不导入或解析 Swift 源码。
+组件命名对应这次信息架构中的 Screen：`HistoryHomeScreen` 是朝代目录，`DynastyDetailScreen` 是朝代总览，`EmperorListScreen`、`ReignEraListScreen` 和 `DynastySpanDetailScreen` 是三个资料分支，`ReignEraDetailScreen` 是年号详情。网页原型不导入或解析 Swift 源码，样例数据在 `historyData.ts` 中显式维护。
 
 ## 修改全局样式
 
