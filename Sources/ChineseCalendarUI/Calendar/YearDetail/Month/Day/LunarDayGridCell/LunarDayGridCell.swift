@@ -13,7 +13,7 @@ struct LunarDayGridCell: View {
     @Environment(\.locale) private var locale
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
+        LunarDayCellLayout {
             Text(dayTitle)
                 .font(.headline)
                 .lineLimit(1)
@@ -30,15 +30,17 @@ struct LunarDayGridCell: View {
 
             Text(daySubtitle)
                 .font(.subheadline)
+                .lineLimit(1)
                 .foregroundStyle(.secondary)
 
             Text(civilDateTitle)
                 .font(.subheadline)
+                .fixedSize(horizontal: false, vertical: true)
                 .foregroundStyle(.secondary)
         }
         .foregroundStyle(.primary)
         .padding(10)
-        .frame(maxWidth: .infinity, minHeight: 72, alignment: .topLeading)
+        .frame(minHeight: 72, alignment: .topLeading)
         .background(.background, in: RoundedRectangle(cornerRadius: 18))
         .overlay {
             RoundedRectangle(cornerRadius: 18)
@@ -58,7 +60,7 @@ struct LunarDayGridCell: View {
     }
 
     private var daySubtitle: String {
-        "\(LunarCalendarFormatting.daySubtitle(stemIndex: day.dayStemIndex, branchIndex: day.dayBranchIndex))日"
+        LunarCalendarFormatting.daySubtitle(stemIndex: day.dayStemIndex, branchIndex: day.dayBranchIndex)
     }
 
     private var civilDateTitle: String {
@@ -73,7 +75,7 @@ struct LunarDayGridCell: View {
     }
 
     private var accessibilityLabel: String {
-        let components: [String?] = [dayTitle, isToday ? "今天" : nil, daySubtitle, civilDateTitle]
+        let components: [String?] = [dayTitle, isToday ? "今天" : nil, "日干支", daySubtitle, civilDateTitle]
         return components
             .compactMap(\.self)
             .joined(separator: "，")

@@ -69,7 +69,7 @@ struct LunarMonthGrid: View {
                             .foregroundStyle(.secondary)
                     }
 
-                    LazyVGrid(columns: gridColumns, alignment: .leading, spacing: 8) {
+                    LunarDayGridLayout {
                         ForEach(days, id: \.dayIndex) { day in
                             Button {
                                 daySelection.dayIndex = day.dayIndex
@@ -103,10 +103,6 @@ struct LunarMonthGrid: View {
         .onChange(of: todayJulianDayNumber) {
             selectDefaultDayIfNeeded()
         }
-    }
-
-    private var gridColumns: [GridItem] {
-        [GridItem(.adaptive(minimum: 58), spacing: 8)]
     }
 
     private func selectedDay(
