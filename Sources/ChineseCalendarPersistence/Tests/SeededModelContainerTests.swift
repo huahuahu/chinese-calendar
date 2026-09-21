@@ -2,7 +2,7 @@
 import Foundation
 import Testing
 
-@Suite("Seed store artifact identity")
+@Suite("Seed store installation and identity")
 struct SeededModelContainerTests {
     @Test func provenanceOnlyManifestChangesDoNotReinstall() throws {
         let fixture = try SeedStoreFixture(
@@ -24,14 +24,46 @@ struct SeededModelContainerTests {
         #expect(try fixture.shouldInstall())
     }
 
-    @Test func installedFullStoreIsNeverReplacedByBundledBaseStore() throws {
+    @Test func compatibleInstalledFullStoreIsPreserved() throws {
         let fixture = try SeedStoreFixture(
-            seedManifest: Self.manifest(artifactVersion: "artifact-b", contentLevel: "base"),
-            installedManifest: Self.manifest(artifactVersion: "artifact-a", contentLevel: "full")
+            seedManifest: Self.manifest(artifactVersion: "artifact-b"),
+            installedManifest: Self.manifest(
+                artifactVersion: "artifact-a",
+                schemaVersion: ChineseCalendarModelSchema.versionIdentifier,
+                contentLevel: "full"
+            )
         )
         defer { fixture.remove() }
 
         #expect(try !fixture.shouldInstall())
+    }
+
+    @Test func incompatibleInstalledFullStoreIsReplacedWithBundledBaseStore() throws {
+        let fixture = try SeedStoreFixture(
+            seedManifest: Self.manifest(artifactVersion: "artifact-b"),
+            installedManifest: Self.manifest(
+                artifactVersion: "artifact-a",
+                schemaVersion: "1.2.0",
+                contentLevel: "full"
+            )
+        )
+        defer { fixture.remove() }
+
+        #expect(try fixture.shouldInstall())
+    }
+
+    @Test func installedFullStoreWithoutSchemaVersionIsReplaced() throws {
+        let fixture = try SeedStoreFixture(
+            seedManifest: Self.manifest(artifactVersion: "artifact-b"),
+            installedManifest: Self.manifest(
+                artifactVersion: "artifact-a",
+                schemaVersion: nil,
+                contentLevel: "full"
+            )
+        )
+        defer { fixture.remove() }
+
+        #expect(try fixture.shouldInstall())
     }
 
     @Test func missingInstalledManifestRequiresInstallation() throws {
@@ -66,15 +98,20 @@ struct SeededModelContainerTests {
 
     private static func manifest(
         artifactVersion: String,
+        schemaVersion: String? = ChineseCalendarModelSchema.versionIdentifier,
         generatedAt: String = "timestamp",
         contentLevel: String = "base"
     ) -> [String: Any] {
-        [
+        var manifest: [String: Any] = [
             "artifactVersion": artifactVersion,
             "datasetVersion": "dataset",
             "generatedAt": generatedAt,
             "seedStoreContentLevel": contentLevel
         ]
+        if let schemaVersion {
+            manifest["schemaVersion"] = schemaVersion
+        }
+        return manifest
     }
 }
 

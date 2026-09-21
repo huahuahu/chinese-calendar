@@ -3,55 +3,73 @@ import SwiftUI
 
 /// 显示在 DynastyDetailView 中，用于比较朝代各正统时期的起止边界。
 struct DynastyBoundaryComparisonView: View {
+    // swiftformat:disable:next enumNamespaces
+    private struct Constants {
+        static let contentSpacing: CGFloat = 12
+        static let headingSpacing: CGFloat = 6
+    }
+
     let dynasty: Dynasty
     let orthodoxPeriods: [OrthodoxPeriod]
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            VStack(alignment: .leading, spacing: 6) {
-                Text("时间边界")
-                    .font(.title2)
-                    .bold()
+        VStack(alignment: .leading, spacing: Constants.contentSpacing) {
+            sectionHeading
+            comparisonCards
+        }
+    }
 
-                Text("对比朝代自称起止与正统时间线采用的边界。")
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-            }
+    private var sectionHeading: some View {
+        VStack(alignment: .leading, spacing: Constants.headingSpacing) {
+            Text("时间边界")
+                .font(.title2)
+                .bold()
 
-            if orthodoxPeriods.isEmpty {
-                DynastyBoundaryComparisonCard(
-                    title: "正统期",
-                    traditionName: nil,
-                    claimedStartDate: dynasty.claimedStartDate,
-                    orthodoxStartDate: nil,
-                    claimedEndDate: dynasty.claimedEndDate,
-                    orthodoxEndDate: nil,
-                    startDifferenceText: nil,
-                    endDifferenceText: nil,
-                    note: "当前 SwiftData store 还没有为这个朝代关联正统开始和结束边界。"
-                )
-            } else {
-                ForEach(orthodoxPeriods, id: \.id) { period in
-                    DynastyBoundaryComparisonCard(
-                        title: periodTitle(for: period),
-                        traditionName: period.tradition?.name,
-                        claimedStartDate: dynasty.claimedStartDate,
-                        orthodoxStartDate: period.startBoundary?.date,
-                        claimedEndDate: dynasty.claimedEndDate,
-                        orthodoxEndDate: period.endBoundary?.date,
-                        startDifferenceText: differenceText(
-                            claimed: dynasty.claimedStartDate,
-                            orthodox: period.startBoundary?.date
-                        ),
-                        endDifferenceText: differenceText(
-                            claimed: dynasty.claimedEndDate,
-                            orthodox: period.endBoundary?.date
-                        ),
-                        note: period.note
-                    )
-                }
+            Text("对比朝代自称起止与正统时间线采用的边界。")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+        }
+    }
+
+    @ViewBuilder
+    private var comparisonCards: some View {
+        if orthodoxPeriods.isEmpty {
+            DynastyBoundaryComparisonCard(
+                title: "正统期",
+                traditionName: nil,
+                claimedStartDate: dynasty.claimedStartDate,
+                orthodoxStartDate: nil,
+                claimedEndDate: dynasty.claimedEndDate,
+                orthodoxEndDate: nil,
+                startDifferenceText: nil,
+                endDifferenceText: nil,
+                note: "当前 SwiftData store 还没有为这个朝代关联正统开始和结束边界。"
+            )
+        } else {
+            ForEach(orthodoxPeriods, id: \.id) { period in
+                comparisonCard(for: period)
             }
         }
+    }
+
+    private func comparisonCard(for period: OrthodoxPeriod) -> some View {
+        DynastyBoundaryComparisonCard(
+            title: periodTitle(for: period),
+            traditionName: period.tradition?.name,
+            claimedStartDate: dynasty.claimedStartDate,
+            orthodoxStartDate: period.startBoundary?.date,
+            claimedEndDate: dynasty.claimedEndDate,
+            orthodoxEndDate: period.endBoundary?.date,
+            startDifferenceText: differenceText(
+                claimed: dynasty.claimedStartDate,
+                orthodox: period.startBoundary?.date
+            ),
+            endDifferenceText: differenceText(
+                claimed: dynasty.claimedEndDate,
+                orthodox: period.endBoundary?.date
+            ),
+            note: period.note
+        )
     }
 
     private func periodTitle(for period: OrthodoxPeriod) -> String {
@@ -90,4 +108,14 @@ struct DynastyBoundaryComparisonView: View {
 
         return difference > 0 ? "正统晚 \(difference) 年" : "正统早 \(abs(difference)) 年"
     }
+}
+
+#Preview {
+    let sample = HistoryPreviewData.makeSample()
+
+    DynastyBoundaryComparisonView(
+        dynasty: sample.dynasty,
+        orthodoxPeriods: [sample.period]
+    )
+    .padding()
 }

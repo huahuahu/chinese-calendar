@@ -111,8 +111,8 @@ final class CalendarRouter {
         switch deepLink {
         case let .lunarYear(yearNumber, monthIndex):
             .replacePath([.lunarYear(yearNumber, monthIndex: monthIndex)], on: .years)
-        case let .dynasty(dynastyID):
-            .replacePath([.dynasty(dynastyID)], on: .history)
+        case let .dynasty(orthodoxPeriodID):
+            .replacePath([.dynasty(orthodoxPeriodID: orthodoxPeriodID)], on: .history)
         case let .emperor(emperorID):
             .replacePath([.emperor(emperorID)], on: .history)
         }

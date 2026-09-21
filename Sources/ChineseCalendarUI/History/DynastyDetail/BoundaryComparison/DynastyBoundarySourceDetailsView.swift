@@ -4,6 +4,13 @@ import SwiftUI
 
 /// 由边界比较卡片弹出，用于展示朝代边界的原始来源说明。
 struct DynastyBoundarySourceDetailsView: View {
+    // swiftformat:disable:next enumNamespaces
+    private struct Constants {
+        static let sourceSpacing: CGFloat = 10
+        static let disclosureTopPadding: CGFloat = 8
+        static let detailSpacing: CGFloat = 3
+    }
+
     let claimedStartDate: ChineseDateExpression
     let orthodoxStartDate: ChineseDateExpression?
     let claimedEndDate: ChineseDateExpression
@@ -12,27 +19,31 @@ struct DynastyBoundarySourceDetailsView: View {
 
     var body: some View {
         DisclosureGroup {
-            VStack(alignment: .leading, spacing: 10) {
-                detail("自称开始", date: claimedStartDate)
-                detail("正统开始", date: orthodoxStartDate)
-                detail("自称结束", date: claimedEndDate)
-                detail("正统结束", date: orthodoxEndDate)
-
-                if let note {
-                    Text(note)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
-            }
-            .padding(.top, 8)
+            sourceDetails
         } label: {
             Label("来源和精度", systemSymbol: .infoCircle)
                 .font(.callout)
         }
     }
 
-    private func detail(_ title: String, date: ChineseDateExpression?) -> some View {
-        VStack(alignment: .leading, spacing: 3) {
+    private var sourceDetails: some View {
+        VStack(alignment: .leading, spacing: Constants.sourceSpacing) {
+            sourceDetailRow("自称开始", date: claimedStartDate)
+            sourceDetailRow("正统开始", date: orthodoxStartDate)
+            sourceDetailRow("自称结束", date: claimedEndDate)
+            sourceDetailRow("正统结束", date: orthodoxEndDate)
+
+            if let note {
+                Text(note)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .padding(.top, Constants.disclosureTopPadding)
+    }
+
+    private func sourceDetailRow(_ title: String, date: ChineseDateExpression?) -> some View {
+        VStack(alignment: .leading, spacing: Constants.detailSpacing) {
             Text(title)
                 .font(.caption)
                 .bold()
@@ -78,4 +89,17 @@ struct DynastyBoundarySourceDetailsView: View {
             "精度未知"
         }
     }
+}
+
+#Preview {
+    let sample = HistoryPreviewData.makeSample()
+
+    DynastyBoundarySourceDetailsView(
+        claimedStartDate: sample.dynasty.claimedStartDate,
+        orthodoxStartDate: sample.period.startBoundary?.date,
+        claimedEndDate: sample.dynasty.claimedEndDate,
+        orthodoxEndDate: sample.period.endBoundary?.date,
+        note: sample.period.note
+    )
+    .padding()
 }

@@ -1,8 +1,13 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { SegmentedControl } from '../design-system/components/SegmentedControl'
-import { screenNames, type CalendarState, type ScreenId } from '../flows/navigationFlow'
-import { CalendarHomeScreen } from '../screens/CalendarHomeScreen'
-import { YearPickerScreen } from '../screens/YearPickerScreen'
+import { screenNames, type ScreenId } from '../flows/navigationFlow'
+import { DynastyDetailScreen } from '../screens/DynastyDetailScreen'
+import { DynastySpanDetailScreen } from '../screens/DynastySpanDetailScreen'
+import { EmperorListScreen } from '../screens/EmperorListScreen'
+import { HistoryHomeScreen } from '../screens/HistoryHomeScreen'
+import { mingReignEras, type ReignEraPreview } from '../screens/historyData'
+import { ReignEraDetailScreen } from '../screens/ReignEraDetailScreen'
+import { ReignEraListScreen } from '../screens/ReignEraListScreen'
 import { FlowConnections } from './FlowConnections'
 import { IPhoneCanvas } from './IPhoneCanvas'
 
@@ -12,9 +17,8 @@ type CanvasSize = 'compact' | 'regular'
 export function PrototypeApp() {
   const [theme, setTheme] = useState<Theme>('light')
   const [size, setSize] = useState<CanvasSize>('regular')
-  const [activeScreen, setActiveScreen] = useState<ScreenId>('calendar-home')
-  const [calendarState, setCalendarState] = useState<CalendarState>('normal')
-  const [year, setYear] = useState(2035)
+  const [activeScreen, setActiveScreen] = useState<ScreenId>('history-home')
+  const [selectedEra, setSelectedEra] = useState<ReignEraPreview>(mingReignEras[2])
   const boardRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -22,99 +26,108 @@ export function PrototypeApp() {
     document.documentElement.dataset.size = size
   }, [theme, size])
 
-  const selectYear = (nextYear: number) => {
-    setYear(nextYear)
-    setActiveScreen('calendar-home')
+  const openEra = (era: ReignEraPreview) => {
+    setSelectedEra(era)
+    setActiveScreen('reign-era-detail')
   }
-
-  const activate = (screen: ScreenId) => setActiveScreen(screen)
 
   return (
     <div className="prototype-shell">
       <header className="workspace-header">
-        <div><p>中华历 · Design Prototype</p><h1>iOS 页面与流程</h1></div>
+        <div>
+          <p>中华历 · 第二个 Tab</p>
+          <h1>朝代与年号流程重构</h1>
+        </div>
         <div className="workspace-controls">
           <SegmentedControl label="主题" value={theme} onChange={setTheme} options={[
-            { label: '浅色', value: 'light' }, { label: '深色', value: 'dark' },
+            { label: '浅色', value: 'light' },
+            { label: '深色', value: 'dark' },
           ]} />
           <SegmentedControl label="画板尺寸" value={size} onChange={setSize} options={[
-            { label: '紧凑', value: 'compact' }, { label: '常规', value: 'regular' },
+            { label: '紧凑', value: 'compact' },
+            { label: '常规', value: 'regular' },
           ]} />
         </div>
       </header>
 
       <main className="prototype-board">
         <div className="prototype-board__heading">
-          <div><span>页面流程</span><h2>按钮直接连接到目标页面或状态</h2></div>
-          <div className="connection-legend"><span><i />同页状态</span><span><i className="sheet" />sheet / dismiss</span></div>
+          <div>
+            <span>Navigation Flow</span>
+            <h2>朝代目录 → 朝代总览 → 帝王 / 年号 / 国祚</h2>
+          </div>
+          <div className="connection-legend">
+            <span><i />push</span>
+            <span><i className="pop" />pop</span>
+          </div>
         </div>
+
         <div className="flow-board" ref={boardRef}>
-          <FlowConnections boardRef={boardRef} layoutKey={`${theme}-${size}-${year}-${calendarState}`} />
+          <FlowConnections boardRef={boardRef} layoutKey={`${theme}-${size}-${selectedEra.id}`} />
 
-          <section className="screen-artboard screen-artboard--home">
-            <header><span>01</span><h2>{screenNames['calendar-home']}</h2><small>1 screen · 4 states</small></header>
-            <div className="screen-state-switcher">
-              <span>Screen State</span>
-              <SegmentedControl label="日历页面状态" value={calendarState} onChange={setCalendarState} options={[
-                { label: '普通', value: 'normal' },
-                { label: '选中', value: 'selected' },
-                { label: '今天', value: 'today' },
-                { label: '今天已选', value: 'todaySelected' },
-              ]} />
-            </div>
-            <IPhoneCanvas screenId="calendar-home" isActive={activeScreen === 'calendar-home'}>
-              <CalendarHomeScreen
-                year={year}
-                state={calendarState}
-                onSelectDate={() => {
-                  setCalendarState('selected')
-                  activate('calendar-home')
-                }}
-                onSelectToday={() => {
-                  setCalendarState('todaySelected')
-                  activate('calendar-home')
-                }}
-                onOpenYearPicker={() => activate('year-picker')}
-              />
-            </IPhoneCanvas>
-            <div className="state-strip" aria-label="日期单元格状态对照">
-              <div className="state-strip__heading"><strong>日期单元格状态</strong><span>局部组件对照</span></div>
-              <div className="state-strip__items">
-                {([
-                  ['normal', '普通'],
-                  ['selected', '选中'],
-                  ['today', '今天'],
-                  ['todaySelected', '今天已选'],
-                ] as const).map(([state, label]) => (
-                  <button
-                    type="button"
-                    key={state}
-                    className={`state-sample state-sample--${state} ${calendarState === state ? 'is-active' : ''}`}
-                    data-state-id={state}
-                    aria-pressed={calendarState === state}
-                    onClick={() => setCalendarState(state)}
-                  >
-                    <span>{label}</span>
-                    <strong>初一</strong>
-                    <small>乙丑日</small>
-                  </button>
-                ))}
-              </div>
-            </div>
-          </section>
+          <ScreenArtboard index="01" screenId="history-home" detail="Tab 根页面" activeScreen={activeScreen}>
+            <HistoryHomeScreen onOpenDynasty={() => setActiveScreen('dynasty-detail')} />
+          </ScreenArtboard>
 
-          <section className="screen-artboard screen-artboard--picker">
-            <header><span>02</span><h2>{screenNames['year-picker']}</h2><small>sheet</small></header>
-            <IPhoneCanvas screenId="year-picker" isActive={activeScreen === 'year-picker'}>
-              <YearPickerScreen
-                selectedYear={year}
-                onSelect={selectYear}
-                onDismiss={() => activate('calendar-home')}
-              />
-            </IPhoneCanvas>
-          </section>
+          <ScreenArtboard index="02" screenId="dynasty-detail" detail="push" activeScreen={activeScreen}>
+            <DynastyDetailScreen
+              onBack={() => setActiveScreen('history-home')}
+              onOpenEmperors={() => setActiveScreen('emperor-list')}
+              onOpenEras={() => setActiveScreen('reign-era-list')}
+              onOpenSpan={() => setActiveScreen('dynasty-span-detail')}
+            />
+          </ScreenArtboard>
+
+          <ScreenArtboard index="03" screenId="emperor-list" detail="push" activeScreen={activeScreen}>
+            <EmperorListScreen onBack={() => setActiveScreen('dynasty-detail')} />
+          </ScreenArtboard>
+
+          <ScreenArtboard index="04" screenId="reign-era-list" detail="push" activeScreen={activeScreen}>
+            <ReignEraListScreen
+              onBack={() => setActiveScreen('dynasty-detail')}
+              onOpenEra={openEra}
+            />
+          </ScreenArtboard>
+
+          <ScreenArtboard index="05" screenId="dynasty-span-detail" detail="push" activeScreen={activeScreen}>
+            <DynastySpanDetailScreen onBack={() => setActiveScreen('dynasty-detail')} />
+          </ScreenArtboard>
+
+          <ScreenArtboard index="06" screenId="reign-era-detail" detail="push" activeScreen={activeScreen}>
+            <ReignEraDetailScreen
+              era={selectedEra}
+              onBack={() => setActiveScreen('reign-era-list')}
+            />
+          </ScreenArtboard>
         </div>
       </main>
     </div>
+  )
+}
+
+function ScreenArtboard({
+  index,
+  screenId,
+  detail,
+  activeScreen,
+  children,
+}: {
+  index: string
+  screenId: ScreenId
+  detail: string
+  activeScreen: ScreenId
+  children: ReactNode
+}) {
+  return (
+    <section className={`screen-artboard screen-artboard--${screenId}`}>
+      <header>
+        <span>{index}</span>
+        <h2>{screenNames[screenId]}</h2>
+        <small>{detail}</small>
+      </header>
+      <IPhoneCanvas screenId={screenId} isActive={activeScreen === screenId}>
+        {children}
+      </IPhoneCanvas>
+    </section>
   )
 }

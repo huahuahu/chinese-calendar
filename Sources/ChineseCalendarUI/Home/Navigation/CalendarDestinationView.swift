@@ -14,8 +14,16 @@ struct CalendarDestinationView: View {
                     dayIndex: dayIndex
                 )
                 .id(destination)
-            case let .dynasty(dynastyID):
-                DynastyDetailView(dynastyID: dynastyID)
+            case let .dynasty(orthodoxPeriodID):
+                DynastyDetailView(orthodoxPeriodID: orthodoxPeriodID)
+            case let .emperorList(dynastyID):
+                EmperorListView(dynastyID: dynastyID)
+            case let .reignEraList(dynastyID):
+                ReignEraListView(dynastyID: dynastyID)
+            case let .dynastySpan(orthodoxPeriodID):
+                DynastySpanDetailView(orthodoxPeriodID: orthodoxPeriodID)
+            case let .reignEra(reignEraID):
+                ReignEraDetailView(reignEraID: reignEraID)
             case let .emperor(emperorID):
                 EmperorDetailView(emperorID: emperorID)
             case let .yearPicker(yearPicker):

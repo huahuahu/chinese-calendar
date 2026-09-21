@@ -253,6 +253,15 @@ public enum ChineseCalendarModelContainerFactory {
         let seedContentLevel = try seedStoreContentLevel(at: seedManifestURL)
         let installedContentLevel = try seedStoreContentLevel(at: installedManifestURL)
         if seedContentLevel == .base, installedContentLevel == .full {
+            guard try seedStoreSchemaVersion(at: installedManifestURL)
+                == ChineseCalendarModelSchema.versionIdentifier
+            else {
+                ChineseCalendarLog.persistence.notice(
+                    "Replacing installed full seed store because its schema is incompatible"
+                )
+                return true
+            }
+
             ChineseCalendarLog.persistence
                 .info("Keeping installed full seed store instead of reinstalling bundled base store")
             return false
@@ -272,7 +281,9 @@ public enum ChineseCalendarModelContainerFactory {
         let manifest = try seedStoreManifest(at: manifestURL)
         return manifest["artifactVersion"] as? String ?? manifest["datasetVersion"] as? String
     }
+}
 
+private extension ChineseCalendarModelContainerFactory {
     private static func seedStoreArtifactVersion(at manifestURL: URL) throws -> String? {
         try seedStoreManifest(at: manifestURL)["artifactVersion"] as? String
     }
@@ -294,6 +305,15 @@ public enum ChineseCalendarModelContainerFactory {
         }
 
         return ChineseCalendarSeedStoreContentLevel(rawValue: rawValue)
+    }
+
+    private static func seedStoreSchemaVersion(at manifestURL: URL) throws -> String? {
+        let data = try Data(contentsOf: manifestURL)
+        guard let manifest = try JSONSerialization.jsonObject(with: data) as? [String: Any] else {
+            return nil
+        }
+
+        return manifest["schemaVersion"] as? String
     }
 
     private static func seedStoreResourceURL(in bundle: Bundle) -> URL? {
