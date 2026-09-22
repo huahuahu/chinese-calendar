@@ -4,6 +4,18 @@ import SwiftUI
 
 /// 显示在 LunarMonthGrid 的日期网格中，用于呈现单个农历日。
 struct LunarDayGridCell: View {
+    // swiftformat:disable:next enumNamespaces
+    private struct Constants {
+        static let spacing: CGFloat = 6
+        static let titleHorizontalPadding: CGFloat = 6
+        static let titleVerticalPadding: CGFloat = 2
+        static let padding: CGFloat = 10
+        static let minimumHeight: CGFloat = 72
+        static let cornerRadius: CGFloat = 18
+        static let borderWidth: CGFloat = 1
+        static let borderOpacity: Double = 0.08
+    }
+
     let day: ChineseLunarDay
     let isSelected: Bool
     let isToday: Bool
@@ -13,24 +25,26 @@ struct LunarDayGridCell: View {
     @Environment(\.locale) private var locale
 
     var body: some View {
-        LunarDayCellLayout {
+        VStack(alignment: .leading, spacing: Constants.spacing) {
             Text(dayTitle)
                 .font(.headline)
                 .lineLimit(1)
-                .padding(.horizontal, 6)
-                .padding(.vertical, 2)
+                .fixedSize(horizontal: true, vertical: false)
+                .padding(.horizontal, Constants.titleHorizontalPadding)
+                .padding(.vertical, Constants.titleVerticalPadding)
                 .foregroundStyle(state.titleForegroundColor)
                 .background(state.titleBackgroundColor, in: Capsule())
                 .overlay {
                     if showsTodayOutline {
                         Capsule()
-                            .strokeBorder(Color.accentColor, lineWidth: 1)
+                            .strokeBorder(Color.accentColor, lineWidth: Constants.borderWidth)
                     }
                 }
 
             Text(daySubtitle)
                 .font(.subheadline)
                 .lineLimit(1)
+                .fixedSize(horizontal: true, vertical: false)
                 .foregroundStyle(.secondary)
 
             Text(civilDateTitle)
@@ -38,13 +52,14 @@ struct LunarDayGridCell: View {
                 .fixedSize(horizontal: false, vertical: true)
                 .foregroundStyle(.secondary)
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .foregroundStyle(.primary)
-        .padding(10)
-        .frame(minHeight: 72, alignment: .topLeading)
-        .background(.background, in: RoundedRectangle(cornerRadius: 18))
+        .padding(Constants.padding)
+        .frame(minHeight: Constants.minimumHeight, alignment: .topLeading)
+        .background(.background, in: RoundedRectangle(cornerRadius: Constants.cornerRadius))
         .overlay {
-            RoundedRectangle(cornerRadius: 18)
-                .strokeBorder(Color.primary.opacity(0.08), lineWidth: 1)
+            RoundedRectangle(cornerRadius: Constants.cornerRadius)
+                .strokeBorder(Color.primary.opacity(Constants.borderOpacity), lineWidth: Constants.borderWidth)
         }
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(accessibilityLabel)

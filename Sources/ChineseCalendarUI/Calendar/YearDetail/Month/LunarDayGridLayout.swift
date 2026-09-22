@@ -55,8 +55,9 @@ nonisolated struct LunarDayGridLayout: Layout {
     ) -> (size: CGSize, frames: [CGRect]) {
         guard !subviews.isEmpty else { return (.zero, []) }
 
-        // 提议零宽是探测下限，不是强制压成零宽。LunarDayCellLayout 会保留农历日、干支的完整宽度，
+        // 提议零宽是探测下限，不是强制压成零宽。单元格前两行的 fixedSize 会保留农历日、干支的完整宽度，
         // 外层 padding 也计入返回值；取所有格子的最大值并向上取整，避免分配不足。
+        // 此处只取宽度；零宽下的换行高度不用于排版，之后按实际列宽重新测量。
         // 内容下限与容器宽度无关，在本轮缓存有效期间只测量一次。
         let minimumWidth = cache.minimumWidth ?? ceil(subviews.map {
             $0.sizeThatFits(ProposedViewSize(width: 0, height: nil)).width
