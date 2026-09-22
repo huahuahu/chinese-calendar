@@ -4,7 +4,7 @@ import SwiftUI
 
 /// 显示在 LunarMonthGrid 的日期网格中，用于呈现单个农历日。
 struct LunarDayGridCell: View {
-    private struct Constants {
+    private enum Constants {
         static let spacing: CGFloat = 6
         static let titleHorizontalPadding: CGFloat = 6
         static let titleVerticalPadding: CGFloat = 2
