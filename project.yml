@@ -86,7 +86,7 @@ targets:
         CFBundleDisplayName: Chinese Calendar
         CFBundleLocalizations:
           - zh-Hans
-        ChineseCalendarFullSeedStoreManifestURL: https://github.com/huahuahu/chinese-calendar/releases/download/full-seed-store-2026.08.30/ChineseCalendarFullSeedStoreManifest.json
+        ChineseCalendarFullSeedStoreManifestURL: https://github.com/huahuahu/chinese-calendar/releases/download/full-seed-store-2026.06.28/ChineseCalendarFullSeedStoreManifest.json
         CFBundleURLTypes:
           - CFBundleURLName: com.tiger.suzhou.ChineseCalendar
             CFBundleURLSchemes:
