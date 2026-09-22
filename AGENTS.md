@@ -99,6 +99,13 @@ This repository hosts a Swift project for browsing the traditional Chinese calen
 - If the in-app browser reports that its webview did not attach, keep the existing browser binding, create a fresh tab, and retry the local URL. Navigation can replace the browser tab ID; if a later action says the tab is missing, list tabs and reacquire the current `Simulator - <device name>` tab instead of restarting the simulator mirror.
 - If `serve-sim` shows `Connecting...`, inspect its terminal. Framebuffer/encoder-ready messages prove capture started but not that the control socket is usable. Restart the mirror with the proxy variables removed as above; after it becomes `live`, browser coordinate clicks can operate the streamed simulator UI.
 
+## SwiftUI View 编写约定
+
+创建或修改 SwiftUI View 时：
+
+1. 使用嵌套在对应 View 内的 `private struct Constants`，集中管理仅供该 View 使用的间距、内边距、尺寸、圆角、透明度等展示常量。业务数据以及 `.tint`、`.secondary`、`.headline` 等具有明确系统语义的样式不放入 `Constants`。
+2. 使用职责单一的小 View 组合界面，让 `body` 只表达页面或组件的整体结构。拆出的 View 应使用语义清晰的名称，并且只接收自身渲染所需的最少数据。可复用或具有独立含义的组件拆成单独的 View；仅服务当前页面的简单、一次性布局片段，可以使用命名清晰的私有计算属性或构建函数。
+
 ## Swift Agent Guidance
 
 The project keeps its own repository-specific rules above, but also adopts the spirit of Paul Hudson's Swift agent guidance:
