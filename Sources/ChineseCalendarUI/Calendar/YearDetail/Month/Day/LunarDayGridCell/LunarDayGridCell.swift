@@ -13,10 +13,11 @@ struct LunarDayGridCell: View {
     @Environment(\.locale) private var locale
 
     var body: some View {
-        LunarDayCellLayout {
+        VStack(alignment: .leading, spacing: 6) {
             Text(dayTitle)
                 .font(.headline)
                 .lineLimit(1)
+                .fixedSize(horizontal: true, vertical: false)
                 .padding(.horizontal, 6)
                 .padding(.vertical, 2)
                 .foregroundStyle(state.titleForegroundColor)
@@ -31,6 +32,7 @@ struct LunarDayGridCell: View {
             Text(daySubtitle)
                 .font(.subheadline)
                 .lineLimit(1)
+                .fixedSize(horizontal: true, vertical: false)
                 .foregroundStyle(.secondary)
 
             Text(civilDateTitle)
@@ -38,6 +40,7 @@ struct LunarDayGridCell: View {
                 .fixedSize(horizontal: false, vertical: true)
                 .foregroundStyle(.secondary)
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .foregroundStyle(.primary)
         .padding(10)
         .frame(minHeight: 72, alignment: .topLeading)
