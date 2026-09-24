@@ -308,9 +308,8 @@ private extension ReignEraDetailView {
     }
 }
 
-#Preview {
+#Preview(traits: .sampleData) {
     NavigationStack {
         ReignEraDetailView(reignEraID: HistoryPreviewData.reignEraID)
     }
-    .modelContainer(HistoryPreviewData.container)
 }

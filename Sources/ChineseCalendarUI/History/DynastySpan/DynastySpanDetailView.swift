@@ -188,9 +188,8 @@ struct DynastySpanDetailView: View {
     }
 }
 
-#Preview {
+#Preview(traits: .sampleData) {
     NavigationStack {
         DynastySpanDetailView(orthodoxPeriodID: HistoryPreviewData.orthodoxPeriodID)
     }
-    .modelContainer(HistoryPreviewData.container)
 }

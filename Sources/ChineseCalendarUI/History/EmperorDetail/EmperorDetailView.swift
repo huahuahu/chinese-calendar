@@ -302,9 +302,8 @@ private extension EmperorDetailView {
     }
 }
 
-#Preview {
+#Preview(traits: .sampleData) {
     NavigationStack {
         EmperorDetailView(emperorID: HistoryPreviewData.emperorID)
     }
-    .modelContainer(HistoryPreviewData.container)
 }

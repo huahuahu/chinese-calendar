@@ -26,8 +26,6 @@ struct CalendarDestinationView: View {
                 ReignEraDetailView(reignEraID: reignEraID)
             case let .emperor(emperorID):
                 EmperorDetailView(emperorID: emperorID)
-            case let .yearPicker(yearPicker):
-                CalendarYearPickerDestinationView(destination: yearPicker)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)

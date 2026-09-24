@@ -154,9 +154,8 @@ struct ReignEraListView: View {
     }
 }
 
-#Preview {
+#Preview(traits: .sampleData) {
     NavigationStack {
         ReignEraListView(dynastyID: HistoryPreviewData.dynastyID)
     }
-    .modelContainer(HistoryPreviewData.container)
 }

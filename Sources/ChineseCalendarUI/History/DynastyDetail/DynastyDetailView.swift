@@ -111,9 +111,8 @@ struct DynastyDetailView: View {
     }
 }
 
-#Preview {
+#Preview(traits: .sampleData) {
     NavigationStack {
         DynastyDetailView(orthodoxPeriodID: HistoryPreviewData.orthodoxPeriodID)
     }
-    .modelContainer(HistoryPreviewData.container)
 }

@@ -2,18 +2,29 @@ import ChineseCalendarCore
 import ChineseCalendarPersistence
 import SwiftUI
 
-/// 显示在 LunarMonthGrid 中，用于展开说明当前选中的农历日。
-struct SelectedLunarDayDetailCard: View {
-    let day: ChineseLunarDay
-    let month: ChineseLunarMonth
-    let contentLevel: ChineseCalendarSeedStoreContentLevel
+/// 显示唯一选中日的详细信息；所属月份由日模型关系推导。
+struct SelectedLunarDayDetail: View {
+    // swiftformat:disable:next enumNamespaces
+    private struct Constants {
+        static let contentSpacing: CGFloat = 16
+        static let headerSpacing: CGFloat = 16
+        static let titleSpacing: CGFloat = 6
+        static let sealDimension: CGFloat = 54
+        static let sealCornerRadius: CGFloat = 18
+        static let factSpacing: CGFloat = 10
+        static let factMinimumWidth: CGFloat = 140
+        static let cornerRadius: CGFloat = 28
+    }
 
+    @Environment(\.calendarStoreContentLevel) private var contentLevel
     @Environment(\.locale) private var locale
 
+    let day: ChineseLunarDay
+
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            HStack(alignment: .top, spacing: 16) {
-                VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: Constants.contentSpacing) {
+            HStack(alignment: .top, spacing: Constants.headerSpacing) {
+                VStack(alignment: .leading, spacing: Constants.titleSpacing) {
                     Text("选中日")
                         .font(.caption)
                         .bold()
@@ -32,12 +43,15 @@ struct SelectedLunarDayDetailCard: View {
                     .font(.title2)
                     .bold()
                     .foregroundStyle(.white)
-                    .frame(width: 54, height: 54)
-                    .background(Color.accentColor, in: RoundedRectangle(cornerRadius: 18))
+                    .frame(width: Constants.sealDimension, height: Constants.sealDimension)
+                    .background(
+                        Color.accentColor,
+                        in: RoundedRectangle(cornerRadius: Constants.sealCornerRadius)
+                    )
                     .accessibilityHidden(true)
             }
 
-            LazyVGrid(columns: columns, alignment: .leading, spacing: 10) {
+            LazyVGrid(columns: columns, alignment: .leading, spacing: Constants.factSpacing) {
                 CalendarFactTile(title: "农历表达", value: lunarExpression)
                 CalendarFactTile(title: "日干支", value: dayStemBranch)
                 CalendarFactTile(title: civilDateFactTitle, value: civilDateValue)
@@ -45,12 +59,24 @@ struct SelectedLunarDayDetailCard: View {
             }
         }
         .padding()
-        .background(.background.secondary, in: RoundedRectangle(cornerRadius: 28))
+        .background(
+            .background.secondary,
+            in: RoundedRectangle(cornerRadius: Constants.cornerRadius)
+        )
         .accessibilityElement(children: .contain)
     }
 
+    private var month: ChineseLunarMonth? {
+        day.chineseLunarMonth
+    }
+
     private var columns: [GridItem] {
-        [GridItem(.adaptive(minimum: 140), spacing: 10)]
+        [
+            GridItem(
+                .adaptive(minimum: Constants.factMinimumWidth),
+                spacing: Constants.factSpacing
+            )
+        ]
     }
 
     private var dayTitle: String {
@@ -70,7 +96,11 @@ struct SelectedLunarDayDetailCard: View {
     }
 
     private var lunarExpression: String {
-        "\(LunarMonthDisplay.title(for: month))\(dayTitle)"
+        guard let month else {
+            return dayTitle
+        }
+
+        return "\(LunarMonthDisplay.title(for: month))\(dayTitle)"
     }
 
     private var civilDateFactTitle: String {

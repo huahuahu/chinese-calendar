@@ -1,5 +1,4 @@
 import ChineseCalendarPersistence
-import SwiftData
 
 /// 为 History 目录中的同文件 Preview 提供一套彼此关联的内存数据。
 enum HistoryPreviewData {
@@ -15,31 +14,6 @@ enum HistoryPreviewData {
     static let orthodoxPeriodID = "preview-ming-orthodox-period"
     static let emperorID = "preview-ming-chengzu"
     static let reignEraID = "preview-yongle"
-
-    static let container: ModelContainer = {
-        do {
-            let schema = Schema(
-                ChineseCalendarModelSchema.models,
-                version: ChineseCalendarModelSchema.version
-            )
-            let configuration = ModelConfiguration(
-                "HistoryPreview",
-                schema: schema,
-                isStoredInMemoryOnly: true
-            )
-            let container = try ModelContainer(for: schema, configurations: [configuration])
-            let sample = makeSample()
-
-            container.mainContext.insert(sample.tradition)
-            container.mainContext.insert(sample.dynasty)
-            container.mainContext.insert(sample.period)
-            try container.mainContext.save()
-
-            return container
-        } catch {
-            fatalError("无法创建 History Preview 的内存 ModelContainer：\(error)")
-        }
-    }()
 
     static func makeSample() -> Sample {
         let dynasty = makeDynasty()
@@ -120,7 +94,7 @@ enum HistoryPreviewData {
             personalName: "朱棣",
             templeName: "成祖",
             sequenceIndex: 1,
-            note: "Preview 展示庙号、本名、在位区间与年号关系。"
+            note: "Preview 展示庙号、本名、在位区间与年号关系。这段较长说明用于验证窄屏和辅助功能字号下的多行排版不会截断关键信息。"
         )
         let yongleSegment = EmperorReignSegment(
             id: "preview-yongle-reign",

@@ -35,7 +35,7 @@
             }
             .padding()
             .background(.background.secondary, in: RoundedRectangle(cornerRadius: 28))
-            // Match the page padding outside LunarMonthGrid as well as its own padding.
+            // Match the page padding outside LunarDayGrid as well as its own padding.
             .padding()
         }
     }

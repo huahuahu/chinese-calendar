@@ -70,7 +70,7 @@ public struct CalendarHomeView<BottomStatusBar: View>: View {
     }
 }
 
-#Preview {
+#Preview(traits: .sampleData) {
     CalendarHomeView()
 }
 
