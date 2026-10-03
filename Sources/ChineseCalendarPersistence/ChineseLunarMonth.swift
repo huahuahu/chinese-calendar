@@ -9,7 +9,6 @@ public final class ChineseLunarMonth {
     #Unique<ChineseLunarMonth>([\.lunarMonthIndex])
 
     public var lunarMonthIndex: Int
-    public var lunarYearNumber: Int
     public var monthNumberInYear: Int
     public var isLeapMonth: Bool
     public var intercalaryMonthNameStyleRawValue: String
@@ -31,18 +30,16 @@ public final class ChineseLunarMonth {
 
     public init(
         lunarMonthIndex: Int,
-        lunarYearNumber: Int,
         monthNumberInYear: Int,
         isLeapMonth: Bool,
         intercalaryMonthNameStyle: LunarIntercalaryMonthNameStyle = .leap,
         dayCount: Int,
         monthStemIndex: Int,
         monthBranchIndex: Int,
-        chineseLunarYear: ChineseLunarYear? = nil,
+        chineseLunarYear: ChineseLunarYear,
         days: [ChineseLunarDay] = []
     ) {
         self.lunarMonthIndex = lunarMonthIndex
-        self.lunarYearNumber = lunarYearNumber
         self.monthNumberInYear = monthNumberInYear
         self.isLeapMonth = isLeapMonth
         intercalaryMonthNameStyleRawValue = intercalaryMonthNameStyle.rawValue

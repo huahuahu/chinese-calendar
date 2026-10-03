@@ -17,7 +17,7 @@ struct PreviewSampleDataTests {
         for month in months {
             let days = month.days.sorted { $0.dayNumberInMonth < $1.dayNumberInMonth }
             #expect(days.count == month.dayCount)
-            #expect(month.chineseLunarYear?.lunarYearNumber == month.lunarYearNumber)
+            #expect(month.chineseLunarYear != nil)
             #expect(days.map(\.dayNumberInMonth) == Array(1 ... month.dayCount))
             for day in days {
                 #expect(day.dayIndex == month.lunarMonthIndex * 100 + day.dayNumberInMonth)
@@ -41,8 +41,10 @@ struct PreviewSampleDataTests {
 
         #expect(nextMonth.lunarMonthIndex == afterIndex)
         #expect(previousMonth.lunarMonthIndex == beforeIndex)
-        #expect(LunarCalendarFormatting.yearTitle(lunarYearNumber: previousMonth.lunarYearNumber) == "公元前 1 年")
-        #expect(LunarCalendarFormatting.yearTitle(lunarYearNumber: nextMonth.lunarYearNumber) == "公元 1 年")
+        #expect(try LunarCalendarFormatting
+            .yearTitle(lunarYearNumber: #require(previousMonth.chineseLunarYear).lunarYearNumber) == "公元前 1 年")
+        #expect(try LunarCalendarFormatting
+            .yearTitle(lunarYearNumber: #require(nextMonth.chineseLunarYear).lunarYearNumber) == "公元 1 年")
         let previousJulianDays = previousMonth.days.compactMap { $0.calendarDay?.julianDayNumber }
         let nextJulianDays = nextMonth.days.compactMap { $0.calendarDay?.julianDayNumber }
         let lastJulianDay = try #require(previousJulianDays.max())
@@ -77,7 +79,8 @@ struct PreviewSampleDataTests {
         #expect(previous.lunarMonthIndex != post.lunarMonthIndex)
         #expect(post.intercalaryMonthNameStyle == .post)
         #expect(next.monthNumberInYear == 10)
-        #expect(next.lunarYearNumber == post.lunarYearNumber + 1)
+        #expect(try #require(next.chineseLunarYear).lunarYearNumber == #require(post.chineseLunarYear)
+            .lunarYearNumber + 1)
         #expect(LunarCalendarFormatting.monthTitle(
             monthNumberInYear: 6,
             isLeapMonth: true,
@@ -99,7 +102,7 @@ struct PreviewSampleDataTests {
             return calendar.component(.era, from: JulianDayNumber.dateAtNoonUTC(for: julianDay))
         }
         #expect(Set(eras) == [0, 1])
-        #expect(month.lunarYearNumber == 0)
+        #expect(month.chineseLunarYear?.lunarYearNumber == 0)
         #expect(month.monthNumberInYear == 11)
     }
 

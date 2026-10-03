@@ -1,0 +1,11 @@
+Full days 884256
+Indexed days samples 999 rows 29506 median ms 0.6569623947143555 P95 ms 1.2340545654296875
+Indexed months samples 807 median ms 0.5519390106201172 P95 ms 0.8590221405029297
+Selected month 9 day Optional(263) derived Optional(9) year Optional(-220)
+Selected month 10 day Optional(293) derived Optional(10) year Optional(-220)
+Selected month 11 day Optional(322) derived Optional(11) year Optional(-219)
+Selected month 27773 day Optional(820149) derived Optional(27773) year Optional(2025)
+Selected month 27774 day Optional(820179) derived Optional(27774) year Optional(2025)
+Selected month 27775 day Optional(820208) derived Optional(27775) year Optional(2025)
+Selected month 2780 day Optional(82092) derived Optional(2780) year Optional(4)
+Selected month 2781 day Optional(82122) derived Optional(2781) year Optional(4)

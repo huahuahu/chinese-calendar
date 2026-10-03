@@ -4,7 +4,7 @@ import SwiftData
 @Model
 public final class Emperor {
     #Unique<Emperor>([\.id])
-    #Index<Emperor>([\.id], [\.sequenceIndex])
+    #Index<Emperor>([\.sequenceIndex])
 
     /// 皇帝或国主的稳定导入标识。
     public var id: String
@@ -61,7 +61,7 @@ public final class Emperor {
 @Model
 public final class EmperorReignSegment {
     #Unique<EmperorReignSegment>([\.id])
-    #Index<EmperorReignSegment>([\.id], [\.sequenceIndex], [\.segmentIndex])
+    #Index<EmperorReignSegment>([\.sequenceIndex], [\.segmentIndex])
 
     /// 在位区间的稳定导入标识。
     public var id: String
@@ -110,7 +110,7 @@ public final class EmperorReignSegment {
 @Model
 public final class ReignEra {
     #Unique<ReignEra>([\.id])
-    #Index<ReignEra>([\.id], [\.normalizedName], [\.sequenceIndex], [\.eraIndexWithinEmperor])
+    #Index<ReignEra>([\.normalizedName], [\.sequenceIndex], [\.eraIndexWithinEmperor])
 
     /// 年号使用区间的稳定导入标识。
     public var id: String

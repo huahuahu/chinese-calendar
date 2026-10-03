@@ -12,7 +12,7 @@ public enum ChineseDatePrecision: String, Codable, CaseIterable, Sendable {
 @Model
 public final class Dynasty {
     #Unique<Dynasty>([\.id])
-    #Index<Dynasty>([\.id], [\.name])
+    #Index<Dynasty>([\.name])
 
     public var id: String
     public var name: String
@@ -51,7 +51,7 @@ public final class Dynasty {
 @Model
 public final class ChineseDateExpression {
     #Unique<ChineseDateExpression>([\.id])
-    #Index<ChineseDateExpression>([\.id], [\.precisionRawValue, \.index])
+    #Index<ChineseDateExpression>([\.precisionRawValue, \.index])
 
     public var id: String
     public var precisionRawValue: String
@@ -131,7 +131,6 @@ public final class ChineseDateBound {
 @Model
 public final class OrthodoxTradition {
     #Unique<OrthodoxTradition>([\.id])
-    #Index<OrthodoxTradition>([\.id])
 
     public var id: String
     public var name: String
@@ -147,11 +146,9 @@ public final class OrthodoxTradition {
 @Model
 public final class OrthodoxBoundary {
     #Unique<OrthodoxBoundary>([\.id])
-    #Index<OrthodoxBoundary>([\.id], [\.traditionID])
+    #Index<OrthodoxBoundary>([\.tradition])
 
     public var id: String
-    public var traditionID: String
-    public var dateExpressionID: String
     public var note: String?
 
     public var tradition: OrthodoxTradition?
@@ -161,15 +158,11 @@ public final class OrthodoxBoundary {
 
     public init(
         id: String,
-        traditionID: String,
-        dateExpressionID: String,
-        tradition: OrthodoxTradition? = nil,
+        tradition: OrthodoxTradition,
         date: ChineseDateExpression,
         note: String? = nil
     ) {
         self.id = id
-        self.traditionID = traditionID
-        self.dateExpressionID = dateExpressionID
         self.tradition = tradition
         self.date = date
         self.note = note
@@ -179,13 +172,9 @@ public final class OrthodoxBoundary {
 @Model
 public final class OrthodoxPeriod {
     #Unique<OrthodoxPeriod>([\.id])
-    #Index<OrthodoxPeriod>([\.id], [\.traditionID, \.sequenceIndex], [\.segmentIndex])
+    #Index<OrthodoxPeriod>([\.tradition, \.sequenceIndex], [\.segmentIndex])
 
     public var id: String
-    public var traditionID: String
-    public var dynastyID: String
-    public var startBoundaryID: String
-    public var endBoundaryID: String
     public var sequenceIndex: Int
     public var segmentIndex: Int
     public var segmentName: String
@@ -198,24 +187,16 @@ public final class OrthodoxPeriod {
 
     public init(
         id: String,
-        traditionID: String,
-        dynastyID: String,
-        startBoundaryID: String,
-        endBoundaryID: String,
         sequenceIndex: Int,
         segmentIndex: Int,
         segmentName: String,
-        tradition: OrthodoxTradition? = nil,
-        dynasty: Dynasty? = nil,
-        startBoundary: OrthodoxBoundary? = nil,
-        endBoundary: OrthodoxBoundary? = nil,
+        tradition: OrthodoxTradition,
+        dynasty: Dynasty,
+        startBoundary: OrthodoxBoundary,
+        endBoundary: OrthodoxBoundary,
         note: String? = nil
     ) {
         self.id = id
-        self.traditionID = traditionID
-        self.dynastyID = dynastyID
-        self.startBoundaryID = startBoundaryID
-        self.endBoundaryID = endBoundaryID
         self.sequenceIndex = sequenceIndex
         self.segmentIndex = segmentIndex
         self.segmentName = segmentName

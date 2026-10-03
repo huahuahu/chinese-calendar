@@ -140,7 +140,6 @@ struct SelectedLunarDayDetail: View {
     )
     let month = ChineseLunarMonth(
         lunarMonthIndex: 3,
-        lunarYearNumber: 2026,
         monthNumberInYear: 1,
         isLeapMonth: false,
         dayCount: 30,
@@ -150,7 +149,6 @@ struct SelectedLunarDayDetail: View {
     )
     let day = ChineseLunarDay(
         dayIndex: 315,
-        lunarMonthIndex: 3,
         dayNumberInMonth: 15,
         dayStemIndex: 4,
         dayBranchIndex: 2,
@@ -174,10 +172,10 @@ struct SelectedLunarDayDetail: View {
 #Preview("有可能空白 · 关联数据缺失") {
     let day = ChineseLunarDay(
         dayIndex: 315,
-        lunarMonthIndex: 3,
         dayNumberInMonth: 15,
         dayStemIndex: 4,
-        dayBranchIndex: 2
+        dayBranchIndex: 2,
+        chineseLunarMonth: PreviewSampleData.makeStandaloneMonth()
     )
 
     NavigationStack {

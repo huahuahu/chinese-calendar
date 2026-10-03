@@ -76,6 +76,26 @@ struct SeededModelContainerTests {
         #expect(try fixture.shouldInstall())
     }
 
+    @Test func incompatibleBaseIsReplacedEvenWhenArtifactMatches() throws {
+        let fixture = try SeedStoreFixture(
+            seedManifest: Self.manifest(artifactVersion: "same"),
+            installedManifest: Self.manifest(artifactVersion: "same", schemaVersion: "1.2.0")
+        )
+        defer { fixture.remove() }
+        #expect(try fixture.shouldInstall())
+    }
+
+    @Test func firstInstallationRequiresBundledStore() throws {
+        let fixture = try SeedStoreFixture(
+            seedManifest: Self.manifest(artifactVersion: "new"), installedManifest: nil
+        )
+        defer { fixture.remove() }
+        try FileManager.default.removeItem(
+            at: fixture.storeDirectory.appendingPathComponent(ChineseCalendarSeedStore.storeFileName)
+        )
+        #expect(try fixture.shouldInstall())
+    }
+
     @Test func identityTokenPrefersArtifactThenDatasetAndNeverUsesGeneratedAt() throws {
         let directory = FileManager.default.temporaryDirectory
             .appendingPathComponent("SeedStoreIdentityTests-\(UUID().uuidString)", isDirectory: true)

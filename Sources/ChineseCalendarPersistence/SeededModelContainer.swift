@@ -250,18 +250,16 @@ public enum ChineseCalendarModelContainerFactory {
             return true
         }
 
+        guard try seedStoreSchemaVersion(at: installedManifestURL)
+            == ChineseCalendarModelSchema.versionIdentifier
+        else {
+            ChineseCalendarLog.persistence.notice("Replacing installed seed store with incompatible or missing schema")
+            return true
+        }
+
         let seedContentLevel = try seedStoreContentLevel(at: seedManifestURL)
         let installedContentLevel = try seedStoreContentLevel(at: installedManifestURL)
         if seedContentLevel == .base, installedContentLevel == .full {
-            guard try seedStoreSchemaVersion(at: installedManifestURL)
-                == ChineseCalendarModelSchema.versionIdentifier
-            else {
-                ChineseCalendarLog.persistence.notice(
-                    "Replacing installed full seed store because its schema is incompatible"
-                )
-                return true
-            }
-
             ChineseCalendarLog.persistence
                 .info("Keeping installed full seed store instead of reinstalling bundled base store")
             return false

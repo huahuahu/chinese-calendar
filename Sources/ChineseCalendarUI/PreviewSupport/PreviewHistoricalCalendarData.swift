@@ -116,7 +116,6 @@ enum PreviewHistoricalCalendarData {
     ) {
         let month = ChineseLunarMonth(
             lunarMonthIndex: sample.index,
-            lunarYearNumber: year.lunarYearNumber,
             monthNumberInYear: sample.number,
             isLeapMonth: sample.isPost,
             intercalaryMonthNameStyle: sample.isPost ? .post : .leap,
@@ -132,7 +131,6 @@ enum PreviewHistoricalCalendarData {
             let calendarDay = CalendarDay(dayIndex: dayIndex, julianDayNumber: julianDay)
             let day = ChineseLunarDay(
                 dayIndex: dayIndex,
-                lunarMonthIndex: sample.index,
                 dayNumberInMonth: number,
                 dayStemIndex: (julianDay + 9) % 10,
                 dayBranchIndex: (julianDay + 1) % 12,

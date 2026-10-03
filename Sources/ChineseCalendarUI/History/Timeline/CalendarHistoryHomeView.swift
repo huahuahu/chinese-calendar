@@ -27,7 +27,7 @@ struct CalendarHistoryHomeView: View {
         let traditionID = HistoryConfiguration.defaultOrthodoxTraditionID
         _periods = Query(
             filter: #Predicate<OrthodoxPeriod> { period in
-                period.traditionID == traditionID
+                period.tradition?.id == traditionID
             },
             sort: \OrthodoxPeriod.sequenceIndex
         )

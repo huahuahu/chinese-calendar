@@ -34,7 +34,8 @@ struct CalendarSelectionResolver {
         inMonth monthIndex: Int,
         todayJulianDayNumber: Int
     ) throws -> Int? {
-        if let today = try todayDay(julianDayNumber: todayJulianDayNumber), today.lunarMonthIndex == monthIndex {
+        let today = try todayDay(julianDayNumber: todayJulianDayNumber)
+        if let today, today.chineseLunarMonth?.lunarMonthIndex == monthIndex {
             return today.dayIndex
         }
 
@@ -46,7 +47,7 @@ struct CalendarSelectionResolver {
         todayJulianDayNumber: Int
     ) throws -> Int? {
         if let today = try todayDay(julianDayNumber: todayJulianDayNumber) {
-            let todayYearNumber = try month(monthIndex: today.lunarMonthIndex)?.lunarYearNumber
+            let todayYearNumber = today.chineseLunarMonth?.chineseLunarYear?.lunarYearNumber
             if todayYearNumber == yearNumber {
                 return today.dayIndex
             }
@@ -125,12 +126,12 @@ struct CalendarSelectionResolver {
     func yearNumber(forDayIndex dayIndex: Int?) throws -> Int? {
         guard let dayIndex,
               let selectedDay = try day(dayIndex: dayIndex),
-              let selectedMonth = try month(monthIndex: selectedDay.lunarMonthIndex)
+              let selectedMonth = selectedDay.chineseLunarMonth
         else {
             return nil
         }
 
-        return selectedMonth.lunarYearNumber
+        return selectedMonth.chineseLunarYear?.lunarYearNumber
     }
 
     func monthIndex(forDayIndex dayIndex: Int?) throws -> Int? {
@@ -138,7 +139,7 @@ struct CalendarSelectionResolver {
             return nil
         }
 
-        return try day(dayIndex: dayIndex)?.lunarMonthIndex
+        return try day(dayIndex: dayIndex)?.chineseLunarMonth?.lunarMonthIndex
     }
 
     func todayDayIndex(julianDayNumber: Int) throws -> Int? {
@@ -157,7 +158,7 @@ struct CalendarSelectionResolver {
         )
         descriptor.fetchLimit = 1
         descriptor.relationshipKeyPathsForPrefetching = [\.calendarDay, \.chineseLunarMonth]
-        return try modelContext.fetch(descriptor).first
+        return try validDay(modelContext.fetch(descriptor).first)
     }
 
     private func todayDay(julianDayNumber: Int) throws -> ChineseLunarDay? {
@@ -168,30 +169,24 @@ struct CalendarSelectionResolver {
         )
         descriptor.fetchLimit = 1
         descriptor.relationshipKeyPathsForPrefetching = [\.chineseLunarDay]
-        return try modelContext.fetch(descriptor).first?.chineseLunarDay
+        return try validDay(modelContext.fetch(descriptor).first?.chineseLunarDay)
     }
 
     private func firstDay(monthIndex: Int) throws -> ChineseLunarDay? {
         var descriptor = FetchDescriptor<ChineseLunarDay>(
-            predicate: #Predicate<ChineseLunarDay> { day in
-                day.lunarMonthIndex == monthIndex
-            },
+            predicate: ChineseCalendarRelationshipPredicates.days(inMonth: monthIndex),
             sortBy: [SortDescriptor(\.dayNumberInMonth)]
         )
         descriptor.fetchLimit = 1
         descriptor.relationshipKeyPathsForPrefetching = [\.calendarDay, \.chineseLunarMonth]
-        return try modelContext.fetch(descriptor).first
+        return try validDay(modelContext.fetch(descriptor).first)
     }
 
-    private func month(monthIndex: Int) throws -> ChineseLunarMonth? {
-        var descriptor = FetchDescriptor<ChineseLunarMonth>(
-            predicate: #Predicate<ChineseLunarMonth> { month in
-                month.lunarMonthIndex == monthIndex
-            }
-        )
-        descriptor.fetchLimit = 1
-        descriptor.relationshipKeyPathsForPrefetching = [\.chineseLunarYear]
-        return try modelContext.fetch(descriptor).first
+    private func validDay(_ day: ChineseLunarDay?) -> ChineseLunarDay? {
+        guard let day, day.calendarDay != nil, day.chineseLunarMonth?.chineseLunarYear != nil else {
+            return nil
+        }
+        return day
     }
 
     private func boundaryMonth(
@@ -199,9 +194,7 @@ struct CalendarSelectionResolver {
         order: SortOrder
     ) throws -> ChineseLunarMonth? {
         var descriptor = FetchDescriptor<ChineseLunarMonth>(
-            predicate: #Predicate<ChineseLunarMonth> { month in
-                month.lunarYearNumber == yearNumber
-            },
+            predicate: ChineseCalendarRelationshipPredicates.months(inYear: yearNumber),
             sortBy: [SortDescriptor(\.lunarMonthIndex, order: order)]
         )
         descriptor.fetchLimit = 1

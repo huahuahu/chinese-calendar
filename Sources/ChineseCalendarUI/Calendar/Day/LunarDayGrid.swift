@@ -25,9 +25,7 @@ struct LunarDayGrid: View {
 
         let lunarMonthIndex = month.lunarMonthIndex
         _days = Query(
-            filter: #Predicate<ChineseLunarDay> { day in
-                day.lunarMonthIndex == lunarMonthIndex
-            },
+            filter: ChineseCalendarRelationshipPredicates.days(inMonth: lunarMonthIndex),
             sort: \ChineseLunarDay.dayNumberInMonth
         )
     }
@@ -134,12 +132,12 @@ struct LunarDayGrid: View {
             LunarDayGrid(
                 month: ChineseLunarMonth(
                     lunarMonthIndex: 3,
-                    lunarYearNumber: 2026,
                     monthNumberInYear: 1,
                     isLeapMonth: false,
                     dayCount: 30,
                     monthStemIndex: 2,
-                    monthBranchIndex: 2
+                    monthBranchIndex: 2,
+                    chineseLunarYear: ChineseLunarYear(lunarYearNumber: 2026, yearStemIndex: 0, yearBranchIndex: 0)
                 )
             )
             .padding()
@@ -154,12 +152,12 @@ struct LunarDayGrid: View {
             LunarDayGrid(
                 month: ChineseLunarMonth(
                     lunarMonthIndex: 3,
-                    lunarYearNumber: 2026,
                     monthNumberInYear: 1,
                     isLeapMonth: false,
                     dayCount: 30,
                     monthStemIndex: 2,
-                    monthBranchIndex: 2
+                    monthBranchIndex: 2,
+                    chineseLunarYear: ChineseLunarYear(lunarYearNumber: 2026, yearStemIndex: 0, yearBranchIndex: 0)
                 )
             )
             .padding()
@@ -173,12 +171,12 @@ struct LunarDayGrid: View {
         ScrollView {
             LunarDayGrid(month: ChineseLunarMonth(
                 lunarMonthIndex: 4,
-                lunarYearNumber: 2026,
                 monthNumberInYear: 2,
                 isLeapMonth: false,
                 dayCount: 29,
                 monthStemIndex: 3,
-                monthBranchIndex: 3
+                monthBranchIndex: 3,
+                chineseLunarYear: ChineseLunarYear(lunarYearNumber: 2026, yearStemIndex: 0, yearBranchIndex: 0)
             ))
             .padding()
         }
@@ -191,12 +189,12 @@ struct LunarDayGrid: View {
         ScrollView {
             LunarDayGrid(month: ChineseLunarMonth(
                 lunarMonthIndex: 6,
-                lunarYearNumber: 2027,
                 monthNumberInYear: 1,
                 isLeapMonth: false,
                 dayCount: 30,
                 monthStemIndex: 5,
-                monthBranchIndex: 5
+                monthBranchIndex: 5,
+                chineseLunarYear: ChineseLunarYear(lunarYearNumber: 2027, yearStemIndex: 0, yearBranchIndex: 0)
             ))
             .environment(\.calendarStoreContentLevel, .base)
             .padding()

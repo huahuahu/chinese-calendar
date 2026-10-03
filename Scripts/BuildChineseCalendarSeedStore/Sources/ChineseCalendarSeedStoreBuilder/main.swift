@@ -155,6 +155,7 @@ private struct SeedStoreBuilder {
 
             log("Importing dynasty and orthodox-period data...")
             try importDynastyArtifact(into: container)
+            try ChineseCalendarRelationshipValidation.validate(in: makeContext(for: container))
         }
 
         try finalizeSQLiteStore(at: storeURL)
@@ -219,7 +220,6 @@ private struct SeedStoreBuilder {
             }
             let month = ChineseLunarMonth(
                 lunarMonthIndex: record.lunarMonthIndex,
-                lunarYearNumber: record.lunarYearNumber,
                 monthNumberInYear: record.monthNumberInYear,
                 isLeapMonth: record.isLeapMonth,
                 intercalaryMonthNameStyle: record.intercalaryMonthNameStyle,
@@ -266,6 +266,13 @@ private struct SeedStoreBuilder {
                     in: context,
                     cache: &monthCache
                 )
+                guard record.chineseLunarDay.dayIndex == record.calendarDay.dayIndex,
+                      record.civilDate.dayIndex == record.calendarDay.dayIndex,
+                      (1 ... lunarMonth.dayCount).contains(record.chineseLunarDay.dayNumberInMonth)
+                else {
+                    throw SeedStoreBuilderError
+                        .invalidArgument("Invalid day bundle at dayIndex \(record.calendarDay.dayIndex).")
+                }
                 let calendarDay = CalendarDay(
                     dayIndex: record.calendarDay.dayIndex,
                     julianDayNumber: record.calendarDay.julianDayNumber
@@ -279,7 +286,6 @@ private struct SeedStoreBuilder {
                 )
                 let lunarDay = ChineseLunarDay(
                     dayIndex: record.chineseLunarDay.dayIndex,
-                    lunarMonthIndex: record.chineseLunarDay.lunarMonthIndex,
                     dayNumberInMonth: record.chineseLunarDay.dayNumberInMonth,
                     dayStemIndex: record.chineseLunarDay.dayStemIndex,
                     dayBranchIndex: record.chineseLunarDay.dayBranchIndex,
@@ -435,8 +441,6 @@ private struct SeedStoreBuilder {
 
             let boundary = try OrthodoxBoundary(
                 id: record.id,
-                traditionID: record.traditionID,
-                dateExpressionID: record.dateExpressionID,
                 tradition: tradition,
                 date: takeDateExpression(record.dateExpressionID, from: &availableDateExpressions),
                 note: record.note
@@ -517,10 +521,6 @@ private struct SeedStoreBuilder {
 
             context.insert(OrthodoxPeriod(
                 id: record.id,
-                traditionID: record.traditionID,
-                dynastyID: record.dynastyID,
-                startBoundaryID: record.startBoundaryID,
-                endBoundaryID: record.endBoundaryID,
                 sequenceIndex: record.sequenceIndex,
                 segmentIndex: record.segmentIndex,
                 segmentName: record.segmentName,

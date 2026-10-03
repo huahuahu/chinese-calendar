@@ -1,5 +1,6 @@
 import ChineseCalendarPersistence
 @testable import ChineseCalendarUI
+import Foundation
 import SwiftData
 import Testing
 
@@ -93,6 +94,19 @@ struct CalendarSelectionResolverTests {
         #expect(next?.lunarMonthIndex == 26001)
     }
 
+    @Test func incompleteSelectedDayCannotResolveAValidCalendarPosition() throws {
+        let fixture = try Fixture()
+        let dayIndex = 2_600_102
+        let day = try #require(try fixture.container.mainContext.fetch(
+            FetchDescriptor<ChineseLunarDay>(predicate: #Predicate { $0.dayIndex == dayIndex })
+        ).first)
+        day.chineseLunarMonth = nil
+        try fixture.container.mainContext.save()
+        #expect(try !fixture.resolver.contains(dayIndex: dayIndex))
+        #expect(try fixture.resolver.yearNumber(forDayIndex: dayIndex) == nil)
+        #expect(try fixture.resolver.todayDayIndex(julianDayNumber: fixture.todayJulianDayNumber) == nil)
+    }
+
     @Test func monthWithoutDaysCannotProduceASelection() throws {
         let fixture = try Fixture()
 
@@ -131,11 +145,11 @@ private extension CalendarSelectionResolverTests {
             let year2026 = ChineseLunarYear(lunarYearNumber: 2026, yearStemIndex: 1, yearBranchIndex: 1)
             let year2027 = ChineseLunarYear(lunarYearNumber: 2027, yearStemIndex: 2, yearBranchIndex: 2)
 
-            let month25001 = makeMonth(index: 25001, yearNumber: 2025, monthNumber: 1)
-            let month25002 = makeMonth(index: 25002, yearNumber: 2025, monthNumber: 2)
-            let month26001 = makeMonth(index: 26001, yearNumber: 2026, monthNumber: 1)
-            let month26002 = makeMonth(index: 26002, yearNumber: 2026, monthNumber: 2)
-            let month27001 = makeMonth(index: 27001, yearNumber: 2027, monthNumber: 1)
+            let month25001 = makeMonth(index: 25001, year: year2025, monthNumber: 1)
+            let month25002 = makeMonth(index: 25002, year: year2025, monthNumber: 2)
+            let month26001 = makeMonth(index: 26001, year: year2026, monthNumber: 1)
+            let month26002 = makeMonth(index: 26002, year: year2026, monthNumber: 2)
+            let month27001 = makeMonth(index: 27001, year: year2027, monthNumber: 1)
 
             attach(month: month25002, to: year2025)
             attach(month: month25001, to: year2025)
@@ -159,17 +173,17 @@ private extension CalendarSelectionResolverTests {
 
         private func makeMonth(
             index: Int,
-            yearNumber: Int,
+            year: ChineseLunarYear,
             monthNumber: Int
         ) -> ChineseLunarMonth {
             ChineseLunarMonth(
                 lunarMonthIndex: index,
-                lunarYearNumber: yearNumber,
                 monthNumberInYear: monthNumber,
                 isLeapMonth: false,
                 dayCount: 30,
                 monthStemIndex: 0,
-                monthBranchIndex: 0
+                monthBranchIndex: 0,
+                chineseLunarYear: year
             )
         }
 
@@ -187,7 +201,6 @@ private extension CalendarSelectionResolverTests {
             let calendarDay = CalendarDay(dayIndex: index, julianDayNumber: julianDayNumber)
             let day = ChineseLunarDay(
                 dayIndex: index,
-                lunarMonthIndex: month.lunarMonthIndex,
                 dayNumberInMonth: number,
                 dayStemIndex: 0,
                 dayBranchIndex: 0,

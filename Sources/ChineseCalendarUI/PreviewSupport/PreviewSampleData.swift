@@ -96,6 +96,19 @@ enum PreviewSampleData {
         context.insert(year2027)
     }
 
+    /// A complete transient parent for isolated cell/layout previews and tests.
+    static func makeStandaloneMonth() -> ChineseLunarMonth {
+        ChineseLunarMonth(
+            lunarMonthIndex: 3,
+            monthNumberInYear: 1,
+            isLeapMonth: false,
+            dayCount: 30,
+            monthStemIndex: 2,
+            monthBranchIndex: 2,
+            chineseLunarYear: ChineseLunarYear(lunarYearNumber: 2026, yearStemIndex: 2, yearBranchIndex: 6)
+        )
+    }
+
     private static func makeMonth(
         index: Int,
         number: Int,
@@ -105,7 +118,6 @@ enum PreviewSampleData {
     ) -> ChineseLunarMonth {
         let month = ChineseLunarMonth(
             lunarMonthIndex: index,
-            lunarYearNumber: year.lunarYearNumber,
             monthNumberInYear: number,
             isLeapMonth: isLeap,
             dayCount: dayCount,
@@ -132,7 +144,6 @@ enum PreviewSampleData {
             )
             let lunarDay = ChineseLunarDay(
                 dayIndex: dayIndex,
-                lunarMonthIndex: month.lunarMonthIndex,
                 dayNumberInMonth: dayNumber,
                 dayStemIndex: (dayIndex - 1) % 10,
                 dayBranchIndex: (dayIndex - 1) % 12,

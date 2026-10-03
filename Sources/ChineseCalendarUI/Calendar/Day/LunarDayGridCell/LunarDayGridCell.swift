@@ -104,14 +104,14 @@ struct LunarDayGridCell: View {
 #Preview("四种日期状态") {
     let day = ChineseLunarDay(
         dayIndex: 315,
-        lunarMonthIndex: 3,
         dayNumberInMonth: 15,
         dayStemIndex: 4,
         dayBranchIndex: 2,
         calendarDay: CalendarDay(
             dayIndex: 315,
             julianDayNumber: 2_461_063
-        )
+        ),
+        chineseLunarMonth: PreviewSampleData.makeStandaloneMonth()
     )
 
     NavigationStack {
@@ -149,10 +149,10 @@ struct LunarDayGridCell: View {
 #Preview("有可能空白 · 缺少对应日期") {
     let day = ChineseLunarDay(
         dayIndex: 315,
-        lunarMonthIndex: 3,
         dayNumberInMonth: 15,
         dayStemIndex: 4,
-        dayBranchIndex: 2
+        dayBranchIndex: 2,
+        chineseLunarMonth: PreviewSampleData.makeStandaloneMonth()
     )
 
     NavigationStack {

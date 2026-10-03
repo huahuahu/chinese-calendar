@@ -106,14 +106,20 @@ Julian calendar 是儒略历，由 Julius Caesar 推行，规则中每 4 年置�
 
 显示层再把整数转换成中文名，例如 `0 + 0 -> 甲子`。这样可以让 raw data 更容易校验，也避免同一概念在数据里出现多种写法。
 
+## 导入键与运行时关系
+
+JSONL / DTO 中的 `ChineseLunarDayRecord.lunarMonthIndex` 和 `LunarMonthRecord.lunarYearNumber` 是导入查找键。Builder 用它们查找父对象并建立关系；SwiftData 不再重复持久化这两个字段，构造日、月时必须传入父对象。
+
+关系在存储模型中保留可选类型，便于检测缺失关联；合法制品必须通过 `ChineseCalendarRelationshipValidation`。下载或构建发现缺失关系时失败，不补默认 ID。日历选择遇到缺失日、月、年关联时返回无可用选择。
+
 ## 关系图
 
 ```mermaid
 erDiagram
     CalendarDay ||--|| CivilDate : "dayIndex"
     CalendarDay ||--|| ChineseLunarDay : "dayIndex"
-    ChineseLunarYear ||--o{ ChineseLunarMonth : "lunarYearNumber"
-    ChineseLunarMonth ||--o{ ChineseLunarDay : "lunarMonthIndex"
+    ChineseLunarYear ||--o{ ChineseLunarMonth : "chineseLunarYear"
+    ChineseLunarMonth ||--o{ ChineseLunarDay : "chineseLunarMonth"
 
     CalendarDay {
         int dayIndex
@@ -136,7 +142,6 @@ erDiagram
 
     ChineseLunarMonth {
         int lunarMonthIndex
-        int lunarYearNumber
         int monthNumberInYear
         bool isLeapMonth
         string intercalaryMonthNameStyle
@@ -147,7 +152,6 @@ erDiagram
 
     ChineseLunarDay {
         int dayIndex
-        int lunarMonthIndex
         int dayNumberInMonth
         int dayStemIndex
         int dayBranchIndex
@@ -212,7 +216,6 @@ erDiagram
 基础字段：
 
 - `dayIndex: Int`
-- `lunarMonthIndex: Int`
 - `dayNumberInMonth: Int`
 - `dayStemIndex: Int`
 - `dayBranchIndex: Int`
@@ -222,13 +225,13 @@ erDiagram
 - 表达“某个农历月里的第几日”
 - 保存日干支
 - 通过 `dayIndex` 和 `CalendarDay` 建立与公历日的一对一对应
-- 通过 `lunarMonthIndex` 关联到所属农历月
+- 通过 `chineseLunarMonth` 对象关系关联到所属农历月
 
 约束：
 
 - `dayNumberInMonth` 只能是 `1...30`。
-- 同一个 `lunarMonthIndex` 下的 `dayNumberInMonth` 必须唯一。
-- `lunarMonthIndex` 必须指向一条真实存在的 `ChineseLunarMonth`。
+- `dayIndex` 独立唯一；同一个 `chineseLunarMonth` 关系下的 `dayNumberInMonth` 必须唯一。
+- `chineseLunarMonth` 必须指向一条真实存在的 `ChineseLunarMonth`。
 - 每个 `ChineseLunarDay` 必须对应且只对应一个 `CalendarDay`。
 - 日干支使用 `dayStemIndex` 和 `dayBranchIndex` 保存，显示时再转换成中文。
 
@@ -238,7 +241,6 @@ erDiagram
 
 基础字段：
 
-- `lunarYearNumber: Int`
 - `lunarMonthIndex: Int`
 - `monthNumberInYear: Int`
 - `isLeapMonth: Bool`
@@ -254,12 +256,12 @@ erDiagram
 - 表达闰月展示命名样式
 - 表达大月、小月信息
 - 保存月干支
-- 通过 `lunarYearNumber` 关联到所属农历年
+- 通过 `chineseLunarYear` 对象关系关联到所属农历年
 
 约束：
 
 - `lunarMonthIndex` 在数据集中必须连续且唯一。
-- `lunarYearNumber` 必须指向一条真实存在的 `ChineseLunarYear`。
+- `chineseLunarYear` 必须指向一条真实存在的 `ChineseLunarYear`。
 - `monthNumberInYear` 只能是 `1...12`。
 - `intercalaryMonthNameStyle` 只能是 `leap` 或 `post`；普通月份必须为 `leap`。
 - `dayCount` 只能是 `29` 或 `30`，其中 `29` 表示小月，`30` 表示大月。
@@ -270,7 +272,7 @@ erDiagram
 说明：
 
 - 月份的起止 `dayIndex` 可以从该月下所有 `ChineseLunarDay` 派生，不属于最基本的 raw data。
-- `dayCount` 是上游历算数据给出的月大小事实，应随月份保存；导入校验时再确认实际日记录数与 `dayCount` 一致。
+- `dayCount` 是上游历算数据给出的月大小事实，应随月份保存；full 导入时校验月内日号范围。base 没有日记录，数据覆盖边界月份也可能只有部分日，不能用 `days.count` 替代。
 - 历史改正朔会造成重复同名月，例如 `lunarYearNumber = -103` 中有两个十月、两个十一月、两个十二月，`lunarYearNumber = 762` 中有两个四月、两个五月。更多核对结论见 [干支与生肖循环结论](./sexagenary-cycle-and-zodiac.md) 的“历史特殊年与数据库建模”章节。
 
 ## ChineseLunarYear
@@ -303,9 +305,9 @@ erDiagram
 - `CalendarDay`：`dayIndex`
 - `CivilDate`：`dayIndex`
 - `ChineseLunarDay`：`dayIndex`
-- `ChineseLunarDay -> ChineseLunarMonth`：`lunarMonthIndex`
+- `ChineseLunarDay -> ChineseLunarMonth`：`chineseLunarMonth` 关系
 - `ChineseLunarMonth`：`lunarMonthIndex`
-- `ChineseLunarMonth -> ChineseLunarYear`：`lunarYearNumber`
+- `ChineseLunarMonth -> ChineseLunarYear`：`chineseLunarYear` 关系
 - `ChineseLunarYear`：`lunarYearNumber`
 
 如果某个存储层需要稳定字符串 ID，可以在导入时派生，而不要把它当作 raw data。日记录统一使用 `day-{dayIndex}`，例如 `day-0`、`day-1`。
@@ -334,8 +336,8 @@ erDiagram
 1. 使用 `CivilDate(year, month, dayOfMonth, calendarStyle)` 找到 `dayIndex`。
 2. 使用 `dayIndex` 找到 `CalendarDay`。
 3. 使用同一个 `dayIndex` 找到 `ChineseLunarDay`。
-4. 使用 `ChineseLunarDay.lunarMonthIndex` 找到所属农历月。
-5. 使用 `ChineseLunarMonth.lunarYearNumber` 找到所属农历年。
+4. 读取 `ChineseLunarDay.chineseLunarMonth` 获取所属农历月。
+5. 读取 `ChineseLunarMonth.chineseLunarYear` 获取所属农历年。
 
 返回结果可以组合出：
 
@@ -349,10 +351,10 @@ erDiagram
 
 步骤：
 
-1. 如果调用方已经持有 `lunarMonthIndex`，直接使用 `lunarMonthIndex + dayNumberInMonth` 找到 `ChineseLunarDay`。
+1. 如果调用方已经持有 `lunarMonthIndex`，直接使用 `chineseLunarMonth?.lunarMonthIndex + dayNumberInMonth` 查询 `ChineseLunarDay`。
 2. 如果调用方只有 `lunarYearNumber + monthNumberInYear + isLeapMonth + dayNumberInMonth`，先筛选候选 `ChineseLunarMonth`，再用额外条件消歧。
 3. 消歧条件可以是 `lunarMonthIndex`、该农历年内的实际月份顺序、月份起始 `dayIndex`，或明确的历史 rule。
-4. 候选月份唯一后，使用 `lunarMonthIndex + dayNumberInMonth` 找到 `ChineseLunarDay`。
+4. 候选月份唯一后，使用 `chineseLunarMonth?.lunarMonthIndex + dayNumberInMonth` 查询 `ChineseLunarDay`。
 5. 使用该日的 `dayIndex` 找到 `CalendarDay`。
 6. 使用同一个 `dayIndex` 找到 `CivilDate`。
 
