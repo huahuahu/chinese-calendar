@@ -216,7 +216,7 @@ where cd.ZYEAR = 2024 and cd.ZMONTH = 1 and cd.ZDAYOFMONTH = 1;
 
 ## 关系 Schema 验证
 
-Schema 1.3.0 的日/月/正统归属由对象关系表达。Builder 拒绝缺失父对象、越界月内日号、日序不一致，以及正统区间两端属于其他传统的数据。构建末尾与完整数据下载后都运行 `ChineseCalendarRelationshipValidation`。
+Schema 1.4.0 的日/月/正统归属由对象关系表达。Builder 拒绝缺失父对象、越界月内日号、日序不一致，以及正统区间两端属于其他传统的数据。构建末尾与完整数据下载后都运行 `ChineseCalendarRelationshipValidation`。
 
 只读核对 base / full 的关系、删除字段和真实 SQLite 索引：
 

@@ -1,0 +1,20 @@
+{
+  "base": {
+    "schemaVersion": "1.4.0",
+    "storeSchemaVersionIdentifiers": [
+      "1.4.0"
+    ],
+    "artifactVersion": "43ae5b55e0290f25451885dca5458022bedf647e7d868ad35d546f36a6d54637",
+    "byteCount": 2658304,
+    "sha256": "af1481e48f771d7127830616d441ad65375961ff6b51039c5c48e913b3df1c5e"
+  },
+  "full": {
+    "schemaVersion": "1.4.0",
+    "storeSchemaVersionIdentifiers": [
+      "1.4.0"
+    ],
+    "artifactVersion": "465fb388943cc8aeba67ee7e6b83807c8dc01ecf3606636eae2bfbbeb0f924a1",
+    "byteCount": 207093760,
+    "sha256": "0e0b3688f2f410d5343a5a9f2ee5f1b60b7f74f179d680dd97805b3e40895989"
+  }
+}

@@ -32,7 +32,7 @@ test("artifact identity changes with schema, format, content level, and recipe",
   try {
     const base = await calculateBaseIdentity(fixture);
 
-    await writeFile(fixture.schemaSource, schemaSource("1.3.0"), "utf8");
+    await writeFile(fixture.schemaSource, schemaSource("1.4.0"), "utf8");
     const schemaChange = await calculateBaseIdentity(fixture);
     assert.notEqual(schemaChange.artifactVersion, base.artifactVersion);
 

@@ -173,13 +173,12 @@ struct CalendarSelectionResolver {
     }
 
     private func firstDay(monthIndex: Int) throws -> ChineseLunarDay? {
-        var descriptor = FetchDescriptor<ChineseLunarDay>(
-            predicate: ChineseCalendarRelationshipPredicates.days(inMonth: monthIndex),
-            sortBy: [SortDescriptor(\.dayNumberInMonth)]
+        var monthDescriptor = FetchDescriptor<ChineseLunarMonth>(
+            predicate: #Predicate { $0.lunarMonthIndex == monthIndex }
         )
-        descriptor.fetchLimit = 1
-        descriptor.relationshipKeyPathsForPrefetching = [\.calendarDay, \.chineseLunarMonth]
-        return try validDay(modelContext.fetch(descriptor).first)
+        monthDescriptor.fetchLimit = 1
+        guard let month = try modelContext.fetch(monthDescriptor).first else { return nil }
+        return validDay(ChineseCalendarRelationshipQueries.days(inMonth: month).first)
     }
 
     private func validDay(_ day: ChineseLunarDay?) -> ChineseLunarDay? {
@@ -193,11 +192,12 @@ struct CalendarSelectionResolver {
         yearNumber: Int,
         order: SortOrder
     ) throws -> ChineseLunarMonth? {
-        var descriptor = FetchDescriptor<ChineseLunarMonth>(
-            predicate: ChineseCalendarRelationshipPredicates.months(inYear: yearNumber),
-            sortBy: [SortDescriptor(\.lunarMonthIndex, order: order)]
+        var yearDescriptor = FetchDescriptor<ChineseLunarYear>(
+            predicate: #Predicate { $0.lunarYearNumber == yearNumber }
         )
-        descriptor.fetchLimit = 1
-        return try modelContext.fetch(descriptor).first
+        yearDescriptor.fetchLimit = 1
+        guard let year = try modelContext.fetch(yearDescriptor).first else { return nil }
+        let months = ChineseCalendarRelationshipQueries.months(inYear: year)
+        return order == .forward ? months.first : months.last
     }
 }

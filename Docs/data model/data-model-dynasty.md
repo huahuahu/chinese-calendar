@@ -53,7 +53,7 @@
 
 ## SwiftData 关系与导入键
 
-从 schema 1.3.0 开始，`OrthodoxBoundary` 仅用 `tradition`、`date` 表达归属，`OrthodoxPeriod` 仅用 `tradition`、`dynasty`、`startBoundary`、`endBoundary` 表达归属；不再重复存储六个关联 ID 字段。构造函数要求传入这些对象。
+从 schema 1.4.0 开始，`OrthodoxBoundary` 仅用 `tradition`、`date` 表达归属，`OrthodoxPeriod` 仅用 `tradition`、`dynasty`、`startBoundary`、`endBoundary` 表达归属；不再重复存储六个关联 ID 字段。构造函数要求传入这些对象。
 
 JSONL / DTO 仍保留 `traditionID`、`dateExpressionID`、`dynastyID`、`startBoundaryID`、`endBoundaryID`，由 builder 查找对象。缺少对象或区间两端边界属于另一传统时，构建和下载校验失败；查询使用 `period.tradition?.id`、`period.dynasty?.id` 等实际持久化关系。
 

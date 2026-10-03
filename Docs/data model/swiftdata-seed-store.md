@@ -55,7 +55,7 @@ Remote full-store manifest:
 {
   "datasetVersion": "<sha256>",
   "artifactVersion": "<sha256>",
-  "schemaVersion": "1.3.0",
+  "schemaVersion": "1.4.0",
   "seedStoreContentLevel": "full",
   "seedStoreFormatVersion": 4,
   "storeFileName": "ChineseCalendar.sqlite",
@@ -109,7 +109,7 @@ The source artifact is intentionally still kept under `Data/Processed/swiftdata_
 - Runtime containers open the copied seed store with `allowsSave: false`; the shared calendar data is read-only.
 - The full store is installed only after validation. The seed builder purges SwiftData/Core Data transaction-history rows before publishing stores; no app-defined history tracking metadata is kept in SQLite.
 - The builder resolves JSONL association keys to actual SwiftData relationships: month → year, day → month, boundary → tradition/date, and period → tradition/dynasty/boundaries. It caches persistent month identifiers and resets day-import contexts in batches, so it does not need to retain every day in one large array. Runtime models do not duplicate those association keys.
-- Schema 1.3.0 removes eight duplicated association fields and eight redundant standalone `id` indexes. Day identity stays unique, and a compound unique constraint covers the month relationship plus day number.
+- Schema 1.4.0 removes eight duplicated association fields and eight redundant standalone `id` indexes. Day identity stays unique, and a compound unique constraint covers the month relationship plus day number.
 - Existing base and full stores with a different or missing schema version are replaced with the bundled base before opening. Users can then download the compatible full store. Compatible installed full stores are preserved. There is no in-place migration of the read-only dataset. Remote manifests with old schema versions fail before downloading; downloaded stores must open and pass required-relationship validation before installation.
 
 ## Relationship query verification

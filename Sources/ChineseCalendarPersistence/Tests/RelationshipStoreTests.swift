@@ -44,7 +44,7 @@ struct RelationshipStoreTests {
         #expect(days.allSatisfy { $0.dayNumberInMonth == 2 })
     }
 
-    @Test func relationshipPredicatesFollowReassignedParentsOnDisk() throws {
+    @Test func relationshipCollectionsFollowReassignedParentsOnDisk() throws {
         let directory = try makeDirectory()
         defer { try? FileManager.default.removeItem(at: directory) }
         let container = try ChineseCalendarModelContainerFactory.makeContainer(
@@ -62,14 +62,10 @@ struct RelationshipStoreTests {
         month.chineseLunarYear = newYear
         try context.save()
         let readContext = ModelContext(container)
-        let yearNumber = 2026
-        let monthIndex = 1
-        #expect(try readContext.fetchCount(FetchDescriptor<ChineseLunarMonth>(
-            predicate: ChineseCalendarRelationshipPredicates.months(inYear: yearNumber)
-        )) == 1)
-        #expect(try readContext.fetchCount(FetchDescriptor<ChineseLunarDay>(
-            predicate: ChineseCalendarRelationshipPredicates.days(inMonth: monthIndex)
-        )) == 1)
+        let reloadedYear = try #require(readContext.model(for: newYear.persistentModelID) as? ChineseLunarYear)
+        let reloadedMonth = try #require(readContext.model(for: month.persistentModelID) as? ChineseLunarMonth)
+        #expect(ChineseCalendarRelationshipQueries.months(inYear: reloadedYear).map(\.lunarMonthIndex) == [1])
+        #expect(ChineseCalendarRelationshipQueries.days(inMonth: reloadedMonth).map(\.dayIndex) == [10])
         try ChineseCalendarRelationshipValidation.validate(in: readContext)
     }
 
@@ -91,9 +87,10 @@ struct RelationshipStoreTests {
         }
     }
 
-    @Test func oldRemoteManifestIsRejectedBeforeDownloading() throws {
+    @Test(arguments: ["1.2.0", "1.3.0"])
+    func oldRemoteManifestIsRejectedBeforeDownloading(schemaVersion: String) throws {
         let manifest = FullSeedStoreManifest(
-            datasetVersion: "old", schemaVersion: "1.2.0", seedStoreContentLevel: .full,
+            datasetVersion: "old", schemaVersion: schemaVersion, seedStoreContentLevel: .full,
             seedStoreFormatVersion: 4, byteCount: 1, sha256: "unused",
             downloadURL: URL(fileURLWithPath: "/unused.sqlite")
         )
@@ -102,7 +99,7 @@ struct RelationshipStoreTests {
         }
     }
 
-    @Test func indexedPredicatesSafelyExcludeMissingParents() throws {
+    @Test func detachingParentsRemovesChildrenFromRelationshipCollections() throws {
         let directory = try makeDirectory()
         defer { try? FileManager.default.removeItem(at: directory) }
         let container = try ChineseCalendarModelContainerFactory.makeContainer(
@@ -118,13 +115,11 @@ struct RelationshipStoreTests {
         month.chineseLunarYear = nil
         try context.save()
 
-        let dayPredicate = ChineseCalendarRelationshipPredicates.days(inMonth: 1)
-        let monthPredicate = ChineseCalendarRelationshipPredicates.months(inYear: 2026)
-        #expect(try !dayPredicate.evaluate(day))
-        #expect(try !monthPredicate.evaluate(month))
         let readContext = ModelContext(container)
-        #expect(try readContext.fetchCount(FetchDescriptor<ChineseLunarDay>(predicate: dayPredicate)) == 0)
-        #expect(try readContext.fetchCount(FetchDescriptor<ChineseLunarMonth>(predicate: monthPredicate)) == 0)
+        let reloadedYear = try #require(readContext.model(for: year.persistentModelID) as? ChineseLunarYear)
+        let reloadedMonth = try #require(readContext.model(for: month.persistentModelID) as? ChineseLunarMonth)
+        #expect(ChineseCalendarRelationshipQueries.days(inMonth: reloadedMonth).isEmpty)
+        #expect(ChineseCalendarRelationshipQueries.months(inYear: reloadedYear).isEmpty)
     }
 
     private func makeDirectory() throws -> URL {

@@ -18,19 +18,12 @@ struct LunarDayGrid: View {
 
     let month: ChineseLunarMonth
 
-    @Query private var days: [ChineseLunarDay]
-
-    init(month: ChineseLunarMonth) {
-        self.month = month
-
-        let lunarMonthIndex = month.lunarMonthIndex
-        _days = Query(
-            filter: ChineseCalendarRelationshipPredicates.days(inMonth: lunarMonthIndex),
-            sort: \ChineseLunarDay.dayNumberInMonth
-        )
+    private var sortedDays: [ChineseLunarDay] {
+        ChineseCalendarRelationshipQueries.days(inMonth: month)
     }
 
     var body: some View {
+        let days = sortedDays
         Group {
             if days.isEmpty {
                 ContentUnavailableView(
@@ -114,13 +107,14 @@ struct LunarDayGrid: View {
 
     private func finishPendingMonthSwitch() {
         let performanceSignposts = ChineseCalendarPerformanceSignposts.shared
+        let dayCount = month.days.count
         performanceSignposts.monthDaysAvailable(
             monthIndex: month.lunarMonthIndex,
-            dayCount: days.count
+            dayCount: dayCount
         )
         performanceSignposts.endMonthSwitch(
             monthIndex: month.lunarMonthIndex,
-            dayCount: days.count,
+            dayCount: dayCount,
             selectedDayIndex: selection.selectedDayIndex
         )
     }
@@ -129,18 +123,8 @@ struct LunarDayGrid: View {
 #Preview("30 天与选中日", traits: .sampleData) {
     NavigationStack {
         ScrollView {
-            LunarDayGrid(
-                month: ChineseLunarMonth(
-                    lunarMonthIndex: 3,
-                    monthNumberInYear: 1,
-                    isLeapMonth: false,
-                    dayCount: 30,
-                    monthStemIndex: 2,
-                    monthBranchIndex: 2,
-                    chineseLunarYear: ChineseLunarYear(lunarYearNumber: 2026, yearStemIndex: 0, yearBranchIndex: 0)
-                )
-            )
-            .padding()
+            LunarDayGridMonthPreviewContent(monthIndex: 3)
+                .padding()
         }
         .navigationTitle("日期网格")
     }
@@ -169,16 +153,8 @@ struct LunarDayGrid: View {
 #Preview("29 天的小月", traits: .sampleData) {
     NavigationStack {
         ScrollView {
-            LunarDayGrid(month: ChineseLunarMonth(
-                lunarMonthIndex: 4,
-                monthNumberInYear: 2,
-                isLeapMonth: false,
-                dayCount: 29,
-                monthStemIndex: 3,
-                monthBranchIndex: 3,
-                chineseLunarYear: ChineseLunarYear(lunarYearNumber: 2026, yearStemIndex: 0, yearBranchIndex: 0)
-            ))
-            .padding()
+            LunarDayGridMonthPreviewContent(monthIndex: 4)
+                .padding()
         }
         .navigationTitle("日期网格")
     }
@@ -200,6 +176,20 @@ struct LunarDayGrid: View {
             .padding()
         }
         .navigationTitle("日期网格")
+    }
+}
+
+private struct LunarDayGridMonthPreviewContent: View {
+    @Query private var months: [ChineseLunarMonth]
+
+    init(monthIndex: Int) {
+        _months = Query(filter: #Predicate<ChineseLunarMonth> { $0.lunarMonthIndex == monthIndex })
+    }
+
+    var body: some View {
+        if let month = months.first {
+            LunarDayGrid(month: month)
+        }
     }
 }
 

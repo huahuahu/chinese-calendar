@@ -1,0 +1,89 @@
+{
+  "store": "Data/Processed/remote_full_seed_store/ChineseCalendar.sqlite",
+  "audit": {
+    "missingRelationships": {
+      "ZCHINESELUNARDAY.ZCHINESELUNARMONTH": 0,
+      "ZCHINESELUNARDAY.ZCALENDARDAY": 0,
+      "ZCHINESELUNARMONTH.ZCHINESELUNARYEAR": 0,
+      "ZORTHODOXBOUNDARY.ZTRADITION": 0,
+      "ZORTHODOXBOUNDARY.ZDATE": 0,
+      "ZORTHODOXPERIOD.ZTRADITION": 0,
+      "ZORTHODOXPERIOD.ZDYNASTY": 0,
+      "ZORTHODOXPERIOD.ZSTARTBOUNDARY": 0,
+      "ZORTHODOXPERIOD.ZENDBOUNDARY": 0
+    },
+    "idIndexes": {
+      "Dynasty": [
+        {
+          "unique": true,
+          "columns": [
+            "ZID"
+          ]
+        }
+      ],
+      "ChineseDateExpression": [
+        {
+          "unique": true,
+          "columns": [
+            "ZID"
+          ]
+        }
+      ],
+      "OrthodoxTradition": [
+        {
+          "unique": true,
+          "columns": [
+            "ZID"
+          ]
+        }
+      ],
+      "OrthodoxBoundary": [
+        {
+          "unique": true,
+          "columns": [
+            "ZID"
+          ]
+        }
+      ],
+      "OrthodoxPeriod": [
+        {
+          "unique": true,
+          "columns": [
+            "ZID"
+          ]
+        }
+      ],
+      "Emperor": [
+        {
+          "unique": true,
+          "columns": [
+            "ZID"
+          ]
+        }
+      ],
+      "EmperorReignSegment": [
+        {
+          "unique": true,
+          "columns": [
+            "ZID"
+          ]
+        }
+      ],
+      "ReignEra": [
+        {
+          "unique": true,
+          "columns": [
+            "ZID"
+          ]
+        }
+      ]
+    },
+    "rowCounts": {
+      "ZCALENDARDAY": 884256,
+      "ZCIVILDATE": 884256,
+      "ZCHINESELUNARDAY": 884256,
+      "ZCHINESELUNARMONTH": 29944,
+      "ZCHINESELUNARYEAR": 2421
+    }
+  }
+}

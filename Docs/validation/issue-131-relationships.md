@@ -1,6 +1,10 @@
 # Issue #131：SwiftData 关系与索引验证
 
-验证日期：2026-10-03。基线 `6d354fa9`，schema 从 1.2.0 更新为 1.3.0。
+验证日期：2026-10-03。基线 `6d354fa9`，最终 schema 从 1.2.0 更新为 **1.4.0**。
+初轮实现和运行验证使用过临时的 1.3.0；随后确认已发布的
+[`full-seed-store-2026.08.30`](https://github.com/huahuahu/chinese-calendar/releases/tag/full-seed-store-2026.08.30)
+清单已经使用 1.3.0，因此本次关系重构改用 1.4.0，避免把历史数据包误判为兼容。
+下方保留初轮验证的版本、制品身份和运行证据；最终 1.4.0 的重建与兼容验证见文末补充。
 构建环境为 Xcode 27.1 beta；运行验证使用 iOS 27.0、iPhone 18 Pro Max 模拟器。
 
 ## 模型与兼容策略
@@ -23,9 +27,9 @@
 
 最终测试摘要：`E8B0E530-6382-439D-B64D-89994B572DE7.txt`；Xcode 构建日志：`BuildProject-Log-20261003-162554.txt`。
 本机原始证据在 `/tmp/chinese-calendar-issue-131/`，Xcode 原始日志在工具返回的 `ActionArtifacts/default` 目录。
-可随仓库复核的 [SQLite 审计结果](issue-131/full-store-audit.json)、[SwiftData 查询结果](issue-131/full-swiftdata-results.txt) 和 [查询片段](issue-131/full-swiftdata-snippet.swift) 一并保存；在上述源码上下文中运行片段，并把 store 路径改成自己的完整库路径。
+可随仓库复核的初轮 [SQLite 审计结果](issue-131/full-store-audit.json)、[SwiftData 查询结果](issue-131/full-swiftdata-results.txt) 一并保存。[查询片段](issue-131/full-swiftdata-snippet.swift) 已更新为最终 1.4.0 的实现；在上述源码上下文中运行，并把 store 路径改成自己的完整库路径。
 
-## 数据制品
+## 初轮数据制品
 
 | 制品 | schema | 字节数 | CalendarDay / CivilDate / ChineseLunarDay | 月 / 年 |
 | --- | --- | ---: | ---: | ---: |
@@ -41,7 +45,7 @@
 新 full SHA-256：`46934db2a516ab351bcdd206e26202dc3df210716bed8b948181017645cea488`。
 
 旧 full 来自 `full-seed-store-2026.06.28`，已核对 manifest 的字节数和 SHA-256。
-新 full 位于被 Git 忽略的 `Data/Processed/remote_full_seed_store`；不提交大型远端制品。
+full 输出目录为被 Git 忽略的 `Data/Processed/remote_full_seed_store`，当前已替换为文末的 1.4.0 制品；不提交大型远端制品。
 
 两个新 store 均通过 `PRAGMA integrity_check`，没有发布用 SQLite sidecar。9 类必需关系无缺失，正统区间与边界所属传统一致。
 实际 SQLite 已无 8 个被删除字段；8 个 `id` 各只保留唯一索引；农历日两个唯一索引均存在，月内日号无重复。
@@ -56,7 +60,7 @@ python3 Scripts/BuildChineseCalendarSeedStore/verify_relationship_store.py \
   --compare-to /path/to/schema-1.2.0-full.sqlite
 ```
 
-## 完整库查询性能
+## 初轮完整库查询性能
 
 `verify_relationship_store.py` 在同一台机器上，以分布在完整时间范围内的 999 个月和 807 个年分别查询新旧 store，每个样本逐项比较结果：
 
@@ -76,7 +80,7 @@ python3 Scripts/BuildChineseCalendarSeedStore/verify_relationship_store.py \
 
 实现中发现：直接使用 `day.chineseLunarMonth?.lunarMonthIndex == index`，当前 SwiftData 会生成 SQL `CASE`，完整库 median 约 60.8 ms、P95 62.4 ms。只检查等价手写 SQL 会漏掉该退化。
 
-生产谓词集中于 `ChineseCalendarRelationshipPredicates`，先明确排除 nil，再解包关系；两个解包位置有局部 SwiftLint 豁免与原因说明，缺失数据仍由关系校验器拒绝。App 运行时的 `-com.apple.CoreData.SQLDebug 1` 证实最终 SQL 为：
+初轮谓词集中于 `ChineseCalendarRelationshipPredicates`，先明确排除 nil，再解包关系。该实现随后被 CI 证实不支持 iOS 26.5，已移除；下面 SQL 仅作为初轮 iOS 27 的诊断记录保留。最终实现与性能见文末。
 
 ```sql
 FROM ZCHINESELUNARDAY t0
@@ -88,7 +92,7 @@ ORDER BY t0.ZDAYNUMBERINMONTH, t0.Z_PK
 
 该查询使用月稳定身份唯一索引和「月份关系 + 日号」唯一索引；App 日志中的 29 日查询耗时为 0.0004 秒。按年查月使用年唯一索引与 SwiftData 自动生成的年份关系索引。
 
-## 安装和运行验证
+## 初轮安装和运行验证
 
 - 新版 base 启动后，日历明确提示需要完整日期数据；朝代时间线 → 西汉 → 43 个年号列表正常。
 - 独立空模拟器首次安装成功；将旧 base 及 manifest 放入 App Group 后重新启动，也成功替换为新版 base。
@@ -102,5 +106,33 @@ ORDER BY t0.ZDAYNUMBERINMONTH, t0.Z_PK
 
 ## 远端发布
 
-待发布制品：`full-seed-store-2026.10.03`，包含 `ChineseCalendar.sqlite` 与 `ChineseCalendarFullSeedStoreManifest.json`。
-本地制品与安装流程已验证。远端发布及 `project.yml` 清单 URL 切换应一起完成，避免新 schema 继续下载旧 1.2.0 清单；发布前不能将公共下载路径视为完成。
+待发布制品：schema **1.4.0** 的 `full-seed-store-2026.10.03`，包含 `ChineseCalendar.sqlite` 与 `ChineseCalendarFullSeedStoreManifest.json`。
+远端发布及 `project.yml` 清单 URL 切换应一起完成，避免新 schema 继续下载旧 1.2.0 清单。已发布的 1.3.0 清单也不兼容本次关系重构；发布前不能将公共下载路径视为完成。
+
+## 最终 schema 1.4.0 验证
+
+- 模型字符串版本、`Schema.Version(1, 4, 0)`、base/full runtime manifest，以及两份 SQLite 的 `NSStoreModelVersionIdentifiers` 均为 1.4.0。
+- base/full 重新生成并通过稳定内容身份校验、SQLite integrity、必需关系、删除字段与唯一索引审计；无 WAL/SHM sidecar。full 仍包含 884,256 条农历日。
+- 新增 1.3.0 兼容用例：已安装旧 base/full 会替换为当前 base，旧远端清单在下载前被拒绝；继续覆盖 1.2.0。
+- 原 PR 的 iOS 26.5 CI 暴露 `PredicateExpressions.ForcedUnwrap` 不受支持。最终移除该谓词实现，使用 `ChineseCalendarRelationshipQueries` 读取有界的 `month.days` / `year.months` 关系集合并按业务顺序排序。导航先按模型自身稳定身份定位父对象，再读取关系；日期网格与 Preview 使用实际已入库的月份对象。
+- iOS 26.5 的 Persistence/UI 测试结果为 **113 项通过、0 失败**（摘要 `D90933CA-8FC4-45B2-A6FA-AE114DFC1351.txt`）；恢复配置的 iOS 27.0 模拟器后，工具返回 **91 项通过、0 失败**（摘要 `98E59183-FFAC-4FCE-8759-73CF45D5C098.txt`）。两次均请求同一组 87 个测试标识，记录工具实际展开并返回的结果数。
+- 「30 天与选中日」和「29 天的小月」Preview 均成功渲染并显示日期。Xcode Preview 实际选用 iPhone Duo / iOS 27.1；未重新渲染其余全部 Preview，也未重复完整下载 UI 流程。
+- 3 项 seed identity Node 测试、SwiftFormat、严格 SwiftLint、`git diff --check` 通过。
+
+最终制品：[身份与校验和](issue-131/schema-1.4-artifacts.json)、[full 审计](issue-131/full-store-audit-1.4.json)。
+
+| 制品 | 字节数 | artifactVersion |
+| --- | ---: | --- |
+| base 1.4.0 | 2,658,304 | `43ae5b55e0290f25451885dca5458022bedf647e7d868ad35d546f36a6d54637` |
+| full 1.4.0 | 207,093,760 | `465fb388943cc8aeba67ee7e6b83807c8dc01ecf3606636eae2bfbbeb0f924a1` |
+
+最终 full SHA-256：`0e0b3688f2f410d5343a5a9f2ee5f1b60b7f74f179d680dd97805b3e40895989`。
+
+使用最终代码在完整库上重新运行 [查询片段](issue-131/full-swiftdata-snippet.swift)，[结果](issue-131/full-swiftdata-results-1.4.txt) 包括父对象查找、关系加载和排序，均为本机单次顺序抽样：
+
+| SwiftData 关系加载 | 样本数 | median / P95 (ms) |
+| --- | ---: | ---: |
+| 按月读取日期 | 999 | 3.3990 / 4.1060 |
+| 按年读取月份 | 807 | 2.0790 / 2.4580 |
+
+这比初轮 iOS 27 专用的直接过滤慢，但不再使用不受支持的解包谓词，也未出现可选链全表扫描的约 60 ms 延迟。完整库关系校验及后月、闰月、跨年导航结果均通过；最终公开下载仍待发布后验证。

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Read-only SQLite audit for schema 1.3.0; optionally compare queries with a 1.2.0 store."""
+"""Read-only SQLite audit for schema 1.4.0; optionally compare queries with a 1.2.0 store."""
 import argparse
 import json
 import sqlite3
