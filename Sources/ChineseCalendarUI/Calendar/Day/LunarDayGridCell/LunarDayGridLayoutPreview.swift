@@ -78,7 +78,10 @@
         }
     }
 
-    #Preview("日期网格实时预览", traits: .fixedLayout(width: 1024, height: 900)) {
-        LunarDayGridLayoutPreview()
+    #Preview("日期网格实时预览") {
+        NavigationStack {
+            LunarDayGridLayoutPreview()
+                .navigationTitle("日期网格布局")
+        }
     }
 #endif

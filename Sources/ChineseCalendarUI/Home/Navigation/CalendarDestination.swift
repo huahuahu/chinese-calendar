@@ -1,6 +1,5 @@
 enum CalendarDestination: Hashable, Identifiable {
     case lunarYear(Int, monthIndex: Int? = nil, dayIndex: Int? = nil)
-    case yearPicker(CalendarYearPickerDestination)
     case dynasty(orthodoxPeriodID: String)
     case emperorList(dynastyID: String)
     case reignEraList(dynastyID: String)
@@ -12,8 +11,6 @@ enum CalendarDestination: Hashable, Identifiable {
         switch self {
         case let .lunarYear(yearNumber, monthIndex, dayIndex):
             "lunar-year-\(yearNumber)-\(monthIndex.map(String.init) ?? "none")-\(dayIndex.map(String.init) ?? "none")"
-        case let .yearPicker(yearPicker):
-            "year-picker-\(yearPicker.id)"
         case let .dynasty(orthodoxPeriodID):
             "dynasty-\(orthodoxPeriodID)"
         case let .emperorList(dynastyID):
@@ -33,7 +30,7 @@ enum CalendarDestination: Hashable, Identifiable {
         switch self {
         case let .lunarYear(yearNumber, _, _):
             yearNumber
-        case .yearPicker, .dynasty, .emperorList, .reignEraList, .dynastySpan, .reignEra, .emperor:
+        case .dynasty, .emperorList, .reignEraList, .dynastySpan, .reignEra, .emperor:
             nil
         }
     }

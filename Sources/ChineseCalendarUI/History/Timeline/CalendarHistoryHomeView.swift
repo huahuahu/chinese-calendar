@@ -126,9 +126,14 @@ struct CalendarHistoryHomeView: View {
     }
 }
 
-#Preview {
+#Preview("示例数据", traits: .sampleData) {
     NavigationStack {
         CalendarHistoryHomeView()
     }
-    .modelContainer(HistoryPreviewData.container)
+}
+
+#Preview("空状态", traits: .emptySampleData) {
+    NavigationStack {
+        CalendarHistoryHomeView()
+    }
 }

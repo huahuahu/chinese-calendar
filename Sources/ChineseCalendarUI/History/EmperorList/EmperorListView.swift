@@ -116,9 +116,8 @@ struct EmperorListView: View {
     }
 }
 
-#Preview {
+#Preview(traits: .sampleData) {
     NavigationStack {
         EmperorListView(dynastyID: HistoryPreviewData.dynastyID)
     }
-    .modelContainer(HistoryPreviewData.container)
 }

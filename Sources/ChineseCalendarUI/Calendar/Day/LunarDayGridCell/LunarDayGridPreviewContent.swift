@@ -35,8 +35,22 @@
             }
             .padding()
             .background(.background.secondary, in: RoundedRectangle(cornerRadius: 28))
-            // Match the page padding outside LunarMonthGrid as well as its own padding.
+            // Match the page padding outside LunarDayGrid as well as its own padding.
             .padding()
+        }
+    }
+
+    #Preview("日期网格内容") {
+        @Previewable @State var selectedDayIndex = 15
+
+        NavigationStack {
+            ScrollView {
+                LunarDayGridPreviewContent(
+                    days: LunarDayGridLayoutPreview.makeDays(),
+                    selectedDayIndex: $selectedDayIndex
+                )
+            }
+            .navigationTitle("日期网格")
         }
     }
 #endif

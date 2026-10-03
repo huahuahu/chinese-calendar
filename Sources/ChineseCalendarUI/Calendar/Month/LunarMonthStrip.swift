@@ -99,3 +99,109 @@ struct LunarMonthStrip: View {
         }
     }
 }
+
+#Preview("含闰月的月份条") {
+    @Previewable @State var selectedMonthOffset = 6
+
+    let months: [ChineseLunarMonth] = {
+        let regularMonths = (1 ... 12).map { monthNumber in
+            ChineseLunarMonth(
+                lunarMonthIndex: monthNumber < 7 ? monthNumber : monthNumber + 1,
+                lunarYearNumber: 2026,
+                monthNumberInYear: monthNumber,
+                isLeapMonth: false,
+                dayCount: monthNumber.isMultiple(of: 2) ? 29 : 30,
+                monthStemIndex: (monthNumber - 1) % 10,
+                monthBranchIndex: (monthNumber - 1) % 12
+            )
+        }
+        let leapMonth = ChineseLunarMonth(
+            lunarMonthIndex: 7,
+            lunarYearNumber: 2026,
+            monthNumberInYear: 6,
+            isLeapMonth: true,
+            dayCount: 29,
+            monthStemIndex: 6,
+            monthBranchIndex: 6
+        )
+        return Array(regularMonths.prefix(6))
+            + [leapMonth]
+            + regularMonths.dropFirst(6)
+    }()
+
+    NavigationStack {
+        ScrollView {
+            LunarMonthStrip(
+                months: months,
+                selectedMonth: months[selectedMonthOffset],
+                selectMonth: { month in
+                    if let index = months.firstIndex(where: { $0.lunarMonthIndex == month.lunarMonthIndex }) {
+                        selectedMonthOffset = index
+                    }
+                },
+                yearTransitionPreparationMonthIndex: nil,
+                completeYearTransitionPreparation: { _ in }
+            )
+            .padding()
+        }
+        .navigationTitle("月份选择")
+    }
+}
+
+#Preview("有可能空白 · 没有月份") {
+    let selectedMonth = ChineseLunarMonth(
+        lunarMonthIndex: 3,
+        lunarYearNumber: 2026,
+        monthNumberInYear: 1,
+        isLeapMonth: false,
+        dayCount: 30,
+        monthStemIndex: 2,
+        monthBranchIndex: 2
+    )
+
+    NavigationStack {
+        ScrollView {
+            LunarMonthStrip(
+                months: [],
+                selectedMonth: selectedMonth,
+                selectMonth: { _ in },
+                yearTransitionPreparationMonthIndex: nil,
+                completeYearTransitionPreparation: { _ in }
+            )
+            .padding()
+        }
+        .navigationTitle("月份选择")
+    }
+}
+
+#Preview("后六月 · 仅命名示例，非历史记录") {
+    @Previewable @State var selectedMonthOffset = 0
+
+    // 当前导入库没有后六月记录；这里只验证模型的 .post 命名和重复月份的选择。
+    let months = [6, 6, 7].enumerated().map { offset, number in
+        ChineseLunarMonth(
+            lunarMonthIndex: offset,
+            lunarYearNumber: -220,
+            monthNumberInYear: number,
+            isLeapMonth: offset == 1,
+            intercalaryMonthNameStyle: offset == 1 ? .post : .leap,
+            dayCount: offset == 1 ? 29 : 30,
+            monthStemIndex: 0,
+            monthBranchIndex: 0
+        )
+    }
+
+    NavigationStack {
+        ScrollView {
+            LunarMonthStrip(
+                months: months,
+                selectedMonth: months[selectedMonthOffset],
+                selectMonth: { selectedMonthOffset = $0.lunarMonthIndex },
+                yearTransitionPreparationMonthIndex: nil,
+                completeYearTransitionPreparation: { _ in }
+            )
+            .padding()
+        }
+        .navigationTitle("后六月命名示例")
+    }
+}

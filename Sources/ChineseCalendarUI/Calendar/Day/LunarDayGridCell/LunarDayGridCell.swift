@@ -2,7 +2,7 @@ import ChineseCalendarCore
 import ChineseCalendarPersistence
 import SwiftUI
 
-/// 显示在 LunarMonthGrid 的日期网格中，用于呈现单个农历日。
+/// 显示在 LunarDayGrid 的日期网格中，用于呈现单个农历日。
 struct LunarDayGridCell: View {
     // swiftformat:disable:next enumNamespaces
     private struct Constants {
@@ -98,5 +98,68 @@ struct LunarDayGridCell: View {
 
     private var showsTodayOutline: Bool {
         differentiateWithoutColor && state == .today
+    }
+}
+
+#Preview("四种日期状态") {
+    let day = ChineseLunarDay(
+        dayIndex: 315,
+        lunarMonthIndex: 3,
+        dayNumberInMonth: 15,
+        dayStemIndex: 4,
+        dayBranchIndex: 2,
+        calendarDay: CalendarDay(
+            dayIndex: 315,
+            julianDayNumber: 2_461_063
+        )
+    )
+
+    NavigationStack {
+        ScrollView {
+            Grid(horizontalSpacing: 8, verticalSpacing: 8) {
+                GridRow {
+                    Text("普通")
+                    Text("选中")
+                }
+                .font(.caption)
+                .foregroundStyle(.secondary)
+
+                GridRow {
+                    LunarDayGridCell(day: day, isSelected: false, isToday: false)
+                    LunarDayGridCell(day: day, isSelected: true, isToday: false)
+                }
+                GridRow {
+                    Text("今天")
+                    Text("今天且选中")
+                }
+                .font(.caption)
+                .foregroundStyle(.secondary)
+
+                GridRow {
+                    LunarDayGridCell(day: day, isSelected: false, isToday: true)
+                    LunarDayGridCell(day: day, isSelected: true, isToday: true)
+                }
+            }
+            .padding()
+        }
+        .navigationTitle("日期状态")
+    }
+}
+
+#Preview("有可能空白 · 缺少对应日期") {
+    let day = ChineseLunarDay(
+        dayIndex: 315,
+        lunarMonthIndex: 3,
+        dayNumberInMonth: 15,
+        dayStemIndex: 4,
+        dayBranchIndex: 2
+    )
+
+    NavigationStack {
+        ScrollView {
+            LunarDayGridCell(day: day, isSelected: false, isToday: false)
+                .padding()
+        }
+        .navigationTitle("日期状态")
     }
 }
