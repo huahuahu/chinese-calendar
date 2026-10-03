@@ -131,3 +131,61 @@ struct SelectedLunarDayDetail: View {
         }
     }
 }
+
+#Preview("完整关联数据") {
+    let year = ChineseLunarYear(
+        lunarYearNumber: 2026,
+        yearStemIndex: 2,
+        yearBranchIndex: 6
+    )
+    let month = ChineseLunarMonth(
+        lunarMonthIndex: 3,
+        lunarYearNumber: 2026,
+        monthNumberInYear: 1,
+        isLeapMonth: false,
+        dayCount: 30,
+        monthStemIndex: 2,
+        monthBranchIndex: 2,
+        chineseLunarYear: year
+    )
+    let day = ChineseLunarDay(
+        dayIndex: 315,
+        lunarMonthIndex: 3,
+        dayNumberInMonth: 15,
+        dayStemIndex: 4,
+        dayBranchIndex: 2,
+        calendarDay: CalendarDay(
+            dayIndex: 315,
+            julianDayNumber: 2_461_063
+        ),
+        chineseLunarMonth: month
+    )
+
+    NavigationStack {
+        ScrollView {
+            SelectedLunarDayDetail(day: day)
+                .padding()
+        }
+        .navigationTitle("日历")
+    }
+    .environment(\.calendarStoreContentLevel, .full)
+}
+
+#Preview("有可能空白 · 关联数据缺失") {
+    let day = ChineseLunarDay(
+        dayIndex: 315,
+        lunarMonthIndex: 3,
+        dayNumberInMonth: 15,
+        dayStemIndex: 4,
+        dayBranchIndex: 2
+    )
+
+    NavigationStack {
+        ScrollView {
+            SelectedLunarDayDetail(day: day)
+                .padding()
+        }
+        .navigationTitle("日历")
+    }
+    .environment(\.calendarStoreContentLevel, .base)
+}

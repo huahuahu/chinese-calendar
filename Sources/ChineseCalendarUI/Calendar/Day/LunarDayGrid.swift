@@ -127,3 +127,101 @@ struct LunarDayGrid: View {
         )
     }
 }
+
+#Preview("30 天与选中日", traits: .sampleData) {
+    NavigationStack {
+        ScrollView {
+            LunarDayGrid(
+                month: ChineseLunarMonth(
+                    lunarMonthIndex: 3,
+                    lunarYearNumber: 2026,
+                    monthNumberInYear: 1,
+                    isLeapMonth: false,
+                    dayCount: 30,
+                    monthStemIndex: 2,
+                    monthBranchIndex: 2
+                )
+            )
+            .padding()
+        }
+        .navigationTitle("日期网格")
+    }
+}
+
+#Preview("有可能空白", traits: .emptySampleData) {
+    NavigationStack {
+        ScrollView {
+            LunarDayGrid(
+                month: ChineseLunarMonth(
+                    lunarMonthIndex: 3,
+                    lunarYearNumber: 2026,
+                    monthNumberInYear: 1,
+                    isLeapMonth: false,
+                    dayCount: 30,
+                    monthStemIndex: 2,
+                    monthBranchIndex: 2
+                )
+            )
+            .padding()
+        }
+        .navigationTitle("日期网格")
+    }
+}
+
+#Preview("29 天的小月", traits: .sampleData) {
+    NavigationStack {
+        ScrollView {
+            LunarDayGrid(month: ChineseLunarMonth(
+                lunarMonthIndex: 4,
+                lunarYearNumber: 2026,
+                monthNumberInYear: 2,
+                isLeapMonth: false,
+                dayCount: 29,
+                monthStemIndex: 3,
+                monthBranchIndex: 3
+            ))
+            .padding()
+        }
+        .navigationTitle("日期网格")
+    }
+}
+
+#Preview("有可能空白 · 未下载完整日期", traits: .emptySampleData) {
+    NavigationStack {
+        ScrollView {
+            LunarDayGrid(month: ChineseLunarMonth(
+                lunarMonthIndex: 6,
+                lunarYearNumber: 2027,
+                monthNumberInYear: 1,
+                isLeapMonth: false,
+                dayCount: 30,
+                monthStemIndex: 5,
+                monthBranchIndex: 5
+            ))
+            .environment(\.calendarStoreContentLevel, .base)
+            .padding()
+        }
+        .navigationTitle("日期网格")
+    }
+}
+
+private struct LunarDayGridEraPreviewContent: View {
+    @Environment(CalendarSelection.self) private var selection
+    @Query private var days: [ChineseLunarDay]
+
+    var body: some View {
+        if let month = days.first(where: { $0.dayIndex == selection.selectedDayIndex })?.chineseLunarMonth {
+            LunarDayGrid(month: month)
+        }
+    }
+}
+
+#Preview("同月日期跨越公历纪元", traits: .sampleData(.civilEraBoundary)) {
+    NavigationStack {
+        ScrollView {
+            LunarDayGridEraPreviewContent()
+                .padding()
+        }
+        .navigationTitle("公元前 → 公元")
+    }
+}

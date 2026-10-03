@@ -104,3 +104,34 @@ nonisolated struct LunarDayGridLayout: Layout {
         return (size, frames)
     }
 }
+
+#Preview("网格排列与换行") {
+    NavigationStack {
+        ScrollView {
+            LunarDayGridLayout {
+                ForEach(1 ... 30, id: \.self) { dayNumber in
+                    Text(dayNumber, format: .number)
+                        .font(.headline)
+                        .fixedSize(horizontal: true, vertical: false)
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(.background.secondary, in: .rect(cornerRadius: 18))
+                }
+            }
+            .padding()
+        }
+        .navigationTitle("日期网格布局")
+    }
+}
+
+#Preview("有可能空白 · 无子视图") {
+    NavigationStack {
+        ScrollView {
+            LunarDayGridLayout {
+                EmptyView()
+            }
+            .padding()
+        }
+        .navigationTitle("日期网格布局")
+    }
+}

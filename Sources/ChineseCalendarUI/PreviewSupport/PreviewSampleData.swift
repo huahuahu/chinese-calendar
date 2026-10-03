@@ -44,6 +44,7 @@ enum PreviewSampleData {
 
         if includesSampleData {
             insertCalendarSample(into: container.mainContext)
+            PreviewHistoricalCalendarData.insert(into: container.mainContext)
             insertHistorySample(into: container.mainContext)
             try container.mainContext.save()
         }

@@ -377,3 +377,68 @@ extension YearMonthHeader {
         civilDateRangeTitle ?? fallback
     }
 }
+
+private struct YearMonthHeaderPreviewContent: View {
+    @Environment(CalendarSelection.self) private var selection
+    @Query private var days: [ChineseLunarDay]
+
+    var body: some View {
+        if let month = days.first(where: { $0.dayIndex == selection.selectedDayIndex })?.chineseLunarMonth {
+            YearMonthHeader(month: month)
+        } else {
+            // 保留真实的无选中日状态；不回退到另一个月份。
+            ContentUnavailableView(
+                "没有找到日期",
+                systemSymbol: .calendarBadgeExclamationmark
+            )
+        }
+    }
+}
+
+#Preview(traits: .sampleData) {
+    NavigationStack {
+        ScrollView {
+            YearMonthHeaderPreviewContent()
+                .padding()
+        }
+        .navigationTitle("日历")
+    }
+}
+
+#Preview("有可能空白 · 缺少年份与日期关联", traits: .emptySampleData) {
+    NavigationStack {
+        ScrollView {
+            YearMonthHeader(month: ChineseLunarMonth(
+                lunarMonthIndex: 3,
+                lunarYearNumber: 2026,
+                monthNumberInYear: 1,
+                isLeapMonth: false,
+                dayCount: 30,
+                monthStemIndex: 2,
+                monthBranchIndex: 2
+            ))
+            .padding()
+        }
+        .navigationTitle("日历")
+    }
+}
+
+#Preview("公元前 1 年 · 跨年导航", traits: .sampleData(.beforeCommonEra)) {
+    NavigationStack {
+        ScrollView {
+            YearMonthHeaderPreviewContent()
+                .padding()
+        }
+        .navigationTitle("年月切换")
+    }
+}
+
+#Preview("九月 → 后九月 → 次年十月", traits: .sampleData(.postNinthMonth)) {
+    NavigationStack {
+        ScrollView {
+            YearMonthHeaderPreviewContent()
+                .padding()
+        }
+        .navigationTitle("古历后月")
+    }
+}

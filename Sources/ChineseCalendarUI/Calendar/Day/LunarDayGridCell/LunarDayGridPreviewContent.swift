@@ -39,4 +39,18 @@
             .padding()
         }
     }
+
+    #Preview("日期网格内容") {
+        @Previewable @State var selectedDayIndex = 15
+
+        NavigationStack {
+            ScrollView {
+                LunarDayGridPreviewContent(
+                    days: LunarDayGridLayoutPreview.makeDays(),
+                    selectedDayIndex: $selectedDayIndex
+                )
+            }
+            .navigationTitle("日期网格")
+        }
+    }
 #endif

@@ -52,7 +52,7 @@ struct LunarDayGridCell: View {
                 .fixedSize(horizontal: false, vertical: true)
                 .foregroundStyle(.secondary)
         }
-        .frame(maxWidth: .infinity, alignment: .topLeading)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .foregroundStyle(.primary)
         .padding(Constants.padding)
         .frame(minHeight: Constants.minimumHeight, alignment: .topLeading)
@@ -103,40 +103,63 @@ struct LunarDayGridCell: View {
 
 #Preview("四种日期状态") {
     let day = ChineseLunarDay(
-        dayIndex: 0,
-        lunarMonthIndex: 0,
-        dayNumberInMonth: 4,
-        dayStemIndex: 8,
-        dayBranchIndex: 10,
+        dayIndex: 315,
+        lunarMonthIndex: 3,
+        dayNumberInMonth: 15,
+        dayStemIndex: 4,
+        dayBranchIndex: 2,
         calendarDay: CalendarDay(
-            dayIndex: 0,
-            julianDayNumber: 0,
-            civilDate: CivilDate(
-                dayIndex: 0,
-                year: 2026,
-                month: 8,
-                dayOfMonth: 16,
-                calendarStyle: .gregorian
-            )
+            dayIndex: 315,
+            julianDayNumber: 2_461_063
         )
     )
 
-    Grid(horizontalSpacing: 8, verticalSpacing: 8) {
-        GridRow {
-            Text("普通")
-            Text("选中")
-            Text("今天")
-            Text("今天且选中")
-        }
-        .font(.caption)
-        .foregroundStyle(.secondary)
+    NavigationStack {
+        ScrollView {
+            Grid(horizontalSpacing: 8, verticalSpacing: 8) {
+                GridRow {
+                    Text("普通")
+                    Text("选中")
+                }
+                .font(.caption)
+                .foregroundStyle(.secondary)
 
-        GridRow {
-            LunarDayGridCell(day: day, isSelected: false, isToday: false)
-            LunarDayGridCell(day: day, isSelected: true, isToday: false)
-            LunarDayGridCell(day: day, isSelected: false, isToday: true)
-            LunarDayGridCell(day: day, isSelected: true, isToday: true)
+                GridRow {
+                    LunarDayGridCell(day: day, isSelected: false, isToday: false)
+                    LunarDayGridCell(day: day, isSelected: true, isToday: false)
+                }
+                GridRow {
+                    Text("今天")
+                    Text("今天且选中")
+                }
+                .font(.caption)
+                .foregroundStyle(.secondary)
+
+                GridRow {
+                    LunarDayGridCell(day: day, isSelected: false, isToday: true)
+                    LunarDayGridCell(day: day, isSelected: true, isToday: true)
+                }
+            }
+            .padding()
         }
+        .navigationTitle("日期状态")
     }
-    .padding()
+}
+
+#Preview("有可能空白 · 缺少对应日期") {
+    let day = ChineseLunarDay(
+        dayIndex: 315,
+        lunarMonthIndex: 3,
+        dayNumberInMonth: 15,
+        dayStemIndex: 4,
+        dayBranchIndex: 2
+    )
+
+    NavigationStack {
+        ScrollView {
+            LunarDayGridCell(day: day, isSelected: false, isToday: false)
+                .padding()
+        }
+        .navigationTitle("日期状态")
+    }
 }

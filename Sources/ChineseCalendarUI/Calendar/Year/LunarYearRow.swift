@@ -19,3 +19,36 @@ struct LunarYearRow: View {
         .accessibilityElement(children: .combine)
     }
 }
+
+#Preview("公元前与公元年份") {
+    let years = [
+        ChineseLunarYear(
+            lunarYearNumber: -221,
+            yearStemIndex: 6,
+            yearBranchIndex: 4
+        ),
+        ChineseLunarYear(
+            lunarYearNumber: 618,
+            yearStemIndex: 4,
+            yearBranchIndex: 2
+        ),
+        ChineseLunarYear(
+            lunarYearNumber: 2026,
+            yearStemIndex: 2,
+            yearBranchIndex: 6
+        )
+    ]
+
+    NavigationStack {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 16) {
+                ForEach(years, id: \.lunarYearNumber) { year in
+                    LunarYearRow(year: year)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+            }
+            .padding()
+        }
+        .navigationTitle("年份")
+    }
+}

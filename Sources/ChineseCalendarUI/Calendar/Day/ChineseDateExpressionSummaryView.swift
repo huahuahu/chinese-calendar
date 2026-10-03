@@ -66,3 +66,93 @@ struct ChineseDateExpressionSummaryView: View {
         "\(bound.precision.rawValue) \(bound.index)"
     }
 }
+
+#Preview("日期精度与长备注") {
+    let dayExpression = ChineseDateExpression(
+        id: "preview-day-expression",
+        precision: .day,
+        index: 315,
+        sourceText: "丙午年正月十五",
+        note: "这是一段较长的说明文字，用于检查来源备注换行后，卡片是否仍然保持清晰的层级与间距。"
+    )
+    let rangeExpression = ChineseDateExpression(
+        id: "preview-range-expression",
+        precision: .range,
+        uncertainRange: ChineseDateRange(
+            id: "preview-date-range",
+            lowerBound: ChineseDateBound(
+                id: "preview-range-lower-bound",
+                precision: .year,
+                index: 220
+            ),
+            upperBound: ChineseDateBound(
+                id: "preview-range-upper-bound",
+                precision: .year,
+                index: 221
+            )
+        ),
+        sourceText: "约公元220年至221年"
+    )
+    let unknownExpression = ChineseDateExpression(
+        id: "preview-unknown-expression",
+        precision: .unknown,
+        sourceText: "年代不详"
+    )
+
+    NavigationStack {
+        ScrollView {
+            VStack(spacing: 16) {
+                ChineseDateExpressionSummaryView(
+                    title: "日精度",
+                    date: dayExpression
+                )
+                ChineseDateExpressionSummaryView(
+                    title: "范围精度",
+                    date: rangeExpression
+                )
+                ChineseDateExpressionSummaryView(
+                    title: "没有备注",
+                    date: unknownExpression
+                )
+            }
+            .padding()
+        }
+        .navigationTitle("日期表达")
+    }
+}
+
+#Preview("有可能空白 · 无索引或备注") {
+    NavigationStack {
+        ScrollView {
+            VStack(spacing: 16) {
+                ChineseDateExpressionSummaryView(
+                    title: "只有年份",
+                    date: ChineseDateExpression(
+                        id: "preview-year-expression",
+                        precision: .year,
+                        index: 2026,
+                        sourceText: "丙午年"
+                    )
+                )
+                ChineseDateExpressionSummaryView(
+                    title: "月份索引缺失",
+                    date: ChineseDateExpression(
+                        id: "preview-month-expression",
+                        precision: .month,
+                        sourceText: "正月"
+                    )
+                )
+                ChineseDateExpressionSummaryView(
+                    title: "范围边界缺失",
+                    date: ChineseDateExpression(
+                        id: "preview-missing-range-expression",
+                        precision: .range,
+                        sourceText: "约在年初"
+                    )
+                )
+            }
+            .padding()
+        }
+        .navigationTitle("日期表达")
+    }
+}

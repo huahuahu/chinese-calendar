@@ -6,6 +6,11 @@ extension PreviewTrait where T == Preview.ViewTraits {
         .modifier(SampleDataPreviewModifier())
     }
 
+    /// 复用同一示例库，按场景隔离初始选中日，例如 `.sampleData(.beforeCommonEra)`。
+    static func sampleData(_ scenario: PreviewCalendarScenario) -> Self {
+        .modifier(SampleDataPreviewModifier(scenario: scenario))
+    }
+
     /// 使用没有记录的内存库验证页面空状态。
     static var emptySampleData: Self {
         .modifier(EmptySampleDataPreviewModifier())

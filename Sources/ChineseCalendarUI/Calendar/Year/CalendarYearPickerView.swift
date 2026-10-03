@@ -157,8 +157,36 @@ private struct CalendarYearPickerRow: View {
     }
 }
 
-#Preview(traits: .sampleData) {
+private struct CalendarYearPickerPreviewContent: View {
+    @Environment(CalendarSelection.self) private var selection
+    @Environment(CalendarToday.self) private var today
+    @Environment(\.modelContext) private var modelContext
+
+    var body: some View {
+        CalendarYearPickerView { yearNumber in
+            let resolver = CalendarSelectionResolver(modelContext: modelContext)
+            selection.select(dayIndex: try? resolver.selectedDayIndex(
+                inYear: yearNumber,
+                todayJulianDayNumber: today.julianDayNumber
+            ))
+        }
+    }
+}
+
+#Preview("示例数据", traits: .sampleData) {
+    NavigationStack {
+        CalendarYearPickerPreviewContent()
+    }
+}
+
+#Preview("有可能空白", traits: .emptySampleData) {
     NavigationStack {
         CalendarYearPickerView { _ in }
+    }
+}
+
+#Preview("公元前与公元 · 不显示公元 0 年", traits: .sampleData(.beforeCommonEra)) {
+    NavigationStack {
+        CalendarYearPickerPreviewContent()
     }
 }

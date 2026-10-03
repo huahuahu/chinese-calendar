@@ -18,3 +18,36 @@ struct CalendarYearsListView: View {
         .navigationTitle("年份")
     }
 }
+
+#Preview("跨时代年份", traits: .sampleData) {
+    let years = [
+        ChineseLunarYear(
+            lunarYearNumber: -221,
+            yearStemIndex: 6,
+            yearBranchIndex: 4
+        ),
+        ChineseLunarYear(
+            lunarYearNumber: 618,
+            yearStemIndex: 4,
+            yearBranchIndex: 2
+        ),
+        ChineseLunarYear(
+            lunarYearNumber: 2026,
+            yearStemIndex: 2,
+            yearBranchIndex: 6
+        )
+    ]
+
+    NavigationStack {
+        CalendarYearsListView(years: years)
+            .navigationDestination(for: CalendarDestination.self) { destination in
+                CalendarDestinationView(destination: destination)
+            }
+    }
+}
+
+#Preview("有可能空白") {
+    NavigationStack {
+        CalendarYearsListView(years: [])
+    }
+}

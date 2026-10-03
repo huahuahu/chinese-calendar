@@ -90,3 +90,55 @@ struct LunarYearDetailView: View {
         }
     }
 }
+
+private struct LunarYearDetailPreviewContent: View {
+    @Environment(CalendarSelection.self) private var selection
+
+    var body: some View {
+        LunarYearDetailView(selectedDayIndex: selection.selectedDayIndex)
+    }
+}
+
+#Preview("完整日历", traits: .sampleData) {
+    NavigationStack {
+        LunarYearDetailPreviewContent()
+    }
+}
+
+#Preview("有可能空白", traits: .emptySampleData) {
+    NavigationStack {
+        LunarYearDetailView(selectedDayIndex: nil)
+    }
+}
+
+#Preview("有可能空白 · 未下载完整日期", traits: .sampleData) {
+    NavigationStack {
+        LunarYearDetailView(selectedDayIndex: nil)
+            .environment(\.calendarStoreContentLevel, .base)
+    }
+}
+
+#Preview("有可能空白 · 日期不存在", traits: .sampleData) {
+    NavigationStack {
+        LunarYearDetailView(selectedDayIndex: -1)
+    }
+}
+
+// 点击下个月进入公元 1 年；反向场景点击上个月回到公元前 1 年。
+#Preview("公元前 1 年 → 公元 1 年", traits: .sampleData(.beforeCommonEra)) {
+    NavigationStack {
+        LunarYearDetailPreviewContent()
+    }
+}
+
+#Preview("公元 1 年 → 公元前 1 年", traits: .sampleData(.commonEra)) {
+    NavigationStack {
+        LunarYearDetailPreviewContent()
+    }
+}
+
+#Preview("公元前 221 年 · 后九月", traits: .sampleData(.postNinthMonth)) {
+    NavigationStack {
+        LunarYearDetailPreviewContent()
+    }
+}
