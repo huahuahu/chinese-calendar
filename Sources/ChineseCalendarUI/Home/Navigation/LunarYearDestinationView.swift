@@ -7,22 +7,10 @@ import SwiftUI
 
 /// 把年月日导航地址解析为一次性的选中日，并为日历功能子树提供共享环境。
 struct LunarYearDestinationView: View {
-    private let landing: LunarCalendarLanding
+    let landing: LunarCalendarLanding
 
     @State private var selection = CalendarSelection()
     @State private var today = CalendarToday()
-
-    init(
-        yearNumber: Int,
-        monthIndex: Int? = nil,
-        dayIndex: Int? = nil
-    ) {
-        landing = LunarCalendarLanding(
-            yearNumber: yearNumber,
-            monthIndex: monthIndex,
-            dayIndex: dayIndex
-        )
-    }
 
     var body: some View {
         LunarYearSelectionHost(landing: landing)
@@ -42,7 +30,7 @@ private struct LunarYearSelectionHost: View {
     let landing: LunarCalendarLanding
 
     var body: some View {
-        LunarYearDetailView(selectedDayIndex: selection.selectedDayIndex)
+        CalendarPageView(selectedDayIndex: selection.selectedDayIndex)
             .task(id: storeContentLevel) {
                 resolveInitialSelectionIfNeeded()
             }

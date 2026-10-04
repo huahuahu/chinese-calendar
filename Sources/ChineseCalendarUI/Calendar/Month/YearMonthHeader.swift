@@ -347,7 +347,7 @@ private extension YearMonthHeader {
         do {
             try selection.select(
                 dayIndex: resolver.selectedDayIndex(
-                    inMonth: monthIndex,
+                    for: .month(index: monthIndex),
                     todayJulianDayNumber: today.julianDayNumber
                 )
             )

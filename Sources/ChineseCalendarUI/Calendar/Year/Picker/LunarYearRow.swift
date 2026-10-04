@@ -40,14 +40,11 @@ struct LunarYearRow: View {
     ]
 
     NavigationStack {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 16) {
-                ForEach(years, id: \.lunarYearNumber) { year in
-                    LunarYearRow(year: year)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                }
+        List {
+            ForEach(years, id: \.lunarYearNumber) { year in
+                LunarYearRow(year: year)
+                    .frame(maxWidth: .infinity, alignment: .leading)
             }
-            .padding()
         }
         .navigationTitle("年份")
     }

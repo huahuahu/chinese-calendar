@@ -32,10 +32,14 @@ struct PreviewSampleDataTests {
     @Test func eraBoundaryResolvesBothDirectionsWithoutADisplayedYearZero() throws {
         let container = try PreviewSampleData.makeModelContainer()
         let resolver = CalendarSelectionResolver(modelContext: container.mainContext)
-        let beforeIndex = try #require(try resolver.monthIndex(forDayIndex: PreviewCalendarScenario.beforeCommonEra
-                .selectedDayIndex))
-        let afterIndex = try #require(try resolver
-            .monthIndex(forDayIndex: PreviewCalendarScenario.commonEra.selectedDayIndex))
+        let beforeIndex = try #require(try monthIndex(
+            forDayIndex: PreviewCalendarScenario.beforeCommonEra.selectedDayIndex,
+            in: container.mainContext
+        ))
+        let afterIndex = try #require(try monthIndex(
+            forDayIndex: PreviewCalendarScenario.commonEra.selectedDayIndex,
+            in: container.mainContext
+        ))
         let nextMonth = try #require(try resolver.adjacentMonth(to: beforeIndex, direction: .later))
         let previousMonth = try #require(try resolver.adjacentMonth(to: afterIndex, direction: .earlier))
 
@@ -61,14 +65,16 @@ struct PreviewSampleDataTests {
             direction: .earlier,
             todayJulianDayNumber: 0
         )
-        #expect(try resolver.monthIndex(forDayIndex: reverseDay) == beforeIndex)
+        #expect(try monthIndex(forDayIndex: reverseDay, in: container.mainContext) == beforeIndex)
     }
 
     @Test func postNinthMonthRetainsNameIdentityAndAncientYearBoundary() throws {
         let container = try PreviewSampleData.makeModelContainer()
         let resolver = CalendarSelectionResolver(modelContext: container.mainContext)
-        let index = try #require(try resolver
-            .monthIndex(forDayIndex: PreviewCalendarScenario.postNinthMonth.selectedDayIndex))
+        let index = try #require(try monthIndex(
+            forDayIndex: PreviewCalendarScenario.postNinthMonth.selectedDayIndex,
+            in: container.mainContext
+        ))
         let previous = try #require(try resolver.adjacentMonth(to: index, direction: .earlier))
         let post = try #require(try resolver.adjacentMonth(to: previous.lunarMonthIndex, direction: .later))
         let next = try #require(try resolver.adjacentMonth(to: index, direction: .later))
@@ -115,5 +121,22 @@ struct PreviewSampleDataTests {
         #expect(sample.selectedDayIndex == PreviewCalendarScenario.modern.selectedDayIndex)
         #expect(try resolver.yearNumber(forDayIndex: sample.selectedDayIndex) == 2026)
         #expect(try resolver.contains(dayIndex: -1) == false)
+    }
+}
+
+private extension PreviewSampleDataTests {
+    /// 从测试夹具读取日期所属的月序，为历史边界断言提供参照。
+    func monthIndex(forDayIndex dayIndex: Int?, in modelContext: ModelContext) throws -> Int? {
+        guard let dayIndex else {
+            return nil
+        }
+
+        var descriptor = FetchDescriptor<ChineseLunarDay>(
+            predicate: #Predicate<ChineseLunarDay> { day in
+                day.dayIndex == dayIndex
+            }
+        )
+        descriptor.fetchLimit = 1
+        return try modelContext.fetch(descriptor).first?.chineseLunarMonth?.lunarMonthIndex
     }
 }
