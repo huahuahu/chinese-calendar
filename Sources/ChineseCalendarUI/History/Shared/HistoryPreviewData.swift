@@ -128,24 +128,16 @@ enum HistoryPreviewData {
         let orthodoxEndDate = date(id: "preview-ming-orthodox-end-date", year: 1644)
         let startBoundary = OrthodoxBoundary(
             id: "preview-ming-orthodox-start",
-            traditionID: tradition.id,
-            dateExpressionID: orthodoxStartDate.id,
             tradition: tradition,
             date: orthodoxStartDate
         )
         let endBoundary = OrthodoxBoundary(
             id: "preview-ming-orthodox-end",
-            traditionID: tradition.id,
-            dateExpressionID: orthodoxEndDate.id,
             tradition: tradition,
             date: orthodoxEndDate
         )
         return OrthodoxPeriod(
             id: orthodoxPeriodID,
-            traditionID: tradition.id,
-            dynastyID: dynasty.id,
-            startBoundaryID: startBoundary.id,
-            endBoundaryID: endBoundary.id,
             sequenceIndex: 0,
             segmentIndex: 0,
             segmentName: dynasty.shortName ?? dynasty.name,

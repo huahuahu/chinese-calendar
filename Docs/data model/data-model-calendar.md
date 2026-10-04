@@ -106,6 +106,21 @@ Julian calendar 是儒略历，由 Julius Caesar 推行，规则中每 4 年置�
 
 显示层再把整数转换成中文名，例如 `0 + 0 -> 甲子`。这样可以让 raw data 更容易校验，也避免同一概念在数据里出现多种写法。
 
+## SwiftData 实现说明
+
+本文的字段、关系图、约束和查询步骤描述与存储框架无关的领域模型。`lunarMonthIndex` 和 `lunarYearNumber` 仍用于表达日、月、年的逻辑关联；SwiftData 从 schema 1.4.0 起，通过对象关系实现这些关联，不在子对象上重复持久化关联键。
+
+| 领域关联键 | SwiftData 实现 |
+| --- | --- |
+| `ChineseLunarDay.lunarMonthIndex` | 通过 `ChineseLunarDay.chineseLunarMonth` 关联到所属月份；`lunarMonthIndex` 保存在月份对象上。 |
+| `ChineseLunarMonth.lunarYearNumber` | 通过 `ChineseLunarMonth.chineseLunarYear` 关联到所属年份；`lunarYearNumber` 保存在年份对象上。 |
+
+JSONL / DTO 仍保留这些逻辑关联键。Builder 用它们查找父对象并建立 SwiftData 关系，构造日、月时必须传入父对象。运行时通过对象关系访问所属月份和年份，实现下文查询步骤中的逻辑关联。
+
+领域约束保持不变：SwiftData 保留 `ChineseLunarDay.dayIndex` 的独立唯一约束，并用“月份关系 + 月内日号”的复合唯一约束实现同一个 `lunarMonthIndex` 下日号唯一。关系属性虽然是可选类型，合法数据仍必须具备对应的父对象；构建和下载制品时由 `ChineseCalendarRelationshipValidation` 检查关系完整性。
+
+SwiftData seed store 的数据覆盖范围需要单独考虑：base 不包含日级记录，full 在数据集首尾的跨界月份可能只有部分日。因此 `dayCount` 仍保存上游月大小事实，不能用存储中现有的 `days.count` 替代。制品结构和校验流程见 [SwiftData Seed Store](./swiftdata-seed-store.md)。
+
 ## 关系图
 
 ```mermaid

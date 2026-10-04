@@ -33,7 +33,7 @@ struct ReignEraListView: View {
         )
         _periods = Query(
             filter: #Predicate<OrthodoxPeriod> { period in
-                period.traditionID == traditionID && period.dynastyID == dynastyID
+                period.tradition?.id == traditionID && period.dynasty?.id == dynastyID
             },
             sort: \OrthodoxPeriod.sequenceIndex
         )

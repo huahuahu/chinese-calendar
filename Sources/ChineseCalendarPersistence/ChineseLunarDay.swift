@@ -3,10 +3,9 @@ import SwiftData
 
 @Model
 public final class ChineseLunarDay {
-    #Unique<ChineseLunarDay>([\.dayIndex], [\.lunarMonthIndex, \.dayNumberInMonth])
+    #Unique<ChineseLunarDay>([\.dayIndex], [\.chineseLunarMonth, \.dayNumberInMonth])
 
     public var dayIndex: Int
-    public var lunarMonthIndex: Int
     public var dayNumberInMonth: Int
     public var dayStemIndex: Int
     public var dayBranchIndex: Int
@@ -19,15 +18,13 @@ public final class ChineseLunarDay {
 
     public init(
         dayIndex: Int,
-        lunarMonthIndex: Int,
         dayNumberInMonth: Int,
         dayStemIndex: Int,
         dayBranchIndex: Int,
         calendarDay: CalendarDay? = nil,
-        chineseLunarMonth: ChineseLunarMonth? = nil
+        chineseLunarMonth: ChineseLunarMonth
     ) {
         self.dayIndex = dayIndex
-        self.lunarMonthIndex = lunarMonthIndex
         self.dayNumberInMonth = dayNumberInMonth
         self.dayStemIndex = dayStemIndex
         self.dayBranchIndex = dayBranchIndex

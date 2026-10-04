@@ -130,7 +130,7 @@ public actor ChineseCalendarFullSeedStoreInstaller {
         eventHandler: @Sendable (ChineseCalendarFullSeedStoreInstallEvent) -> Void
     ) async throws -> FullSeedStoreInstallResult {
         let manifest = try await fetchRemoteManifest()
-        try validate(manifest)
+        try Self.validate(manifest)
 
         eventHandler(.downloading(progress: nil))
         let downloadsDirectory = try ChineseCalendarModelContainerFactory.downloadsDirectory(
@@ -190,17 +190,17 @@ public actor ChineseCalendarFullSeedStoreInstaller {
         return try decoder.decode(FullSeedStoreManifest.self, from: data)
     }
 
-    private func validate(_ manifest: FullSeedStoreManifest) throws {
+    static func validate(_ manifest: FullSeedStoreManifest) throws {
         guard manifest.seedStoreContentLevel == .full else {
             throw ChineseCalendarFullSeedStoreInstallError.unsupportedContentLevel(manifest.seedStoreContentLevel)
         }
         guard manifest.storeFileName == ChineseCalendarSeedStore.storeFileName else {
             throw ChineseCalendarFullSeedStoreInstallError.unsupportedStoreFileName(manifest.storeFileName)
         }
-        guard manifest.schemaVersion == Self.supportedSchemaVersion else {
+        guard manifest.schemaVersion == supportedSchemaVersion else {
             throw ChineseCalendarFullSeedStoreInstallError.unsupportedSchemaVersion(
                 manifest.schemaVersion,
-                expected: Self.supportedSchemaVersion
+                expected: supportedSchemaVersion
             )
         }
     }
@@ -382,7 +382,8 @@ private extension ChineseCalendarFullSeedStoreInstaller {
     }
 
     private func validateStoreCanOpen(at storeURL: URL) throws {
-        _ = try ChineseCalendarModelContainerFactory.makeContainer(at: storeURL, allowsSave: false)
+        let container = try ChineseCalendarModelContainerFactory.makeContainer(at: storeURL, allowsSave: false)
+        try ChineseCalendarRelationshipValidation.validate(in: ModelContext(container))
     }
 
     private func writeInstalledManifest(

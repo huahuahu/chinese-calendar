@@ -199,11 +199,11 @@ private func makeCell(julianDayNumber: Int = 2_461_042) -> some View {
     LunarDayGridCell(
         day: ChineseLunarDay(
             dayIndex: 1,
-            lunarMonthIndex: 0,
             dayNumberInMonth: 1,
             dayStemIndex: 0,
             dayBranchIndex: 0,
-            calendarDay: CalendarDay(dayIndex: 1, julianDayNumber: julianDayNumber)
+            calendarDay: CalendarDay(dayIndex: 1, julianDayNumber: julianDayNumber),
+            chineseLunarMonth: PreviewSampleData.makeStandaloneMonth()
         ),
         isSelected: false,
         isToday: false

@@ -38,12 +38,13 @@ struct SeededModelContainerTests {
         #expect(try !fixture.shouldInstall())
     }
 
-    @Test func incompatibleInstalledFullStoreIsReplacedWithBundledBaseStore() throws {
+    @Test(arguments: ["1.2.0", "1.3.0"])
+    func incompatibleInstalledFullStoreIsReplacedWithBundledBaseStore(schemaVersion: String) throws {
         let fixture = try SeedStoreFixture(
             seedManifest: Self.manifest(artifactVersion: "artifact-b"),
             installedManifest: Self.manifest(
                 artifactVersion: "artifact-a",
-                schemaVersion: "1.2.0",
+                schemaVersion: schemaVersion,
                 contentLevel: "full"
             )
         )
@@ -73,6 +74,27 @@ struct SeededModelContainerTests {
         )
         defer { fixture.remove() }
 
+        #expect(try fixture.shouldInstall())
+    }
+
+    @Test(arguments: ["1.2.0", "1.3.0"])
+    func incompatibleBaseIsReplacedEvenWhenArtifactMatches(schemaVersion: String) throws {
+        let fixture = try SeedStoreFixture(
+            seedManifest: Self.manifest(artifactVersion: "same"),
+            installedManifest: Self.manifest(artifactVersion: "same", schemaVersion: schemaVersion)
+        )
+        defer { fixture.remove() }
+        #expect(try fixture.shouldInstall())
+    }
+
+    @Test func firstInstallationRequiresBundledStore() throws {
+        let fixture = try SeedStoreFixture(
+            seedManifest: Self.manifest(artifactVersion: "new"), installedManifest: nil
+        )
+        defer { fixture.remove() }
+        try FileManager.default.removeItem(
+            at: fixture.storeDirectory.appendingPathComponent(ChineseCalendarSeedStore.storeFileName)
+        )
         #expect(try fixture.shouldInstall())
     }
 

@@ -50,11 +50,11 @@ struct YearMonthHeader: View {
 
                 ZStack(alignment: .leading) {
                     titleContent
-                        .id(month.lunarYearNumber)
+                        .id(year?.lunarYearNumber)
                         .transition(yearTransition)
                 }
                 .clipped()
-                .animation(yearSelectionAnimation, value: month.lunarYearNumber)
+                .animation(yearSelectionAnimation, value: year?.lunarYearNumber)
                 .frame(maxWidth: .infinity, alignment: .leading)
 
                 Button("下个月", systemSymbol: .chevronRight) {
@@ -79,11 +79,11 @@ struct YearMonthHeader: View {
                     yearTransitionPreparationMonthIndex: pendingYearTransition?.sourceMonthIndex,
                     completeYearTransitionPreparation: completeYearTransitionPreparation
                 )
-                .id(month.lunarYearNumber)
+                .id(year?.lunarYearNumber)
                 .transition(yearTransition)
             }
             .clipped()
-            .animation(yearSelectionAnimation, value: month.lunarYearNumber)
+            .animation(yearSelectionAnimation, value: year?.lunarYearNumber)
         }
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
@@ -125,7 +125,7 @@ private extension YearMonthHeader {
                 branchIndex: year.yearBranchIndex
             )
         } else {
-            String(month.lunarYearNumber)
+            "年份数据缺失"
         }
 
         return "\(yearTitle) \(LunarMonthDisplay.title(for: month))"
@@ -207,16 +207,18 @@ private extension YearMonthHeader {
 
     private func selectMonth(_ destinationMonth: ChineseLunarMonth?) {
         guard let destinationMonth,
-              destinationMonth.lunarMonthIndex != month.lunarMonthIndex
+              destinationMonth.lunarMonthIndex != month.lunarMonthIndex,
+              let sourceYearNumber = year?.lunarYearNumber,
+              let destinationYearNumber = destinationMonth.chineseLunarYear?.lunarYearNumber
         else {
             return
         }
 
-        let crossesYear = destinationMonth.lunarYearNumber != month.lunarYearNumber
+        let crossesYear = destinationYearNumber != sourceYearNumber
         if crossesYear {
             let direction = LunarYearTransitionDirection(
-                from: month.lunarYearNumber,
-                to: destinationMonth.lunarYearNumber
+                from: sourceYearNumber,
+                to: destinationYearNumber
             )
             if let direction {
                 yearTransitionContext.direction = direction
@@ -243,9 +245,9 @@ private extension YearMonthHeader {
             )
             let destinationYearNumber = try resolver.yearNumber(forDayIndex: destinationDayIndex)
 
-            if let destinationYearNumber {
+            if let destinationYearNumber, let sourceYearNumber = year?.lunarYearNumber {
                 let direction = LunarYearTransitionDirection(
-                    from: month.lunarYearNumber,
+                    from: sourceYearNumber,
                     to: destinationYearNumber
                 )
                 if let direction {
@@ -266,10 +268,12 @@ private extension YearMonthHeader {
     }
 
     private func selectYear(_ yearNumber: Int) {
-        guard let direction = LunarYearTransitionDirection(
-            from: month.lunarYearNumber,
-            to: yearNumber
-        ) else {
+        guard let sourceYearNumber = year?.lunarYearNumber,
+              let direction = LunarYearTransitionDirection(
+                  from: sourceYearNumber,
+                  to: yearNumber
+              )
+        else {
             return
         }
 
@@ -282,7 +286,7 @@ private extension YearMonthHeader {
                 isSource: false
             )
             guard let sourceMonthIndex = try resolver.boundaryMonthIndex(
-                inYear: month.lunarYearNumber,
+                inYear: sourceYearNumber,
                 direction: direction,
                 isSource: true
             ) else {
@@ -292,7 +296,7 @@ private extension YearMonthHeader {
             }
 
             pendingYearTransition = LunarYearTransitionRequest(
-                sourceYearNumber: month.lunarYearNumber,
+                sourceYearNumber: sourceYearNumber,
                 sourceMonthIndex: sourceMonthIndex,
                 destinationYearNumber: yearNumber,
                 destinationMonthIndex: destinationMonthIndex
@@ -307,7 +311,7 @@ private extension YearMonthHeader {
     private func completeYearTransitionPreparation(_ sourceMonthIndex: Int) {
         guard let pendingYearTransition,
               pendingYearTransition.sourceMonthIndex == sourceMonthIndex,
-              pendingYearTransition.sourceYearNumber == month.lunarYearNumber
+              pendingYearTransition.sourceYearNumber == year?.lunarYearNumber
         else {
             return
         }
@@ -406,18 +410,16 @@ private struct YearMonthHeaderPreviewContent: View {
 }
 
 #Preview("有可能空白 · 缺少年份与日期关联", traits: .emptySampleData) {
+    let month: ChineseLunarMonth = {
+        let month = PreviewSampleData.makeStandaloneMonth()
+        month.chineseLunarYear = nil
+        return month
+    }()
+
     NavigationStack {
         ScrollView {
-            YearMonthHeader(month: ChineseLunarMonth(
-                lunarMonthIndex: 3,
-                lunarYearNumber: 2026,
-                monthNumberInYear: 1,
-                isLeapMonth: false,
-                dayCount: 30,
-                monthStemIndex: 2,
-                monthBranchIndex: 2
-            ))
-            .padding()
+            YearMonthHeader(month: month)
+                .padding()
         }
         .navigationTitle("日历")
     }

@@ -104,25 +104,26 @@ struct LunarMonthStrip: View {
     @Previewable @State var selectedMonthOffset = 6
 
     let months: [ChineseLunarMonth] = {
+        let year = ChineseLunarYear(lunarYearNumber: 2026, yearStemIndex: 2, yearBranchIndex: 6)
         let regularMonths = (1 ... 12).map { monthNumber in
             ChineseLunarMonth(
                 lunarMonthIndex: monthNumber < 7 ? monthNumber : monthNumber + 1,
-                lunarYearNumber: 2026,
                 monthNumberInYear: monthNumber,
                 isLeapMonth: false,
                 dayCount: monthNumber.isMultiple(of: 2) ? 29 : 30,
                 monthStemIndex: (monthNumber - 1) % 10,
-                monthBranchIndex: (monthNumber - 1) % 12
+                monthBranchIndex: (monthNumber - 1) % 12,
+                chineseLunarYear: year
             )
         }
         let leapMonth = ChineseLunarMonth(
             lunarMonthIndex: 7,
-            lunarYearNumber: 2026,
             monthNumberInYear: 6,
             isLeapMonth: true,
             dayCount: 29,
             monthStemIndex: 6,
-            monthBranchIndex: 6
+            monthBranchIndex: 6,
+            chineseLunarYear: year
         )
         return Array(regularMonths.prefix(6))
             + [leapMonth]
@@ -151,12 +152,12 @@ struct LunarMonthStrip: View {
 #Preview("有可能空白 · 没有月份") {
     let selectedMonth = ChineseLunarMonth(
         lunarMonthIndex: 3,
-        lunarYearNumber: 2026,
         monthNumberInYear: 1,
         isLeapMonth: false,
         dayCount: 30,
         monthStemIndex: 2,
-        monthBranchIndex: 2
+        monthBranchIndex: 2,
+        chineseLunarYear: ChineseLunarYear(lunarYearNumber: 2026, yearStemIndex: 0, yearBranchIndex: 0)
     )
 
     NavigationStack {
@@ -178,16 +179,17 @@ struct LunarMonthStrip: View {
     @Previewable @State var selectedMonthOffset = 0
 
     // 当前导入库没有后六月记录；这里只验证模型的 .post 命名和重复月份的选择。
+    let year = ChineseLunarYear(lunarYearNumber: -220, yearStemIndex: 0, yearBranchIndex: 0)
     let months = [6, 6, 7].enumerated().map { offset, number in
         ChineseLunarMonth(
             lunarMonthIndex: offset,
-            lunarYearNumber: -220,
             monthNumberInYear: number,
             isLeapMonth: offset == 1,
             intercalaryMonthNameStyle: offset == 1 ? .post : .leap,
             dayCount: offset == 1 ? 29 : 30,
             monthStemIndex: 0,
-            monthBranchIndex: 0
+            monthBranchIndex: 0,
+            chineseLunarYear: year
         )
     }
 

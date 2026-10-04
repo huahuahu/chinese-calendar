@@ -192,11 +192,12 @@ ChineseLunarYear|2421
 ```bash
 sqlite3 Apps/Shared/Resources/ChineseCalendarSeedStore.bundle/ChineseCalendar.sqlite "
 select cd.ZYEAR || '-' || cd.ZMONTH || '-' || cd.ZDAYOFMONTH,
-       ld.ZLUNARMONTHINDEX,
+       lm.ZLUNARMONTHINDEX,
        ld.ZDAYNUMBERINMONTH
 from ZCIVILDATE cd
 join ZCALENDARDAY day on day.ZCIVILDATE = cd.Z_PK
 join ZCHINESELUNARDAY ld on day.ZCHINESELUNARDAY = ld.Z_PK
+join ZCHINESELUNARMONTH lm on ld.ZCHINESELUNARMONTH = lm.Z_PK
 where cd.ZYEAR = 2024 and cd.ZMONTH = 1 and cd.ZDAYOFMONTH = 1;
 "
 ```
@@ -212,3 +213,21 @@ where cd.ZYEAR = 2024 and cd.ZMONTH = 1 and cd.ZDAYOFMONTH = 1;
 - 如果脚本包编译时没有识别到 `ChineseCalendarPersistence` 的新文件，先删除 `Scripts/BuildChineseCalendarSeedStore/.build` 再重跑。
 - 如果 row count 不一致，先重新生成 `Data/Processed/swiftdata_import`，再重新运行本脚本。
 - 如果出现 WAL/SHM 文件，重新运行脚本；它的 finalize 阶段会 checkpoint、切换到 DELETE journal，并清理 sidecar 文件。
+
+## 关系 Schema 验证
+
+Schema 1.4.0 的日/月/正统归属由对象关系表达。Builder 拒绝缺失父对象、越界月内日号、日序不一致，以及正统区间两端属于其他传统的数据。构建末尾与完整数据下载后都运行 `ChineseCalendarRelationshipValidation`。
+
+只读核对 base / full 的关系、删除字段和真实 SQLite 索引：
+
+```bash
+python3 Scripts/BuildChineseCalendarSeedStore/verify_relationship_store.py \
+  Apps/Shared/Resources/ChineseCalendarSeedStore.bundle/ChineseCalendar.sqlite
+python3 Scripts/BuildChineseCalendarSeedStore/verify_relationship_store.py \
+  Data/Processed/remote_full_seed_store/ChineseCalendar.sqlite \
+  --compare-to /path/to/previous-schema-1.2.0-full.sqlite
+```
+
+可选的旧 full 对照会遍历分布在整个数据范围的月份与年份，确认关系查询结果一致，并输出延迟中位数、P95 和查询计划。脚本始终以 SQLite `mode=ro` 打开文件，不执行迁移。
+
+SwiftData 的重复插入/upsert 和关闭再打开后的唯一性，由 `ChineseCalendarPersistenceTests/RelationshipStoreTests` 在临时磁盘 store 上验证。该 target 已包含在生成的 iOS scheme 中。

@@ -62,17 +62,18 @@
 
         /// Transient layout fixtures include January 1's longer civil date; no store is opened.
         static func makeDays() -> [ChineseLunarDay] {
-            (1 ... 30).map { dayNumber in
+            let month = PreviewSampleData.makeStandaloneMonth()
+            return (1 ... 30).map { dayNumber in
                 ChineseLunarDay(
                     dayIndex: dayNumber,
-                    lunarMonthIndex: 0,
                     dayNumberInMonth: dayNumber,
                     dayStemIndex: (dayNumber - 1) % 10,
                     dayBranchIndex: (dayNumber - 1) % 12,
                     calendarDay: CalendarDay(
                         dayIndex: dayNumber,
                         julianDayNumber: 2_461_029 + dayNumber
-                    )
+                    ),
+                    chineseLunarMonth: month
                 )
             }
         }
