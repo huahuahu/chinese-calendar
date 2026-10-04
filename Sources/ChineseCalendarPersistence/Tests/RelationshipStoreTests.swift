@@ -87,6 +87,35 @@ struct RelationshipStoreTests {
         }
     }
 
+    @Test func boundaryWithoutDateIsRejectedAfterReopening() throws {
+        let directory = try makeDirectory()
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let url = directory.appendingPathComponent("test.sqlite")
+        do {
+            let container = try ChineseCalendarModelContainerFactory.makeContainer(at: url)
+            let context = ModelContext(container)
+            context.autosaveEnabled = false
+            let boundary = OrthodoxBoundary(
+                id: "boundary",
+                tradition: OrthodoxTradition(id: "tradition", name: "Tradition"),
+                date: ChineseDateExpression(id: "date", precision: .year, index: 2026, sourceText: "2026")
+            )
+            context.insert(boundary)
+            try context.save()
+            try ChineseCalendarRelationshipValidation.validate(in: ModelContext(container))
+
+            boundary.date = nil
+            try context.save()
+        }
+
+        let reopened = try ChineseCalendarModelContainerFactory.makeContainer(at: url, allowsSave: false)
+        let context = ModelContext(reopened)
+        #expect(try context.fetchCount(FetchDescriptor<OrthodoxBoundary>()) == 1)
+        #expect(throws: ChineseCalendarRelationshipValidation.InvalidRelationships.self) {
+            try ChineseCalendarRelationshipValidation.validate(in: context)
+        }
+    }
+
     @Test(arguments: ["1.2.0", "1.3.0"])
     func oldRemoteManifestIsRejectedBeforeDownloading(schemaVersion: String) throws {
         let manifest = FullSeedStoreManifest(

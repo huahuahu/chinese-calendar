@@ -154,7 +154,7 @@ public final class OrthodoxBoundary {
     public var tradition: OrthodoxTradition?
 
     @Relationship(deleteRule: .cascade)
-    public var date: ChineseDateExpression
+    public var date: ChineseDateExpression?
 
     public init(
         id: String,

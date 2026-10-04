@@ -19,7 +19,7 @@ public enum ChineseCalendarRelationshipValidation {
         )
         try requireComplete(
             context.fetchCount(FetchDescriptor<OrthodoxBoundary>(predicate: #Predicate {
-                $0.tradition == nil
+                $0.tradition == nil || $0.date == nil
             })),
             model: "OrthodoxBoundary"
         )
