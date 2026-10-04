@@ -106,8 +106,8 @@ ORDER BY t0.ZDAYNUMBERINMONTH, t0.Z_PK
 
 ## 远端发布
 
-待发布制品：schema **1.4.0** 的 `full-seed-store-2026.10.03`，包含 `ChineseCalendar.sqlite` 与 `ChineseCalendarFullSeedStoreManifest.json`。
-远端发布及 `project.yml` 清单 URL 切换应一起完成，避免新 schema 继续下载旧 1.2.0 清单。已发布的 1.3.0 清单也不兼容本次关系重构；发布前不能将公共下载路径视为完成。
+已发布 schema **1.4.0** 的 [full-seed-store-2026.10.04](https://github.com/huahuahu/chinese-calendar/releases/tag/full-seed-store-2026.10.04)，包含 `ChineseCalendar.sqlite` 与 `ChineseCalendarFullSeedStoreManifest.json`。GitHub 上两个资产均为 uploaded，SQLite 字节数与 SHA-256 和本地制品一致。
+`project.yml` 已同步指向新清单。旧 1.2.0 / 1.3.0 制品不兼容本次关系重构；公开下载与生产安装器的验证结果记录在 [PR #134](https://github.com/huahuahu/chinese-calendar/pull/134)。
 
 ## 最终 schema 1.4.0 验证
 
@@ -124,9 +124,9 @@ ORDER BY t0.ZDAYNUMBERINMONTH, t0.Z_PK
 | 制品 | 字节数 | artifactVersion |
 | --- | ---: | --- |
 | base 1.4.0 | 2,658,304 | `43ae5b55e0290f25451885dca5458022bedf647e7d868ad35d546f36a6d54637` |
-| full 1.4.0 | 207,093,760 | `465fb388943cc8aeba67ee7e6b83807c8dc01ecf3606636eae2bfbbeb0f924a1` |
+| full 1.4.0 | 207,097,856 | `465fb388943cc8aeba67ee7e6b83807c8dc01ecf3606636eae2bfbbeb0f924a1` |
 
-最终 full SHA-256：`0e0b3688f2f410d5343a5a9f2ee5f1b60b7f74f179d680dd97805b3e40895989`。
+最终 full SHA-256：`ba0490ac4b78bce947a64733a067e08bdba5d342ed8c1dd765fb8bba65215c77`。
 
 使用最终代码在完整库上重新运行 [查询片段](issue-131/full-swiftdata-snippet.swift)，[结果](issue-131/full-swiftdata-results-1.4.txt) 包括父对象查找、关系加载和排序，均为本机单次顺序抽样：
 
@@ -135,4 +135,12 @@ ORDER BY t0.ZDAYNUMBERINMONTH, t0.Z_PK
 | 按月读取日期 | 999 | 3.3990 / 4.1060 |
 | 按年读取月份 | 807 | 2.0790 / 2.4580 |
 
-这比初轮 iOS 27 专用的直接过滤慢，但不再使用不受支持的解包谓词，也未出现可选链全表扫描的约 60 ms 延迟。完整库关系校验及后月、闰月、跨年导航结果均通过；最终公开下载仍待发布后验证。
+这比初轮 iOS 27 专用的直接过滤慢，但不再使用不受支持的解包谓词，也未出现可选链全表扫描的约 60 ms 延迟。完整库关系校验及后月、闰月、跨年导航结果均通过。上述性能与导航结果采集于 2026-10-03；2026-10-04 的发布前修订见下文。
+
+## 2026-10-04 合并前验证
+
+- 将 `OrthodoxBoundary.date` 改为可诊断缺失值的可选存储关系，构造函数仍要求日期对象；制品校验同时拒绝缺失 tradition 或 date 的边界。
+- 新增回归测试：先保存合法边界，再移除日期关系并保存；关闭后以只读方式重新打开数据库，确认关系校验拒绝该制品。
+- Xcode MCP 在项目配置的 iOS 27.0 模拟器运行完整套件，162 项通过、0 失败；修复提交 `5e944d6d` 的 iOS 26.5 CI、SwiftFormat、SwiftLint 均通过。
+- 919,377 条 JSONL 记录校验通过。按最终模型重新生成 base/full，核对 schema 1.4.0、稳定内容身份、SQLite integrity、必需关系和唯一索引；完整库仍包含 884,256 条农历日，无 WAL/SHM sidecar。
+- [身份与校验和](issue-131/schema-1.4-artifacts.json) 已更新为本次实际提交的 base 和发布的 full；[full 审计](issue-131/full-store-audit-1.4.json) 与重建结果一致。
