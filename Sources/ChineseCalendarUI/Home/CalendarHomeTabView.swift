@@ -19,7 +19,7 @@ struct CalendarHomeTabView<BottomStatusBar: View>: View {
                 value: CalendarTab.years
             ) {
                 NavigationStack(path: $router.yearsPath) {
-                    LunarYearDestinationView(yearNumber: ChineseLunarCalendar.yearNumber())
+                    LunarYearDestinationView(landing: .year(number: ChineseLunarCalendar.yearNumber()))
                         .calendarDestinations()
                 }
             }

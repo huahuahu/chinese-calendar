@@ -166,7 +166,7 @@ private struct CalendarYearPickerPreviewContent: View {
         CalendarYearPickerView { yearNumber in
             let resolver = CalendarSelectionResolver(modelContext: modelContext)
             selection.select(dayIndex: try? resolver.selectedDayIndex(
-                inYear: yearNumber,
+                for: .year(number: yearNumber),
                 todayJulianDayNumber: today.julianDayNumber
             ))
         }

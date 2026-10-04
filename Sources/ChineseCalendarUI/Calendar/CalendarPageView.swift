@@ -4,7 +4,7 @@ import SwiftData
 import SwiftUI
 
 /// 根据唯一选中日推导当前农历月和农历年，并组合日历页面的四个区域。
-struct LunarYearDetailView: View {
+struct CalendarPageView: View {
     // swiftformat:disable:next enumNamespaces
     private struct Constants {
         static let sectionSpacing: CGFloat = 16
@@ -91,54 +91,54 @@ struct LunarYearDetailView: View {
     }
 }
 
-private struct LunarYearDetailPreviewContent: View {
+private struct CalendarPagePreviewContent: View {
     @Environment(CalendarSelection.self) private var selection
 
     var body: some View {
-        LunarYearDetailView(selectedDayIndex: selection.selectedDayIndex)
+        CalendarPageView(selectedDayIndex: selection.selectedDayIndex)
     }
 }
 
 #Preview("完整日历", traits: .sampleData) {
     NavigationStack {
-        LunarYearDetailPreviewContent()
+        CalendarPagePreviewContent()
     }
 }
 
 #Preview("有可能空白", traits: .emptySampleData) {
     NavigationStack {
-        LunarYearDetailView(selectedDayIndex: nil)
+        CalendarPageView(selectedDayIndex: nil)
     }
 }
 
 #Preview("有可能空白 · 未下载完整日期", traits: .sampleData) {
     NavigationStack {
-        LunarYearDetailView(selectedDayIndex: nil)
+        CalendarPageView(selectedDayIndex: nil)
             .environment(\.calendarStoreContentLevel, .base)
     }
 }
 
 #Preview("有可能空白 · 日期不存在", traits: .sampleData) {
     NavigationStack {
-        LunarYearDetailView(selectedDayIndex: -1)
+        CalendarPageView(selectedDayIndex: -1)
     }
 }
 
 // 点击下个月进入公元 1 年；反向场景点击上个月回到公元前 1 年。
 #Preview("公元前 1 年 → 公元 1 年", traits: .sampleData(.beforeCommonEra)) {
     NavigationStack {
-        LunarYearDetailPreviewContent()
+        CalendarPagePreviewContent()
     }
 }
 
 #Preview("公元 1 年 → 公元前 1 年", traits: .sampleData(.commonEra)) {
     NavigationStack {
-        LunarYearDetailPreviewContent()
+        CalendarPagePreviewContent()
     }
 }
 
 #Preview("公元前 221 年 · 后九月", traits: .sampleData(.postNinthMonth)) {
     NavigationStack {
-        LunarYearDetailPreviewContent()
+        CalendarPagePreviewContent()
     }
 }

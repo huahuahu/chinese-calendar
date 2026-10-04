@@ -8,12 +8,17 @@ struct CalendarDestinationView: View {
         Group {
             switch destination {
             case let .lunarYear(yearNumber, monthIndex, dayIndex):
-                LunarYearDestinationView(
-                    yearNumber: yearNumber,
-                    monthIndex: monthIndex,
-                    dayIndex: dayIndex
-                )
-                .id(destination)
+                // 在导航边界选取地址中最具体的定位信息，页面只接收一种落点。
+                let landing: LunarCalendarLanding = if let dayIndex {
+                    .day(index: dayIndex)
+                } else if let monthIndex {
+                    .month(index: monthIndex)
+                } else {
+                    .year(number: yearNumber)
+                }
+
+                LunarYearDestinationView(landing: landing)
+                    .id(destination)
             case let .dynasty(orthodoxPeriodID):
                 DynastyDetailView(orthodoxPeriodID: orthodoxPeriodID)
             case let .emperorList(dynastyID):
