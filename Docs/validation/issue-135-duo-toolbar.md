@@ -16,8 +16,8 @@
 - 最终源码在 Xcode 27.1 Beta / iOS 27.1 SDK 构建通过，scheme 为 `ChineseCalendar-iOS`，目标为 `iPhone Duo (issue-135)`。
 - 三个 Swift 文件通过 SwiftFormat 与 SwiftLint strict；`git diff --check` 通过。
 - 最终版本尚未重新执行完整设备交互矩阵，早期实验版本的点击结果不作为最终版本验收依据。
+- CI 使用 GitHub 的 `xcode-27` runner，固定选择 Xcode 27.1，以提供 `toolbarVerticalEdge` 所需的 iOS 27.1 SDK。
 
 ## 剩余项
 
-- 构建需要 iOS 27.1 SDK，仓库 CI 目前固定 Xcode 26.5；运行时 `#available` 检查不能提供旧 SDK 编译支持。
 - Canvas 外屏遮挡、完整折叠／方向／尺寸覆盖、导航返回及普通 iPhone 回归尚未全部完成，#135 保持打开。
