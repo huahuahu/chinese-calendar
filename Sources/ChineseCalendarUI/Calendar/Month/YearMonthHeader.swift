@@ -86,8 +86,13 @@ struct YearMonthHeader: View {
             .animation(yearSelectionAnimation, value: year?.lunarYearNumber)
         }
         .toolbar {
-            ToolbarItem(placement: .primaryAction) {
-                Button("今天", action: selectToday)
+            if #available(iOS 27.1, *) {
+                CalendarTodayToolbar(selectToday: selectToday)
+            } else {
+                ToolbarItem(placement: .primaryAction) {
+                    Button("今天", systemSymbol: .calendarBadgeClock, action: selectToday)
+                        .labelStyle(.titleOnly)
+                }
             }
         }
         .sheet(isPresented: $isYearPickerPresented) {
