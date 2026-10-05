@@ -105,6 +105,11 @@ private struct CalendarPagePreviewContent: View {
     }
 }
 
+// 核对应用的 TabView 与导航层级；Duo 系统竖栏仍需结合模拟器中的实际运行验证。
+#Preview("完整日历 · 应用导航", traits: .sampleData) {
+    CalendarHomeView()
+}
+
 #Preview("有可能空白", traits: .emptySampleData) {
     NavigationStack {
         CalendarPageView(selectedDayIndex: nil)
