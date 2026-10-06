@@ -7,13 +7,13 @@ Swift project for exploring the traditional Chinese calendar on iOS.
 - `./Scripts/format.sh`: formats the Swift codebase with SwiftFormat.
 - `./Scripts/format.sh --check`: verifies formatting without changing files.
 - `./Scripts/lint.sh`: runs SwiftLint in strict mode.
-- `./Scripts/test.sh`: runs the package test suite on iOS Simulator.
-- `./Scripts/ci.sh`: runs format check, lint, and tests in the same order as CI.
+- `./Scripts/test.sh`: runs seed-store script tests and the Xcode test suite on iOS Simulator.
+- `./Scripts/ci.sh`: runs format check, lint, data schema validation, project generation, Simulator tests, and the iOS app build.
 
 ## CI
 
 GitHub Actions runs on pushes to `main`, pull requests, and manual dispatch.
-The workflow runs on a macOS build host with Xcode 26.5, checks formatting, runs linting, and executes the test suite on iOS Simulator.
+The workflow selects its Xcode version in `.github/workflows/ci.yml`, checks formatting and lint, validates data schemas, runs tests on iOS Simulator, and builds the iOS app.
 `swiftformat` and `swiftlint` are installed from pinned GitHub Release versions declared in the workflow, so the CI toolchain stays reproducible.
 
 ## Local Tooling
@@ -53,6 +53,7 @@ This repository contains a Swift Package rooted at `Sources` and Xcode app targe
 - Project-local SwiftData skill: `./.agents/skills/swiftdata-pro`
 - Project-local worktree cleanup skill: `./.agents/skills/worktree-cleanup`
 - Project-local documentation grilling skill: `./.agents/skills/grill-with-docs`
+- Project-local change review skill: [English agent instructions](.agents/skills/review-changes/SKILL.md) · [中文对照版](.agents/skills/review-changes/SKILL.zh-CN.md)
 
 In GitHub Copilot, ask the agent to use `swiftui-pro`, `swift-concurrency-pro`, or `swiftdata-pro` when working on the matching Swift area.
 `swift-agent-skills` is a catalog repository, so it is mirrored into this project for reference rather than installed as a directly invokable skill.

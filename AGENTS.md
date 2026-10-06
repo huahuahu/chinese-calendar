@@ -1,124 +1,41 @@
 # AGENTS.md
 
-This repository hosts a Swift project for browsing the traditional Chinese calendar on iOS.
+Chinese-date is an iOS app for browsing traditional Chinese calendar data, including source data from [ytliu0/ChineseCalendar](https://github.com/ytliu0/ChineseCalendar).
 
-## Goals
+## Architecture and Scope
 
-- Build a Swift codebase for iOS.
-- Import Chinese calendar source data from [ytliu0/ChineseCalendar](https://github.com/ytliu0/ChineseCalendar).
-- Present historical calendar data in a clean browsing experience.
-
-## Current Structure
-
-- `Sources/Package.swift`: Shared Swift Package definition.
-- `Sources/ChineseCalendarCore`: Domain models and calendar logic.
-- `Sources/ChineseCalendarData`: Data loading and repository abstractions.
-- `Sources/ChineseCalendarUI`: Shared SwiftUI views.
-- `Apps/iOSApp`: iOS app entry point and app-specific code.
-- `Data/Raw`: Downloaded upstream source data.
-- `Data/Processed`: Normalized app-ready data artifacts.
-- `Scripts/ImportChineseCalendar`: Import and transformation scripts.
+- Keep business logic in the shared package defined by `Sources/Package.swift`; use `Apps/iOSApp` for platform entry points and app-specific behavior.
+- Treat `Sources/ChineseCalendarCore` as the source of truth for calendar domain logic and value types. SwiftData models and store lifecycle belong in `Sources/ChineseCalendarPersistence`; data loading and repository abstractions belong in `Sources/ChineseCalendarData`.
+- Shared SwiftUI views belong in `Sources/ChineseCalendarUI`; shared navigation infrastructure belongs in `Sources/NavigationCore`.
+- Store upstream inputs in `Data/Raw` and generated data artifacts in `Data/Processed`. When changing `Scripts/ImportChineseCalendar`, document the upstream source and output format.
+- `project.yml` is the XcodeGen source; `ChineseCalendar.xcodeproj` is generated. Make lasting project configuration changes in the source configuration.
 
 ## Working Rules
 
-- Prefer keeping business logic in shared package targets instead of app targets.
-- Treat `ChineseCalendarCore` as the source of truth for domain models.
-- Keep app-specific UI behavior in `Apps/iOSApp` only when it does not belong in the shared package targets.
-- Store fetched upstream files in `Data/Raw` and generated artifacts in `Data/Processed`.
-- Make small, reviewable commits.
+- Before adding a module or dependency, check whether the work belongs in an existing shared target. Avoid third-party dependencies without a clear project need.
+- Keep changes focused and incremental, and make small, reviewable commits.
 - Do not use `git commit --amend` when changing or committing work; create a new commit instead.
 
-## Common Commands
+## Shared Implementation and Review Rules
 
-- `swift build --package-path Sources`
-- `swift test --package-path Sources`
-- `git status --short`
+- Apply the same project rules when implementing and reviewing changes. Read `CONTEXT.md` and relevant `Docs/` documents for domain terminology, behavior, and accepted decisions; cite those sources instead of maintaining a second coding standard inside a review skill.
+- Keep project coding conventions under `Docs/Conventions/`, indexed in [Docs/README.md](Docs/README.md). This file defines when to read them; module READMEs and skills link to the canonical topic instead of duplicating its rules.
+- Before implementing or reviewing code, read [the common conventions](Docs/Conventions/Common.md).
+- Before creating, modifying, or reviewing SwiftUI views, read [the SwiftUI conventions](Docs/Conventions/SwiftUI.md). Follow the project's extraction criteria, including its allowance for simple private view properties and functions, ahead of generic skill recommendations.
+- Keep task progress and future priorities in Issues or task documents. This file contains durable working instructions, not a roadmap or an inventory of installed skills.
+- Before implementing a substantial feature or decision-shaping fix, or reviewing work with task records, read [the task documentation workflow](Docs/Tasks/README.md). Use it to decide when to keep a plan and result, and load the relevant existing records; small changes do not require a task folder.
 
-## Near-Term Priorities
+## Validation and Apple Tools
 
-1. Add importer scripts for the upstream Chinese calendar dataset.
-2. Define stable app-side data models and serialization format.
-3. Build a calendar browsing UI backed by real imported data.
-4. Create an Xcode project or workspace that wraps the shared package targets.
+- Prefer the native `xcode` MCP for operations it exposes. Use `xcodebuildmcp` when the native tool is unavailable, fails, or lacks the operation; use direct Xcode commands only when neither MCP can perform it.
+- Before the first build, test, run, Preview, or device operation, read [the Xcode workflow](Docs/agent-workflows.md#xcode-project-context) and reconcile the selected tool with `.xcodebuildmcp/config.yaml`. Do not assume either tool has the correct project, scheme, or Simulator already selected.
+- Use `./Scripts/format.sh --check` and `./Scripts/lint.sh` for Swift formatting and strict lint. `./Scripts/validate_data_schemas.sh` provides data schema validation.
+- `./Scripts/test.sh` and `./Scripts/build_apps.sh` define the project's Simulator test and app-build commands; `./Scripts/ci.sh` assembles the full CI workflow. Follow the MCP preference above for interactive build/test work. Do not treat a generic host `swift build` or `swift test` as validation of the iOS app and UI targets.
+- Prefer the sosumi MCP for Apple Developer Documentation, Human Interface Guidelines, and video transcripts. Use other sources when the needed material is unavailable there. Verify current API behavior when it affects implementation or review.
 
-## Notes for GitHub Copilot
+## Task-Specific Workflows
 
-- Before adding new modules, check whether the code belongs in an existing shared package target.
-- Prefer incremental scaffolding over large speculative implementations.
-- When touching data import logic, document the upstream source and output format.
-
-## Installed Agent Resources
-
-- Project-local skill: `./.agents/skills/grill-with-docs`
-- Project-local skill: `./.agents/skills/swiftui-pro`
-- Project-local skill: `./.agents/skills/swift-concurrency-pro`
-- Project-local skill: `./.agents/skills/swiftdata-pro`
-- Project-local skill: `./.agents/skills/publish-full-seed-store`
-- Project-local skill: `./.agents/skills/worktree-cleanup`
-- Project-local skill: `./.agents/skills/cleaning-merged-pr-worktrees`
-- Project-local skill: `./.agents/skills/screen-flow-prototype`
-
-## Apple Documentation
-
-- Prefer the sosumi MCP for Apple Developer Documentation, Human Interface Guidelines, and Apple Developer video transcripts before using web search or direct fetch tools.
-- Use non-sosumi sources only when the needed material is not available through sosumi.
-
-## XcodeBuildMCP
-
-- XcodeBuildMCP is installed as a CLI and exposed through MCP. Prefer XcodeBuildMCP tools over direct `xcrun simctl` calls whenever XcodeBuildMCP exposes the needed operation.
-- Use `xcrun simctl` only for simulator lifecycle operations not exposed by XcodeBuildMCP, such as creating or deleting branch-scoped simulators in the worktree skills.
-- Project defaults live in `.xcodebuildmcp/config.yaml`.
-- At the start of each new agent session, before the first xcodebuildmcp build/run/test call, show active defaults with `session_show_defaults`.
-- If active defaults are missing or differ from `.xcodebuildmcp/config.yaml`, read `sessionDefaults` from that file and apply them with `session_set_defaults` before building, running, or testing.
-- Resolve any relative `projectPath` in `sessionDefaults` from the repository root before calling `session_set_defaults` (for example, `ChineseCalendar.xcodeproj` becomes `<repo-root>/ChineseCalendar.xcodeproj`).
-
-## Simulator in Codex Browser
-
-- When the user asks to view or operate the running iOS app in the Codex in-app browser, use the `ios-simulator-browser` skill together with the in-app browser skill.
-- Use the simulator selected by XcodeBuildMCP. Read `sessionDefaults.simulatorId` from `.xcodebuildmcp/config.yaml` when session-default tools are unavailable; do not choose a different booted simulator by name.
-- `serve-sim` must run without inherited proxy variables. A proxy-launched process can capture the framebuffer while the browser remains at `Connecting...` or reports `control socket connect timeout`. If the package is not cached yet, fetch/cache it in a separate command using the repository's required full proxy environment, then start the actual mirror offline with all proxy variables removed.
-- Start a simulator-scoped, long-running mirror and keep its terminal alive while the browser is using it. Never use an unscoped `serve-sim --kill`:
-
-  ```bash
-  SIM="<sessionDefaults.simulatorId>"
-  cleanup_serve_sim() {
-    env -u HTTP_PROXY -u HTTPS_PROXY -u ALL_PROXY \
-      -u http_proxy -u https_proxy -u all_proxy \
-      -u NO_PROXY -u no_proxy \
-      npx --offline --yes serve-sim@latest --kill "$SIM" >/dev/null 2>&1 || true
-  }
-  trap cleanup_serve_sim EXIT INT TERM HUP
-  cleanup_serve_sim
-  env -u HTTP_PROXY -u HTTPS_PROXY -u ALL_PROXY \
-    -u http_proxy -u https_proxy -u all_proxy \
-    -u NO_PROXY -u no_proxy \
-    npx --offline --yes serve-sim@latest "$SIM"
-  ```
-
-- Open the exact local URL printed by `serve-sim` (normally `http://localhost:3200`) in the Codex in-app browser. Do not report success until the status is `live`, a real app frame is visible, and one simulator interaction such as switching tabs has visibly changed the app.
-- If the in-app browser reports that its webview did not attach, keep the existing browser binding, create a fresh tab, and retry the local URL. Navigation can replace the browser tab ID; if a later action says the tab is missing, list tabs and reacquire the current `Simulator - <device name>` tab instead of restarting the simulator mirror.
-- If `serve-sim` shows `Connecting...`, inspect its terminal. Framebuffer/encoder-ready messages prove capture started but not that the control socket is usable. Restart the mirror with the proxy variables removed as above; after it becomes `live`, browser coordinate clicks can operate the streamed simulator UI.
-
-## SwiftUI View 编写约定
-
-创建或修改 SwiftUI View 时：
-
-1. 使用嵌套在对应 View 内的 `private struct Constants`，集中管理仅供该 View 使用的间距、内边距、尺寸、圆角、透明度等展示常量。业务数据以及 `.tint`、`.secondary`、`.headline` 等具有明确系统语义的样式不放入 `Constants`。
-2. 使用职责单一的小 View 组合界面，让 `body` 只表达页面或组件的整体结构。拆出的 View 应使用语义清晰的名称，并且只接收自身渲染所需的最少数据。可复用或具有独立含义的组件拆成单独的 View；仅服务当前页面的简单、一次性布局片段，可以使用命名清晰的私有计算属性或构建函数。
-
-## Swift Agent Guidance
-
-The project keeps its own repository-specific rules above, but also adopts the spirit of Paul Hudson's Swift agent guidance:
-
-- Prefer modern Swift and SwiftUI API over legacy alternatives.
-- Favor Swift concurrency and safe state management patterns.
-- Avoid third-party dependencies unless there is a clear project need.
-- Keep SwiftUI code accessible, testable, and structurally simple.
-- When current Apple API behavior matters, use fetched Apple documentation as the reference for implementation and reviews.
-
-When a task is primarily about SwiftUI review or generation, prefer using the local `swiftui-pro` skill.
-When a task is primarily about async/await, actor isolation, cancellation, or task structure, prefer `swift-concurrency-pro`.
-When a task is primarily about SwiftData models, predicates, indexing, or CloudKit integration, prefer `swiftdata-pro`.
-When publishing a new remote full SwiftData seed store SQLite release, prefer `publish-full-seed-store`.
-When cleaning up branch worktrees, prefer `worktree-cleanup`.
-When cleaning up a local worktree for a PR that was already merged, closed, or whose remote branch was deleted, prefer `cleaning-merged-pr-worktrees`.
+- For SwiftUI work, prefer the project-local `swiftui-pro` skill; for concurrency work, `swift-concurrency-pro`; for SwiftData work, `swiftdata-pro`. Load only the relevant guidance.
+- For a requested change or PR review, use [review-changes](.agents/skills/review-changes/SKILL.md). Its [Chinese counterpart](.agents/skills/review-changes/SKILL.zh-CN.md) is for the maintainer. Ordinary implementation does not itself trigger a parallel review run.
+- For publishing a remote full SwiftData seed store, use `publish-full-seed-store`. For worktree cleanup, use `cleaning-merged-pr-worktrees` when the PR is merged/closed or its remote branch is gone; otherwise use `worktree-cleanup`.
+- For viewing or operating Simulator in the Codex browser, read [the repository browser workflow](Docs/agent-workflows.md#simulator-in-codex-browser) and use `ios-simulator-browser` with the available in-app browser tools. Follow the repository's proxy and Simulator-selection requirements in that workflow.
