@@ -17,6 +17,7 @@
         }
 
         #expect(events.first == .preparingManifest)
+        #expect(events.dropFirst().first == .downloading(progress: 0))
         #expect(events.suffix(3) == [.validating, .installing, .completed])
 
         let downloadProgress = events.compactMap { event in
@@ -26,7 +27,7 @@
         #expect(downloadProgress == expectedDownloadProgress)
         #expect(downloadProgress == downloadProgress.sorted())
 
-        let expectedDurations = [Duration.milliseconds(500)]
+        let expectedDurations = [Duration.milliseconds(2500)]
             + Array(repeating: .milliseconds(200), count: 50)
             + [.milliseconds(750), .milliseconds(750)]
         #expect(durations == expectedDurations)

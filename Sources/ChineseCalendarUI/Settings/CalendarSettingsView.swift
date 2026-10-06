@@ -12,6 +12,9 @@ public struct CalendarSettingsView: View {
     private var colorSchemePreference = CalendarColorSchemePreference.system
     @State private var isConfirmingClear = false
     @State private var resultMessage: SettingsResultMessage?
+    #if DEBUG
+        @State private var isShowingDownloadPreview = false
+    #endif
 
     public init(coordinator: ChineseCalendarStoreCoordinator, showsDoneButton: Bool = true) {
         self.coordinator = coordinator
@@ -64,6 +67,10 @@ public struct CalendarSettingsView: View {
                     )
                     .disabled(!coordinator.canStartSimulatedFullStoreDownload)
 
+                    Button("下载进度布局预览", systemSymbol: .eye) {
+                        isShowingDownloadPreview = true
+                    }
+
                     Text("只模拟下载进度，不访问网络、写入文件或替换日历数据库。")
                         .font(.footnote)
                         .foregroundStyle(.secondary)
@@ -97,6 +104,11 @@ public struct CalendarSettingsView: View {
             Text(resultMessage.message)
         }
         .calendarColorSchemePreference()
+        #if DEBUG
+            .fullScreenCover(isPresented: $isShowingDownloadPreview) {
+                FullStoreDownloadPreview()
+            }
+        #endif
     }
 
     private var resultMessageIsPresented: Binding<Bool> {

@@ -19,7 +19,7 @@
         func run(eventHandler: EventHandler) async throws {
             try Task.checkCancellation()
             eventHandler(.preparingManifest)
-            try await wait(for: .milliseconds(500))
+            try await wait(for: .milliseconds(2500))
 
             eventHandler(.downloading(progress: 0))
             for step in 1 ... 50 {

@@ -7,6 +7,7 @@ import SwiftUI
 @MainActor
 public struct ChineseCalendarRootView: View {
     @State private var coordinator: ChineseCalendarStoreCoordinator
+    @State private var isShowingDownloadDetails = false
 
     public init(coordinator: ChineseCalendarStoreCoordinator) {
         _coordinator = State(initialValue: coordinator)
@@ -45,6 +46,16 @@ public struct ChineseCalendarRootView: View {
             Text(coordinator.downloadErrorMessage ?? "请稍后再试。")
         }
         .calendarColorSchemePreference()
+        .sheet(isPresented: $isShowingDownloadDetails) {
+            if let progress = coordinator.fullStoreDownloadProgress {
+                FullStoreDownloadDetailView(progress: progress)
+            }
+        }
+        .onChange(of: coordinator.fullStoreDownloadProgress) { _, progress in
+            if progress == nil {
+                isShowingDownloadDetails = false
+            }
+        }
     }
 
     private func readyCalendarHome(
@@ -81,7 +92,9 @@ public struct ChineseCalendarRootView: View {
     @ViewBuilder
     private func bottomStatusBar(contentLevel: ChineseCalendarSeedStoreContentLevel) -> some View {
         if let progress = coordinator.fullStoreDownloadProgress {
-            FullStoreDownloadBottomProgressView(progress: progress)
+            FullStoreDownloadBottomProgressView(progress: progress) {
+                isShowingDownloadDetails = true
+            }
         } else if coordinator.canDownloadFullStore(contentLevel: contentLevel) {
             FullStoreDownloadBanner(action: startFullStoreDownload)
         }
