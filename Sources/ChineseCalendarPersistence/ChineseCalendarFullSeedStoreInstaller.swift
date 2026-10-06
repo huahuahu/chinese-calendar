@@ -14,6 +14,7 @@ public struct FullSeedStoreManifest: Decodable, Sendable {
     public let sha256: String
     public let downloadURL: URL
 
+    /// 构造远端清单，文件大小和摘要用于下载进度及完整性校验。
     public init(
         datasetVersion: String,
         artifactVersion: String? = nil,
@@ -43,7 +44,7 @@ public struct FullSeedStoreInstallResult: Sendable {
 }
 
 public enum ChineseCalendarFullSeedStoreInstallEvent: Sendable {
-    case downloading(progress: Double?)
+    case downloading(progress: Double)
     case validating
     case installing
     case installed(FullSeedStoreInstallResult)
@@ -53,12 +54,16 @@ public enum ChineseCalendarFullSeedStoreInstallError: Error, LocalizedError {
     case unsupportedContentLevel(ChineseCalendarSeedStoreContentLevel)
     case unsupportedStoreFileName(String)
     case unsupportedSchemaVersion(String, expected: String)
+    case invalidManifestByteCount(Int64)
+    case invalidManifestChecksum(String)
+    case invalidContentRange
     case downloadFailed(Int)
     case rangeNotSatisfiable
     case invalidByteCount(expected: Int64, actual: Int64)
     case checksumMismatch(expected: String, actual: String)
     case missingDownloadedStore(URL)
 
+    /// 将安装失败原因转换为可显示的错误说明。
     public var errorDescription: String? {
         switch self {
         case let .unsupportedContentLevel(contentLevel):
@@ -67,6 +72,12 @@ public enum ChineseCalendarFullSeedStoreInstallError: Error, LocalizedError {
             "Remote seed store file name must be \(ChineseCalendarSeedStore.storeFileName), got \(fileName)."
         case let .unsupportedSchemaVersion(version, expected):
             "Remote seed store schema version \(version) is not supported by this app. Expected \(expected)."
+        case let .invalidManifestByteCount(byteCount):
+            "Remote seed store manifest must specify a positive file size, got \(byteCount)."
+        case let .invalidManifestChecksum(checksum):
+            "Remote seed store manifest must specify a SHA-256 checksum, got \(checksum)."
+        case .invalidContentRange:
+            "Remote seed store response does not match the requested byte range."
         case let .downloadFailed(statusCode):
             "Remote seed store download failed with HTTP status \(statusCode)."
         case .rangeNotSatisfiable:
@@ -90,6 +101,7 @@ public actor ChineseCalendarFullSeedStoreInstaller {
     private let fileManager: FileManager
     private let decoder = JSONDecoder()
 
+    /// 注入下载配置和存储依赖，测试时可替换网络会话及文件管理器。
     public init(
         configuration: FullSeedStoreConfig,
         appGroupIdentifier: String = ChineseCalendarAppConfiguration.appGroupIdentifier,
@@ -102,6 +114,7 @@ public actor ChineseCalendarFullSeedStoreInstaller {
         self.fileManager = fileManager
     }
 
+    /// 启动一次安装，通过事件流返回阶段进度和最终结果。
     public func installEvents() -> AsyncThrowingStream<ChineseCalendarFullSeedStoreInstallEvent, Error> {
         AsyncThrowingStream { continuation in
             let task = Task {
@@ -116,33 +129,31 @@ public actor ChineseCalendarFullSeedStoreInstaller {
                 }
             }
 
+            // 内部 Task 不会随消费任务自动取消，在事件流终止时主动传递取消。
             continuation.onTermination = { _ in
                 task.cancel()
             }
         }
     }
 
-    public func install() async throws -> FullSeedStoreInstallResult {
-        try await install { _ in }
-    }
-
+    /// 按下载、校验、替换存储的顺序执行完整安装。
     private func install(
-        eventHandler: @Sendable (ChineseCalendarFullSeedStoreInstallEvent) -> Void
+        eventHandler: @escaping @Sendable (ChineseCalendarFullSeedStoreInstallEvent) -> Void
     ) async throws -> FullSeedStoreInstallResult {
         let manifest = try await fetchRemoteManifest()
         try Self.validate(manifest)
 
-        eventHandler(.downloading(progress: nil))
         let downloadsDirectory = try ChineseCalendarModelContainerFactory.downloadsDirectory(
             appGroupIdentifier: appGroupIdentifier,
             fileManager: fileManager
         )
         let stagingDirectory = downloadsDirectory.appendingPathComponent("FullSeedStoreStaging", isDirectory: true)
-        let partialDirectory = partialStoreDirectory(in: downloadsDirectory, manifest: manifest)
+        let partialDirectory = Self.partialStoreDirectory(in: downloadsDirectory, manifest: manifest)
         let downloadedStoreURL = stagingDirectory.appendingPathComponent(ChineseCalendarSeedStore.storeFileName)
         let partialStoreURL = partialDirectory
             .appendingPathComponent("\(ChineseCalendarSeedStore.storeFileName).partial")
 
+        // 每次清空暂存区，续传片段则保留在按清单隔离的目录中。
         try resetDirectory(stagingDirectory)
         try excludeFromBackup(downloadsDirectory)
         try excludeFromBackup(stagingDirectory)
@@ -155,17 +166,21 @@ public actor ChineseCalendarFullSeedStoreInstaller {
             eventHandler: eventHandler
         )
 
+        // 文件完整性和数据库关系均通过校验后，才替换当前存储。
         eventHandler(.validating)
+        ChineseCalendarLog.persistence.info("Validating downloaded full seed store")
         try validateDownloadedStore(at: temporaryDownloadURL, manifest: manifest)
         try validateStoreCanOpen(at: temporaryDownloadURL)
 
         eventHandler(.installing)
+        ChineseCalendarLog.persistence.info("Full seed store validation passed; installing")
         let storeDirectory = try ChineseCalendarModelContainerFactory.sharedStoreDirectory(
             appGroupIdentifier: appGroupIdentifier,
             fileManager: fileManager
         )
         let storeURL = storeDirectory.appendingPathComponent(ChineseCalendarSeedStore.storeFileName)
 
+        // 移除旧存储文件，再放入已验证的新数据库并记录安装信息。
         try ChineseCalendarSeedStoreFiles.removeStoreFiles(
             in: storeDirectory,
             fileManager: fileManager
@@ -180,6 +195,7 @@ public actor ChineseCalendarFullSeedStoreInstaller {
         return FullSeedStoreInstallResult(manifest: manifest, storeURL: storeURL)
     }
 
+    /// 获取下载清单，读取文件地址、总大小和校验信息。
     private func fetchRemoteManifest() async throws -> FullSeedStoreManifest {
         let (data, response) = try await session.data(from: configuration.manifestURL)
         let statusCode = (response as? HTTPURLResponse)?.statusCode
@@ -190,7 +206,11 @@ public actor ChineseCalendarFullSeedStoreInstaller {
         return try decoder.decode(FullSeedStoreManifest.self, from: data)
     }
 
+    /// 下载前检查清单大小、摘要、内容类型、文件名和数据库版本。
     static func validate(_ manifest: FullSeedStoreManifest) throws {
+        guard manifest.byteCount > 0 else {
+            throw ChineseCalendarFullSeedStoreInstallError.invalidManifestByteCount(manifest.byteCount)
+        }
         guard manifest.seedStoreContentLevel == .full else {
             throw ChineseCalendarFullSeedStoreInstallError.unsupportedContentLevel(manifest.seedStoreContentLevel)
         }
@@ -203,52 +223,62 @@ public actor ChineseCalendarFullSeedStoreInstaller {
                 expected: supportedSchemaVersion
             )
         }
+        guard manifest.sha256.utf8.count == 64,
+              manifest.sha256.utf8.allSatisfy({ (48 ... 57).contains($0) || (65 ... 70).contains($0) ||
+                      (97 ... 102).contains($0) })
+        else {
+            throw ChineseCalendarFullSeedStoreInstallError.invalidManifestChecksum(manifest.sha256)
+        }
     }
 
-    private func downloadStore(
+    /// 以完整 SHA-256 隔离片段；同一内容可续传，内容更新后自动使用新目录。
+    static func partialStoreDirectory(in downloadsDirectory: URL, manifest: FullSeedStoreManifest) -> URL {
+        downloadsDirectory.appendingPathComponent(
+            "FullSeedStorePartial-\(manifest.sha256.lowercased())",
+            isDirectory: true
+        )
+    }
+
+    /// 下载到暂存位置，复用已有片段并持续上报文件传输进度。
+    func downloadStore(
         manifest: FullSeedStoreManifest,
         partialURL: URL,
         destinationURL: URL,
-        eventHandler: @Sendable (ChineseCalendarFullSeedStoreInstallEvent) -> Void
+        eventHandler: @escaping @Sendable (ChineseCalendarFullSeedStoreInstallEvent) -> Void
     ) async throws -> URL {
-        var downloadedByteCount = existingPartialByteCount(at: partialURL, manifest: manifest)
-        if downloadedByteCount == manifest.byteCount {
-            if fileManager.fileExists(atPath: destinationURL.path) {
-                try fileManager.removeItem(at: destinationURL)
+        try Self.validate(manifest)
+        try Task.checkCancellation()
+        let downloadedByteCount = try existingPartialByteCount(at: partialURL, manifest: manifest)
+        eventHandler(.downloading(progress: Double(downloadedByteCount) / Double(manifest.byteCount)))
+        // 大小已完整的片段跳过网络请求，内容正确性仍由后续校验确认。
+        if downloadedByteCount < manifest.byteCount {
+            do {
+                try await downloadPartialStore(
+                    manifest: manifest, partialURL: partialURL, offset: downloadedByteCount,
+                    eventHandler: eventHandler
+                )
+            } catch let error as ChineseCalendarFullSeedStoreInstallError {
+                guard downloadedByteCount > 0 else { throw error }
+                switch error {
+                case .rangeNotSatisfiable, .invalidContentRange: break
+                default: throw error
+                }
+                try Task.checkCancellation()
+                // 请求已结束且文件已关闭；删除失败直接抛出，不能带着旧片段重试。
+                try fileManager.removeItem(at: partialURL)
+                ChineseCalendarLog.persistence.notice("Invalid full seed store resume; retrying once from byte 0")
+                eventHandler(.downloading(progress: 0))
+                // 重试位于 catch 内，失败直接向上传递，不会再次进入回退。
+                try await downloadPartialStore(
+                    manifest: manifest, partialURL: partialURL, offset: 0, eventHandler: eventHandler
+                )
             }
-            try fileManager.moveItem(at: partialURL, to: destinationURL)
-            eventHandler(.downloading(progress: 1))
-            return destinationURL
+        } else {
+            ChineseCalendarLog.persistence
+                .info("Reusing complete full seed store partial: \(downloadedByteCount) bytes")
         }
+        try Task.checkCancellation()
 
-        var request = URLRequest(url: manifest.downloadURL)
-        if downloadedByteCount > 0 {
-            request.setValue("bytes=\(downloadedByteCount)-", forHTTPHeaderField: "Range")
-        }
-
-        let (downloadedURL, response) = try await session.download(for: request)
-        let didRestart = try normalizeDownloadResponse(
-            response,
-            partialURL: partialURL,
-            requestedOffset: downloadedByteCount
-        )
-        if didRestart {
-            downloadedByteCount = 0
-        }
-
-        if downloadedByteCount == 0 {
-            fileManager.createFile(atPath: partialURL.path, contents: nil)
-        }
-
-        downloadedByteCount = try append(
-            downloadedURL,
-            to: partialURL,
-            downloadedByteCount: downloadedByteCount,
-            expectedLength: manifest.byteCount,
-            eventHandler: eventHandler
-        )
-
-        eventHandler(.downloading(progress: progress(downloadedByteCount, expectedLength: manifest.byteCount)))
         if fileManager.fileExists(atPath: destinationURL.path) {
             try fileManager.removeItem(at: destinationURL)
         }
@@ -258,103 +288,53 @@ public actor ChineseCalendarFullSeedStoreInstaller {
 }
 
 private extension ChineseCalendarFullSeedStoreInstaller {
+    /// 只执行一次网络请求；范围无效时由调用方决定是否清理并重试。
+    func downloadPartialStore(
+        manifest: FullSeedStoreManifest,
+        partialURL: URL,
+        offset: Int64,
+        eventHandler: @escaping @Sendable (ChineseCalendarFullSeedStoreInstallEvent) -> Void
+    ) async throws {
+        try Task.checkCancellation()
+        ChineseCalendarLog.persistence.info(
+            "Starting full seed store download: offset=\(offset), total=\(manifest.byteCount)"
+        )
+        var request = URLRequest(url: manifest.downloadURL)
+        // 字节偏移对应原始文件，避免传输压缩改变 Range 的含义。
+        request.setValue("identity", forHTTPHeaderField: "Accept-Encoding")
+        if offset > 0 {
+            request.setValue("bytes=\(offset)-", forHTTPHeaderField: "Range")
+        }
+        let downloader = FullSeedStoreDownloader(
+            partialURL: partialURL,
+            expectedByteCount: manifest.byteCount,
+            requestedOffset: offset
+        ) { fraction in
+            eventHandler(.downloading(progress: fraction))
+        }
+        // 接收的数据直接写入持久片段；失败或取消时保留已经写入的部分。
+        try await downloader.download(for: request, using: session)
+    }
+
+    /// 读取可续传的片段大小；文件缺失或大小异常时清理并从零开始。
     private func existingPartialByteCount(
         at partialURL: URL,
         manifest: FullSeedStoreManifest
-    ) -> Int64 {
-        guard fileManager.fileExists(atPath: partialURL.path),
-              let attributes = try? fileManager.attributesOfItem(atPath: partialURL.path),
-              let byteCount = attributes[.size] as? Int64,
+    ) throws -> Int64 {
+        guard fileManager.fileExists(atPath: partialURL.path) else { return 0 }
+        let attributes = try fileManager.attributesOfItem(atPath: partialURL.path)
+        guard let byteCount = attributes[.size] as? Int64,
               byteCount > 0,
               byteCount <= manifest.byteCount
         else {
-            try? fileManager.removeItem(at: partialURL)
+            try fileManager.removeItem(at: partialURL)
             return 0
         }
 
         return byteCount
     }
 
-    private func append(
-        _ downloadedURL: URL,
-        to partialURL: URL,
-        downloadedByteCount: Int64,
-        expectedLength: Int64,
-        eventHandler: @Sendable (ChineseCalendarFullSeedStoreInstallEvent) -> Void
-    ) throws -> Int64 {
-        let sourceHandle = try FileHandle(forReadingFrom: downloadedURL)
-        defer {
-            try? sourceHandle.close()
-            try? fileManager.removeItem(at: downloadedURL)
-        }
-
-        let destinationHandle = try FileHandle(forWritingTo: partialURL)
-        defer {
-            try? destinationHandle.close()
-        }
-
-        try destinationHandle.seekToEnd()
-
-        var downloadedByteCount = downloadedByteCount
-        while true {
-            try Task.checkCancellation()
-            let data = sourceHandle.readData(ofLength: 1024 * 1024)
-            guard !data.isEmpty else {
-                break
-            }
-
-            try destinationHandle.write(contentsOf: data)
-            downloadedByteCount += Int64(data.count)
-            eventHandler(.downloading(progress: progress(downloadedByteCount, expectedLength: expectedLength)))
-        }
-
-        return downloadedByteCount
-    }
-
-    private func normalizeDownloadResponse(
-        _ response: URLResponse,
-        partialURL: URL,
-        requestedOffset: Int64
-    ) throws -> Bool {
-        guard let httpResponse = response as? HTTPURLResponse else {
-            return false
-        }
-
-        switch (requestedOffset, httpResponse.statusCode) {
-        case (0, 200), (0, 206):
-            return false
-        case (1..., 206):
-            return false
-        case (1..., 200):
-            try? fileManager.removeItem(at: partialURL)
-            fileManager.createFile(atPath: partialURL.path, contents: nil)
-            return true
-        case (_, 416):
-            try? fileManager.removeItem(at: partialURL)
-            throw ChineseCalendarFullSeedStoreInstallError.rangeNotSatisfiable
-        default:
-            throw ChineseCalendarFullSeedStoreInstallError.downloadFailed(httpResponse.statusCode)
-        }
-    }
-
-    private func progress(_ downloadedByteCount: Int64, expectedLength: Int64) -> Double? {
-        guard expectedLength > 0 else {
-            return nil
-        }
-
-        return min(1, max(0, Double(downloadedByteCount) / Double(expectedLength)))
-    }
-
-    private func partialStoreDirectory(
-        in downloadsDirectory: URL,
-        manifest: FullSeedStoreManifest
-    ) -> URL {
-        downloadsDirectory.appendingPathComponent(
-            "FullSeedStorePartial-\(manifest.datasetVersion)-\(manifest.sha256.prefix(12))",
-            isDirectory: true
-        )
-    }
-
+    /// 依次核对文件存在、字节数和 SHA-256，确认下载内容完整。
     private func validateDownloadedStore(
         at storeURL: URL,
         manifest: FullSeedStoreManifest
@@ -372,6 +352,7 @@ private extension ChineseCalendarFullSeedStoreInstaller {
             )
         }
 
+        // 先检查大小，再计算开销较大的文件摘要。
         let checksum = try sha256(for: storeURL)
         guard checksum.caseInsensitiveCompare(manifest.sha256) == .orderedSame else {
             throw ChineseCalendarFullSeedStoreInstallError.checksumMismatch(
@@ -381,11 +362,13 @@ private extension ChineseCalendarFullSeedStoreInstaller {
         }
     }
 
+    /// 以禁止保存的配置打开下载数据库，并检查关键模型关系。
     private func validateStoreCanOpen(at storeURL: URL) throws {
         let container = try ChineseCalendarModelContainerFactory.makeContainer(at: storeURL, allowsSave: false)
         try ChineseCalendarRelationshipValidation.validate(in: ModelContext(container))
     }
 
+    /// 记录已安装的版本和文件信息，供后续识别本地数据。
     private func writeInstalledManifest(
         _ manifest: FullSeedStoreManifest,
         to storeDirectory: URL
@@ -410,9 +393,11 @@ private extension ChineseCalendarFullSeedStoreInstaller {
             options: [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]
         )
         encodedData.append(Data("\n".utf8))
+        // 原子写入清单，避免留下只写了一部分的 JSON。
         try encodedData.write(to: manifestURL, options: .atomic)
     }
 
+    /// 分块计算 SHA-256，返回小写十六进制摘要。
     private func sha256(for fileURL: URL) throws -> String {
         let handle = try FileHandle(forReadingFrom: fileURL)
         defer {
@@ -420,6 +405,7 @@ private extension ChineseCalendarFullSeedStoreInstaller {
         }
 
         var hasher = SHA256()
+        // 逐块释放临时数据，控制大文件校验的内存占用。
         while autoreleasepool(invoking: {
             let data = handle.readData(ofLength: 1024 * 1024)
             guard !data.isEmpty else {
@@ -432,6 +418,7 @@ private extension ChineseCalendarFullSeedStoreInstaller {
         return hasher.finalize().map { String(format: "%02x", $0) }.joined()
     }
 
+    /// 删除并重建暂存目录，避免上次安装残留影响本次流程。
     private func resetDirectory(_ directoryURL: URL) throws {
         if fileManager.fileExists(atPath: directoryURL.path) {
             try fileManager.removeItem(at: directoryURL)
@@ -439,6 +426,7 @@ private extension ChineseCalendarFullSeedStoreInstaller {
         try fileManager.createDirectory(at: directoryURL, withIntermediateDirectories: true)
     }
 
+    /// 下载数据可重新获取，将其排除在系统备份之外。
     private func excludeFromBackup(_ url: URL) throws {
         var values = URLResourceValues()
         values.isExcludedFromBackup = true

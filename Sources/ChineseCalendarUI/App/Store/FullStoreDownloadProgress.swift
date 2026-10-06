@@ -1,14 +1,6 @@
 import Foundation
 import SFSafeSymbols
 
-enum FullStoreDownloadPhase: Equatable {
-    case preparingManifest
-    case downloading
-    case validating
-    case installing
-    case completed
-}
-
 struct FullStoreDownloadProgress: Equatable {
     let phase: FullStoreDownloadPhase
     let downloadProgress: Double?
@@ -16,56 +8,32 @@ struct FullStoreDownloadProgress: Equatable {
     static let preparingManifest = Self(phase: .preparingManifest, downloadProgress: nil)
     static let validating = Self(phase: .validating, downloadProgress: nil)
     static let installing = Self(phase: .installing, downloadProgress: nil)
-    static let completed = Self(phase: .completed, downloadProgress: 1)
+    static let completed = Self(phase: .completed, downloadProgress: nil)
 
-    static func downloading(progress: Double?) -> Self {
-        Self(phase: .downloading, downloadProgress: progress)
+    private init(phase: FullStoreDownloadPhase, downloadProgress: Double?) {
+        self.phase = phase
+        self.downloadProgress = downloadProgress
     }
 
-    var fractionCompleted: Double {
-        switch phase {
-        case .preparingManifest:
-            0.03
-        case .downloading:
-            0.05 + (boundedDownloadProgress ?? 0) * 0.82
-        case .validating:
-            0.9
-        case .installing:
-            0.97
-        case .completed:
-            1
-        }
+    static func downloading(progress: Double) -> Self {
+        Self(phase: .downloading, downloadProgress: progress.isFinite ? min(1, max(0, progress)) : 0)
     }
 
-    var title: String {
-        switch phase {
-        case .preparingManifest:
-            "正在准备完整日历数据"
-        case .downloading:
-            "正在下载完整日历数据"
-        case .validating:
-            "正在校验完整日历数据"
-        case .installing:
-            "正在安装完整日历数据"
-        case .completed:
-            "完整日历数据已安装"
-        }
+    /// 只有文件传输阶段有百分比；构造下载状态时必须提供进度。
+    var downloadFraction: Double? {
+        downloadProgress
     }
 
-    var detail: String {
+    var detail: LocalizedStringResource {
         switch phase {
         case .preparingManifest:
-            "正在获取下载清单。"
+            "正在准备下载所需的信息。"
         case .downloading:
-            if let boundedDownloadProgress {
-                "已下载 \(boundedDownloadProgress.formatted(.percent.precision(.fractionLength(0))))。"
-            } else {
-                "已连接下载源，正在计算文件大小。"
-            }
+            "文件已下载 \((downloadFraction ?? 0).formatted(.percent.precision(.fractionLength(0))))。"
         case .validating:
-            "正在检查文件大小和校验和。"
+            "正在确认下载文件完整。"
         case .installing:
-            "正在替换本地数据存储。"
+            "正在安装完整日历数据。"
         case .completed:
             "现在可以浏览每日干支和对应民用日期。"
         }
@@ -86,11 +54,11 @@ struct FullStoreDownloadProgress: Equatable {
         }
     }
 
-    private var boundedDownloadProgress: Double? {
-        guard let downloadProgress else {
-            return nil
+    func status(of step: FullStoreDownloadPhase) -> FullStoreDownloadPhase.Status {
+        if phase == .completed || step.rawValue < phase.rawValue {
+            return .completed
         }
 
-        return min(1, max(0, downloadProgress))
+        return step == phase ? .current : .pending
     }
 }
