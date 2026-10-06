@@ -1,0 +1,4 @@
+interface:
+  display_name: "并行代码审查"
+  short_description: "并行专项审查当前改动，核实证据并去重，输出各 Agent 报告与中文汇总"
+  default_prompt: "使用 $review-changes 审查当前改动，按需要启动专项 Agent，各自写报告，再验证、去重并生成中文汇总。"
