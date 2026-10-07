@@ -13,7 +13,7 @@ public extension CalendarStringKey.History.Boundary {
         CalendarStringKey.resource(
             "history.boundary.claimed",
             defaultValue: "自称",
-            comment: "界面文案：History.Boundary.claimed。"
+            comment: "历史边界对照中的来源类别标签，表示朝代自称的起止时间。"
         )
     }
 
@@ -21,7 +21,7 @@ public extension CalendarStringKey.History.Boundary {
         CalendarStringKey.resource(
             "history.boundary.orthodox",
             defaultValue: "正统",
-            comment: "界面文案：History.Boundary.orthodox。"
+            comment: "历史边界对照中的来源类别标签，表示正统时间线采用的起止时间。"
         )
     }
 
@@ -29,7 +29,7 @@ public extension CalendarStringKey.History.Boundary {
         CalendarStringKey.resource(
             "history.boundary.start",
             defaultValue: "开始",
-            comment: "界面文案：History.Boundary.start。"
+            comment: "历史边界对照中开始日期一行的标签。"
         )
     }
 
@@ -37,7 +37,7 @@ public extension CalendarStringKey.History.Boundary {
         CalendarStringKey.resource(
             "history.boundary.end",
             defaultValue: "结束",
-            comment: "界面文案：History.Boundary.end。"
+            comment: "历史边界对照中结束日期一行的标签。"
         )
     }
 
@@ -45,7 +45,7 @@ public extension CalendarStringKey.History.Boundary {
         CalendarStringKey.resource(
             "history.boundary.unknown",
             defaultValue: "不详",
-            comment: "界面文案：History.Boundary.unknown。"
+            comment: "历史边界缺少可确定日期时的简短占位文字。"
         )
     }
 
@@ -53,7 +53,7 @@ public extension CalendarStringKey.History.Boundary {
         CalendarStringKey.resource(
             "history.boundary.missingData",
             defaultValue: "当前数据缺失",
-            comment: "界面文案：History.Boundary.missingData。"
+            comment: "历史边界单元格缺少可显示资料时的占位文字。"
         )
     }
 
@@ -61,7 +61,7 @@ public extension CalendarStringKey.History.Boundary {
         CalendarStringKey.resource(
             "history.boundary.period",
             defaultValue: "正统期",
-            comment: "界面文案：History.Boundary.period。"
+            comment: "历史起讫页面中正统时期记录的类别标签。"
         )
     }
 
@@ -69,7 +69,7 @@ public extension CalendarStringKey.History.Boundary {
         CalendarStringKey.resource(
             "history.boundary.claimedDynasty",
             defaultValue: "朝代自称",
-            comment: "界面文案：History.Boundary.claimedDynasty。"
+            comment: "历史边界摘要中标识朝代自称时间范围的栏目标题。"
         )
     }
 
@@ -77,7 +77,7 @@ public extension CalendarStringKey.History.Boundary {
         CalendarStringKey.resource(
             "history.boundary.timeline",
             defaultValue: "正统时间线",
-            comment: "界面文案：History.Boundary.timeline。"
+            comment: "历史边界摘要中标识正统时间线所采用日期的栏目标题。"
         )
     }
 
@@ -111,7 +111,7 @@ public extension CalendarStringKey.History.Boundary.Comparison {
         CalendarStringKey.resource(
             "history.boundary.comparison.title",
             defaultValue: "时间边界",
-            comment: "界面文案：History.Boundary.Comparison.title。"
+            comment: "朝代详情中比较自称与正统起止日期的分区标题。"
         )
     }
 
@@ -119,7 +119,7 @@ public extension CalendarStringKey.History.Boundary.Comparison {
         CalendarStringKey.resource(
             "history.boundary.comparison.message",
             defaultValue: "对比朝代自称起止与正统时间线采用的边界。",
-            comment: "界面文案：History.Boundary.Comparison.message。"
+            comment: "朝代详情的时间边界分区说明，解释正在比较自称起止与正统时间线。"
         )
     }
 
@@ -127,7 +127,7 @@ public extension CalendarStringKey.History.Boundary.Comparison {
         CalendarStringKey.resource(
             "history.boundary.comparison.missingMessage",
             defaultValue: "当前 SwiftData store 还没有为这个朝代关联正统开始和结束边界。",
-            comment: "界面文案：History.Boundary.Comparison.missingMessage。"
+            comment: "朝代边界对照缺少正统边界关系时，解释当前存储中的资料缺口。"
         )
     }
 
@@ -135,7 +135,7 @@ public extension CalendarStringKey.History.Boundary.Comparison {
         CalendarStringKey.resource(
             "history.boundary.comparison.differentPrecision",
             defaultValue: "边界精度不同",
-            comment: "界面文案：History.Boundary.Comparison.differentPrecision。"
+            comment: "历史边界比较结果，表示两个日期的记录精度不一致。"
         )
     }
 
@@ -143,7 +143,7 @@ public extension CalendarStringKey.History.Boundary.Comparison {
         CalendarStringKey.resource(
             "history.boundary.comparison.sameSource",
             defaultValue: "同一来源文本",
-            comment: "界面文案：History.Boundary.Comparison.sameSource。"
+            comment: "历史边界比较结果，表示两个日期保留了相同来源文字。"
         )
     }
 
@@ -151,7 +151,7 @@ public extension CalendarStringKey.History.Boundary.Comparison {
         CalendarStringKey.resource(
             "history.boundary.comparison.differentSource",
             defaultValue: "边界来源不同",
-            comment: "界面文案：History.Boundary.Comparison.differentSource。"
+            comment: "历史边界比较结果，表示两个日期来自不同的来源文字。"
         )
     }
 
@@ -159,7 +159,7 @@ public extension CalendarStringKey.History.Boundary.Comparison {
         CalendarStringKey.resource(
             "history.boundary.comparison.sameYear",
             defaultValue: "同年",
-            comment: "界面文案：History.Boundary.Comparison.sameYear。"
+            comment: "历史边界比较结果，表示两个边界落在同一年。"
         )
     }
 
@@ -167,7 +167,7 @@ public extension CalendarStringKey.History.Boundary.Comparison {
         CalendarStringKey.resource(
             "history.boundary.comparison.sameBoundary",
             defaultValue: "同一边界",
-            comment: "界面文案：History.Boundary.Comparison.sameBoundary。"
+            comment: "历史边界比较结果，表示自称与正统记录指向同一边界。"
         )
     }
 
@@ -175,7 +175,7 @@ public extension CalendarStringKey.History.Boundary.Comparison {
         CalendarStringKey.resource(
             "history.boundary.comparison.differentBoundary",
             defaultValue: "边界不同",
-            comment: "界面文案：History.Boundary.Comparison.differentBoundary。"
+            comment: "历史边界比较结果，表示自称与正统记录的边界不相同。"
         )
     }
 
@@ -259,7 +259,7 @@ public extension CalendarStringKey.History.Boundary.Source {
         CalendarStringKey.resource(
             "history.boundary.source.title",
             defaultValue: "来源和精度",
-            comment: "界面文案：History.Boundary.Source.title。"
+            comment: "历史边界详情中展示原始来源及日期精度的分区标题。"
         )
     }
 
@@ -267,7 +267,7 @@ public extension CalendarStringKey.History.Boundary.Source {
         CalendarStringKey.resource(
             "history.boundary.source.claimedStart",
             defaultValue: "自称开始",
-            comment: "界面文案：History.Boundary.Source.claimedStart。"
+            comment: "边界来源详情中朝代自称开始日期的字段标题。"
         )
     }
 
@@ -275,7 +275,7 @@ public extension CalendarStringKey.History.Boundary.Source {
         CalendarStringKey.resource(
             "history.boundary.source.orthodoxStart",
             defaultValue: "正统开始",
-            comment: "界面文案：History.Boundary.Source.orthodoxStart。"
+            comment: "边界来源详情中正统时间线开始日期的字段标题。"
         )
     }
 
@@ -283,7 +283,7 @@ public extension CalendarStringKey.History.Boundary.Source {
         CalendarStringKey.resource(
             "history.boundary.source.claimedEnd",
             defaultValue: "自称结束",
-            comment: "界面文案：History.Boundary.Source.claimedEnd。"
+            comment: "边界来源详情中朝代自称结束日期的字段标题。"
         )
     }
 
@@ -291,7 +291,7 @@ public extension CalendarStringKey.History.Boundary.Source {
         CalendarStringKey.resource(
             "history.boundary.source.orthodoxEnd",
             defaultValue: "正统结束",
-            comment: "界面文案：History.Boundary.Source.orthodoxEnd。"
+            comment: "边界来源详情中正统时间线结束日期的字段标题。"
         )
     }
 

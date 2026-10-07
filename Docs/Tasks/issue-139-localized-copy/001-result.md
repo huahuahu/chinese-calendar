@@ -86,3 +86,9 @@ Copilot 在 [review comment](https://github.com/huahuahu/chinese-calendar/pull/1
 `Common.List.names` 的默认 locale 改为资源包的 `preferredLocalizations`，仍保留显式 locale 参数；`EmperorCardModel` 的多个在位区间也统一经过该入口。Apple 文档说明 `Locale.current` 会考虑宿主 App 的可用语言，而 bundle 的 `preferredLocalizations` 根据该 bundle 的资源选择语言，因此不能以宿主的 locale 代替基础资源模块的选择。
 
 修复后 App/test build、**216 项完整测试**、SwiftFormat、严格 SwiftLint 和资源扫描均通过，新增测试还覆盖皇帝多段在位区间的实际展示模型路径。源码快照、修复前失败及修复后结果见[列表语言验证摘要](evidence/list-locale-validation.txt)。该远程问题已修复并验证，原有 Preview 与交互缺口保持不变。
+
+## 2026-10-07：翻译注释语境补全
+
+[后续远程 review](https://github.com/huahuahu/chinese-calendar/pull/144#pullrequestreview-5436720676) 指出 176 项固定文案的注释只重复符号路径，未满足本地化规范的页面与用途要求。已逐项补充实际页面、状态、控件用途和必要领域含义，同步更新 Swift 定义与唯一 catalog 的注释；同时将迁移清单中残留的“两个 catalog”改为当前单一资源表。
+
+资源校验新增对此类占位注释的拒绝规则：修复前实际报告 176 项错误，修复后 254 项资源及 21 个保留生产字符串全部通过；SwiftFormat、严格 SwiftLint、`git diff --check` 通过。结构化比较确认本轮 31 个 Swift 资源文件与 catalog 只改变翻译注释，所有 key、默认文案、翻译值、插值和执行逻辑均保持不变，因此复用上一轮 216 项本地测试的行为证据；PR 的最终 CI 状态以 GitHub 当前提交为准。

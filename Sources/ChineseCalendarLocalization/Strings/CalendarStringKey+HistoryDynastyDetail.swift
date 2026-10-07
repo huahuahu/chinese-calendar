@@ -14,7 +14,7 @@ public extension CalendarStringKey.History.DynastyDetail.Fact {
         CalendarStringKey.resource(
             "history.dynastyDetail.fact.emperorUnit",
             defaultValue: "位皇帝",
-            comment: "界面文案：History.DynastyDetail.Fact.emperorUnit。"
+            comment: "朝代详情皇帝数量事实卡中，紧随数量展示的计数单位。"
         )
     }
 
@@ -22,7 +22,7 @@ public extension CalendarStringKey.History.DynastyDetail.Fact {
         CalendarStringKey.resource(
             "history.dynastyDetail.fact.reignEraUnit",
             defaultValue: "个年号",
-            comment: "界面文案：History.DynastyDetail.Fact.reignEraUnit。"
+            comment: "朝代详情年号数量事实卡中，紧随数量展示的计数单位。"
         )
     }
 
@@ -30,7 +30,7 @@ public extension CalendarStringKey.History.DynastyDetail.Fact {
         CalendarStringKey.resource(
             "history.dynastyDetail.fact.yearUnit",
             defaultValue: "年",
-            comment: "界面文案：History.DynastyDetail.Fact.yearUnit。"
+            comment: "朝代详情国祚时长事实卡中，紧随年数展示的时间单位。"
         )
     }
 
@@ -72,7 +72,7 @@ public extension CalendarStringKey.History.DynastyDetail.Unavailable {
         CalendarStringKey.resource(
             "history.dynastyDetail.unavailable.title",
             defaultValue: "没有找到朝代",
-            comment: "界面文案：History.DynastyDetail.Unavailable.title。"
+            comment: "朝代详情无法找到目标记录时的不可用状态标题。"
         )
     }
 
@@ -80,7 +80,7 @@ public extension CalendarStringKey.History.DynastyDetail.Unavailable {
         CalendarStringKey.resource(
             "history.dynastyDetail.unavailable.periodMessage",
             defaultValue: "对应的朝代或正统期记录不在当前 SwiftData store 中。",
-            comment: "界面文案：History.DynastyDetail.Unavailable.periodMessage。"
+            comment: "按正统时期进入朝代详情但关联记录不存在时，解释内容不可用的原因。"
         )
     }
 
@@ -88,7 +88,7 @@ public extension CalendarStringKey.History.DynastyDetail.Unavailable {
         CalendarStringKey.resource(
             "history.dynastyDetail.unavailable.message",
             defaultValue: "这个朝代记录不在当前 SwiftData store 中。",
-            comment: "界面文案：History.DynastyDetail.Unavailable.message。"
+            comment: "按朝代进入详情但记录不存在时，解释内容不可用的原因。"
         )
     }
 }

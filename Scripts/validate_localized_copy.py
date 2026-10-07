@@ -122,6 +122,8 @@ def check_catalog(errors):
                 errors.append(f"{key}: catalog 值或插值类型与默认值不一致")
             if not comment.strip() or entry.get("comment") != comment:
                 errors.append(f"{key}: 翻译注释缺失或不一致")
+            if re.fullmatch(r"界面文案：[\w.]+。", comment):
+                errors.append(f"{key}: 翻译注释不能只重复符号路径，需说明页面和用途")
     for key in catalog["strings"].keys() - definitions.keys():
         errors.append(f"{module}: catalog 存在没有类型化入口的 key {key}")
     print(f"{module}: 已核对 {len(definitions)} 项资源的 key、默认值、插值和注释")

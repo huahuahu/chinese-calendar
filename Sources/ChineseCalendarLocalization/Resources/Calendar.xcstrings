@@ -98,7 +98,7 @@
       }
     },
     "calendar.dayDetail.civilDateLabel": {
-      "comment": "界面文案：Calendar.DayDetail.civilDateLabel。",
+      "comment": "日历选中日详情中，对应公历日期字段的标签。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -110,7 +110,7 @@
       }
     },
     "calendar.dayDetail.contentLevelLabel": {
-      "comment": "界面文案：Calendar.DayDetail.contentLevelLabel。",
+      "comment": "日历选中日详情中，说明当前使用基础数据还是完整日期数据的字段标签。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -134,7 +134,7 @@
       }
     },
     "calendar.dayDetail.lunarExpressionLabel": {
-      "comment": "界面文案：Calendar.DayDetail.lunarExpressionLabel。",
+      "comment": "日历选中日详情中，农历年月日表达字段的标签。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -146,7 +146,7 @@
       }
     },
     "calendar.dayDetail.sexagenaryLabel": {
-      "comment": "界面文案：Calendar.DayDetail.sexagenaryLabel。",
+      "comment": "日历选中日详情中，当日天干地支字段的标签。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -170,7 +170,7 @@
       }
     },
     "calendar.dayDetail.title": {
-      "comment": "界面文案：Calendar.DayDetail.title。",
+      "comment": "日历页面下方当前选中日期的详情分区标题。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -206,7 +206,7 @@
       }
     },
     "calendar.monthGrid.empty.message": {
-      "comment": "界面文案：Calendar.MonthGrid.Empty.message。",
+      "comment": "农历月格为空时，说明该月没有可展示的逐日记录。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -218,7 +218,7 @@
       }
     },
     "calendar.monthGrid.empty.requiresFullDataMessage": {
-      "comment": "界面文案：Calendar.MonthGrid.Empty.requiresFullDataMessage。",
+      "comment": "农历月格因只有基础数据而为空时，提示用户下载完整日期数据。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -230,7 +230,7 @@
       }
     },
     "calendar.monthGrid.empty.requiresFullDataTitle": {
-      "comment": "界面文案：Calendar.MonthGrid.Empty.requiresFullDataTitle。",
+      "comment": "农历月格尚未获得完整日期数据时的空状态标题。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -242,7 +242,7 @@
       }
     },
     "calendar.monthGrid.empty.title": {
-      "comment": "界面文案：Calendar.MonthGrid.Empty.title。",
+      "comment": "农历月格没有逐日记录时的空状态标题。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -254,7 +254,7 @@
       }
     },
     "calendar.monthGrid.subtitle": {
-      "comment": "界面文案：Calendar.MonthGrid.subtitle。",
+      "comment": "农历月格的辅助说明，表示按农历月内日序连续排列，不按星期分组。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -266,7 +266,7 @@
       }
     },
     "calendar.monthGrid.title": {
-      "comment": "界面文案：Calendar.MonthGrid.title。",
+      "comment": "日历页面中逐日展示农历日期的网格分区标题。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -278,7 +278,7 @@
       }
     },
     "calendar.monthNavigation.missingYear": {
-      "comment": "界面文案：Calendar.MonthNavigation.missingYear。",
+      "comment": "日历年月导航无法读取所属年份时的占位说明。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -290,7 +290,7 @@
       }
     },
     "calendar.monthNavigation.next": {
-      "comment": "界面文案：Calendar.MonthNavigation.next。",
+      "comment": "日历年月导航中切换到后一个农历月的按钮名称。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -302,7 +302,7 @@
       }
     },
     "calendar.monthNavigation.nextHelp": {
-      "comment": "界面文案：Calendar.MonthNavigation.nextHelp。",
+      "comment": "日历下个月按钮的帮助提示，说明会切换当前农历月。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -314,7 +314,7 @@
       }
     },
     "calendar.monthNavigation.previous": {
-      "comment": "界面文案：Calendar.MonthNavigation.previous。",
+      "comment": "日历年月导航中切换到前一个农历月的按钮名称。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -326,7 +326,7 @@
       }
     },
     "calendar.monthNavigation.previousHelp": {
-      "comment": "界面文案：Calendar.MonthNavigation.previousHelp。",
+      "comment": "日历上个月按钮的帮助提示，说明会切换当前农历月。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -350,7 +350,7 @@
       }
     },
     "calendar.monthNavigation.today": {
-      "comment": "界面文案：Calendar.MonthNavigation.today。",
+      "comment": "日历工具栏定位到今天所在日期和农历月的操作名称。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -362,7 +362,7 @@
       }
     },
     "calendar.title": {
-      "comment": "界面文案：Calendar.title。",
+      "comment": "日历 Tab 及其日期浏览首页的导航标题。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -374,7 +374,7 @@
       }
     },
     "calendar.unavailable.missingDateMessage": {
-      "comment": "界面文案：Calendar.Unavailable.missingDateMessage。",
+      "comment": "日历目标无法解析为具体农历日时，解释导航内容不可用的原因。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -386,7 +386,7 @@
       }
     },
     "calendar.unavailable.missingDateTitle": {
-      "comment": "界面文案：Calendar.Unavailable.missingDateTitle。",
+      "comment": "日历导航目标对应日期不存在时的不可用状态标题。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -398,7 +398,7 @@
       }
     },
     "calendar.unavailable.requiresFullDataMessage": {
-      "comment": "界面文案：Calendar.Unavailable.requiresFullDataMessage。",
+      "comment": "只有年份和月份基础数据时，解释逐日浏览需要先下载完整日期数据。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -410,7 +410,7 @@
       }
     },
     "calendar.unavailable.requiresFullDataTitle": {
-      "comment": "界面文案：Calendar.Unavailable.requiresFullDataTitle。",
+      "comment": "日历目标因缺少逐日记录而不可用时的标题。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -422,7 +422,7 @@
       }
     },
     "calendar.yearPicker.accessibilityHint": {
-      "comment": "界面文案：Calendar.YearPicker.accessibilityHint。",
+      "comment": "日历年份入口的无障碍提示，说明激活后会打开年份选择器。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -470,7 +470,7 @@
       }
     },
     "calendar.yearPicker.title": {
-      "comment": "界面文案：Calendar.YearPicker.title。",
+      "comment": "用于跳转到指定农历年的年份选择页面标题。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -482,7 +482,7 @@
       }
     },
     "common.action.close": {
-      "comment": "界面文案：Common.Action.close。",
+      "comment": "用于关闭当前弹出页面或详情的通用按钮名称。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -494,7 +494,7 @@
       }
     },
     "common.action.done": {
-      "comment": "界面文案：Common.Action.done。",
+      "comment": "用于结束当前操作并离开临时页面的通用按钮名称。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -506,7 +506,7 @@
       }
     },
     "common.action.ok": {
-      "comment": "界面文案：Common.Action.ok。",
+      "comment": "提示弹窗中确认已知晓信息并关闭弹窗的通用按钮名称。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -518,7 +518,7 @@
       }
     },
     "common.action.retry": {
-      "comment": "界面文案：Common.Action.retry。",
+      "comment": "可恢复错误状态中重新执行失败操作的通用按钮名称。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -554,7 +554,7 @@
       }
     },
     "common.datePrecision.day": {
-      "comment": "界面文案：Common.DatePrecision.day。",
+      "comment": "历史日期的精度标签，表示资料可精确到日。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -578,7 +578,7 @@
       }
     },
     "common.datePrecision.month": {
-      "comment": "界面文案：Common.DatePrecision.month。",
+      "comment": "历史日期的精度标签，表示资料只能精确到月。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -590,7 +590,7 @@
       }
     },
     "common.datePrecision.range": {
-      "comment": "界面文案：Common.DatePrecision.range。",
+      "comment": "历史日期的精度标签，表示资料只给出一个范围。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -602,7 +602,7 @@
       }
     },
     "common.datePrecision.unknown": {
-      "comment": "界面文案：Common.DatePrecision.unknown。",
+      "comment": "历史日期的精度标签，表示资料未提供可判定的时间精度。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -614,7 +614,7 @@
       }
     },
     "common.datePrecision.year": {
-      "comment": "界面文案：Common.DatePrecision.year。",
+      "comment": "历史日期的精度标签，表示资料只能精确到年。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -626,7 +626,7 @@
       }
     },
     "common.error.retryLater": {
-      "comment": "界面文案：Common.Error.retryLater。",
+      "comment": "可恢复错误提示中的通用建议，表示稍后再次尝试当前操作。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -662,7 +662,7 @@
       }
     },
     "history.boundary.claimed": {
-      "comment": "界面文案：History.Boundary.claimed。",
+      "comment": "历史边界对照中的来源类别标签，表示朝代自称的起止时间。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -674,7 +674,7 @@
       }
     },
     "history.boundary.claimedDynasty": {
-      "comment": "界面文案：History.Boundary.claimedDynasty。",
+      "comment": "历史边界摘要中标识朝代自称时间范围的栏目标题。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -686,7 +686,7 @@
       }
     },
     "history.boundary.comparison.differentBoundary": {
-      "comment": "界面文案：History.Boundary.Comparison.differentBoundary。",
+      "comment": "历史边界比较结果，表示自称与正统记录的边界不相同。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -698,7 +698,7 @@
       }
     },
     "history.boundary.comparison.differentPrecision": {
-      "comment": "界面文案：History.Boundary.Comparison.differentPrecision。",
+      "comment": "历史边界比较结果，表示两个日期的记录精度不一致。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -710,7 +710,7 @@
       }
     },
     "history.boundary.comparison.differentSource": {
-      "comment": "界面文案：History.Boundary.Comparison.differentSource。",
+      "comment": "历史边界比较结果，表示两个日期来自不同的来源文字。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -758,7 +758,7 @@
       }
     },
     "history.boundary.comparison.message": {
-      "comment": "界面文案：History.Boundary.Comparison.message。",
+      "comment": "朝代详情的时间边界分区说明，解释正在比较自称起止与正统时间线。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -770,7 +770,7 @@
       }
     },
     "history.boundary.comparison.missingMessage": {
-      "comment": "界面文案：History.Boundary.Comparison.missingMessage。",
+      "comment": "朝代边界对照缺少正统边界关系时，解释当前存储中的资料缺口。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -782,7 +782,7 @@
       }
     },
     "history.boundary.comparison.sameBoundary": {
-      "comment": "界面文案：History.Boundary.Comparison.sameBoundary。",
+      "comment": "历史边界比较结果，表示自称与正统记录指向同一边界。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -794,7 +794,7 @@
       }
     },
     "history.boundary.comparison.sameSource": {
-      "comment": "界面文案：History.Boundary.Comparison.sameSource。",
+      "comment": "历史边界比较结果，表示两个日期保留了相同来源文字。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -806,7 +806,7 @@
       }
     },
     "history.boundary.comparison.sameYear": {
-      "comment": "界面文案：History.Boundary.Comparison.sameYear。",
+      "comment": "历史边界比较结果，表示两个边界落在同一年。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -842,7 +842,7 @@
       }
     },
     "history.boundary.comparison.title": {
-      "comment": "界面文案：History.Boundary.Comparison.title。",
+      "comment": "朝代详情中比较自称与正统起止日期的分区标题。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -866,7 +866,7 @@
       }
     },
     "history.boundary.end": {
-      "comment": "界面文案：History.Boundary.end。",
+      "comment": "历史边界对照中结束日期一行的标签。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -926,7 +926,7 @@
       }
     },
     "history.boundary.missingData": {
-      "comment": "界面文案：History.Boundary.missingData。",
+      "comment": "历史边界单元格缺少可显示资料时的占位文字。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -962,7 +962,7 @@
       }
     },
     "history.boundary.orthodox": {
-      "comment": "界面文案：History.Boundary.orthodox。",
+      "comment": "历史边界对照中的来源类别标签，表示正统时间线采用的起止时间。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -974,7 +974,7 @@
       }
     },
     "history.boundary.period": {
-      "comment": "界面文案：History.Boundary.period。",
+      "comment": "历史起讫页面中正统时期记录的类别标签。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -986,7 +986,7 @@
       }
     },
     "history.boundary.source.claimedEnd": {
-      "comment": "界面文案：History.Boundary.Source.claimedEnd。",
+      "comment": "边界来源详情中朝代自称结束日期的字段标题。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -998,7 +998,7 @@
       }
     },
     "history.boundary.source.claimedStart": {
-      "comment": "界面文案：History.Boundary.Source.claimedStart。",
+      "comment": "边界来源详情中朝代自称开始日期的字段标题。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -1034,7 +1034,7 @@
       }
     },
     "history.boundary.source.orthodoxEnd": {
-      "comment": "界面文案：History.Boundary.Source.orthodoxEnd。",
+      "comment": "边界来源详情中正统时间线结束日期的字段标题。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -1046,7 +1046,7 @@
       }
     },
     "history.boundary.source.orthodoxStart": {
-      "comment": "界面文案：History.Boundary.Source.orthodoxStart。",
+      "comment": "边界来源详情中正统时间线开始日期的字段标题。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -1058,7 +1058,7 @@
       }
     },
     "history.boundary.source.title": {
-      "comment": "界面文案：History.Boundary.Source.title。",
+      "comment": "历史边界详情中展示原始来源及日期精度的分区标题。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -1070,7 +1070,7 @@
       }
     },
     "history.boundary.start": {
-      "comment": "界面文案：History.Boundary.start。",
+      "comment": "历史边界对照中开始日期一行的标签。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -1082,7 +1082,7 @@
       }
     },
     "history.boundary.timeline": {
-      "comment": "界面文案：History.Boundary.timeline。",
+      "comment": "历史边界摘要中标识正统时间线所采用日期的栏目标题。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -1094,7 +1094,7 @@
       }
     },
     "history.boundary.unknown": {
-      "comment": "界面文案：History.Boundary.unknown。",
+      "comment": "历史边界缺少可确定日期时的简短占位文字。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -1142,7 +1142,7 @@
       }
     },
     "history.date.unknown": {
-      "comment": "界面文案：History.Date.unknown。",
+      "comment": "历史日期格式化无法确定时间时的通用占位说明。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -1166,7 +1166,7 @@
       }
     },
     "history.dynastyCard.unavailable": {
-      "comment": "界面文案：History.DynastyCard.unavailable。",
+      "comment": "朝代卡片缺少相关统计或边界资料时的占位说明。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -1178,7 +1178,7 @@
       }
     },
     "history.dynastyDetail.fact.emperorUnit": {
-      "comment": "界面文案：History.DynastyDetail.Fact.emperorUnit。",
+      "comment": "朝代详情皇帝数量事实卡中，紧随数量展示的计数单位。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -1202,7 +1202,7 @@
       }
     },
     "history.dynastyDetail.fact.reignEraUnit": {
-      "comment": "界面文案：History.DynastyDetail.Fact.reignEraUnit。",
+      "comment": "朝代详情年号数量事实卡中，紧随数量展示的计数单位。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -1250,7 +1250,7 @@
       }
     },
     "history.dynastyDetail.fact.yearUnit": {
-      "comment": "界面文案：History.DynastyDetail.Fact.yearUnit。",
+      "comment": "朝代详情国祚时长事实卡中，紧随年数展示的时间单位。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -1262,7 +1262,7 @@
       }
     },
     "history.dynastyDetail.unavailable.message": {
-      "comment": "界面文案：History.DynastyDetail.Unavailable.message。",
+      "comment": "按朝代进入详情但记录不存在时，解释内容不可用的原因。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -1274,7 +1274,7 @@
       }
     },
     "history.dynastyDetail.unavailable.periodMessage": {
-      "comment": "界面文案：History.DynastyDetail.Unavailable.periodMessage。",
+      "comment": "按正统时期进入朝代详情但关联记录不存在时，解释内容不可用的原因。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -1286,7 +1286,7 @@
       }
     },
     "history.dynastyDetail.unavailable.title": {
-      "comment": "界面文案：History.DynastyDetail.Unavailable.title。",
+      "comment": "朝代详情无法找到目标记录时的不可用状态标题。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -1298,7 +1298,7 @@
       }
     },
     "history.dynastySpan.boundaryEyebrow": {
-      "comment": "界面文案：History.DynastySpan.boundaryEyebrow。",
+      "comment": "朝代起讫页面边界对照区域的辅助栏目标签。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -1310,7 +1310,7 @@
       }
     },
     "history.dynastySpan.boundaryTitle": {
-      "comment": "界面文案：History.DynastySpan.boundaryTitle。",
+      "comment": "朝代起讫页面中对照自称日期与正统时期的分区标题。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -1334,7 +1334,7 @@
       }
     },
     "history.dynastySpan.eventsEyebrow": {
-      "comment": "界面文案：History.DynastySpan.eventsEyebrow。",
+      "comment": "朝代起讫页面边界事件区域的辅助栏目标签。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -1346,7 +1346,7 @@
       }
     },
     "history.dynastySpan.eventsTitle": {
-      "comment": "界面文案：History.DynastySpan.eventsTitle。",
+      "comment": "朝代起讫页面中说明关键边界变动的事件分区标题。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -1370,7 +1370,7 @@
       }
     },
     "history.dynastySpan.title": {
-      "comment": "界面文案：History.DynastySpan.title。",
+      "comment": "展示朝代自称起止、正统时期及国祚的详情页面标题。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -1382,7 +1382,7 @@
       }
     },
     "history.dynastySpan.unavailable.title": {
-      "comment": "界面文案：History.DynastySpan.Unavailable.title。",
+      "comment": "朝代起讫详情缺少目标记录时的不可用状态标题。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -1394,7 +1394,7 @@
       }
     },
     "history.dynastySpan.unavailableDuration": {
-      "comment": "界面文案：History.DynastySpan.unavailableDuration。",
+      "comment": "朝代起讫页面无法计算国祚年数时的占位说明。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -1454,7 +1454,7 @@
       }
     },
     "history.emperorCard.unknownReign": {
-      "comment": "界面文案：History.EmperorCard.unknownReign。",
+      "comment": "皇帝卡片缺少在位区间资料时的占位说明。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -1466,7 +1466,7 @@
       }
     },
     "history.emperorDetail.dynastyLabel": {
-      "comment": "界面文案：History.EmperorDetail.dynastyLabel。",
+      "comment": "皇帝详情基本资料中所属朝代字段的标签。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -1490,7 +1490,7 @@
       }
     },
     "history.emperorDetail.namesTitle": {
-      "comment": "界面文案：History.EmperorDetail.namesTitle。",
+      "comment": "皇帝详情中汇总本名、庙号及谥号的称号分区标题。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -1502,7 +1502,7 @@
       }
     },
     "history.emperorDetail.personalNameLabel": {
-      "comment": "界面文案：History.EmperorDetail.personalNameLabel。",
+      "comment": "皇帝详情称号分区中出生姓名字段的标签。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -1514,7 +1514,7 @@
       }
     },
     "history.emperorDetail.posthumousNameLabel": {
-      "comment": "界面文案：History.EmperorDetail.posthumousNameLabel。",
+      "comment": "皇帝详情称号分区中谥号或来源保留称号字段的标签。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -1526,7 +1526,7 @@
       }
     },
     "history.emperorDetail.reignErasTitle": {
-      "comment": "界面文案：History.EmperorDetail.reignErasTitle。",
+      "comment": "皇帝详情中展示其使用年号的分区标题。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -1538,7 +1538,7 @@
       }
     },
     "history.emperorDetail.reignLabel": {
-      "comment": "界面文案：History.EmperorDetail.reignLabel。",
+      "comment": "皇帝详情基本资料中在位时间字段的标签。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -1574,7 +1574,7 @@
       }
     },
     "history.emperorDetail.segmentsTitle": {
-      "comment": "界面文案：History.EmperorDetail.segmentsTitle。",
+      "comment": "皇帝详情中按记录分别展示各次在位区间的分区标题。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -1586,7 +1586,7 @@
       }
     },
     "history.emperorDetail.templeNameLabel": {
-      "comment": "界面文案：History.EmperorDetail.templeNameLabel。",
+      "comment": "皇帝详情称号分区中庙号字段的标签。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -1598,7 +1598,7 @@
       }
     },
     "history.emperorDetail.unavailable.message": {
-      "comment": "界面文案：History.EmperorDetail.Unavailable.message。",
+      "comment": "皇帝详情记录不存在时，解释当前存储缺少该人物资料。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -1610,7 +1610,7 @@
       }
     },
     "history.emperorDetail.unavailable.title": {
-      "comment": "界面文案：History.EmperorDetail.Unavailable.title。",
+      "comment": "皇帝详情无法找到目标人物时的不可用状态标题。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -1622,7 +1622,7 @@
       }
     },
     "history.emperorList.empty.message": {
-      "comment": "界面文案：History.EmperorList.Empty.message。",
+      "comment": "朝代帝王列表为空时，解释当前存储没有该朝代的皇帝记录。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -1634,7 +1634,7 @@
       }
     },
     "history.emperorList.empty.title": {
-      "comment": "界面文案：History.EmperorList.Empty.title。",
+      "comment": "朝代帝王列表没有记录时的空状态标题。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -1658,7 +1658,7 @@
       }
     },
     "history.emperorList.title": {
-      "comment": "界面文案：History.EmperorList.title。",
+      "comment": "展示某朝代皇帝与在位记录的列表页面标题。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -1670,7 +1670,7 @@
       }
     },
     "history.emperorSummary.missingNames": {
-      "comment": "界面文案：History.EmperorSummary.missingNames。",
+      "comment": "皇帝摘要缺少来源中其他姓名或称号时的占位说明。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -1706,7 +1706,7 @@
       }
     },
     "history.reignEraDetail.boundaryEyebrow": {
-      "comment": "界面文案：History.ReignEraDetail.boundaryEyebrow。",
+      "comment": "年号详情日期边界区域的辅助栏目标签，表示年号使用范围。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -1718,7 +1718,7 @@
       }
     },
     "history.reignEraDetail.boundaryTitle": {
-      "comment": "界面文案：History.ReignEraDetail.boundaryTitle。",
+      "comment": "年号详情中展示启用与结束时间的边界分区标题。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -1742,7 +1742,7 @@
       }
     },
     "history.reignEraDetail.emperorTitle": {
-      "comment": "界面文案：History.ReignEraDetail.emperorTitle。",
+      "comment": "年号详情中展示使用该年号的皇帝的分区标题。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -1754,7 +1754,7 @@
       }
     },
     "history.reignEraDetail.noteSeal": {
-      "comment": "界面文案：History.ReignEraDetail.noteSeal。",
+      "comment": "年号交接说明旁的单字装饰印记，表示此处有资料备注。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -1766,7 +1766,7 @@
       }
     },
     "history.reignEraDetail.notesEyebrow": {
-      "comment": "界面文案：History.ReignEraDetail.notesEyebrow。",
+      "comment": "年号详情来源备注区域的辅助栏目标签。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -1778,7 +1778,7 @@
       }
     },
     "history.reignEraDetail.notesTitle": {
-      "comment": "界面文案：History.ReignEraDetail.notesTitle。",
+      "comment": "年号详情中解释沿用、交接等来源备注的分区标题。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -1802,7 +1802,7 @@
       }
     },
     "history.reignEraDetail.unavailable.message": {
-      "comment": "界面文案：History.ReignEraDetail.Unavailable.message。",
+      "comment": "年号详情记录不存在时，解释当前存储缺少该年号资料。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -1814,7 +1814,7 @@
       }
     },
     "history.reignEraDetail.unavailable.title": {
-      "comment": "界面文案：History.ReignEraDetail.Unavailable.title。",
+      "comment": "年号详情无法找到目标记录时的不可用状态标题。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -1838,7 +1838,7 @@
       }
     },
     "history.reignEraList.empty.message": {
-      "comment": "界面文案：History.ReignEraList.Empty.message。",
+      "comment": "朝代年号列表为空时，解释当前存储没有该朝代的年号记录。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -1850,7 +1850,7 @@
       }
     },
     "history.reignEraList.empty.title": {
-      "comment": "界面文案：History.ReignEraList.Empty.title。",
+      "comment": "朝代年号列表没有记录时的空状态标题。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -1874,7 +1874,7 @@
       }
     },
     "history.reignEraList.title": {
-      "comment": "界面文案：History.ReignEraList.title。",
+      "comment": "展示某朝代年号及其使用区间的列表页面标题。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -1886,7 +1886,7 @@
       }
     },
     "history.timeline.empty.message": {
-      "comment": "界面文案：History.Timeline.Empty.message。",
+      "comment": "历史首页时间线为空时，解释当前存储没有默认正统传统的记录。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -1898,7 +1898,7 @@
       }
     },
     "history.timeline.empty.title": {
-      "comment": "界面文案：History.Timeline.Empty.title。",
+      "comment": "历史首页没有可展示的朝代时间线时的空状态标题。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -1910,7 +1910,7 @@
       }
     },
     "history.timeline.listTitle": {
-      "comment": "界面文案：History.Timeline.listTitle。",
+      "comment": "历史首页按时间浏览朝代的列表分区标题。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -1922,7 +1922,7 @@
       }
     },
     "history.timeline.sortLabel": {
-      "comment": "界面文案：History.Timeline.sortLabel。",
+      "comment": "历史首页朝代列表的排序说明，表示以起始年代排列。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -1934,7 +1934,7 @@
       }
     },
     "history.timeline.subtitle": {
-      "comment": "界面文案：History.Timeline.subtitle。",
+      "comment": "历史首页导航说明，引导用户沿正统时间线进入朝代纪年资料。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -1946,7 +1946,7 @@
       }
     },
     "history.timeline.title": {
-      "comment": "界面文案：History.Timeline.title。",
+      "comment": "历史 Tab 及朝代时间线首页的导航标题。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -1958,7 +1958,7 @@
       }
     },
     "settings.appearance.dark": {
-      "comment": "界面文案：Settings.Appearance.dark。",
+      "comment": "设置页颜色模式选项，表示始终使用深色外观。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -1970,7 +1970,7 @@
       }
     },
     "settings.appearance.light": {
-      "comment": "界面文案：Settings.Appearance.light。",
+      "comment": "设置页颜色模式选项，表示始终使用浅色外观。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -1982,7 +1982,7 @@
       }
     },
     "settings.appearance.pickerLabel": {
-      "comment": "界面文案：Settings.Appearance.pickerLabel。",
+      "comment": "设置页用于选择跟随系统、浅色或深色外观的控件标签。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -1994,7 +1994,7 @@
       }
     },
     "settings.appearance.system": {
-      "comment": "界面文案：Settings.Appearance.system。",
+      "comment": "设置页颜色模式选项，表示使用系统当前的外观设置。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -2006,7 +2006,7 @@
       }
     },
     "settings.appearance.title": {
-      "comment": "界面文案：Settings.Appearance.title。",
+      "comment": "设置页包含颜色模式选择器的外观分区标题。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -2018,7 +2018,7 @@
       }
     },
     "settings.clearData.action": {
-      "comment": "界面文案：Settings.ClearData.action。",
+      "comment": "设置页发起删除已下载日期数据及缓存的操作名称。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -2030,7 +2030,7 @@
       }
     },
     "settings.clearData.confirmationMessage": {
-      "comment": "界面文案：Settings.ClearData.confirmationMessage。",
+      "comment": "清空下载数据前的确认说明，告知会取消下载、删除缓存并恢复内置基础数据。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -2042,7 +2042,7 @@
       }
     },
     "settings.clearData.confirmationTitle": {
-      "comment": "界面文案：Settings.ClearData.confirmationTitle。",
+      "comment": "设置页执行清空下载数据前的确认弹窗标题。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -2054,7 +2054,7 @@
       }
     },
     "settings.clearData.failureTitle": {
-      "comment": "界面文案：Settings.ClearData.failureTitle。",
+      "comment": "设置页清空下载数据失败时的结果弹窗标题。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -2066,7 +2066,7 @@
       }
     },
     "settings.clearData.progress": {
-      "comment": "界面文案：Settings.ClearData.progress。",
+      "comment": "设置页正在清空下载数据时的操作状态文字。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -2078,7 +2078,7 @@
       }
     },
     "settings.clearData.successMessage": {
-      "comment": "界面文案：Settings.ClearData.successMessage。",
+      "comment": "清空操作成功后的结果说明，告知已恢复为内置基础数据。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -2090,7 +2090,7 @@
       }
     },
     "settings.clearData.successTitle": {
-      "comment": "界面文案：Settings.ClearData.successTitle。",
+      "comment": "设置页清空下载数据成功时的结果弹窗标题。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -2102,7 +2102,7 @@
       }
     },
     "settings.data.base.message": {
-      "comment": "界面文案：Settings.Data.Base.message。",
+      "comment": "设置页正在使用基础数据时，说明仍可清理未完成下载留下的缓存。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -2114,7 +2114,7 @@
       }
     },
     "settings.data.base.title": {
-      "comment": "界面文案：Settings.Data.Base.title。",
+      "comment": "设置页数据状态标题，表示当前正在使用内置年份和月份资料。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -2126,7 +2126,7 @@
       }
     },
     "settings.data.downloading.message": {
-      "comment": "界面文案：Settings.Data.Downloading.message。",
+      "comment": "设置页下载进行中的说明，告知清空操作会取消下载并删除临时文件。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -2138,7 +2138,7 @@
       }
     },
     "settings.data.downloading.title": {
-      "comment": "界面文案：Settings.Data.Downloading.title。",
+      "comment": "设置页数据状态标题，表示完整日期数据正在下载。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -2150,7 +2150,7 @@
       }
     },
     "settings.data.full.message": {
-      "comment": "界面文案：Settings.Data.Full.message。",
+      "comment": "设置页完整日期数据状态的说明，告知清空后逐日浏览需要重新下载。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -2162,7 +2162,7 @@
       }
     },
     "settings.data.full.title": {
-      "comment": "界面文案：Settings.Data.Full.title。",
+      "comment": "设置页数据状态标题，表示完整日期数据已经可用。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -2174,7 +2174,7 @@
       }
     },
     "settings.data.preparing.message": {
-      "comment": "界面文案：Settings.Data.Preparing.message。",
+      "comment": "设置页准备数据期间的说明，告知准备完成后可以清理缓存。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -2186,7 +2186,7 @@
       }
     },
     "settings.data.recovery.message": {
-      "comment": "界面文案：Settings.Data.Recovery.message。",
+      "comment": "设置页数据异常时的恢复建议，提示可清空下载数据并回到内置基础数据。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -2198,7 +2198,7 @@
       }
     },
     "settings.data.recovery.title": {
-      "comment": "界面文案：Settings.Data.Recovery.title。",
+      "comment": "设置页数据状态标题，表示当前日历数据需要恢复。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -2210,7 +2210,7 @@
       }
     },
     "settings.data.title": {
-      "comment": "界面文案：Settings.Data.title。",
+      "comment": "设置页展示数据安装状态及清空操作的分区标题。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -2222,7 +2222,7 @@
       }
     },
     "settings.debug.downloadPreview": {
-      "comment": "界面文案：Settings.Debug.downloadPreview。",
+      "comment": "设置页打开固定下载阶段及布局检查页面的入口名称。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -2234,7 +2234,7 @@
       }
     },
     "settings.debug.downloadPreview.accessibilitySize": {
-      "comment": "界面文案：Settings.Debug.DownloadPreview.accessibilitySize。",
+      "comment": "下载布局调试页的字号选项，表示使用最大的辅助功能字号。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -2246,7 +2246,7 @@
       }
     },
     "settings.debug.downloadPreview.defaultSize": {
-      "comment": "界面文案：Settings.Debug.DownloadPreview.defaultSize。",
+      "comment": "下载布局调试页的字号选项，表示使用默认字号。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -2258,7 +2258,7 @@
       }
     },
     "settings.debug.downloadPreview.detailsTitle": {
-      "comment": "界面文案：Settings.Debug.DownloadPreview.detailsTitle。",
+      "comment": "下载布局调试页中完整列出各阶段状态说明的分区标题。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -2306,7 +2306,7 @@
       }
     },
     "settings.debug.downloadPreview.instructions": {
-      "comment": "界面文案：Settings.Debug.DownloadPreview.instructions。",
+      "comment": "下载布局调试页的操作指引，说明滚动标签栏和旋转设备的检查方法。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -2318,7 +2318,7 @@
       }
     },
     "settings.debug.downloadPreview.instructionsTitle": {
-      "comment": "界面文案：Settings.Debug.DownloadPreview.instructionsTitle。",
+      "comment": "下载布局调试页中展示人工检查指引的分区标题。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -2330,7 +2330,7 @@
       }
     },
     "settings.debug.downloadPreview.largeSize": {
-      "comment": "界面文案：Settings.Debug.DownloadPreview.largeSize。",
+      "comment": "下载布局调试页的字号选项，表示使用加大的文字尺寸。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -2342,7 +2342,7 @@
       }
     },
     "settings.debug.downloadPreview.message": {
-      "comment": "界面文案：Settings.Debug.DownloadPreview.message。",
+      "comment": "下载布局调试页的说明，告知固定进度展示不会执行真实下载或修改数据。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -2354,7 +2354,7 @@
       }
     },
     "settings.debug.downloadPreview.scenariosTab": {
-      "comment": "界面文案：Settings.Debug.DownloadPreview.scenariosTab。",
+      "comment": "下载布局调试页中切换固定进度场景的标签名称。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -2366,7 +2366,7 @@
       }
     },
     "settings.debug.downloadPreview.sizePicker": {
-      "comment": "界面文案：Settings.Debug.DownloadPreview.sizePicker。",
+      "comment": "下载布局调试页的系统文字大小选择器标签。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -2378,7 +2378,7 @@
       }
     },
     "settings.debug.downloadPreview.sizeTitle": {
-      "comment": "界面文案：Settings.Debug.DownloadPreview.sizeTitle。",
+      "comment": "下载布局调试页包含文字大小选择器的分区标题。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -2390,7 +2390,7 @@
       }
     },
     "settings.debug.downloadPreview.stagesTitle": {
-      "comment": "界面文案：Settings.Debug.DownloadPreview.stagesTitle。",
+      "comment": "下载布局调试页中可手动选择的固定下载阶段分区标题。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -2402,7 +2402,7 @@
       }
     },
     "settings.debug.downloadPreview.switchMessage": {
-      "comment": "界面文案：Settings.Debug.DownloadPreview.switchMessage。",
+      "comment": "下载布局调试页的切换检查说明，提示检查底部进度保留及详情入口。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -2414,7 +2414,7 @@
       }
     },
     "settings.debug.downloadPreview.switchTab": {
-      "comment": "界面文案：Settings.Debug.DownloadPreview.switchTab。",
+      "comment": "下载布局调试页用于验证切换标签后进度状态的标签名称。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -2426,7 +2426,7 @@
       }
     },
     "settings.debug.downloadPreview.title": {
-      "comment": "界面文案：Settings.Debug.DownloadPreview.title。",
+      "comment": "用于检查固定下载进度布局的调试页面标题。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -2438,7 +2438,7 @@
       }
     },
     "settings.debug.message": {
-      "comment": "界面文案：Settings.Debug.message。",
+      "comment": "设置页调试功能的说明，告知模拟过程不访问网络或修改实际日历数据库。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -2450,7 +2450,7 @@
       }
     },
     "settings.debug.simulateDownload": {
-      "comment": "界面文案：Settings.Debug.simulateDownload。",
+      "comment": "设置页启动完整数据下载进度模拟的操作名称。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -2462,7 +2462,7 @@
       }
     },
     "settings.debug.title": {
-      "comment": "界面文案：Settings.Debug.title。",
+      "comment": "设置页包含下载模拟与布局预览入口的调试分区标题。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -2474,7 +2474,7 @@
       }
     },
     "settings.title": {
-      "comment": "界面文案：Settings.title。",
+      "comment": "设置 Tab 及其根页面的导航标题。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -2486,7 +2486,7 @@
       }
     },
     "settings.unavailable.message": {
-      "comment": "界面文案：Settings.Unavailable.message。",
+      "comment": "设置页面因数据尚未准备完成而不可用时的原因说明。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -2498,7 +2498,7 @@
       }
     },
     "settings.unavailable.title": {
-      "comment": "界面文案：Settings.Unavailable.title。",
+      "comment": "设置页面暂时无法打开时的不可用状态标题。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -2510,7 +2510,7 @@
       }
     },
     "store.bootstrap.failureTitle": {
-      "comment": "界面文案：Store.Bootstrap.failureTitle。",
+      "comment": "App 启动时无法打开日历存储的错误页面标题。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -2522,7 +2522,7 @@
       }
     },
     "store.bootstrap.preparing": {
-      "comment": "界面文案：Store.Bootstrap.preparing。",
+      "comment": "App 启动准备日历存储期间的加载状态说明。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -2534,7 +2534,7 @@
       }
     },
     "store.contentLevel.base": {
-      "comment": "界面文案：Store.ContentLevel.base。",
+      "comment": "数据层级的显示名称，表示只包含年份和月份的内置资料。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -2546,7 +2546,7 @@
       }
     },
     "store.contentLevel.full": {
-      "comment": "界面文案：Store.ContentLevel.full。",
+      "comment": "数据层级的显示名称，表示包含可逐日浏览的完整日期资料。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -2558,7 +2558,7 @@
       }
     },
     "store.download.banner.action": {
-      "comment": "界面文案：Store.Download.Banner.action。",
+      "comment": "完整数据下载提示横幅中启动下载的按钮名称。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -2570,7 +2570,7 @@
       }
     },
     "store.download.banner.title": {
-      "comment": "界面文案：Store.Download.Banner.title。",
+      "comment": "日历只使用基础数据时，提示可下载完整日期数据的横幅标题。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -2582,7 +2582,7 @@
       }
     },
     "store.download.completed.detail": {
-      "comment": "界面文案：Store.Download.Completed.detail。",
+      "comment": "完整数据安装成功后的说明，提示现在可浏览逐日干支与对应民用日期。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -2594,7 +2594,7 @@
       }
     },
     "store.download.completed.shortTitle": {
-      "comment": "界面文案：Store.Download.Completed.shortTitle。",
+      "comment": "底部紧凑下载进度中表示全部数据已可用的简短状态标题。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -2606,7 +2606,7 @@
       }
     },
     "store.download.completed.summary": {
-      "comment": "界面文案：Store.Download.Completed.summary。",
+      "comment": "完整数据下载流程成功结束时的状态摘要。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -2618,7 +2618,7 @@
       }
     },
     "store.download.completed.title": {
-      "comment": "界面文案：Store.Download.Completed.title。",
+      "comment": "下载详情阶段列表中表示整个流程结束的阶段标题。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -2642,7 +2642,7 @@
       }
     },
     "store.download.downloading.shortTitle": {
-      "comment": "界面文案：Store.Download.Downloading.shortTitle。",
+      "comment": "底部紧凑下载进度中正在传输文件的简短阶段标题。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -2654,7 +2654,7 @@
       }
     },
     "store.download.downloading.title": {
-      "comment": "界面文案：Store.Download.Downloading.title。",
+      "comment": "下载详情中正在传输完整数据文件的阶段标题。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -2666,7 +2666,7 @@
       }
     },
     "store.download.failureTitle": {
-      "comment": "界面文案：Store.Download.failureTitle。",
+      "comment": "完整日期数据下载失败时的错误提示标题。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -2678,7 +2678,7 @@
       }
     },
     "store.download.installing.detail": {
-      "comment": "界面文案：Store.Download.Installing.detail。",
+      "comment": "下载详情中解释当前正在将完整数据安装到本地存储的状态说明。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -2690,7 +2690,7 @@
       }
     },
     "store.download.installing.shortTitle": {
-      "comment": "界面文案：Store.Download.Installing.shortTitle。",
+      "comment": "底部紧凑下载进度中安装文件的简短阶段标题。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -2702,7 +2702,7 @@
       }
     },
     "store.download.installing.title": {
-      "comment": "界面文案：Store.Download.Installing.title。",
+      "comment": "下载详情中安装完整日期数据的阶段标题。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -2714,7 +2714,7 @@
       }
     },
     "store.download.preparing.detail": {
-      "comment": "界面文案：Store.Download.Preparing.detail。",
+      "comment": "下载详情中解释当前正在获取下载所需信息的状态说明。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -2726,7 +2726,7 @@
       }
     },
     "store.download.preparing.shortTitle": {
-      "comment": "界面文案：Store.Download.Preparing.shortTitle。",
+      "comment": "底部紧凑下载进度中准备下载信息的简短阶段标题。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -2738,7 +2738,7 @@
       }
     },
     "store.download.preparing.title": {
-      "comment": "界面文案：Store.Download.Preparing.title。",
+      "comment": "下载详情中准备下载地址与文件信息的阶段标题。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -2750,7 +2750,7 @@
       }
     },
     "store.download.progress.accessibilityHint": {
-      "comment": "界面文案：Store.Download.Progress.accessibilityHint。",
+      "comment": "底部下载进度入口的无障碍提示，说明激活后会打开完整状态详情。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -2762,7 +2762,7 @@
       }
     },
     "store.download.progress.detailInputLabel": {
-      "comment": "界面文案：Store.Download.Progress.detailInputLabel。",
+      "comment": "下载进度详情入口的无障碍输入名称，供语音控制定位。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -2774,7 +2774,7 @@
       }
     },
     "store.download.progress.inputLabel": {
-      "comment": "界面文案：Store.Download.Progress.inputLabel。",
+      "comment": "底部下载进度控件的无障碍输入名称，供语音控制定位。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -2798,7 +2798,7 @@
       }
     },
     "store.download.step.completed": {
-      "comment": "界面文案：Store.Download.Step.completed。",
+      "comment": "下载详情阶段列表中，已完成步骤的状态标记。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -2810,7 +2810,7 @@
       }
     },
     "store.download.step.current": {
-      "comment": "界面文案：Store.Download.Step.current。",
+      "comment": "下载详情阶段列表中，当前正在执行步骤的状态标记。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -2822,7 +2822,7 @@
       }
     },
     "store.download.step.pending": {
-      "comment": "界面文案：Store.Download.Step.pending。",
+      "comment": "下载详情阶段列表中，尚未开始步骤的状态标记。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -2834,7 +2834,7 @@
       }
     },
     "store.download.title": {
-      "comment": "界面文案：Store.Download.title。",
+      "comment": "展示完整日期数据下载、校验及安装过程的详情页面标题。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -2846,7 +2846,7 @@
       }
     },
     "store.download.validating.detail": {
-      "comment": "界面文案：Store.Download.Validating.detail。",
+      "comment": "下载详情中解释当前正在检查文件完整性的状态说明。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -2858,7 +2858,7 @@
       }
     },
     "store.download.validating.shortTitle": {
-      "comment": "界面文案：Store.Download.Validating.shortTitle。",
+      "comment": "底部紧凑下载进度中检查文件完整性的简短阶段标题。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
@@ -2870,7 +2870,7 @@
       }
     },
     "store.download.validating.title": {
-      "comment": "界面文案：Store.Download.Validating.title。",
+      "comment": "下载详情中检查下载文件完整性的阶段标题。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {

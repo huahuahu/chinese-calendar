@@ -9,7 +9,7 @@ public extension CalendarStringKey.History.EmperorSummary {
         CalendarStringKey.resource(
             "history.emperorSummary.missingNames",
             defaultValue: "未记录别名",
-            comment: "界面文案：History.EmperorSummary.missingNames。"
+            comment: "皇帝摘要缺少来源中其他姓名或称号时的占位说明。"
         )
     }
 

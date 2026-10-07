@@ -19,7 +19,7 @@ key 使用稳定语义路径，首段与各层用 lowerCamelCase，例如 `histo
 
 catalog 的条目显式维护并标记 `extractionState: manual`：自定义资源工厂不依赖 Xcode 自动提取。`python3 Scripts/validate_localized_copy.py` 检查 Swift 定义与 catalog 的 key、默认值、格式占位符和注释，并检查文案定义只导入 Foundation；检查已接入本地 CI 与 GitHub CI。不能只更新其中一个位置。新增翻译时可以在 catalog 为有数量参数的完整句子增加 plural variations；简体中文目前无需按数量改变词形。
 
-注释说明所在页面与用途；动态文案需按顺序说明每个参数的含义。不要把实体名、完整路径或错误诊断文本当成翻译 key。
+注释说明所在页面与用途；动态文案需按顺序说明每个参数的含义。不能用只重复符号路径的占位注释代替语境，校验脚本会拒绝这类注释。不要把实体名、完整路径或错误诊断文本当成翻译 key。
 
 ## 调用与动态内容
 

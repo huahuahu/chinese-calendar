@@ -9,7 +9,7 @@ public extension CalendarStringKey.History.EmperorCard {
         CalendarStringKey.resource(
             "history.emperorCard.unknownReign",
             defaultValue: "在位时间待考",
-            comment: "界面文案：History.EmperorCard.unknownReign。"
+            comment: "皇帝卡片缺少在位区间资料时的占位说明。"
         )
     }
 

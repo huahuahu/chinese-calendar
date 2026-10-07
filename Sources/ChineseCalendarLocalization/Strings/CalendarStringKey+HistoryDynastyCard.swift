@@ -9,7 +9,7 @@ public extension CalendarStringKey.History.DynastyCard {
         CalendarStringKey.resource(
             "history.dynastyCard.unavailable",
             defaultValue: "资料暂缺",
-            comment: "界面文案：History.DynastyCard.unavailable。"
+            comment: "朝代卡片缺少相关统计或边界资料时的占位说明。"
         )
     }
 

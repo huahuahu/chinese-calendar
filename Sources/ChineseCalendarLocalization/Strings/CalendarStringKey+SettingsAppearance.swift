@@ -9,7 +9,7 @@ public extension CalendarStringKey.Settings.Appearance {
         CalendarStringKey.resource(
             "settings.appearance.system",
             defaultValue: "跟随系统",
-            comment: "界面文案：Settings.Appearance.system。"
+            comment: "设置页颜色模式选项，表示使用系统当前的外观设置。"
         )
     }
 
@@ -17,7 +17,7 @@ public extension CalendarStringKey.Settings.Appearance {
         CalendarStringKey.resource(
             "settings.appearance.light",
             defaultValue: "浅色",
-            comment: "界面文案：Settings.Appearance.light。"
+            comment: "设置页颜色模式选项，表示始终使用浅色外观。"
         )
     }
 
@@ -25,7 +25,7 @@ public extension CalendarStringKey.Settings.Appearance {
         CalendarStringKey.resource(
             "settings.appearance.dark",
             defaultValue: "深色",
-            comment: "界面文案：Settings.Appearance.dark。"
+            comment: "设置页颜色模式选项，表示始终使用深色外观。"
         )
     }
 
@@ -33,7 +33,7 @@ public extension CalendarStringKey.Settings.Appearance {
         CalendarStringKey.resource(
             "settings.appearance.title",
             defaultValue: "外观",
-            comment: "界面文案：Settings.Appearance.title。"
+            comment: "设置页包含颜色模式选择器的外观分区标题。"
         )
     }
 
@@ -41,7 +41,7 @@ public extension CalendarStringKey.Settings.Appearance {
         CalendarStringKey.resource(
             "settings.appearance.pickerLabel",
             defaultValue: "颜色模式",
-            comment: "界面文案：Settings.Appearance.pickerLabel。"
+            comment: "设置页用于选择跟随系统、浅色或深色外观的控件标签。"
         )
     }
 }

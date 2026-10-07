@@ -9,7 +9,7 @@ public extension CalendarStringKey.Calendar.DayDetail {
         CalendarStringKey.resource(
             "calendar.dayDetail.title",
             defaultValue: "选中日",
-            comment: "界面文案：Calendar.DayDetail.title。"
+            comment: "日历页面下方当前选中日期的详情分区标题。"
         )
     }
 
@@ -17,7 +17,7 @@ public extension CalendarStringKey.Calendar.DayDetail {
         CalendarStringKey.resource(
             "calendar.dayDetail.lunarExpressionLabel",
             defaultValue: "农历表达",
-            comment: "界面文案：Calendar.DayDetail.lunarExpressionLabel。"
+            comment: "日历选中日详情中，农历年月日表达字段的标签。"
         )
     }
 
@@ -25,7 +25,7 @@ public extension CalendarStringKey.Calendar.DayDetail {
         CalendarStringKey.resource(
             "calendar.dayDetail.sexagenaryLabel",
             defaultValue: "日干支",
-            comment: "界面文案：Calendar.DayDetail.sexagenaryLabel。"
+            comment: "日历选中日详情中，当日天干地支字段的标签。"
         )
     }
 
@@ -33,7 +33,7 @@ public extension CalendarStringKey.Calendar.DayDetail {
         CalendarStringKey.resource(
             "calendar.dayDetail.contentLevelLabel",
             defaultValue: "数据层级",
-            comment: "界面文案：Calendar.DayDetail.contentLevelLabel。"
+            comment: "日历选中日详情中，说明当前使用基础数据还是完整日期数据的字段标签。"
         )
     }
 
@@ -41,7 +41,7 @@ public extension CalendarStringKey.Calendar.DayDetail {
         CalendarStringKey.resource(
             "calendar.dayDetail.civilDateLabel",
             defaultValue: "对应日期",
-            comment: "界面文案：Calendar.DayDetail.civilDateLabel。"
+            comment: "日历选中日详情中，对应公历日期字段的标签。"
         )
     }
 

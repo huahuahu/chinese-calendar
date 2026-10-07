@@ -11,7 +11,7 @@ public extension CalendarStringKey.Calendar.YearPicker {
         CalendarStringKey.resource(
             "calendar.yearPicker.accessibilityHint",
             defaultValue: "打开年份选择器",
-            comment: "界面文案：Calendar.YearPicker.accessibilityHint。"
+            comment: "日历年份入口的无障碍提示，说明激活后会打开年份选择器。"
         )
     }
 
@@ -19,7 +19,7 @@ public extension CalendarStringKey.Calendar.YearPicker {
         CalendarStringKey.resource(
             "calendar.yearPicker.title",
             defaultValue: "年份选择器",
-            comment: "界面文案：Calendar.YearPicker.title。"
+            comment: "用于跳转到指定农历年的年份选择页面标题。"
         )
     }
 }

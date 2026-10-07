@@ -11,7 +11,7 @@ public extension CalendarStringKey.History.EmperorList {
         CalendarStringKey.resource(
             "history.emperorList.title",
             defaultValue: "帝王",
-            comment: "界面文案：History.EmperorList.title。"
+            comment: "展示某朝代皇帝与在位记录的列表页面标题。"
         )
     }
 
@@ -29,7 +29,7 @@ public extension CalendarStringKey.History.EmperorList.Empty {
         CalendarStringKey.resource(
             "history.emperorList.empty.title",
             defaultValue: "没有帝王资料",
-            comment: "界面文案：History.EmperorList.Empty.title。"
+            comment: "朝代帝王列表没有记录时的空状态标题。"
         )
     }
 
@@ -37,7 +37,7 @@ public extension CalendarStringKey.History.EmperorList.Empty {
         CalendarStringKey.resource(
             "history.emperorList.empty.message",
             defaultValue: "当前 store 中没有这个朝代的皇帝记录。",
-            comment: "界面文案：History.EmperorList.Empty.message。"
+            comment: "朝代帝王列表为空时，解释当前存储没有该朝代的皇帝记录。"
         )
     }
 }

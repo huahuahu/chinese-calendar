@@ -102,7 +102,7 @@
 
 ## 扫描与边界
 
-`python3 Scripts/validate_localized_copy.py` 检查两个 catalog 的所有定义与生产 UI 字符串（包括英文和插值），技术例外显式列在脚本中。开发者 Preview、测试、来源解析与导航协议使用明确排除范围；未来在这些文件新增真实产品文案时仍需人工检查，不能用文件名规避迁移。
+`python3 Scripts/validate_localized_copy.py` 检查唯一的 `Calendar.xcstrings` catalog 的所有定义与生产 UI 字符串（包括英文和插值），技术例外显式列在脚本中。开发者 Preview、测试、来源解析与导航协议使用明确排除范围；未来在这些文件新增真实产品文案时仍需人工检查，不能用文件名规避迁移。
 
 补充人工扫描覆盖 Core、Data、Persistence、NavigationCore、App 入口、SwiftUI 各种 title/label/help/alert、展示模型、`localizedDescription`、rawValue 和句子拼接。`#119` 年号列表空状态继续使用原来的中文与布局，定义只有 `History.ReignEraList.Empty` 一个来源。
 

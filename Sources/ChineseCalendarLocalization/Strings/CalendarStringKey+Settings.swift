@@ -5,7 +5,7 @@ public extension CalendarStringKey.Settings {
         CalendarStringKey.resource(
             "settings.title",
             defaultValue: "设置",
-            comment: "界面文案：Settings.title。"
+            comment: "设置 Tab 及其根页面的导航标题。"
         )
     }
 }

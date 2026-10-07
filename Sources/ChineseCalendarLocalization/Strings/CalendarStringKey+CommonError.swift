@@ -9,7 +9,7 @@ public extension CalendarStringKey.Common.Error {
         CalendarStringKey.resource(
             "common.error.retryLater",
             defaultValue: "请稍后再试。",
-            comment: "界面文案：Common.Error.retryLater。"
+            comment: "可恢复错误提示中的通用建议，表示稍后再次尝试当前操作。"
         )
     }
 }

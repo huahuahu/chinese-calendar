@@ -11,7 +11,7 @@ public extension CalendarStringKey.History.DynastySpan {
         CalendarStringKey.resource(
             "history.dynastySpan.unavailableDuration",
             defaultValue: "国祚暂无",
-            comment: "界面文案：History.DynastySpan.unavailableDuration。"
+            comment: "朝代起讫页面无法计算国祚年数时的占位说明。"
         )
     }
 
@@ -19,7 +19,7 @@ public extension CalendarStringKey.History.DynastySpan {
         CalendarStringKey.resource(
             "history.dynastySpan.title",
             defaultValue: "朝代起讫",
-            comment: "界面文案：History.DynastySpan.title。"
+            comment: "展示朝代自称起止、正统时期及国祚的详情页面标题。"
         )
     }
 
@@ -27,7 +27,7 @@ public extension CalendarStringKey.History.DynastySpan {
         CalendarStringKey.resource(
             "history.dynastySpan.boundaryEyebrow",
             defaultValue: "边界对照",
-            comment: "界面文案：History.DynastySpan.boundaryEyebrow。"
+            comment: "朝代起讫页面边界对照区域的辅助栏目标签。"
         )
     }
 
@@ -35,7 +35,7 @@ public extension CalendarStringKey.History.DynastySpan {
         CalendarStringKey.resource(
             "history.dynastySpan.boundaryTitle",
             defaultValue: "朝代自称与正统期",
-            comment: "界面文案：History.DynastySpan.boundaryTitle。"
+            comment: "朝代起讫页面中对照自称日期与正统时期的分区标题。"
         )
     }
 
@@ -43,7 +43,7 @@ public extension CalendarStringKey.History.DynastySpan {
         CalendarStringKey.resource(
             "history.dynastySpan.eventsEyebrow",
             defaultValue: "相关说明",
-            comment: "界面文案：History.DynastySpan.eventsEyebrow。"
+            comment: "朝代起讫页面边界事件区域的辅助栏目标签。"
         )
     }
 
@@ -51,7 +51,7 @@ public extension CalendarStringKey.History.DynastySpan {
         CalendarStringKey.resource(
             "history.dynastySpan.eventsTitle",
             defaultValue: "关键边界事件",
-            comment: "界面文案：History.DynastySpan.eventsTitle。"
+            comment: "朝代起讫页面中说明关键边界变动的事件分区标题。"
         )
     }
 
@@ -77,7 +77,7 @@ public extension CalendarStringKey.History.DynastySpan.Unavailable {
         CalendarStringKey.resource(
             "history.dynastySpan.unavailable.title",
             defaultValue: "没有找到朝代起讫",
-            comment: "界面文案：History.DynastySpan.Unavailable.title。"
+            comment: "朝代起讫详情缺少目标记录时的不可用状态标题。"
         )
     }
 }

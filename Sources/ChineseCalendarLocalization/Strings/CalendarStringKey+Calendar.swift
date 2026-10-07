@@ -5,7 +5,7 @@ public extension CalendarStringKey.Calendar {
         CalendarStringKey.resource(
             "calendar.title",
             defaultValue: "日历",
-            comment: "界面文案：Calendar.title。"
+            comment: "日历 Tab 及其日期浏览首页的导航标题。"
         )
     }
 }

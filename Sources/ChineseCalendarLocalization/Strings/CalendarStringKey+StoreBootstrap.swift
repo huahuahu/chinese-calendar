@@ -9,7 +9,7 @@ public extension CalendarStringKey.Store.Bootstrap {
         CalendarStringKey.resource(
             "store.bootstrap.preparing",
             defaultValue: "正在准备日历数据",
-            comment: "界面文案：Store.Bootstrap.preparing。"
+            comment: "App 启动准备日历存储期间的加载状态说明。"
         )
     }
 
@@ -17,7 +17,7 @@ public extension CalendarStringKey.Store.Bootstrap {
         CalendarStringKey.resource(
             "store.bootstrap.failureTitle",
             defaultValue: "无法打开日历数据",
-            comment: "界面文案：Store.Bootstrap.failureTitle。"
+            comment: "App 启动时无法打开日历存储的错误页面标题。"
         )
     }
 }

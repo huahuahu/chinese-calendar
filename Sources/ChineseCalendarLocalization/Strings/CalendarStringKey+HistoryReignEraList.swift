@@ -11,7 +11,7 @@ public extension CalendarStringKey.History.ReignEraList {
         CalendarStringKey.resource(
             "history.reignEraList.title",
             defaultValue: "年号",
-            comment: "界面文案：History.ReignEraList.title。"
+            comment: "展示某朝代年号及其使用区间的列表页面标题。"
         )
     }
 
@@ -37,7 +37,7 @@ public extension CalendarStringKey.History.ReignEraList.Empty {
         CalendarStringKey.resource(
             "history.reignEraList.empty.title",
             defaultValue: "没有年号资料",
-            comment: "界面文案：History.ReignEraList.Empty.title。"
+            comment: "朝代年号列表没有记录时的空状态标题。"
         )
     }
 
@@ -45,7 +45,7 @@ public extension CalendarStringKey.History.ReignEraList.Empty {
         CalendarStringKey.resource(
             "history.reignEraList.empty.message",
             defaultValue: "当前 store 中没有这个朝代的年号记录。",
-            comment: "界面文案：History.ReignEraList.Empty.message。"
+            comment: "朝代年号列表为空时，解释当前存储没有该朝代的年号记录。"
         )
     }
 }

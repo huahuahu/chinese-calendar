@@ -9,7 +9,7 @@ public extension CalendarStringKey.Common.DatePrecision {
         CalendarStringKey.resource(
             "common.datePrecision.year",
             defaultValue: "年精度",
-            comment: "界面文案：Common.DatePrecision.year。"
+            comment: "历史日期的精度标签，表示资料只能精确到年。"
         )
     }
 
@@ -17,7 +17,7 @@ public extension CalendarStringKey.Common.DatePrecision {
         CalendarStringKey.resource(
             "common.datePrecision.month",
             defaultValue: "月精度",
-            comment: "界面文案：Common.DatePrecision.month。"
+            comment: "历史日期的精度标签，表示资料只能精确到月。"
         )
     }
 
@@ -25,7 +25,7 @@ public extension CalendarStringKey.Common.DatePrecision {
         CalendarStringKey.resource(
             "common.datePrecision.day",
             defaultValue: "日精度",
-            comment: "界面文案：Common.DatePrecision.day。"
+            comment: "历史日期的精度标签，表示资料可精确到日。"
         )
     }
 
@@ -33,7 +33,7 @@ public extension CalendarStringKey.Common.DatePrecision {
         CalendarStringKey.resource(
             "common.datePrecision.range",
             defaultValue: "范围精度",
-            comment: "界面文案：Common.DatePrecision.range。"
+            comment: "历史日期的精度标签，表示资料只给出一个范围。"
         )
     }
 
@@ -41,7 +41,7 @@ public extension CalendarStringKey.Common.DatePrecision {
         CalendarStringKey.resource(
             "common.datePrecision.unknown",
             defaultValue: "精度未知",
-            comment: "界面文案：Common.DatePrecision.unknown。"
+            comment: "历史日期的精度标签，表示资料未提供可判定的时间精度。"
         )
     }
 

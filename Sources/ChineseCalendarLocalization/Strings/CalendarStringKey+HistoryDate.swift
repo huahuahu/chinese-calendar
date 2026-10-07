@@ -9,7 +9,7 @@ public extension CalendarStringKey.History.Date {
         CalendarStringKey.resource(
             "history.date.unknown",
             defaultValue: "时间待考",
-            comment: "界面文案：History.Date.unknown。"
+            comment: "历史日期格式化无法确定时间时的通用占位说明。"
         )
     }
 

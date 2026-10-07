@@ -11,7 +11,7 @@ public extension CalendarStringKey.History.EmperorDetail {
         CalendarStringKey.resource(
             "history.emperorDetail.dynastyLabel",
             defaultValue: "朝代",
-            comment: "界面文案：History.EmperorDetail.dynastyLabel。"
+            comment: "皇帝详情基本资料中所属朝代字段的标签。"
         )
     }
 
@@ -19,7 +19,7 @@ public extension CalendarStringKey.History.EmperorDetail {
         CalendarStringKey.resource(
             "history.emperorDetail.reignLabel",
             defaultValue: "在位",
-            comment: "界面文案：History.EmperorDetail.reignLabel。"
+            comment: "皇帝详情基本资料中在位时间字段的标签。"
         )
     }
 
@@ -27,7 +27,7 @@ public extension CalendarStringKey.History.EmperorDetail {
         CalendarStringKey.resource(
             "history.emperorDetail.reignErasTitle",
             defaultValue: "年号",
-            comment: "界面文案：History.EmperorDetail.reignErasTitle。"
+            comment: "皇帝详情中展示其使用年号的分区标题。"
         )
     }
 
@@ -35,7 +35,7 @@ public extension CalendarStringKey.History.EmperorDetail {
         CalendarStringKey.resource(
             "history.emperorDetail.namesTitle",
             defaultValue: "称号",
-            comment: "界面文案：History.EmperorDetail.namesTitle。"
+            comment: "皇帝详情中汇总本名、庙号及谥号的称号分区标题。"
         )
     }
 
@@ -43,7 +43,7 @@ public extension CalendarStringKey.History.EmperorDetail {
         CalendarStringKey.resource(
             "history.emperorDetail.personalNameLabel",
             defaultValue: "本名",
-            comment: "界面文案：History.EmperorDetail.personalNameLabel。"
+            comment: "皇帝详情称号分区中出生姓名字段的标签。"
         )
     }
 
@@ -51,7 +51,7 @@ public extension CalendarStringKey.History.EmperorDetail {
         CalendarStringKey.resource(
             "history.emperorDetail.templeNameLabel",
             defaultValue: "庙号",
-            comment: "界面文案：History.EmperorDetail.templeNameLabel。"
+            comment: "皇帝详情称号分区中庙号字段的标签。"
         )
     }
 
@@ -59,7 +59,7 @@ public extension CalendarStringKey.History.EmperorDetail {
         CalendarStringKey.resource(
             "history.emperorDetail.posthumousNameLabel",
             defaultValue: "谥号/称号",
-            comment: "界面文案：History.EmperorDetail.posthumousNameLabel。"
+            comment: "皇帝详情称号分区中谥号或来源保留称号字段的标签。"
         )
     }
 
@@ -67,7 +67,7 @@ public extension CalendarStringKey.History.EmperorDetail {
         CalendarStringKey.resource(
             "history.emperorDetail.segmentsTitle",
             defaultValue: "在位区间",
-            comment: "界面文案：History.EmperorDetail.segmentsTitle。"
+            comment: "皇帝详情中按记录分别展示各次在位区间的分区标题。"
         )
     }
 
@@ -101,7 +101,7 @@ public extension CalendarStringKey.History.EmperorDetail.Unavailable {
         CalendarStringKey.resource(
             "history.emperorDetail.unavailable.title",
             defaultValue: "没有找到皇帝",
-            comment: "界面文案：History.EmperorDetail.Unavailable.title。"
+            comment: "皇帝详情无法找到目标人物时的不可用状态标题。"
         )
     }
 
@@ -109,7 +109,7 @@ public extension CalendarStringKey.History.EmperorDetail.Unavailable {
         CalendarStringKey.resource(
             "history.emperorDetail.unavailable.message",
             defaultValue: "这个皇帝记录不在当前 SwiftData store 中。",
-            comment: "界面文案：History.EmperorDetail.Unavailable.message。"
+            comment: "皇帝详情记录不存在时，解释当前存储缺少该人物资料。"
         )
     }
 }
