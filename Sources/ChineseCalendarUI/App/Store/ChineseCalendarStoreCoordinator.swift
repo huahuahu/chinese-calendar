@@ -9,7 +9,7 @@ import SwiftData
 public final class ChineseCalendarStoreCoordinator {
     private(set) var state: CalendarStoreBootstrapState = .starting
     private(set) var fullStoreDownloadProgress: FullStoreDownloadProgress?
-    private(set) var downloadErrorMessage: String?
+    private(set) var downloadErrorMessage: LocalizedStringResource?
     private(set) var isClearingDownloadedData = false
 
     @ObservationIgnored private var fullStoreDownloadTask: Task<Void, Never>?
@@ -62,7 +62,7 @@ public final class ChineseCalendarStoreCoordinator {
             state = .ready(container: container, contentLevel: contentLevel, identityToken: identityToken)
         } catch {
             ChineseCalendarLog.persistence.error("Failed to prepare SwiftData store: \(error.localizedDescription)")
-            state = .failed(message: error.localizedDescription)
+            state = .failed(message: CalendarStoreErrorPresentation.message(for: error, operation: .prepare))
         }
     }
 
@@ -201,7 +201,7 @@ public final class ChineseCalendarStoreCoordinator {
 
             ChineseCalendarLog.persistence
                 .error("Failed to install full SwiftData store: \(error.localizedDescription)")
-            showDownloadErrorIfStoreRecovers(error.localizedDescription)
+            showDownloadErrorIfStoreRecovers(CalendarStoreErrorPresentation.message(for: error, operation: .download))
         }
     }
 
@@ -222,7 +222,7 @@ public final class ChineseCalendarStoreCoordinator {
                     return
                 }
 
-                downloadErrorMessage = error.localizedDescription
+                downloadErrorMessage = CalendarStoreErrorPresentation.message(for: error, operation: .download)
             }
         }
     #endif
@@ -245,7 +245,7 @@ public final class ChineseCalendarStoreCoordinator {
         }
     }
 
-    private func showDownloadErrorIfStoreRecovers(_ message: String) {
+    private func showDownloadErrorIfStoreRecovers(_ message: LocalizedStringResource) {
         do {
             let container = try ChineseCalendarModelContainerFactory.makeSharedContainer()
             let contentLevel = try ChineseCalendarModelContainerFactory.installedStoreContentLevel() ?? .base
@@ -276,5 +276,5 @@ enum CalendarStoreBootstrapState {
         contentLevel: ChineseCalendarSeedStoreContentLevel,
         identityToken: String?
     )
-    case failed(message: String)
+    case failed(message: LocalizedStringResource)
 }

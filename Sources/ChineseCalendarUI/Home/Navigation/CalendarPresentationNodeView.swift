@@ -1,3 +1,4 @@
+import ChineseCalendarLocalization
 import NavigationCore
 import SwiftUI
 
@@ -10,7 +11,7 @@ struct CalendarPresentationNodeView: View {
             CalendarDestinationView(destination: destination)
                 .toolbar {
                     ToolbarItem(placement: .cancellationAction) {
-                        Button("关闭", action: dismiss)
+                        Button(CalendarStringKey.Common.Action.close, action: dismiss)
                     }
                 }
         }

@@ -1,3 +1,4 @@
+import ChineseCalendarLocalization
 import ChineseCalendarPersistence
 import SFSafeSymbols
 import SwiftData
@@ -172,12 +173,13 @@ private extension ReignEraDetailView {
 
     private func ownerDetails(_ reignEra: ReignEra) -> some View {
         VStack(alignment: .leading, spacing: Constants.ownerDetailSpacing) {
-            Text("所属皇帝")
+            Text(CalendarStringKey.History.ReignEraDetail.emperorTitle)
                 .font(.caption)
                 .foregroundStyle(.secondary)
             Text(ownerText(reignEra))
                 .font(.headline)
-            Text("\(dynastyName(reignEra))朝皇帝序列")
+            Text(String(localized: CalendarStringKey.History.ReignEraDetail
+                    .emperorSequence(dynasty: dynastyName(reignEra))))
                 .font(.caption)
                 .foregroundStyle(.secondary)
         }
@@ -185,9 +187,9 @@ private extension ReignEraDetailView {
 
     private func boundarySection(_ reignEra: ReignEra) -> some View {
         VStack(alignment: .leading, spacing: Constants.sectionHeadingSpacing) {
-            sectionEyebrow("使用区间")
+            sectionEyebrow(String(localized: CalendarStringKey.History.ReignEraDetail.boundaryEyebrow))
 
-            Text("纪年边界")
+            Text(CalendarStringKey.History.ReignEraDetail.boundaryTitle)
                 .font(.title2)
                 .bold()
 
@@ -204,9 +206,9 @@ private extension ReignEraDetailView {
     private func transitionNoteSection(_ reignEra: ReignEra) -> some View {
         if let note = HistoryNoteFormatter.reignEraNote(reignEra.note) {
             VStack(alignment: .leading, spacing: Constants.sectionHeadingSpacing) {
-                sectionEyebrow("沿革说明")
+                sectionEyebrow(String(localized: CalendarStringKey.History.ReignEraDetail.notesEyebrow))
 
-                Text("年号交接")
+                Text(CalendarStringKey.History.ReignEraDetail.notesTitle)
                     .font(.title2)
                     .bold()
 
@@ -243,7 +245,7 @@ private extension ReignEraDetailView {
     }
 
     private var transitionNoteBadge: some View {
-        Text("记")
+        Text(CalendarStringKey.History.ReignEraDetail.noteSeal)
             .font(.caption)
             .fontDesign(.serif)
             .bold()
@@ -265,15 +267,18 @@ private extension ReignEraDetailView {
 
     private var missingReignEraState: some View {
         ContentUnavailableView {
-            Label("没有找到年号", systemSymbol: .timelineSelection)
+            Label(CalendarStringKey.History.ReignEraDetail.Unavailable.title, systemSymbol: .timelineSelection)
         } description: {
-            Text("这个年号记录不在当前 SwiftData store 中。")
+            Text(CalendarStringKey.History.ReignEraDetail.Unavailable.message)
         }
     }
 
     private func summaryTitle(_ reignEra: ReignEra) -> String {
         let dynasty = reignEra.emperor.dynasty
-        return "\(dynasty.shortName ?? dynasty.name) · 第 \(reignEra.sequenceIndex + 1) 个年号"
+        return String(localized: CalendarStringKey.History.ReignEraDetail.subtitle(
+            dynasty: dynasty.shortName ?? dynasty.name,
+            number: reignEra.sequenceIndex + 1
+        ))
     }
 
     private func usageRange(_ reignEra: ReignEra) -> String {
@@ -287,7 +292,7 @@ private extension ReignEraDetailView {
         HistoryDateRangeFormatter.usageDurationYears(
             start: reignEra.startDate,
             exclusiveEnd: reignEra.endDate
-        ).map { "\($0) 年" }
+        ).map { String(localized: CalendarStringKey.History.Date.duration(years: $0)) }
     }
 
     private func ownerText(_ reignEra: ReignEra) -> String {

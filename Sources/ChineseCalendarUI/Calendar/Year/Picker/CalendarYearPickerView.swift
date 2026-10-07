@@ -1,3 +1,4 @@
+import ChineseCalendarLocalization
 import ChineseCalendarPersistence
 import SFSafeSymbols
 import SwiftData
@@ -28,7 +29,7 @@ struct CalendarYearPickerView: View {
                 positionInitiallyIfNeeded(using: proxy)
             }
         }
-        .navigationTitle("年份选择器")
+        .navigationTitle(CalendarStringKey.Calendar.YearPicker.title)
     }
 
     private var yearSections: [CalendarYearSection] {

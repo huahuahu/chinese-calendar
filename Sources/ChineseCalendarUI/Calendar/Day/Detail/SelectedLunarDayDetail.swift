@@ -1,4 +1,5 @@
 import ChineseCalendarCore
+import ChineseCalendarLocalization
 import ChineseCalendarPersistence
 import SwiftUI
 
@@ -25,7 +26,7 @@ struct SelectedLunarDayDetail: View {
         VStack(alignment: .leading, spacing: Constants.contentSpacing) {
             HStack(alignment: .top, spacing: Constants.headerSpacing) {
                 VStack(alignment: .leading, spacing: Constants.titleSpacing) {
-                    Text("选中日")
+                    Text(CalendarStringKey.Calendar.DayDetail.title)
                         .font(.caption)
                         .bold()
                         .foregroundStyle(.tint)
@@ -52,10 +53,16 @@ struct SelectedLunarDayDetail: View {
             }
 
             LazyVGrid(columns: columns, alignment: .leading, spacing: Constants.factSpacing) {
-                CalendarFactTile(title: "农历表达", value: lunarExpression)
-                CalendarFactTile(title: "日干支", value: dayStemBranch)
+                CalendarFactTile(
+                    title: CalendarStringKey.Calendar.DayDetail.lunarExpressionLabel,
+                    value: lunarExpression
+                )
+                CalendarFactTile(title: CalendarStringKey.Calendar.DayDetail.sexagenaryLabel, value: dayStemBranch)
                 CalendarFactTile(title: civilDateFactTitle, value: civilDateValue)
-                CalendarFactTile(title: "数据层级", value: contentLevelTitle)
+                CalendarFactTile(
+                    title: CalendarStringKey.Calendar.DayDetail.contentLevelLabel,
+                    value: String(localized: contentLevelTitle)
+                )
             }
         }
         .padding()
@@ -92,7 +99,10 @@ struct SelectedLunarDayDetail: View {
     }
 
     private var daySubtitle: String {
-        "\(dayStemBranch)日 · \(fullCivilDateTitle)"
+        String(localized: CalendarStringKey.Calendar.DayDetail.subtitle(
+            stemBranch: dayStemBranch,
+            civilDate: fullCivilDateTitle
+        ))
     }
 
     private var lunarExpression: String {
@@ -100,11 +110,14 @@ struct SelectedLunarDayDetail: View {
             return dayTitle
         }
 
-        return "\(LunarMonthDisplay.title(for: month))\(dayTitle)"
+        return String(localized: CalendarStringKey.Calendar.DayDetail.lunarExpression(
+            month: LunarMonthDisplay.title(for: month),
+            day: dayTitle
+        ))
     }
 
-    private var civilDateFactTitle: String {
-        "对应日期"
+    private var civilDateFactTitle: LocalizedStringResource {
+        CalendarStringKey.Calendar.DayDetail.civilDateLabel
     }
 
     private var civilDateValue: String {
@@ -113,7 +126,7 @@ struct SelectedLunarDayDetail: View {
 
     private var fullCivilDateTitle: String {
         guard let julianDayNumber = day.calendarDay?.julianDayNumber else {
-            return "-"
+            return String(localized: CalendarStringKey.Common.Value.unavailable)
         }
 
         return LunarCalendarFormatting.fullCivilDateTitle(
@@ -122,12 +135,12 @@ struct SelectedLunarDayDetail: View {
         )
     }
 
-    private var contentLevelTitle: String {
+    private var contentLevelTitle: LocalizedStringResource {
         switch contentLevel {
         case .base:
-            "基础数据"
+            CalendarStringKey.Store.ContentLevel.base
         case .full:
-            "完整日期数据"
+            CalendarStringKey.Store.ContentLevel.full
         }
     }
 }

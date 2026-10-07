@@ -1,3 +1,4 @@
+import ChineseCalendarLocalization
 import ChineseCalendarPersistence
 import SFSafeSymbols
 import SwiftData
@@ -25,7 +26,7 @@ public struct ChineseCalendarRootView: View {
         Group {
             switch coordinator.state {
             case .starting:
-                CalendarStoreProgressView(title: "正在准备日历数据", progress: nil)
+                CalendarStoreProgressView(title: CalendarStringKey.Store.Bootstrap.preparing, progress: nil)
             case let .ready(container, contentLevel, identityToken):
                 readyCalendarHome(
                     container: container,
@@ -40,10 +41,10 @@ public struct ChineseCalendarRootView: View {
         .task {
             await coordinator.prepareStoreIfNeeded()
         }
-        .alert("完整数据下载失败", isPresented: downloadErrorIsPresented) {
-            Button("好", role: .cancel) {}
+        .alert(CalendarStringKey.Store.Download.failureTitle, isPresented: downloadErrorIsPresented) {
+            Button(CalendarStringKey.Common.Action.ok, role: .cancel) {}
         } message: {
-            Text(coordinator.downloadErrorMessage ?? "请稍后再试。")
+            Text(coordinator.downloadErrorMessage ?? CalendarStringKey.Common.Error.retryLater)
         }
         .calendarColorSchemePreference()
         .sheet(isPresented: $isShowingDownloadDetails) {
@@ -111,12 +112,12 @@ private struct FullStoreDownloadBanner: View {
 
     var body: some View {
         HStack(spacing: 12) {
-            Label("可下载完整日期数据", systemSymbol: .arrowDownCircle)
+            Label(CalendarStringKey.Store.Download.Banner.title, systemSymbol: .arrowDownCircle)
                 .font(.callout)
 
             Spacer(minLength: 12)
 
-            Button("下载", systemSymbol: .arrowDown, action: action)
+            Button(CalendarStringKey.Store.Download.Banner.action, systemSymbol: .arrowDown, action: action)
                 .buttonStyle(.borderedProminent)
         }
         .padding(.horizontal)
@@ -127,7 +128,7 @@ private struct FullStoreDownloadBanner: View {
 
 /// 显示在应用启动阶段，用于反馈日历数据存储的准备进度。
 private struct CalendarStoreProgressView: View {
-    let title: String
+    let title: LocalizedStringResource
     let progress: Double?
 
     var body: some View {
@@ -153,16 +154,16 @@ private struct CalendarStoreProgressView: View {
 
 /// 显示在应用启动失败状态中，用于说明错误并提供重试入口。
 private struct CalendarStoreFailureView: View {
-    let message: String
+    let message: LocalizedStringResource
     let retry: () -> Void
 
     var body: some View {
         ContentUnavailableView {
-            Label("无法打开日历数据", systemSymbol: .externaldriveBadgeExclamationmark)
+            Label(CalendarStringKey.Store.Bootstrap.failureTitle, systemSymbol: .externaldriveBadgeExclamationmark)
         } description: {
             Text(message)
         } actions: {
-            Button("重试", systemSymbol: .arrowClockwise, action: retry)
+            Button(CalendarStringKey.Common.Action.retry, systemSymbol: .arrowClockwise, action: retry)
         }
         .background(.calendarSystemBackground)
     }
@@ -170,4 +171,13 @@ private struct CalendarStoreFailureView: View {
 
 #Preview {
     ChineseCalendarRootView(fullStoreConfiguration: nil)
+}
+
+#Preview("日历数据准备失败") {
+    CalendarStoreFailureView(
+        message: CalendarStoreErrorPresentation.message(
+            for: URLError(.notConnectedToInternet), operation: .prepare
+        ),
+        retry: {}
+    )
 }

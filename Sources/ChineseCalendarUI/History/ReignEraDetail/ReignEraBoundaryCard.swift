@@ -1,3 +1,4 @@
+import ChineseCalendarLocalization
 import SwiftUI
 
 /// 年号详情中的起止边界卡；常规宽度并排，较大字号下自动改为上下排列。
@@ -46,7 +47,11 @@ struct ReignEraBoundaryCard: View {
 
     private var horizontalLayout: some View {
         HStack(spacing: Constants.layoutSpacing) {
-            valueColumn(label: "开始", value: startValue, precision: startPrecision)
+            valueColumn(
+                label: String(localized: CalendarStringKey.History.Boundary.start),
+                value: startValue,
+                precision: startPrecision
+            )
 
             ZStack {
                 Rectangle()
@@ -67,15 +72,27 @@ struct ReignEraBoundaryCard: View {
             .frame(width: Constants.connectorWidth)
             .accessibilityHidden(true)
 
-            valueColumn(label: "结束", value: endValue, precision: endPrecision)
+            valueColumn(
+                label: String(localized: CalendarStringKey.History.Boundary.end),
+                value: endValue,
+                precision: endPrecision
+            )
         }
     }
 
     private var stackedLayout: some View {
         VStack(spacing: Constants.layoutSpacing) {
-            valueRow(label: "开始", value: startValue, precision: startPrecision)
+            valueRow(
+                label: String(localized: CalendarStringKey.History.Boundary.start),
+                value: startValue,
+                precision: startPrecision
+            )
             Divider()
-            valueRow(label: "结束", value: endValue, precision: endPrecision)
+            valueRow(
+                label: String(localized: CalendarStringKey.History.Boundary.end),
+                value: endValue,
+                precision: endPrecision
+            )
         }
     }
 

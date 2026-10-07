@@ -1,3 +1,4 @@
+import ChineseCalendarLocalization
 import ChineseCalendarLogging
 import ChineseCalendarPersistence
 import SFSafeSymbols
@@ -39,13 +40,13 @@ struct LunarDayGrid: View {
             } else {
                 VStack(alignment: .leading, spacing: Constants.contentSpacing) {
                     HStack(alignment: .firstTextBaseline) {
-                        Text("农历月格")
+                        Text(CalendarStringKey.Calendar.MonthGrid.title)
                             .font(.title2)
                             .bold()
 
                         Spacer()
 
-                        Text("连续日序")
+                        Text(CalendarStringKey.Calendar.MonthGrid.subtitle)
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
                     }
@@ -78,12 +79,12 @@ struct LunarDayGrid: View {
         }
     }
 
-    private var emptyStateTitle: String {
+    private var emptyStateTitle: LocalizedStringResource {
         switch storeContentLevel {
         case .base:
-            "完整日期数据尚未下载"
+            CalendarStringKey.Calendar.MonthGrid.Empty.requiresFullDataTitle
         case .full:
-            "没有日期数据"
+            CalendarStringKey.Calendar.MonthGrid.Empty.title
         }
     }
 
@@ -96,12 +97,12 @@ struct LunarDayGrid: View {
         }
     }
 
-    private var emptyStateDescription: String {
+    private var emptyStateDescription: LocalizedStringResource {
         switch storeContentLevel {
         case .base:
-            "请先下载完整日期数据。"
+            CalendarStringKey.Calendar.MonthGrid.Empty.requiresFullDataMessage
         case .full:
-            "这个月份暂时没有可显示的日级记录。"
+            CalendarStringKey.Calendar.MonthGrid.Empty.message
         }
     }
 

@@ -63,7 +63,7 @@ public enum ChineseCalendarFullSeedStoreInstallError: Error, LocalizedError {
     case checksumMismatch(expected: String, actual: String)
     case missingDownloadedStore(URL)
 
-    /// 将安装失败原因转换为可显示的错误说明。
+    /// 提供供日志与工具使用的诊断信息；用户提示由界面层按错误类型映射。
     public var errorDescription: String? {
         switch self {
         case let .unsupportedContentLevel(contentLevel):

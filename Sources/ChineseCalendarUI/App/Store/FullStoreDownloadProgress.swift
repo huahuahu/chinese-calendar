@@ -1,3 +1,4 @@
+import ChineseCalendarLocalization
 import Foundation
 import SFSafeSymbols
 
@@ -27,15 +28,15 @@ struct FullStoreDownloadProgress: Equatable {
     var detail: LocalizedStringResource {
         switch phase {
         case .preparingManifest:
-            "正在准备下载所需的信息。"
+            CalendarStringKey.Store.Download.Preparing.detail
         case .downloading:
-            "文件已下载 \((downloadFraction ?? 0).formatted(.percent.precision(.fractionLength(0))))。"
+            CalendarStringKey.Store.Download.Downloading.detail(progress: downloadFraction ?? 0)
         case .validating:
-            "正在确认下载文件完整。"
+            CalendarStringKey.Store.Download.Validating.detail
         case .installing:
-            "正在安装完整日历数据。"
+            CalendarStringKey.Store.Download.Installing.detail
         case .completed:
-            "现在可以浏览每日干支和对应民用日期。"
+            CalendarStringKey.Store.Download.Completed.detail
         }
     }
 

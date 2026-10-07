@@ -1,3 +1,4 @@
+import ChineseCalendarLocalization
 import ChineseCalendarPersistence
 import SFSafeSymbols
 import SwiftData
@@ -60,7 +61,7 @@ struct DynastySpanDetailView: View {
             .padding(.vertical, Constants.contentVerticalPadding)
             .frame(maxWidth: Constants.maximumContentWidth, alignment: .leading)
         }
-        .navigationTitle("朝代起讫")
+        .navigationTitle(CalendarStringKey.History.DynastySpan.title)
         #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
         #endif
@@ -71,7 +72,8 @@ struct DynastySpanDetailView: View {
         period: OrthodoxPeriod
     ) -> some View {
         VStack(alignment: .leading, spacing: Constants.summarySpacing) {
-            Text("\(dynasty.shortName ?? dynasty.name) · 正统时间线")
+            Text(String(localized: CalendarStringKey.History.DynastySpan
+                    .subtitle(dynasty: dynasty.shortName ?? dynasty.name)))
                 .font(.caption)
                 .bold()
                 .foregroundStyle(.tint)
@@ -127,9 +129,9 @@ struct DynastySpanDetailView: View {
         period: OrthodoxPeriod
     ) -> some View {
         VStack(alignment: .leading, spacing: Constants.sectionHeadingSpacing) {
-            sectionEyebrow("边界对照")
+            sectionEyebrow(String(localized: CalendarStringKey.History.DynastySpan.boundaryEyebrow))
 
-            Text("朝代自称与正统期")
+            Text(CalendarStringKey.History.DynastySpan.boundaryTitle)
                 .font(.title2)
                 .bold()
 
@@ -147,9 +149,9 @@ struct DynastySpanDetailView: View {
     private func boundaryEventsSection(_ events: [HistoryBoundaryEvent]) -> some View {
         if !events.isEmpty {
             VStack(alignment: .leading, spacing: Constants.sectionHeadingSpacing) {
-                sectionEyebrow("相关说明")
+                sectionEyebrow(String(localized: CalendarStringKey.History.DynastySpan.eventsEyebrow))
 
-                Text("关键边界事件")
+                Text(CalendarStringKey.History.DynastySpan.eventsTitle)
                     .font(.title2)
                     .bold()
 
@@ -167,9 +169,9 @@ struct DynastySpanDetailView: View {
 
     private var missingDynastySpanState: some View {
         ContentUnavailableView {
-            Label("没有找到朝代起讫", systemSymbol: .buildingColumns)
+            Label(CalendarStringKey.History.DynastySpan.Unavailable.title, systemSymbol: .buildingColumns)
         } description: {
-            Text("对应的朝代或正统期记录不在当前 SwiftData store 中。")
+            Text(CalendarStringKey.History.DynastyDetail.Unavailable.periodMessage)
         }
     }
 
@@ -184,7 +186,9 @@ struct DynastySpanDetailView: View {
         HistoryDateRangeFormatter.dynastySpanYears(
             start: period.startBoundary?.date,
             end: period.endBoundary?.date
-        ).map { "国祚 \($0) 年" } ?? "国祚暂无"
+        )
+        .map { String(localized: CalendarStringKey.History.DynastySpan.duration(years: $0)) } ??
+        String(localized: CalendarStringKey.History.DynastySpan.unavailableDuration)
     }
 }
 

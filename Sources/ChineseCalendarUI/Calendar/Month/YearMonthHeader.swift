@@ -1,4 +1,5 @@
 import ChineseCalendarCore
+import ChineseCalendarLocalization
 import ChineseCalendarLogging
 import ChineseCalendarPersistence
 import SFSafeSymbols
@@ -35,7 +36,7 @@ struct YearMonthHeader: View {
 
         VStack(alignment: .leading, spacing: Constants.sectionSpacing) {
             HStack(alignment: .center, spacing: Constants.headerSpacing) {
-                Button("上个月", systemSymbol: .chevronLeft) {
+                Button(CalendarStringKey.Calendar.MonthNavigation.previous, systemSymbol: .chevronLeft) {
                     selectMonth(previousMonth)
                 }
                 .labelStyle(.iconOnly)
@@ -46,7 +47,7 @@ struct YearMonthHeader: View {
                 .buttonStyle(.bordered)
                 .controlSize(.large)
                 .disabled(previousMonth == nil)
-                .help("切换到上个月")
+                .help(CalendarStringKey.Calendar.MonthNavigation.previousHelp)
 
                 ZStack(alignment: .leading) {
                     titleContent
@@ -57,7 +58,7 @@ struct YearMonthHeader: View {
                 .animation(yearSelectionAnimation, value: year?.lunarYearNumber)
                 .frame(maxWidth: .infinity, alignment: .leading)
 
-                Button("下个月", systemSymbol: .chevronRight) {
+                Button(CalendarStringKey.Calendar.MonthNavigation.next, systemSymbol: .chevronRight) {
                     selectMonth(nextMonth)
                 }
                 .labelStyle(.iconOnly)
@@ -68,7 +69,7 @@ struct YearMonthHeader: View {
                 .buttonStyle(.bordered)
                 .controlSize(.large)
                 .disabled(nextMonth == nil)
-                .help("切换到下个月")
+                .help(CalendarStringKey.Calendar.MonthNavigation.nextHelp)
             }
 
             ZStack(alignment: .leading) {
@@ -90,8 +91,12 @@ struct YearMonthHeader: View {
                 CalendarTodayToolbar(selectToday: selectToday)
             } else {
                 ToolbarItem(placement: .primaryAction) {
-                    Button("今天", systemSymbol: .calendarBadgeClock, action: selectToday)
-                        .labelStyle(.titleOnly)
+                    Button(
+                        CalendarStringKey.Calendar.MonthNavigation.today,
+                        systemSymbol: .calendarBadgeClock,
+                        action: selectToday
+                    )
+                    .labelStyle(.titleOnly)
                 }
             }
         }
@@ -100,7 +105,7 @@ struct YearMonthHeader: View {
                 CalendarYearPickerView(selectYear: selectYearFromPicker)
                     .toolbar {
                         ToolbarItem(placement: .cancellationAction) {
-                            Button("关闭") {
+                            Button(CalendarStringKey.Common.Action.close) {
                                 isYearPickerPresented = false
                             }
                         }
@@ -130,10 +135,13 @@ private extension YearMonthHeader {
                 branchIndex: year.yearBranchIndex
             )
         } else {
-            "年份数据缺失"
+            String(localized: CalendarStringKey.Calendar.MonthNavigation.missingYear)
         }
 
-        return "\(yearTitle) \(LunarMonthDisplay.title(for: month))"
+        return String(localized: CalendarStringKey.Calendar.MonthNavigation.title(
+            year: yearTitle,
+            month: LunarMonthDisplay.title(for: month)
+        ))
     }
 
     private var monthNavigationSubtitle: String {
@@ -193,7 +201,7 @@ private extension YearMonthHeader {
         }
         .buttonStyle(.plain)
         .contentShape(Rectangle())
-        .accessibilityHint("打开年份选择器")
+        .accessibilityHint(CalendarStringKey.Calendar.YearPicker.accessibilityHint)
     }
 
     private func adjacentMonth(
@@ -396,10 +404,12 @@ private struct YearMonthHeaderPreviewContent: View {
             YearMonthHeader(month: month)
         } else {
             // 保留真实的无选中日状态；不回退到另一个月份。
-            ContentUnavailableView(
-                "没有找到日期",
-                systemSymbol: .calendarBadgeExclamationmark
-            )
+            ContentUnavailableView {
+                Label(
+                    CalendarStringKey.Calendar.Unavailable.missingDateTitle,
+                    systemSymbol: .calendarBadgeExclamationmark
+                )
+            }
         }
     }
 }

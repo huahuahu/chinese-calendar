@@ -1,3 +1,4 @@
+import ChineseCalendarLocalization
 import Foundation
 
 /// 流程中的位置不代表耗时或完成百分比。
@@ -20,11 +21,11 @@ enum FullStoreDownloadPhase: Int, CaseIterable, Identifiable {
 
     var title: LocalizedStringResource {
         switch self {
-        case .preparingManifest: "准备下载"
-        case .downloading: "下载文件"
-        case .validating: "校验文件"
-        case .installing: "安装数据"
-        case .completed: "完成"
+        case .preparingManifest: CalendarStringKey.Store.Download.Preparing.title
+        case .downloading: CalendarStringKey.Store.Download.Downloading.title
+        case .validating: CalendarStringKey.Store.Download.Validating.title
+        case .installing: CalendarStringKey.Store.Download.Installing.title
+        case .completed: CalendarStringKey.Store.Download.Completed.title
         }
     }
 }

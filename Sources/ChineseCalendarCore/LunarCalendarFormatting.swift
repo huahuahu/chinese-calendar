@@ -1,3 +1,4 @@
+import ChineseCalendarLocalization
 import Foundation
 
 public enum LunarMonthSize: Int, Codable, CaseIterable, Sendable {
@@ -21,14 +22,18 @@ public enum LunarMonthSize: Int, Codable, CaseIterable, Sendable {
 public enum LunarCalendarFormatting {
     public static func yearTitle(lunarYearNumber: Int) -> String {
         if lunarYearNumber > 0 {
-            "公元 \(lunarYearNumber) 年"
+            String(localized: CalendarStringKey.Calendar.Date.year(number: lunarYearNumber))
         } else {
-            "公元前 \(lunarYearNumber.magnitude + 1) 年"
+            String(localized: CalendarStringKey.Calendar.Date
+                .beforeCommonEraYear(number: lunarYearNumber.magnitude + 1))
         }
     }
 
     public static func yearSubtitle(stemIndex: Int, branchIndex: Int) -> String {
-        "\(sexagenaryName(stemIndex: stemIndex, branchIndex: branchIndex))年"
+        String(localized: CalendarStringKey.Calendar.Date.sexagenaryYear(name: sexagenaryName(
+            stemIndex: stemIndex,
+            branchIndex: branchIndex
+        )))
     }
 
     public static func monthTitle(
@@ -46,9 +51,12 @@ public enum LunarCalendarFormatting {
             .chineseName
         } else {
             if isLeapMonth {
-                "\(intercalaryMonthNameStyle.chinesePrefix)\(monthNumberInYear)月"
+                String(localized: CalendarStringKey.Calendar.Date.intercalaryMonth(
+                    prefix: intercalaryMonthNameStyle.chinesePrefix,
+                    number: monthNumberInYear
+                ))
             } else {
-                "\(monthNumberInYear)月"
+                String(localized: CalendarStringKey.Calendar.Date.month(number: monthNumberInYear))
             }
         }
 
@@ -56,15 +64,22 @@ public enum LunarCalendarFormatting {
             return monthName
         }
 
-        return monthName + monthSize.chineseName
+        return String(localized: CalendarStringKey.Calendar.Date.sizedMonth(
+            name: monthName,
+            size: monthSize.chineseName
+        ))
     }
 
     public static func monthSubtitle(dayCount: Int, stemIndex: Int, branchIndex: Int) -> String {
-        "\(dayCount)天 · \(sexagenaryName(stemIndex: stemIndex, branchIndex: branchIndex))月"
+        String(localized: CalendarStringKey.Calendar.Date.monthDetail(
+            days: dayCount,
+            stemBranch: sexagenaryName(stemIndex: stemIndex, branchIndex: branchIndex)
+        ))
     }
 
     public static func dayTitle(dayNumberInMonth: Int) -> String {
-        LunarDay(rawValue: dayNumberInMonth)?.chineseName ?? "\(dayNumberInMonth)日"
+        LunarDay(rawValue: dayNumberInMonth)?
+            .chineseName ?? String(localized: CalendarStringKey.Calendar.Date.day(number: dayNumberInMonth))
     }
 
     public static func daySubtitle(stemIndex: Int, branchIndex: Int) -> String {

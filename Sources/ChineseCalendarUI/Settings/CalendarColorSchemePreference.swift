@@ -1,3 +1,4 @@
+import ChineseCalendarLocalization
 import SwiftUI
 
 enum CalendarColorSchemePreference: String, CaseIterable, Identifiable {
@@ -11,14 +12,14 @@ enum CalendarColorSchemePreference: String, CaseIterable, Identifiable {
         self
     }
 
-    var title: String {
+    var title: LocalizedStringResource {
         switch self {
         case .system:
-            "跟随系统"
+            CalendarStringKey.Settings.Appearance.system
         case .light:
-            "浅色"
+            CalendarStringKey.Settings.Appearance.light
         case .dark:
-            "深色"
+            CalendarStringKey.Settings.Appearance.dark
         }
     }
 

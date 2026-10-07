@@ -1,3 +1,4 @@
+import ChineseCalendarLocalization
 import ChineseCalendarPersistence
 
 struct DynastyCardModel: Identifiable {
@@ -20,11 +21,14 @@ struct DynastyCardModel: Identifiable {
             let reignEraCount = dynasty.emperors.reduce(0) { count, emperor in
                 count + emperor.reignEras.count
             }
-            statisticsText = "\(emperorCount) 位皇帝 · \(reignEraCount) 个年号"
+            statisticsText = String(localized: CalendarStringKey.History.DynastyCard.statistics(
+                emperorCount: emperorCount,
+                eraCount: reignEraCount
+            ))
             unavailableText = nil
         } else {
             statisticsText = nil
-            unavailableText = "资料暂缺"
+            unavailableText = String(localized: CalendarStringKey.History.DynastyCard.unavailable)
         }
     }
 
@@ -43,8 +47,7 @@ struct DynastyCardModel: Identifiable {
     }
 
     var accessibilityLabel: String {
-        [dynastyName, boundaryText, statisticsText, unavailableText]
-            .compactMap(\.self)
-            .joined(separator: "，")
+        CalendarStringKey.Common.List.names([dynastyName, boundaryText, statisticsText, unavailableText]
+            .compactMap(\.self))
     }
 }

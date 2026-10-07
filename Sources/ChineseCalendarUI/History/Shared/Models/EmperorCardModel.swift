@@ -1,3 +1,4 @@
+import ChineseCalendarLocalization
 import ChineseCalendarPersistence
 
 struct EmperorCardModel: Identifiable {
@@ -23,13 +24,13 @@ struct EmperorCardModel: Identifiable {
         displayName = emperor.personalName ?? emperor.displayName
         reliableTitle = emperor.templeName ?? emperor.posthumousName
         reignRangeText = segments.isEmpty
-            ? "在位时间待考"
+            ? String(localized: CalendarStringKey.History.EmperorCard.unknownReign)
             : segments.map {
                 HistoryDateRangeFormatter.usageRange(
                     start: $0.startDate,
                     exclusiveEnd: $0.endDate
                 )
-            }.joined(separator: " / ")
+            }.formatted(.list(type: .and, width: .narrow))
         durationText = Self.durationText(for: segments)
         reignEraNames = eras.map(\.name)
     }
@@ -53,7 +54,10 @@ struct EmperorCardModel: Identifiable {
     }
 
     var accessibilityLabel: String {
-        var parts = ["第 \(sequenceText) 位", displayName]
+        var parts = [String(localized: CalendarStringKey.History.EmperorCard.accessibilityIntroduction(
+            sequence: sequenceText,
+            name: displayName
+        ))]
         if let reliableTitle {
             parts.append(reliableTitle)
         }
@@ -62,9 +66,11 @@ struct EmperorCardModel: Identifiable {
             parts.append(durationText)
         }
         if !reignEraNames.isEmpty {
-            parts.append("年号 \(reignEraNames.joined(separator: "、"))")
+            parts
+                .append(String(localized: CalendarStringKey.History.EmperorCard
+                        .eraNamesAccessibilityLabel(names: CalendarStringKey.Common.List.names(reignEraNames))))
         }
-        return parts.joined(separator: "，")
+        return CalendarStringKey.Common.List.names(parts)
     }
 
     private static func durationText(for segments: [EmperorReignSegment]) -> String? {
@@ -80,12 +86,15 @@ struct EmperorCardModel: Identifiable {
 
         let totalYears = durations.reduce(0, +)
         if segments.count == 2 {
-            return "两度在位 · \(totalYears) 年"
+            return String(localized: CalendarStringKey.History.EmperorCard.twoReignsDuration(years: totalYears))
         }
         if segments.count > 2 {
-            return "\(segments.count) 段在位 · \(totalYears) 年"
+            return String(localized: CalendarStringKey.History.EmperorCard.multipleReignsDuration(
+                count: segments.count,
+                years: totalYears
+            ))
         }
-        return "\(totalYears) 年"
+        return String(localized: CalendarStringKey.History.Date.duration(years: totalYears))
     }
 
     private static func sequenceText(_ sequence: Int) -> String {

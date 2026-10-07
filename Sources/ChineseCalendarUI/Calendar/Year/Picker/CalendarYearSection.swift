@@ -1,3 +1,4 @@
+import ChineseCalendarLocalization
 import ChineseCalendarPersistence
 
 struct CalendarYearSection: Identifiable {
@@ -7,15 +8,15 @@ struct CalendarYearSection: Identifiable {
 
     var title: String {
         if id < 0 {
-            "公元前 \(-id) 世纪"
+            String(localized: CalendarStringKey.Calendar.YearPicker.Century.beforeCommonEra(century: -id))
         } else {
-            "公元 \(id) 世纪"
+            String(localized: CalendarStringKey.Calendar.YearPicker.Century.commonEra(century: id))
         }
     }
 
     var indexTitle: String {
         if id < 0 {
-            "前\(-id)"
+            String(localized: CalendarStringKey.Calendar.YearPicker.Century.beforeCommonEraIndex(century: -id))
         } else {
             "\(id)"
         }

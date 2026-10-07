@@ -1,4 +1,5 @@
 import ChineseCalendarCore
+import ChineseCalendarLocalization
 import SFSafeSymbols
 import SwiftUI
 
@@ -13,44 +14,38 @@ struct CalendarHomeTabView<BottomStatusBar: View>: View {
         @Bindable var router = coordinator.router
 
         TabView(selection: $router.selectedTab) {
-            Tab(
-                CalendarTab.years.title,
-                systemSymbol: CalendarTab.years.systemSymbol,
-                value: CalendarTab.years
-            ) {
+            Tab(value: CalendarTab.years) {
                 NavigationStack(path: $router.yearsPath) {
                     LunarYearDestinationView(landing: .year(number: ChineseLunarCalendar.yearNumber()))
                         .calendarDestinations()
                 }
+            } label: {
+                Label(CalendarTab.years.title, systemSymbol: CalendarTab.years.systemSymbol)
             }
 
-            Tab(
-                CalendarTab.history.title,
-                systemSymbol: CalendarTab.history.systemSymbol,
-                value: CalendarTab.history
-            ) {
+            Tab(value: CalendarTab.history) {
                 NavigationStack(path: $router.historyPath) {
                     CalendarHistoryHomeView()
                         .calendarDestinations()
                 }
+            } label: {
+                Label(CalendarTab.history.title, systemSymbol: CalendarTab.history.systemSymbol)
             }
 
-            Tab(
-                CalendarTab.settings.title,
-                systemSymbol: CalendarTab.settings.systemSymbol,
-                value: CalendarTab.settings
-            ) {
+            Tab(value: CalendarTab.settings) {
                 NavigationStack {
                     if let settingsCoordinator {
                         CalendarSettingsView(coordinator: settingsCoordinator, showsDoneButton: false)
                     } else {
                         ContentUnavailableView {
-                            Label("无法打开设置", systemSymbol: .gearshape)
+                            Label(CalendarStringKey.Settings.Unavailable.title, systemSymbol: .gearshape)
                         } description: {
-                            Text("当前日历数据尚未准备完成。")
+                            Text(CalendarStringKey.Settings.Unavailable.message)
                         }
                     }
                 }
+            } label: {
+                Label(CalendarTab.settings.title, systemSymbol: CalendarTab.settings.systemSymbol)
             }
         }
         .calendarTabViewBottomAccessory(isEnabled: bottomStatusBarIsPresented, content: bottomStatusBar)

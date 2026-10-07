@@ -1,3 +1,4 @@
+import ChineseCalendarLocalization
 #if DEBUG
     import SFSafeSymbols
     import SwiftUI
@@ -10,16 +11,28 @@
         @State private var isShowingDetails = false
 
         private enum Stage: String, CaseIterable, Identifiable {
-            case preparing = "准备"
-            case downloadStarted = "下载（0%）"
-            case downloading = "下载（50%）"
-            case downloadFinished = "下载（100%，尚未校验）"
-            case validating = "校验"
-            case installing = "安装"
-            case completed = "完成"
+            case preparing
+            case downloadStarted
+            case downloading
+            case downloadFinished
+            case validating
+            case installing
+            case completed
 
             var id: Self {
                 self
+            }
+
+            var title: LocalizedStringResource {
+                switch self {
+                case .preparing: CalendarStringKey.Store.Download.Preparing.shortTitle
+                case .downloadStarted: CalendarStringKey.Settings.Debug.DownloadPreview.downloadStarted
+                case .downloading: CalendarStringKey.Settings.Debug.DownloadPreview.downloading
+                case .downloadFinished: CalendarStringKey.Settings.Debug.DownloadPreview.downloadFinished
+                case .validating: CalendarStringKey.Store.Download.Validating.shortTitle
+                case .installing: CalendarStringKey.Store.Download.Installing.shortTitle
+                case .completed: CalendarStringKey.Store.Download.Completed.title
+                }
             }
 
             var progress: FullStoreDownloadProgress {
@@ -37,27 +50,31 @@
 
         var body: some View {
             TabView {
-                Tab("进度场景", systemSymbol: .arrowDownCircle) {
+                Tab {
                     NavigationStack {
                         scenarios
-                            .navigationTitle("下载进度预览")
+                            .navigationTitle(CalendarStringKey.Settings.Debug.DownloadPreview.title)
                             .navigationBarTitleDisplayMode(.inline)
                             .toolbar {
                                 ToolbarItem(placement: .confirmationAction) {
-                                    Button("完成", systemSymbol: .checkmark) {
+                                    Button(CalendarStringKey.Common.Action.done, systemSymbol: .checkmark) {
                                         dismiss()
                                     }
                                 }
                             }
                     }
+                } label: {
+                    Label(CalendarStringKey.Settings.Debug.DownloadPreview.scenariosTab, systemSymbol: .arrowDownCircle)
                 }
 
-                Tab("切换检查", systemSymbol: .checkmarkCircle) {
+                Tab {
                     NavigationStack {
-                        Text("切换标签后，底部应保留当前进度。点击附件可查看完整说明。")
+                        Text(CalendarStringKey.Settings.Debug.DownloadPreview.switchMessage)
                             .padding()
-                            .navigationTitle("切换检查")
+                            .navigationTitle(CalendarStringKey.Settings.Debug.DownloadPreview.switchTab)
                     }
+                } label: {
+                    Label(CalendarStringKey.Settings.Debug.DownloadPreview.switchTab, systemSymbol: .checkmarkCircle)
                 }
             }
             .tabBarMinimizeBehavior(.onScrollDown)
@@ -75,21 +92,22 @@
 
         private var scenarios: some View {
             Form {
-                Section("字号") {
-                    Picker("Dynamic Type", selection: $textSize) {
-                        Text("默认").tag(DynamicTypeSize.large)
-                        Text("加大").tag(DynamicTypeSize.xxxLarge)
-                        Text("辅助功能最大").tag(DynamicTypeSize.accessibility5)
+                Section(CalendarStringKey.Settings.Debug.DownloadPreview.sizeTitle) {
+                    Picker(CalendarStringKey.Settings.Debug.DownloadPreview.sizePicker, selection: $textSize) {
+                        Text(CalendarStringKey.Settings.Debug.DownloadPreview.defaultSize).tag(DynamicTypeSize.large)
+                        Text(CalendarStringKey.Settings.Debug.DownloadPreview.largeSize).tag(DynamicTypeSize.xxxLarge)
+                        Text(CalendarStringKey.Settings.Debug.DownloadPreview.accessibilitySize)
+                            .tag(DynamicTypeSize.accessibility5)
                     }
                 }
 
-                Section("固定下载阶段") {
+                Section(CalendarStringKey.Settings.Debug.DownloadPreview.stagesTitle) {
                     ForEach(Stage.allCases) { candidate in
                         Button {
                             stage = candidate
                         } label: {
                             HStack {
-                                Text(candidate.rawValue)
+                                Text(candidate.title)
                                 Spacer()
                                 if stage == candidate {
                                     Image(systemSymbol: .checkmark)
@@ -100,17 +118,17 @@
                     }
                 }
 
-                Section("完整阶段说明") {
+                Section(CalendarStringKey.Settings.Debug.DownloadPreview.detailsTitle) {
                     ForEach(Stage.allCases) { candidate in
-                        LabeledContent(candidate.rawValue) {
+                        LabeledContent(candidate.title) {
                             Text(candidate.progress.detail)
                         }
                     }
                 }
 
-                Section("检查方式") {
-                    Text("向下浏览列表可收起标签栏，向上返回可展开。也可旋转设备，检查不同可用宽度。")
-                    Text("这里只展示固定进度，不会下载或修改日历数据。")
+                Section(CalendarStringKey.Settings.Debug.DownloadPreview.instructionsTitle) {
+                    Text(CalendarStringKey.Settings.Debug.DownloadPreview.instructions)
+                    Text(CalendarStringKey.Settings.Debug.DownloadPreview.message)
                 }
             }
         }

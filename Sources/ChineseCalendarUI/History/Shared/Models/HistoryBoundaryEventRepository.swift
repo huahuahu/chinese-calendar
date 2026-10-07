@@ -1,3 +1,4 @@
+import ChineseCalendarLocalization
 import ChineseCalendarPersistence
 
 enum HistoryBoundaryEventRepository {
@@ -14,8 +15,8 @@ enum HistoryBoundaryEventRepository {
                 orthodoxPeriodID: period.id,
                 dateExpressionID: startDate.id,
                 timeText: HistoryDateRangeFormatter.boundaryText(startDate),
-                title: "\(dynastyName)正统期开始",
-                detail: "\(dynastyName)从这一边界进入当前正统时间线。",
+                title: CalendarStringKey.History.Boundary.Event.startTitle(dynasty: dynastyName),
+                detail: CalendarStringKey.History.Boundary.Event.startDetail(dynasty: dynastyName),
                 sequenceIndex: 0
             ))
         }
@@ -26,8 +27,8 @@ enum HistoryBoundaryEventRepository {
                 orthodoxPeriodID: period.id,
                 dateExpressionID: endDate.id,
                 timeText: HistoryDateRangeFormatter.boundaryText(endDate),
-                title: "\(dynastyName)正统期结束",
-                detail: "当前正统时间线在这一边界结束\(dynastyName)时期。",
+                title: CalendarStringKey.History.Boundary.Event.endTitle(dynasty: dynastyName),
+                detail: CalendarStringKey.History.Boundary.Event.endDetail(dynasty: dynastyName),
                 sequenceIndex: 1
             ))
         }

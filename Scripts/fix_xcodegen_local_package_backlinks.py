@@ -24,6 +24,7 @@ PROJECT_YML = Path("project.yml")
 IOS_SCHEME = Path("ChineseCalendar.xcodeproj/xcshareddata/xcschemes/ChineseCalendar-iOS.xcscheme")
 PACKAGE_CONTAINER = "container:Sources"
 IOS_TEST_TARGETS = [
+    "ChineseCalendarLocalizationTests",
     "ChineseCalendarCoreTests",
     "ChineseCalendarDataTests",
     "ChineseCalendarLoggingTests",

@@ -1,3 +1,4 @@
+import ChineseCalendarLocalization
 import ChineseCalendarPersistence
 import SwiftUI
 
@@ -30,7 +31,7 @@ struct DynastyBoundaryComparisonCell: View {
 
     private var primaryText: String {
         guard let date else {
-            return "不详"
+            return String(localized: CalendarStringKey.History.Boundary.unknown)
         }
 
         guard let index = date.index else {
@@ -41,9 +42,9 @@ struct DynastyBoundaryComparisonCell: View {
         case .year:
             return "\(index)"
         case .month:
-            return "月序 \(index)"
+            return String(localized: CalendarStringKey.History.Boundary.monthIndex(index: index))
         case .day:
-            return "日序 \(index)"
+            return String(localized: CalendarStringKey.History.Boundary.dayIndex(index: index))
         case .range, .unknown:
             return date.sourceText
         }
@@ -51,20 +52,20 @@ struct DynastyBoundaryComparisonCell: View {
 
     private var precisionText: String {
         guard let date else {
-            return "当前数据缺失"
+            return String(localized: CalendarStringKey.History.Boundary.missingData)
         }
 
         switch date.precision {
         case .year:
-            return "年精度"
+            return String(localized: CalendarStringKey.Common.DatePrecision.year)
         case .month:
-            return "月精度"
+            return String(localized: CalendarStringKey.Common.DatePrecision.month)
         case .day:
-            return "日精度"
+            return String(localized: CalendarStringKey.Common.DatePrecision.day)
         case .range:
-            return "范围精度"
+            return String(localized: CalendarStringKey.Common.DatePrecision.range)
         case .unknown:
-            return "精度未知"
+            return String(localized: CalendarStringKey.Common.DatePrecision.unknown)
         }
     }
 }
