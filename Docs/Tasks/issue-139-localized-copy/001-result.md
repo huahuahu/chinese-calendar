@@ -1,6 +1,6 @@
 # Issue #139：用户可见文案统一入口结果
 
-- 关联：[Issue #139](https://github.com/huahuahu/chinese-calendar/issues/139)、[方案](000-plan.md)、[迁移清单](002-inventory.md)、[文案规范](../../Conventions/Localization.md)。
+- 关联：[Issue #139](https://github.com/huahuahu/chinese-calendar/issues/139)、[PR #144](https://github.com/huahuahu/chinese-calendar/pull/144)、[方案](000-plan.md)、[迁移清单](002-inventory.md)、[文案规范](../../Conventions/Localization.md)。
 - 记录日期：2026-10-06。
 - 代码状态（2026-10-06 验证时）：`codex/issue-139-localized-copy`，基线 `dc59e098715c7ae527b524da496856fc36f34985`，实现为下述工作区快照；提交与远程交付状态以关联 PR 为准。
 - 验证快照：[implementation.sha256](evidence/implementation.sha256) 记录本次修改或新增的 96 个实现、模块说明、脚本及 CI 文件；该清单本身的 SHA-256 为 `37f2f365a10c59b3f5c012f98a21c8283ac6fa165fb4d0e99ffac98fc22a895c`。任务文档与截图不参与实现快照。
@@ -70,3 +70,11 @@
 实际 VoiceOver 朗读、真机，以及所有字号/语言/方向组合未验证。错误映射通过最终版本测试，错误页和皇帝详情的 Preview 截图仅来自结构迁移前版本；没有通过破坏现有数据制造运行时失败。皇帝列表卡片原本为静态内容，未为本次文案工作增加导航。旋转后月份条位置曾有异常观察，竖屏重启恢复，尚未证明与文案迁移有关，本次不将其作为已修复问题。
 
 上述验证未启动独立代码审查流程。实现完成与 Issue 全部验收通过分开记录，远程交付不覆盖本记录列出的验证边界。
+
+## 2026-10-07：同步主分支后的交付验证
+
+按用户要求创建 PR 并合并前，先将文案迁移提交为 `911a7914`，再合入主分支的日历宽度修复 `f3435352`，得到 `a828082cd518a2539de26a611a503fb791ee0890`。`CalendarPageView` 自动合并无冲突，核对确认同时保留统一文案入口、可用窗口宽度布局和上游新增 Preview。
+
+该代码版本再次通过原生 Xcode MCP App/test build，以及 **213 passed / 0 failed / 0 skipped / 0 not run** 的完整测试。项目、scheme、Simulator 与上文共享配置一致；SwiftFormat、严格 SwiftLint、254 项资源校验、21 个剩余生产字符串检查及 `git diff --check` 再次通过，见[同步主分支验证摘要](evidence/main-sync-validation.txt)。此前的实现快照仍对应 2026-10-06 的版本，本轮证据以此处 commit 为准。
+
+本轮没有重复设备交互或 Preview；上文未完成的验收仍保留。PR 关联 #139，不通过合并自动关闭仍有验证缺口的 Issue。

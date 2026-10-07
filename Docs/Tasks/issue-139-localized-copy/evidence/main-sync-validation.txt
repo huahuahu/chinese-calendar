@@ -1,0 +1,13 @@
+验证日期：2026-10-07（Asia/Shanghai）
+代码版本：a828082cd518a2539de26a611a503fb791ee0890
+项目：ChineseCalendar.xcodeproj
+Scheme：ChineseCalendar-iOS
+Simulator：chinesedate iPhone 18 Pro Max (885f), 16A9CAA7-45CE-46D5-8915-F61531FC617C, iOS 27.0
+原生 BuildProject(buildForTesting: true)：The project built successfully. (11.53s)
+原生 RunAllTests：213 tests: 213 passed, 0 failed, 0 skipped, 0 expected failures, 0 not run
+静态检查：SwiftFormat、严格 SwiftLint、254 项文案资源、21 个剩余生产字符串、git diff --check 均通过
+说明：仅同步主分支后的构建、测试与静态验证；未新增 Preview 或设备交互证据。
+本机原始构建日志：/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/BuildProject/BuildProject-Log-20261007-094558.txt
+本机原始测试摘要：/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/RunAllTests/99AF85F9-0201-4B71-B4C5-9DD477AD4D9E.txt
+本机 xcresult：/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/RunAllTests/Test-ChineseCalendar-iOS-2026.10.07_09-46-30-+0800.xcresult
+
