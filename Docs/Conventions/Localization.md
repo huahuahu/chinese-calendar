@@ -25,7 +25,7 @@ catalog 的条目显式维护并标记 `extractionState: manual`：自定义资�
 
 视图直接传资源，例如 `Text(CalendarStringKey.Settings.title)`；新的展示模型优先携带资源并延迟解析。`LocalizedSymbolControls` 为 SFSafeSymbols 补充资源重载，保持 `Text` 的本地化上下文。
 
-已有返回 `String` 的纯格式 API，以及混合来源数据/可选句子的展示边界，可以显式 `String(localized:)`；模板、前后缀、标点仍必须定义在统一入口中。不要在业务调用处把已翻译的半句话拼在一起。原始实体名称直接显示，围绕实体的完整句式通过参数传入。列表使用 `Common.List.names` 或 Foundation 的本地化列表格式；日期沿用有 locale/calendar/timeZone 的格式器。历史年份和连续索引不能添加千位分隔，资源使用 `.number.grouping(.never)`。
+已有返回 `String` 的纯格式 API，以及混合来源数据/可选句子的展示边界，可以显式 `String(localized:)`；模板、前后缀、标点仍必须定义在统一入口中。不要在业务调用处把已翻译的半句话拼在一起。原始实体名称直接显示，围绕实体的完整句式通过参数传入。列表使用 `Common.List.names`，默认 locale 跟随资源 bundle 的 `preferredLocalizations`，使连接词与文案回退语言一致；显式指定 locale 时由调用者保证上下文一致。日期沿用有 locale/calendar/timeZone 的格式器。历史年份和连续索引不能添加千位分隔，资源使用 `.number.grouping(.never)`。
 
 百分比资源接收 0...1 的数值，由模板使用 `.percent` 格式化。catalog 中没有插值的固定百分比保留单个 `%`；只有格式模板中的字面百分号才写成 `%%`。数量使用数值插值，避免提前转成字符串而失去 plural 信息。日期范围与精度模板也集中管理，不从枚举 `rawValue` 生成界面标签。
 

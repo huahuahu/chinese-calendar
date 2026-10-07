@@ -1,0 +1,20 @@
+验证日期：2026-10-07（Asia/Shanghai）
+基础提交：86232af488c49b2e76e9f081a15cc4062d0fad36；以下四个文件为本轮源码修复快照。
+866d03476f944da6b3878a92b4e6f003dd30049df68f737be8c62ca638ef293c  Sources/ChineseCalendarLocalization/Strings/CalendarStringKey+CommonList.swift
+68552dfbb3229c4e81071bc481e7fccec8d9603f6edf8aafd65b0063b2113200  Sources/ChineseCalendarLocalization/Tests/CalendarStringKeyTests.swift
+c3b2addbc5ee6201c6349af2f83773446211d428ff139e06334ea0586c577bdd  Sources/ChineseCalendarUI/History/Shared/Models/EmperorCardModel.swift
+31ca9c168fc878de2685b3834e36a2edc422b15bbdeea09e33b701b6a3b3c804  Sources/ChineseCalendarUI/Tests/HistoryDateRangeFormatterTests.swift
+
+修复前：仅增加默认调用路径的回归测试，两个资源回退 locale 用例（en-US、fr-FR）均失败。
+实际默认列表：洪武, 永乐, 宣德
+预期中文列表：洪武、永乐和宣德
+说明：用例在同一 Simulator 测试宿主运行，显式设置资源回退 locale；没有更改设备语言。
+修复前测试摘要：/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/RunSomeTests/8D0576E8-69D4-47C8-8488-85113C4309FB.txt
+
+修复后：原生 BuildProject(buildForTesting: true) 成功（6.343s）。
+完整 RunAllTests：216 tests: 216 passed, 0 failed, 0 skipped, 0 expected failures, 0 not run
+新增覆盖：默认列表入口与中英文/法文资源回退一致；EmperorCardModel 的多个在位区间使用资源语言。
+SwiftFormat、严格 SwiftLint、254 项资源校验、21 个生产字符串残留检查和 git diff --check 均通过。
+本机完整测试摘要：/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/RunAllTests/35538907-A8ED-4853-BFFA-4C18FD679854.txt
+本机 xcresult：/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/RunAllTests/Test-ChineseCalendar-iOS-2026.10.07_09-56-52-+0800.xcresult
+

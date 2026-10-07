@@ -25,12 +25,12 @@ struct EmperorCardModel: Identifiable {
         reliableTitle = emperor.templeName ?? emperor.posthumousName
         reignRangeText = segments.isEmpty
             ? String(localized: CalendarStringKey.History.EmperorCard.unknownReign)
-            : segments.map {
+            : CalendarStringKey.Common.List.names(segments.map {
                 HistoryDateRangeFormatter.usageRange(
                     start: $0.startDate,
                     exclusiveEnd: $0.endDate
                 )
-            }.formatted(.list(type: .and, width: .narrow))
+            })
         durationText = Self.durationText(for: segments)
         reignEraNames = eras.map(\.name)
     }

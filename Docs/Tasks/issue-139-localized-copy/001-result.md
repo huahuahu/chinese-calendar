@@ -78,3 +78,11 @@
 该代码版本再次通过原生 Xcode MCP App/test build，以及 **213 passed / 0 failed / 0 skipped / 0 not run** 的完整测试。项目、scheme、Simulator 与上文共享配置一致；SwiftFormat、严格 SwiftLint、254 项资源校验、21 个剩余生产字符串检查及 `git diff --check` 再次通过，见[同步主分支验证摘要](evidence/main-sync-validation.txt)。此前的实现快照仍对应 2026-10-06 的版本，本轮证据以此处 commit 为准。
 
 本轮没有重复设备交互或 Preview；上文未完成的验收仍保留。PR 关联 #139，不通过合并自动关闭仍有验证缺口的 Issue。
+
+## 2026-10-07：远程 review 的列表语言修复
+
+Copilot 在 [review comment](https://github.com/huahuahu/chinese-calendar/pull/144#discussion_r4202245591) 指出默认列表 locale 与资源 bundle 回退语言可能不一致。新增测试先复现：不传 locale 的生产入口返回 `洪武, 永乐, 宣德`，而中文资源需要 `洪武、永乐和宣德`；en-US、fr-FR 的资源回退用例均失败。这里的 locale 指测试中的资源参数，没有修改设备语言，也不把测试宿主行为宣称为所有 App 配置下的实跑结果。
+
+`Common.List.names` 的默认 locale 改为资源包的 `preferredLocalizations`，仍保留显式 locale 参数；`EmperorCardModel` 的多个在位区间也统一经过该入口。Apple 文档说明 `Locale.current` 会考虑宿主 App 的可用语言，而 bundle 的 `preferredLocalizations` 根据该 bundle 的资源选择语言，因此不能以宿主的 locale 代替基础资源模块的选择。
+
+修复后 App/test build、**216 项完整测试**、SwiftFormat、严格 SwiftLint 和资源扫描均通过，新增测试还覆盖皇帝多段在位区间的实际展示模型路径。源码快照、修复前失败及修复后结果见[列表语言验证摘要](evidence/list-locale-validation.txt)。该远程问题已修复并验证，原有 Preview 与交互缺口保持不变。

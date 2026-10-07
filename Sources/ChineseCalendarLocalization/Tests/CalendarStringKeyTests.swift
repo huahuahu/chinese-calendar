@@ -62,6 +62,18 @@ struct CalendarStringKeyTests {
             == "范围精度 · 年精度 220 到 年精度 221")
     }
 
+    @Test(arguments: ["en-US", "fr-FR"])
+    func defaultListFormattingMatchesChineseFallback(locale: String) {
+        let values = ["洪武", "永乐", "宣德"]
+        let names = CalendarStringKey.Common.List.names(values)
+        let expectedNames = "洪武、永乐和宣德"
+        #expect(names == expectedNames)
+        #expect(localized(
+            CalendarStringKey.History.EmperorCard.eraNamesAccessibilityLabel(names: names),
+            locale: locale
+        ) == "年号：\(expectedNames)")
+    }
+
     private func localized(_ resource: LocalizedStringResource, locale: String = "zh-Hans") -> String {
         var resource = resource
         resource.locale = Locale(identifier: locale)
