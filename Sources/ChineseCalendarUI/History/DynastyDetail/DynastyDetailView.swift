@@ -1,3 +1,4 @@
+import ChineseCalendarLocalization
 import ChineseCalendarPersistence
 import SFSafeSymbols
 import SwiftData
@@ -66,9 +67,9 @@ struct DynastyDetailView: View {
 
     private var missingDynastyState: some View {
         ContentUnavailableView {
-            Label("没有找到朝代", systemSymbol: .buildingColumns)
+            Label(CalendarStringKey.History.DynastyDetail.Unavailable.title, systemSymbol: .buildingColumns)
         } description: {
-            Text("对应的朝代或正统期记录不在当前 SwiftData store 中。")
+            Text(CalendarStringKey.History.DynastyDetail.Unavailable.periodMessage)
         }
     }
 
@@ -89,22 +90,36 @@ struct DynastyDetailView: View {
         return [
             DynastyFactCardModel(
                 value: "\(emperorCount)",
-                unit: "位皇帝",
-                accessibilityLabel: "查看\(dynastyName)朝 \(emperorCount) 位皇帝",
+                unit: String(localized: CalendarStringKey.History.DynastyDetail.Fact.emperorUnit),
+                accessibilityLabel: String(localized: CalendarStringKey.History.DynastyDetail.Fact
+                    .emperorsAccessibilityLabel(
+                        dynasty: dynastyName,
+                        count: emperorCount
+                    )),
                 destination: .emperorList(dynastyID: dynasty.id)
             ),
             DynastyFactCardModel(
                 value: "\(reignEraCount)",
-                unit: "个年号",
-                accessibilityLabel: "查看\(dynastyName)朝 \(reignEraCount) 个年号",
+                unit: String(localized: CalendarStringKey.History.DynastyDetail.Fact.reignEraUnit),
+                accessibilityLabel: String(localized: CalendarStringKey.History.DynastyDetail.Fact
+                    .reignErasAccessibilityLabel(
+                        dynasty: dynastyName,
+                        count: reignEraCount
+                    )),
                 destination: .reignEraList(dynastyID: dynasty.id)
             ),
             DynastyFactCardModel(
-                value: spanYears.map(String.init) ?? "国祚暂无",
-                unit: spanYears == nil ? "" : "年",
+                value: spanYears
+                    .map(String.init) ?? String(localized: CalendarStringKey.History.DynastySpan.unavailableDuration),
+                unit: spanYears == nil ? "" : String(localized: CalendarStringKey.History.DynastyDetail.Fact.yearUnit),
                 accessibilityLabel: spanYears.map {
-                    "查看\(dynastyName)朝国祚与起讫，共 \($0) 年"
-                } ?? "查看\(dynastyName)朝国祚与起讫，国祚暂无",
+                    String(localized: CalendarStringKey.History.DynastyDetail.Fact.spanAccessibilityLabel(
+                        dynasty: dynastyName,
+                        years: $0
+                    ))
+                } ??
+                    String(localized: CalendarStringKey.History.DynastyDetail.Fact
+                        .unknownSpanAccessibilityLabel(dynasty: dynastyName)),
                 destination: .dynastySpan(orthodoxPeriodID: period.id)
             )
         ]

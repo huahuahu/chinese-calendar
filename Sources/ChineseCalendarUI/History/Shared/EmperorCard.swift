@@ -1,3 +1,4 @@
+import ChineseCalendarLocalization
 import SwiftUI
 
 struct EmperorCard: View {
@@ -131,7 +132,8 @@ struct EmperorCard: View {
                 }
             }
         }
-        .accessibilityLabel("年号：\(model.reignEraNames.joined(separator: "、"))")
+        .accessibilityLabel(CalendarStringKey.History.EmperorCard
+            .eraNamesAccessibilityLabel(names: CalendarStringKey.Common.List.names(model.reignEraNames)))
     }
 
     private func reignEraTag(_ name: String) -> some View {

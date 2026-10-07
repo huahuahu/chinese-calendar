@@ -1,3 +1,4 @@
+import ChineseCalendarLocalization
 import SwiftUI
 
 /// 朝代起讫页中用于对照朝代自称范围和当前正统期的两行卡片。
@@ -20,13 +21,13 @@ struct DynastyBoundarySummaryCard: View {
 
     var body: some View {
         VStack(spacing: Constants.cardSpacing) {
-            rangeRow(title: "朝代自称", value: claimedRange)
+            rangeRow(title: String(localized: CalendarStringKey.History.Boundary.claimedDynasty), value: claimedRange)
 
             Rectangle()
                 .fill(.quaternary)
                 .frame(height: Constants.separatorHeight)
 
-            rangeRow(title: "正统时间线", value: orthodoxRange)
+            rangeRow(title: String(localized: CalendarStringKey.History.Boundary.timeline), value: orthodoxRange)
         }
         .background(
             .background,

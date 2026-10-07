@@ -1,3 +1,4 @@
+import ChineseCalendarLocalization
 import ChineseCalendarPersistence
 import SFSafeSymbols
 import SwiftData
@@ -46,7 +47,7 @@ struct CalendarPageView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
         }
         .background(.calendarSystemBackground)
-        .navigationTitle("日历")
+        .navigationTitle(CalendarStringKey.Calendar.title)
     }
 
     private var selectedDay: ChineseLunarDay? {
@@ -62,12 +63,12 @@ struct CalendarPageView: View {
         .frame(maxWidth: .infinity, minHeight: Constants.unavailableMinimumHeight)
     }
 
-    private var unavailableTitle: String {
+    private var unavailableTitle: LocalizedStringResource {
         switch storeContentLevel {
         case .base:
-            "需要完整日期数据"
+            CalendarStringKey.Calendar.Unavailable.requiresFullDataTitle
         case .full:
-            "没有找到日期"
+            CalendarStringKey.Calendar.Unavailable.missingDateTitle
         }
     }
 
@@ -80,12 +81,12 @@ struct CalendarPageView: View {
         }
     }
 
-    private var unavailableDescription: String {
+    private var unavailableDescription: LocalizedStringResource {
         switch storeContentLevel {
         case .base:
-            "当前内置数据只有年份和月份。请先下载完整日期数据，再浏览日历。"
+            CalendarStringKey.Calendar.Unavailable.requiresFullDataMessage
         case .full:
-            "当前导航地址无法解析为一个具体农历日。"
+            CalendarStringKey.Calendar.Unavailable.missingDateMessage
         }
     }
 }

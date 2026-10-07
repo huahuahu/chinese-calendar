@@ -117,3 +117,28 @@ private func yearExpression(id: String, year: Int) -> ChineseDateExpression {
         sourceText: "\(year)"
     )
 }
+
+@MainActor
+@Test func emperorReignRangesUseTheCatalogLanguage() {
+    let dynasty = Dynasty(
+        id: "ming",
+        name: "明",
+        claimedStartDate: yearExpression(id: "ming-start", year: 1368),
+        claimedEndDate: yearExpression(id: "ming-end", year: 1644)
+    )
+    let emperor = Emperor(id: "ming-yingzong", dynasty: dynasty, displayName: "英宗", sequenceIndex: 5)
+    emperor.reignSegments = [
+        EmperorReignSegment(
+            id: "first", emperor: emperor, sequenceIndex: 0, segmentIndex: 0,
+            startDate: yearExpression(id: "first-start", year: 1436),
+            endDate: yearExpression(id: "first-end", year: 1450)
+        ),
+        EmperorReignSegment(
+            id: "second", emperor: emperor, sequenceIndex: 1, segmentIndex: 1,
+            startDate: yearExpression(id: "second-start", year: 1457),
+            endDate: yearExpression(id: "second-end", year: 1465)
+        )
+    ]
+
+    #expect(EmperorCardModel(emperor: emperor).reignRangeText == "1436—1449和1457—1464")
+}

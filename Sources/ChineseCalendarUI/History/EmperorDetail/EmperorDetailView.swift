@@ -1,3 +1,4 @@
+import ChineseCalendarLocalization
 import ChineseCalendarPersistence
 import SFSafeSymbols
 import SwiftData
@@ -122,9 +123,18 @@ private extension EmperorDetailView {
             alignment: .leading,
             spacing: Constants.gridSpacing
         ) {
-            metricCard(title: "朝代", value: emperor.dynasty.shortName ?? emperor.dynasty.name)
-            metricCard(title: "在位", value: "\(reignSegmentCount) 段")
-            metricCard(title: "年号", value: "\(reignEraCount) 个")
+            metricCard(
+                title: String(localized: CalendarStringKey.History.EmperorDetail.dynastyLabel),
+                value: emperor.dynasty.shortName ?? emperor.dynasty.name
+            )
+            metricCard(
+                title: String(localized: CalendarStringKey.History.EmperorDetail.reignLabel),
+                value: String(localized: CalendarStringKey.History.EmperorDetail.segmentCount(count: reignSegmentCount))
+            )
+            metricCard(
+                title: String(localized: CalendarStringKey.History.EmperorDetail.reignErasTitle),
+                value: String(localized: CalendarStringKey.History.EmperorDetail.eraCount(count: reignEraCount))
+            )
         }
     }
 
@@ -132,7 +142,7 @@ private extension EmperorDetailView {
     private func nameDetailsSection(_ emperor: Emperor) -> some View {
         if emperor.personalName != nil || emperor.templeName != nil || emperor.posthumousName != nil {
             VStack(alignment: .leading, spacing: Constants.sectionSpacing) {
-                sectionTitle("称号")
+                sectionTitle(String(localized: CalendarStringKey.History.EmperorDetail.namesTitle))
 
                 LazyVGrid(
                     columns: metricColumns,
@@ -140,15 +150,24 @@ private extension EmperorDetailView {
                     spacing: Constants.gridSpacing
                 ) {
                     if let personalName = emperor.personalName {
-                        metricCard(title: "本名", value: personalName)
+                        metricCard(
+                            title: String(localized: CalendarStringKey.History.EmperorDetail.personalNameLabel),
+                            value: personalName
+                        )
                     }
 
                     if let templeName = emperor.templeName {
-                        metricCard(title: "庙号", value: templeName)
+                        metricCard(
+                            title: String(localized: CalendarStringKey.History.EmperorDetail.templeNameLabel),
+                            value: templeName
+                        )
                     }
 
                     if let posthumousName = emperor.posthumousName {
-                        metricCard(title: "谥号/称号", value: posthumousName)
+                        metricCard(
+                            title: String(localized: CalendarStringKey.History.EmperorDetail.posthumousNameLabel),
+                            value: posthumousName
+                        )
                     }
                 }
             }
@@ -159,7 +178,7 @@ private extension EmperorDetailView {
     private func reignSegmentsSection(_ reignSegments: [EmperorReignSegment]) -> some View {
         if !reignSegments.isEmpty {
             VStack(alignment: .leading, spacing: Constants.sectionSpacing) {
-                sectionTitle("在位区间")
+                sectionTitle(String(localized: CalendarStringKey.History.EmperorDetail.segmentsTitle))
 
                 ForEach(reignSegments, id: \.id, content: reignSegmentCard)
             }
@@ -170,7 +189,7 @@ private extension EmperorDetailView {
     private func reignErasSection(_ reignEras: [ReignEra]) -> some View {
         if !reignEras.isEmpty {
             VStack(alignment: .leading, spacing: Constants.sectionSpacing) {
-                sectionTitle("年号")
+                sectionTitle(String(localized: CalendarStringKey.History.EmperorDetail.reignErasTitle))
 
                 ForEach(reignEras, id: \.id, content: reignEraCard)
             }
@@ -205,8 +224,8 @@ private extension EmperorDetailView {
             Text(reignSegmentTitle(segment))
                 .font(.headline)
 
-            dateDetail(title: "开始", date: segment.startDate)
-            dateDetail(title: "结束", date: segment.endDate)
+            dateDetail(title: String(localized: CalendarStringKey.History.Boundary.start), date: segment.startDate)
+            dateDetail(title: String(localized: CalendarStringKey.History.Boundary.end), date: segment.endDate)
 
             if let note = segment.note {
                 Text(note)
@@ -228,8 +247,8 @@ private extension EmperorDetailView {
             Text(era.name)
                 .font(.headline)
 
-            dateDetail(title: "开始", date: era.startDate)
-            dateDetail(title: "结束", date: era.endDate)
+            dateDetail(title: String(localized: CalendarStringKey.History.Boundary.start), date: era.startDate)
+            dateDetail(title: String(localized: CalendarStringKey.History.Boundary.end), date: era.endDate)
 
             if let note = era.note {
                 Text(note)
@@ -264,15 +283,19 @@ private extension EmperorDetailView {
 
     private var missingEmperorState: some View {
         ContentUnavailableView {
-            Label("没有找到皇帝", systemSymbol: .personCropCircleBadgeQuestionmark)
+            Label(
+                CalendarStringKey.History.EmperorDetail.Unavailable.title,
+                systemSymbol: .personCropCircleBadgeQuestionmark
+            )
         } description: {
-            Text("这个皇帝记录不在当前 SwiftData store 中。")
+            Text(CalendarStringKey.History.EmperorDetail.Unavailable.message)
         }
     }
 
     private func reignSegmentTitle(_ segment: EmperorReignSegment) -> String {
         guard let segmentName = segment.segmentName else {
-            return "第 \(segment.segmentIndex + 1) 段在位"
+            return String(localized: CalendarStringKey.History.EmperorDetail
+                .segmentTitle(number: segment.segmentIndex + 1))
         }
 
         return segmentName
@@ -281,15 +304,15 @@ private extension EmperorDetailView {
     private func precisionText(for date: ChineseDateExpression) -> String {
         switch date.precision {
         case .year:
-            indexText(prefix: "年精度", date: date)
+            indexText(prefix: String(localized: CalendarStringKey.Common.DatePrecision.year), date: date)
         case .month:
-            indexText(prefix: "月精度", date: date)
+            indexText(prefix: String(localized: CalendarStringKey.Common.DatePrecision.month), date: date)
         case .day:
-            indexText(prefix: "日精度", date: date)
+            indexText(prefix: String(localized: CalendarStringKey.Common.DatePrecision.day), date: date)
         case .range:
-            "范围精度"
+            String(localized: CalendarStringKey.Common.DatePrecision.range)
         case .unknown:
-            "精度未知"
+            String(localized: CalendarStringKey.Common.DatePrecision.unknown)
         }
     }
 
@@ -298,7 +321,7 @@ private extension EmperorDetailView {
             return prefix
         }
 
-        return "\(prefix) · index \(index)"
+        return String(localized: CalendarStringKey.Common.DatePrecision.indexed(precision: prefix, index: index))
     }
 }
 

@@ -1,3 +1,4 @@
+import ChineseCalendarLocalization
 import Foundation
 import SFSafeSymbols
 
@@ -10,14 +11,14 @@ enum CalendarTab: Hashable, CaseIterable, Identifiable {
         self
     }
 
-    var title: String {
+    var title: LocalizedStringResource {
         switch self {
         case .years:
-            "日历"
+            CalendarStringKey.Calendar.title
         case .history:
-            "朝代"
+            CalendarStringKey.History.Timeline.title
         case .settings:
-            "设置"
+            CalendarStringKey.Settings.title
         }
     }
 

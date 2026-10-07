@@ -13,13 +13,17 @@ let mainActorSwiftSettings: [SwiftSetting] = [
 
 let package = Package(
     name: "ChineseCalendarSources",
-    defaultLocalization: "en",
+    defaultLocalization: "zh-Hans",
     platforms: [
         .iOS(.v26),
         // Deployment floor for macOS host tools selecting Core/Persistence; UI remains iOS-only.
         .macOS(.v26)
     ],
     products: [
+        .library(
+            name: "ChineseCalendarLocalization",
+            targets: ["ChineseCalendarLocalization"]
+        ),
         .library(
             name: "ChineseCalendarCore",
             targets: ["ChineseCalendarCore"]
@@ -50,6 +54,13 @@ let package = Package(
     ],
     targets: [
         .target(
+            name: "ChineseCalendarLocalization",
+            path: "ChineseCalendarLocalization",
+            exclude: ["README.md", "Tests"],
+            resources: [.process("Resources/Calendar.xcstrings")],
+            swiftSettings: nonisolatedSwiftSettings
+        ),
+        .target(
             name: "ChineseCalendarLogging",
             path: "ChineseCalendarLogging",
             exclude: ["README.md", "Tests"],
@@ -57,7 +68,7 @@ let package = Package(
         ),
         .target(
             name: "ChineseCalendarCore",
-            dependencies: ["ChineseCalendarLogging"],
+            dependencies: ["ChineseCalendarLogging", "ChineseCalendarLocalization"],
             path: "ChineseCalendarCore",
             exclude: ["Tests"],
             swiftSettings: nonisolatedSwiftSettings
@@ -93,6 +104,7 @@ let package = Package(
         .target(
             name: "ChineseCalendarUI",
             dependencies: [
+                "ChineseCalendarLocalization",
                 "ChineseCalendarCore",
                 "ChineseCalendarData",
                 "ChineseCalendarPersistence",
@@ -103,6 +115,12 @@ let package = Package(
             path: "ChineseCalendarUI",
             exclude: ["Tests"],
             swiftSettings: mainActorSwiftSettings
+        ),
+        .testTarget(
+            name: "ChineseCalendarLocalizationTests",
+            dependencies: ["ChineseCalendarLocalization"],
+            path: "ChineseCalendarLocalization/Tests",
+            swiftSettings: nonisolatedSwiftSettings
         ),
         .testTarget(
             name: "ChineseCalendarCoreTests",
@@ -136,7 +154,7 @@ let package = Package(
         ),
         .testTarget(
             name: "ChineseCalendarUITests",
-            dependencies: ["ChineseCalendarUI"],
+            dependencies: ["ChineseCalendarUI", "ChineseCalendarLocalization"],
             path: "ChineseCalendarUI/Tests",
             swiftSettings: mainActorSwiftSettings
         )

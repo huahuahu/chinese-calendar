@@ -7,6 +7,7 @@ Chinese-date is an iOS app for browsing traditional Chinese calendar data, inclu
 - Keep business logic in the shared package defined by `Sources/Package.swift`; use `Apps/iOSApp` for platform entry points and app-specific behavior.
 - Treat `Sources/ChineseCalendarCore` as the source of truth for calendar domain logic and value types. SwiftData models and store lifecycle belong in `Sources/ChineseCalendarPersistence`; data loading and repository abstractions belong in `Sources/ChineseCalendarData`.
 - Shared SwiftUI views belong in `Sources/ChineseCalendarUI`; shared navigation infrastructure belongs in `Sources/NavigationCore`.
+- Shared user-facing copy and localization resources belong in `Sources/ChineseCalendarLocalization`, which depends only on Foundation. Keep domain-state and error-to-copy mapping in the consuming module.
 - Store upstream inputs in `Data/Raw` and generated data artifacts in `Data/Processed`. When changing `Scripts/ImportChineseCalendar`, document the upstream source and output format.
 - `project.yml` is the XcodeGen source; `ChineseCalendar.xcodeproj` is generated. Make lasting project configuration changes in the source configuration.
 
@@ -22,6 +23,7 @@ Chinese-date is an iOS app for browsing traditional Chinese calendar data, inclu
 - Keep project coding conventions under `Docs/Conventions/`, indexed in [Docs/README.md](Docs/README.md). This file defines when to read them; module READMEs and skills link to the canonical topic instead of duplicating its rules.
 - Before implementing or reviewing code, read [the common conventions](Docs/Conventions/Common.md).
 - Before creating, modifying, or reviewing SwiftUI views, read [the SwiftUI conventions](Docs/Conventions/SwiftUI.md). Follow the project's extraction criteria, including its allowance for simple private view properties and functions, ahead of generic skill recommendations.
+- Before adding, modifying, or reviewing user-visible text, read [the localization conventions](Docs/Conventions/Localization.md).
 - Keep task progress and future priorities in Issues or task documents. This file contains durable working instructions, not a roadmap or an inventory of installed skills.
 - Before implementing a substantial feature or decision-shaping fix, or reviewing work with task records, read [the task documentation workflow](Docs/Tasks/README.md). Use it to decide when to keep a plan and result, and load the relevant existing records; small changes do not require a task folder.
 

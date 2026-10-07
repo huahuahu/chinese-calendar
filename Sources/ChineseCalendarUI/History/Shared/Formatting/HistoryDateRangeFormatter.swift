@@ -1,3 +1,4 @@
+import ChineseCalendarLocalization
 import ChineseCalendarPersistence
 import Foundation
 
@@ -83,7 +84,7 @@ enum HistoryDateRangeFormatter {
 
     static func boundaryText(_ expression: ChineseDateExpression?) -> String {
         guard let expression else {
-            return "时间待考"
+            return String(localized: CalendarStringKey.History.Date.unknown)
         }
 
         if expression.precision == .year, let year = expression.index {
@@ -91,7 +92,7 @@ enum HistoryDateRangeFormatter {
         }
 
         let sourceText = expression.sourceText.trimmingCharacters(in: .whitespacesAndNewlines)
-        return sourceText.isEmpty ? "时间待考" : sourceText
+        return sourceText.isEmpty ? String(localized: CalendarStringKey.History.Date.unknown) : sourceText
     }
 
     static func exclusiveEndBoundaryText(_ expression: ChineseDateExpression) -> String {
@@ -103,25 +104,18 @@ enum HistoryDateRangeFormatter {
     }
 
     static func precisionText(_ expression: ChineseDateExpression) -> String {
-        switch expression.precision {
-        case .year:
-            "年精度"
-        case .month:
-            "月精度"
-        case .day:
-            "日精度"
-        case .range:
-            "范围精度"
-        case .unknown:
-            "精度未知"
-        }
+        String(localized: CalendarDatePrecisionPresentation.title(for: expression.precision))
     }
 
     static func yearText(_ astronomicalYear: Int) -> String {
-        astronomicalYear > 0 ? "\(astronomicalYear)" : "前\(1 - astronomicalYear)"
+        astronomicalYear > 0 ? "\(astronomicalYear)" :
+            String(localized: CalendarStringKey.History.Date.beforeCommonEra(year: 1 - astronomicalYear))
     }
 
     private static func range(startText: String, endText: String) -> String {
-        startText == endText ? startText : "\(startText)—\(endText)"
+        startText == endText ? startText : String(localized: CalendarStringKey.History.Date.range(
+            start: startText,
+            end: endText
+        ))
     }
 }

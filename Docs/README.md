@@ -6,6 +6,7 @@
 
 - [通用规范](Conventions/Common.md)：代码注释使用中文，以及日志入口、分类、级别和隐私约定。
 - [SwiftUI](Conventions/SwiftUI.md)：子 View、私有属性／函数的拆分边界，`body` 结构和展示常量。
+- [文案与本地化](Conventions/Localization.md)：统一入口、功能层级、动态模板、String Catalog 和错误提示边界。
 
 新增简短的通用规则放进 `Conventions/Common.md`；像 SwiftUI 这样需要详细说明的专题再单独成文，放在 `Conventions/`，在这里添加索引，并在 `AGENTS.md` 说明何时读取。每项规则只维护一个来源；模块 README 和技能引用对应文档。尚未落地的方案留在 Issue 或提案中。
 

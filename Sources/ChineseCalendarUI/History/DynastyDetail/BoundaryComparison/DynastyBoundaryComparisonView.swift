@@ -1,3 +1,4 @@
+import ChineseCalendarLocalization
 import ChineseCalendarPersistence
 import SwiftUI
 
@@ -21,11 +22,11 @@ struct DynastyBoundaryComparisonView: View {
 
     private var sectionHeading: some View {
         VStack(alignment: .leading, spacing: Constants.headingSpacing) {
-            Text("时间边界")
+            Text(CalendarStringKey.History.Boundary.Comparison.title)
                 .font(.title2)
                 .bold()
 
-            Text("对比朝代自称起止与正统时间线采用的边界。")
+            Text(CalendarStringKey.History.Boundary.Comparison.message)
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
         }
@@ -35,7 +36,7 @@ struct DynastyBoundaryComparisonView: View {
     private var comparisonCards: some View {
         if orthodoxPeriods.isEmpty {
             DynastyBoundaryComparisonCard(
-                title: "正统期",
+                title: String(localized: CalendarStringKey.History.Boundary.period),
                 traditionName: nil,
                 claimedStartDate: dynasty.claimedStartDate,
                 orthodoxStartDate: nil,
@@ -43,7 +44,7 @@ struct DynastyBoundaryComparisonView: View {
                 orthodoxEndDate: nil,
                 startDifferenceText: nil,
                 endDifferenceText: nil,
-                note: "当前 SwiftData store 还没有为这个朝代关联正统开始和结束边界。"
+                note: String(localized: CalendarStringKey.History.Boundary.Comparison.missingMessage)
             )
         } else {
             ForEach(orthodoxPeriods, id: \.id) { period in
@@ -74,10 +75,10 @@ struct DynastyBoundaryComparisonView: View {
 
     private func periodTitle(for period: OrthodoxPeriod) -> String {
         if period.segmentName == dynasty.name || period.segmentName == dynasty.shortName {
-            return "正统期"
+            return String(localized: CalendarStringKey.History.Boundary.period)
         }
 
-        return "正统期 · \(period.segmentName)"
+        return String(localized: CalendarStringKey.History.Boundary.namedPeriod(name: period.segmentName))
     }
 
     private func differenceText(
@@ -89,24 +90,30 @@ struct DynastyBoundaryComparisonView: View {
         }
 
         guard claimed.precision == orthodox.precision else {
-            return "边界精度不同"
+            return String(localized: CalendarStringKey.History.Boundary.Comparison.differentPrecision)
         }
 
         guard let claimedIndex = claimed.index, let orthodoxIndex = orthodox.index else {
-            return claimed.sourceText == orthodox.sourceText ? "同一来源文本" : "边界来源不同"
+            return claimed.sourceText == orthodox
+                .sourceText ? String(localized: CalendarStringKey.History.Boundary.Comparison.sameSource) :
+                String(localized: CalendarStringKey.History.Boundary.Comparison.differentSource)
         }
 
         let difference = orthodoxIndex - claimedIndex
 
         guard difference != 0 else {
-            return claimed.precision == .year ? "同年" : "同一边界"
+            return claimed
+                .precision == .year ? String(localized: CalendarStringKey.History.Boundary.Comparison.sameYear) :
+                String(localized: CalendarStringKey.History.Boundary.Comparison.sameBoundary)
         }
 
         guard claimed.precision == .year else {
-            return "边界不同"
+            return String(localized: CalendarStringKey.History.Boundary.Comparison.differentBoundary)
         }
 
-        return difference > 0 ? "正统晚 \(difference) 年" : "正统早 \(abs(difference)) 年"
+        return difference > 0 ?
+            String(localized: CalendarStringKey.History.Boundary.Comparison.later(years: difference)) :
+            String(localized: CalendarStringKey.History.Boundary.Comparison.earlier(years: abs(difference)))
     }
 }
 

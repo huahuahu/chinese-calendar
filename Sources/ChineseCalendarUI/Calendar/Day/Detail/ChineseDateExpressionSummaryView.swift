@@ -1,3 +1,4 @@
+import ChineseCalendarLocalization
 import ChineseCalendarPersistence
 import SwiftUI
 
@@ -34,24 +35,27 @@ struct ChineseDateExpressionSummaryView: View {
     private var precisionText: String {
         switch date.precision {
         case .year:
-            indexText(prefix: "年精度")
+            indexText(prefix: String(localized: CalendarStringKey.Common.DatePrecision.year))
         case .month:
-            indexText(prefix: "月精度")
+            indexText(prefix: String(localized: CalendarStringKey.Common.DatePrecision.month))
         case .day:
-            indexText(prefix: "日精度")
+            indexText(prefix: String(localized: CalendarStringKey.Common.DatePrecision.day))
         case .range:
             rangeText
         case .unknown:
-            "精度未知"
+            String(localized: CalendarStringKey.Common.DatePrecision.unknown)
         }
     }
 
     private var rangeText: String {
         guard let range = date.uncertainRange else {
-            return "范围精度"
+            return String(localized: CalendarStringKey.Common.DatePrecision.range)
         }
 
-        return "范围精度 · \(boundText(range.lowerBound)) 到 \(boundText(range.upperBound))"
+        return String(localized: CalendarStringKey.Common.DatePrecision.bounds(
+            lower: boundText(range.lowerBound),
+            upper: boundText(range.upperBound)
+        ))
     }
 
     private func indexText(prefix: String) -> String {
@@ -59,11 +63,14 @@ struct ChineseDateExpressionSummaryView: View {
             return prefix
         }
 
-        return "\(prefix) · index \(index)"
+        return String(localized: CalendarStringKey.Common.DatePrecision.indexed(precision: prefix, index: index))
     }
 
     private func boundText(_ bound: ChineseDateBound) -> String {
-        "\(bound.precision.rawValue) \(bound.index)"
+        String(localized: CalendarStringKey.Common.DatePrecision.bound(
+            precision: String(localized: CalendarDatePrecisionPresentation.title(for: bound.precision)),
+            index: bound.index
+        ))
     }
 }
 

@@ -1,3 +1,4 @@
+import ChineseCalendarLocalization
 import SFSafeSymbols
 import SwiftUI
 
@@ -36,7 +37,8 @@ struct FullStoreDownloadStepView: View {
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                 } else {
-                    Text(status == .completed ? "已完成" : "等待开始")
+                    Text(status == .completed ? CalendarStringKey.Store.Download.Step.completed : CalendarStringKey
+                        .Store.Download.Step.pending)
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                 }
@@ -61,7 +63,8 @@ struct FullStoreDownloadStepView: View {
             }
         }
         .accessibilityElement(children: .combine)
-        .accessibilityValue(status == .current ? Text("进行中") : Text(""))
+        .accessibilityValue(status == .current ? Text(CalendarStringKey.Store.Download.Step.current) :
+            Text(CalendarStringKey.Common.Value.empty))
     }
 
     private var hasNextStep: Bool {

@@ -1,3 +1,4 @@
+import ChineseCalendarLocalization
 import ChineseCalendarPersistence
 import SFSafeSymbols
 import SwiftData
@@ -62,7 +63,7 @@ struct ReignEraListView: View {
         ScrollView {
             reignEraListContent
         }
-        .navigationTitle("年号")
+        .navigationTitle(CalendarStringKey.History.ReignEraList.title)
         #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
         #endif
@@ -126,18 +127,18 @@ struct ReignEraListView: View {
 
     private var emptyReignEraListState: some View {
         ContentUnavailableView {
-            Label("没有年号资料", systemSymbol: .timelineSelection)
+            Label(CalendarStringKey.History.ReignEraList.Empty.title, systemSymbol: .timelineSelection)
         } description: {
-            Text("当前 store 中没有这个朝代的年号记录。")
+            Text(CalendarStringKey.History.ReignEraList.Empty.message)
         }
         .frame(maxWidth: .infinity)
     }
 
     private var missingDynastyState: some View {
         ContentUnavailableView {
-            Label("没有找到朝代", systemSymbol: .buildingColumns)
+            Label(CalendarStringKey.History.DynastyDetail.Unavailable.title, systemSymbol: .buildingColumns)
         } description: {
-            Text("这个朝代记录不在当前 SwiftData store 中。")
+            Text(CalendarStringKey.History.DynastyDetail.Unavailable.message)
         }
     }
 
@@ -148,9 +149,12 @@ struct ReignEraListView: View {
                 end: $0.endBoundary?.date
             )
         }
-        return ["\(reignEras.count) 个年号", boundaryText]
-            .compactMap(\.self)
-            .joined(separator: " · ")
+        if let boundaryText {
+            return String(localized: CalendarStringKey.History.ReignEraList.summary(
+                count: reignEras.count, boundary: boundaryText
+            ))
+        }
+        return String(localized: CalendarStringKey.History.ReignEraList.count(count: reignEras.count))
     }
 }
 

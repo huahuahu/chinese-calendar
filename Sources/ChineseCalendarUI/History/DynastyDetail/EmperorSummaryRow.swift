@@ -1,3 +1,4 @@
+import ChineseCalendarLocalization
 import ChineseCalendarPersistence
 import SFSafeSymbols
 import SwiftUI
@@ -57,8 +58,14 @@ struct EmperorSummaryRow: View {
         ]
         .compactMap(\.self)
 
-        let nameText = names.isEmpty ? "未记录别名" : names.joined(separator: " · ")
-        return "\(nameText) · \(emperor.reignSegments.count) 段在位 · \(emperor.reignEras.count) 个年号"
+        let nameText = names
+            .isEmpty ? String(localized: CalendarStringKey.History.EmperorSummary.missingNames) : CalendarStringKey
+            .Common.List.names(names)
+        return String(localized: CalendarStringKey.History.EmperorSummary.subtitle(
+            names: nameText,
+            segments: emperor.reignSegments.count,
+            eras: emperor.reignEras.count
+        ))
     }
 }
 

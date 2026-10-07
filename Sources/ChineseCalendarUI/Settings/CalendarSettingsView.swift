@@ -1,3 +1,4 @@
+import ChineseCalendarLocalization
 import ChineseCalendarPersistence
 import SFSafeSymbols
 import SwiftUI
@@ -23,8 +24,8 @@ public struct CalendarSettingsView: View {
 
     public var body: some View {
         Form {
-            Section("外观") {
-                Picker("颜色模式", selection: $colorSchemePreference) {
+            Section(CalendarStringKey.Settings.Appearance.title) {
+                Picker(CalendarStringKey.Settings.Appearance.pickerLabel, selection: $colorSchemePreference) {
                     ForEach(CalendarColorSchemePreference.allCases) { preference in
                         Text(preference.title)
                             .tag(preference)
@@ -32,7 +33,7 @@ public struct CalendarSettingsView: View {
                 }
             }
 
-            Section("数据") {
+            Section(CalendarStringKey.Settings.Data.title) {
                 VStack(alignment: .leading, spacing: 6) {
                     Label(dataStatusTitle, systemSymbol: dataStatusSystemSymbol)
                         .font(.headline)
@@ -47,59 +48,63 @@ public struct CalendarSettingsView: View {
                 } label: {
                     if coordinator.isClearingDownloadedData {
                         Label {
-                            Text("正在清空")
+                            Text(CalendarStringKey.Settings.ClearData.progress)
                         } icon: {
                             ProgressView()
                         }
                     } else {
-                        Label("清空已下载数据", systemSymbol: .trash)
+                        Label(CalendarStringKey.Settings.ClearData.action, systemSymbol: .trash)
                     }
                 }
                 .disabled(coordinator.isClearingDownloadedData)
             }
 
             #if DEBUG
-                Section("调试") {
+                Section(CalendarStringKey.Settings.Debug.title) {
                     Button(
-                        "模拟完整数据下载",
+                        CalendarStringKey.Settings.Debug.simulateDownload,
                         systemSymbol: .arrowDownCircle,
                         action: startSimulatedFullStoreDownload
                     )
                     .disabled(!coordinator.canStartSimulatedFullStoreDownload)
 
-                    Button("下载进度布局预览", systemSymbol: .eye) {
+                    Button(CalendarStringKey.Settings.Debug.downloadPreview, systemSymbol: .eye) {
                         isShowingDownloadPreview = true
                     }
 
-                    Text("只模拟下载进度，不访问网络、写入文件或替换日历数据库。")
+                    Text(CalendarStringKey.Settings.Debug.message)
                         .font(.footnote)
                         .foregroundStyle(.secondary)
                 }
             #endif
         }
-        .navigationTitle("设置")
+        .navigationTitle(CalendarStringKey.Settings.title)
         .toolbar {
             if showsDoneButton {
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("完成") {
+                    Button(CalendarStringKey.Common.Action.done) {
                         dismiss()
                     }
                 }
             }
         }
         .confirmationDialog(
-            "清空已下载数据？",
+            CalendarStringKey.Settings.ClearData.confirmationTitle,
             isPresented: $isConfirmingClear,
             titleVisibility: .visible
         ) {
-            Button("清空已下载数据", role: .destructive) {
+            Button(CalendarStringKey.Settings.ClearData.action, role: .destructive) {
                 clearDownloadedData()
             }
         } message: {
-            Text("这会取消正在进行的完整数据下载，删除下载缓存，并恢复到内置基础日历数据。")
+            Text(CalendarStringKey.Settings.ClearData.confirmationMessage)
         }
-        .alert(resultMessage?.title ?? "", isPresented: resultMessageIsPresented, presenting: resultMessage) { _ in
-            Button("好", role: .cancel) {}
+        .alert(
+            resultMessage?.title ?? CalendarStringKey.Common.Value.empty,
+            isPresented: resultMessageIsPresented,
+            presenting: resultMessage
+        ) { _ in
+            Button(CalendarStringKey.Common.Action.ok, role: .cancel) {}
         } message: { resultMessage in
             Text(resultMessage.message)
         }
@@ -122,37 +127,37 @@ public struct CalendarSettingsView: View {
         )
     }
 
-    private var dataStatusTitle: String {
+    private var dataStatusTitle: LocalizedStringResource {
         if coordinator.fullStoreDownloadProgress != nil {
-            return "完整数据下载中"
+            return CalendarStringKey.Settings.Data.Downloading.title
         }
 
         switch coordinator.state {
         case .ready(_, .full, _):
-            return "已安装完整日期数据"
+            return CalendarStringKey.Settings.Data.Full.title
         case .ready:
-            return "正在使用内置基础数据"
+            return CalendarStringKey.Settings.Data.Base.title
         case .starting:
-            return "正在准备日历数据"
+            return CalendarStringKey.Store.Bootstrap.preparing
         case .failed:
-            return "日历数据需要恢复"
+            return CalendarStringKey.Settings.Data.Recovery.title
         }
     }
 
-    private var dataStatusDetail: String {
+    private var dataStatusDetail: LocalizedStringResource {
         if coordinator.fullStoreDownloadProgress != nil {
-            return "清空会取消当前下载，并删除已经保存的临时文件。"
+            return CalendarStringKey.Settings.Data.Downloading.message
         }
 
         switch coordinator.state {
         case .ready(_, .full, _):
-            return "清空后会回到基础数据，日级记录需要重新下载完整数据后才能浏览。"
+            return CalendarStringKey.Settings.Data.Full.message
         case .ready:
-            return "没有已安装的完整日期数据；仍可清理未完成的下载缓存。"
+            return CalendarStringKey.Settings.Data.Base.message
         case .starting:
-            return "日历数据准备完成后可以清理下载缓存。"
+            return CalendarStringKey.Settings.Data.Preparing.message
         case .failed:
-            return "可以尝试清空下载数据并恢复内置基础数据。"
+            return CalendarStringKey.Settings.Data.Recovery.message
         }
     }
 
@@ -178,13 +183,13 @@ public struct CalendarSettingsView: View {
             do {
                 try await coordinator.clearDownloadedData()
                 resultMessage = SettingsResultMessage(
-                    title: "已清空",
-                    message: "已删除下载数据，并恢复到内置基础日历数据。"
+                    title: CalendarStringKey.Settings.ClearData.successTitle,
+                    message: CalendarStringKey.Settings.ClearData.successMessage
                 )
             } catch {
                 resultMessage = SettingsResultMessage(
-                    title: "清空失败",
-                    message: error.localizedDescription
+                    title: CalendarStringKey.Settings.ClearData.failureTitle,
+                    message: CalendarStoreErrorPresentation.message(for: error, operation: .clear)
                 )
             }
         }
@@ -199,6 +204,6 @@ public struct CalendarSettingsView: View {
 
 private struct SettingsResultMessage: Identifiable {
     let id = UUID()
-    let title: String
-    let message: String
+    let title: LocalizedStringResource
+    let message: LocalizedStringResource
 }

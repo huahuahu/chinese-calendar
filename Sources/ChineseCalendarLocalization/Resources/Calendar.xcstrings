@@ -1,0 +1,3054 @@
+{
+  "sourceLanguage": "zh-Hans",
+  "strings": {
+    "calendar.date.beforeCommonEraYear": {
+      "comment": "农历年对应的公元前纪年；参数为正整数年份。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "公元前 %@ 年"
+          }
+        }
+      }
+    },
+    "calendar.date.day": {
+      "comment": "无对应农历日名时的日期；参数为日序数。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld日"
+          }
+        }
+      }
+    },
+    "calendar.date.intercalaryMonth": {
+      "comment": "非标准闰后月份；参数依次为历法前缀和月序数。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@%lld月"
+          }
+        }
+      }
+    },
+    "calendar.date.month": {
+      "comment": "无对应农历月名时的月份；参数为月序数。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld月"
+          }
+        }
+      }
+    },
+    "calendar.date.monthDetail": {
+      "comment": "月份副标题；参数依次为天数和月干支。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld天 · %@月"
+          }
+        }
+      }
+    },
+    "calendar.date.sexagenaryYear": {
+      "comment": "干支年标题；参数为领域模型中的干支名。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@年"
+          }
+        }
+      }
+    },
+    "calendar.date.sizedMonth": {
+      "comment": "农历月标题；参数依次为历法月名和大小月领域值。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@%@"
+          }
+        }
+      }
+    },
+    "calendar.date.year": {
+      "comment": "农历年对应的公元纪年；参数为无千位分隔的年份。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "公元 %@ 年"
+          }
+        }
+      }
+    },
+    "calendar.dayDetail.civilDateLabel": {
+      "comment": "日历选中日详情中，对应公历日期字段的标签。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "对应日期"
+          }
+        }
+      }
+    },
+    "calendar.dayDetail.contentLevelLabel": {
+      "comment": "日历选中日详情中，说明当前使用基础数据还是完整日期数据的字段标签。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "数据层级"
+          }
+        }
+      }
+    },
+    "calendar.dayDetail.lunarExpression": {
+      "comment": "农历表达；参数依次为带大小月的月名和农历日名。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@%@"
+          }
+        }
+      }
+    },
+    "calendar.dayDetail.lunarExpressionLabel": {
+      "comment": "日历选中日详情中，农历年月日表达字段的标签。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "农历表达"
+          }
+        }
+      }
+    },
+    "calendar.dayDetail.sexagenaryLabel": {
+      "comment": "日历选中日详情中，当日天干地支字段的标签。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "日干支"
+          }
+        }
+      }
+    },
+    "calendar.dayDetail.subtitle": {
+      "comment": "选中日副标题；参数依次为日干支和已格式化的公历日期。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@日 · %@"
+          }
+        }
+      }
+    },
+    "calendar.dayDetail.title": {
+      "comment": "日历页面下方当前选中日期的详情分区标题。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "选中日"
+          }
+        }
+      }
+    },
+    "calendar.monthGrid.day.accessibilityLabel": {
+      "comment": "月格日期朗读；参数依次为农历日名、日干支、公历日期。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@，日干支，%@，%@"
+          }
+        }
+      }
+    },
+    "calendar.monthGrid.day.todayAccessibilityLabel": {
+      "comment": "今天的月格朗读；参数依次为农历日名、日干支、公历日期。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@，今天，日干支，%@，%@"
+          }
+        }
+      }
+    },
+    "calendar.monthGrid.empty.message": {
+      "comment": "农历月格为空时，说明该月没有可展示的逐日记录。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "这个月份暂时没有可显示的日级记录。"
+          }
+        }
+      }
+    },
+    "calendar.monthGrid.empty.requiresFullDataMessage": {
+      "comment": "农历月格因只有基础数据而为空时，提示用户下载完整日期数据。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "请先下载完整日期数据。"
+          }
+        }
+      }
+    },
+    "calendar.monthGrid.empty.requiresFullDataTitle": {
+      "comment": "农历月格尚未获得完整日期数据时的空状态标题。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "完整日期数据尚未下载"
+          }
+        }
+      }
+    },
+    "calendar.monthGrid.empty.title": {
+      "comment": "农历月格没有逐日记录时的空状态标题。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "没有日期数据"
+          }
+        }
+      }
+    },
+    "calendar.monthGrid.subtitle": {
+      "comment": "农历月格的辅助说明，表示按农历月内日序连续排列，不按星期分组。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "连续日序"
+          }
+        }
+      }
+    },
+    "calendar.monthGrid.title": {
+      "comment": "日历页面中逐日展示农历日期的网格分区标题。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "农历月格"
+          }
+        }
+      }
+    },
+    "calendar.monthNavigation.missingYear": {
+      "comment": "日历年月导航无法读取所属年份时的占位说明。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "年份数据缺失"
+          }
+        }
+      }
+    },
+    "calendar.monthNavigation.next": {
+      "comment": "日历年月导航中切换到后一个农历月的按钮名称。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "下个月"
+          }
+        }
+      }
+    },
+    "calendar.monthNavigation.nextHelp": {
+      "comment": "日历下个月按钮的帮助提示，说明会切换当前农历月。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "切换到下个月"
+          }
+        }
+      }
+    },
+    "calendar.monthNavigation.previous": {
+      "comment": "日历年月导航中切换到前一个农历月的按钮名称。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "上个月"
+          }
+        }
+      }
+    },
+    "calendar.monthNavigation.previousHelp": {
+      "comment": "日历上个月按钮的帮助提示，说明会切换当前农历月。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "切换到上个月"
+          }
+        }
+      }
+    },
+    "calendar.monthNavigation.title": {
+      "comment": "年月导航主标题；参数依次为干支年名和农历月名。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ %@"
+          }
+        }
+      }
+    },
+    "calendar.monthNavigation.today": {
+      "comment": "日历工具栏定位到今天所在日期和农历月的操作名称。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "今天"
+          }
+        }
+      }
+    },
+    "calendar.title": {
+      "comment": "日历 Tab 及其日期浏览首页的导航标题。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "日历"
+          }
+        }
+      }
+    },
+    "calendar.unavailable.missingDateMessage": {
+      "comment": "日历目标无法解析为具体农历日时，解释导航内容不可用的原因。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "当前导航地址无法解析为一个具体农历日。"
+          }
+        }
+      }
+    },
+    "calendar.unavailable.missingDateTitle": {
+      "comment": "日历导航目标对应日期不存在时的不可用状态标题。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "没有找到日期"
+          }
+        }
+      }
+    },
+    "calendar.unavailable.requiresFullDataMessage": {
+      "comment": "只有年份和月份基础数据时，解释逐日浏览需要先下载完整日期数据。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "当前内置数据只有年份和月份。请先下载完整日期数据，再浏览日历。"
+          }
+        }
+      }
+    },
+    "calendar.unavailable.requiresFullDataTitle": {
+      "comment": "日历目标因缺少逐日记录而不可用时的标题。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "需要完整日期数据"
+          }
+        }
+      }
+    },
+    "calendar.yearPicker.accessibilityHint": {
+      "comment": "日历年份入口的无障碍提示，说明激活后会打开年份选择器。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "打开年份选择器"
+          }
+        }
+      }
+    },
+    "calendar.yearPicker.century.beforeCommonEra": {
+      "comment": "年份选择器分区标题；参数为没有 0 世纪的正整数世纪序号。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "公元前 %lld 世纪"
+          }
+        }
+      }
+    },
+    "calendar.yearPicker.century.beforeCommonEraIndex": {
+      "comment": "年份选择器侧边索引；参数为公元前的正整数世纪序号。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "前%lld"
+          }
+        }
+      }
+    },
+    "calendar.yearPicker.century.commonEra": {
+      "comment": "年份选择器分区标题；参数为没有 0 世纪的正整数世纪序号。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "公元 %lld 世纪"
+          }
+        }
+      }
+    },
+    "calendar.yearPicker.title": {
+      "comment": "用于跳转到指定农历年的年份选择页面标题。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "年份选择器"
+          }
+        }
+      }
+    },
+    "common.action.close": {
+      "comment": "用于关闭当前弹出页面或详情的通用按钮名称。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "关闭"
+          }
+        }
+      }
+    },
+    "common.action.done": {
+      "comment": "用于结束当前操作并离开临时页面的通用按钮名称。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "完成"
+          }
+        }
+      }
+    },
+    "common.action.ok": {
+      "comment": "提示弹窗中确认已知晓信息并关闭弹窗的通用按钮名称。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "好"
+          }
+        }
+      }
+    },
+    "common.action.retry": {
+      "comment": "可恢复错误状态中重新执行失败操作的通用按钮名称。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "重试"
+          }
+        }
+      }
+    },
+    "common.datePrecision.bound": {
+      "comment": "单个日期边界；参数依次为精度名称和连续索引。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ %@"
+          }
+        }
+      }
+    },
+    "common.datePrecision.bounds": {
+      "comment": "不确定日期区间；参数依次为下界与上界的精度和索引。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "范围精度 · %@ 到 %@"
+          }
+        }
+      }
+    },
+    "common.datePrecision.day": {
+      "comment": "历史日期的精度标签，表示资料可精确到日。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "日精度"
+          }
+        }
+      }
+    },
+    "common.datePrecision.indexed": {
+      "comment": "来源日期精度与索引；参数依次为精度名称和不加千位分隔的连续索引。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ · index %@"
+          }
+        }
+      }
+    },
+    "common.datePrecision.month": {
+      "comment": "历史日期的精度标签，表示资料只能精确到月。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "月精度"
+          }
+        }
+      }
+    },
+    "common.datePrecision.range": {
+      "comment": "历史日期的精度标签，表示资料只给出一个范围。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "范围精度"
+          }
+        }
+      }
+    },
+    "common.datePrecision.unknown": {
+      "comment": "历史日期的精度标签，表示资料未提供可判定的时间精度。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "精度未知"
+          }
+        }
+      }
+    },
+    "common.datePrecision.year": {
+      "comment": "历史日期的精度标签，表示资料只能精确到年。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "年精度"
+          }
+        }
+      }
+    },
+    "common.error.retryLater": {
+      "comment": "可恢复错误提示中的通用建议，表示稍后再次尝试当前操作。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "请稍后再试。"
+          }
+        }
+      }
+    },
+    "common.value.empty": {
+      "comment": "没有可呈现的状态时使用的空值，不向用户朗读。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": ""
+          }
+        }
+      }
+    },
+    "common.value.unavailable": {
+      "comment": "缺失日期的简短占位符。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "-"
+          }
+        }
+      }
+    },
+    "history.boundary.claimed": {
+      "comment": "历史边界对照中的来源类别标签，表示朝代自称的起止时间。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "自称"
+          }
+        }
+      }
+    },
+    "history.boundary.claimedDynasty": {
+      "comment": "历史边界摘要中标识朝代自称时间范围的栏目标题。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "朝代自称"
+          }
+        }
+      }
+    },
+    "history.boundary.comparison.differentBoundary": {
+      "comment": "历史边界比较结果，表示自称与正统记录的边界不相同。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "边界不同"
+          }
+        }
+      }
+    },
+    "history.boundary.comparison.differentPrecision": {
+      "comment": "历史边界比较结果，表示两个日期的记录精度不一致。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "边界精度不同"
+          }
+        }
+      }
+    },
+    "history.boundary.comparison.differentSource": {
+      "comment": "历史边界比较结果，表示两个日期来自不同的来源文字。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "边界来源不同"
+          }
+        }
+      }
+    },
+    "history.boundary.comparison.earlier": {
+      "comment": "边界比较；参数为正统边界早于自称边界的年数。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正统早 %lld 年"
+          }
+        }
+      }
+    },
+    "history.boundary.comparison.endSummary": {
+      "comment": "结束边界差异；参数为比较结果。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "结束%@"
+          }
+        }
+      }
+    },
+    "history.boundary.comparison.later": {
+      "comment": "边界比较；参数为正统边界晚于自称边界的年数。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正统晚 %lld 年"
+          }
+        }
+      }
+    },
+    "history.boundary.comparison.message": {
+      "comment": "朝代详情的时间边界分区说明，解释正在比较自称起止与正统时间线。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "对比朝代自称起止与正统时间线采用的边界。"
+          }
+        }
+      }
+    },
+    "history.boundary.comparison.missingMessage": {
+      "comment": "朝代边界对照缺少正统边界关系时，解释当前存储中的资料缺口。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "当前 SwiftData store 还没有为这个朝代关联正统开始和结束边界。"
+          }
+        }
+      }
+    },
+    "history.boundary.comparison.sameBoundary": {
+      "comment": "历史边界比较结果，表示自称与正统记录指向同一边界。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "同一边界"
+          }
+        }
+      }
+    },
+    "history.boundary.comparison.sameSource": {
+      "comment": "历史边界比较结果，表示两个日期保留了相同来源文字。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "同一来源文本"
+          }
+        }
+      }
+    },
+    "history.boundary.comparison.sameYear": {
+      "comment": "历史边界比较结果，表示两个边界落在同一年。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "同年"
+          }
+        }
+      }
+    },
+    "history.boundary.comparison.startSummary": {
+      "comment": "开始边界差异；参数为比较结果。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "开始%@"
+          }
+        }
+      }
+    },
+    "history.boundary.comparison.summary": {
+      "comment": "起止边界差异摘要；参数依次为开始和结束的比较结果。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "开始%@，结束%@"
+          }
+        }
+      }
+    },
+    "history.boundary.comparison.title": {
+      "comment": "朝代详情中比较自称与正统起止日期的分区标题。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "时间边界"
+          }
+        }
+      }
+    },
+    "history.boundary.dayIndex": {
+      "comment": "边界日期；参数为连续日序。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "日序 %lld"
+          }
+        }
+      }
+    },
+    "history.boundary.end": {
+      "comment": "历史边界对照中结束日期一行的标签。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "结束"
+          }
+        }
+      }
+    },
+    "history.boundary.event.endDetail": {
+      "comment": "正统时间线边界事件；参数为朝代简称。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "当前正统时间线在这一边界结束%@时期。"
+          }
+        }
+      }
+    },
+    "history.boundary.event.endTitle": {
+      "comment": "正统时间线边界事件；参数为朝代简称。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@正统期结束"
+          }
+        }
+      }
+    },
+    "history.boundary.event.startDetail": {
+      "comment": "正统时间线边界事件；参数为朝代简称。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@从这一边界进入当前正统时间线。"
+          }
+        }
+      }
+    },
+    "history.boundary.event.startTitle": {
+      "comment": "正统时间线边界事件；参数为朝代简称。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@正统期开始"
+          }
+        }
+      }
+    },
+    "history.boundary.missingData": {
+      "comment": "历史边界单元格缺少可显示资料时的占位文字。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "当前数据缺失"
+          }
+        }
+      }
+    },
+    "history.boundary.monthIndex": {
+      "comment": "边界日期；参数为连续农历月序。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "月序 %lld"
+          }
+        }
+      }
+    },
+    "history.boundary.namedPeriod": {
+      "comment": "正统时期标题；参数为来源数据中的时期名。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正统期 · %@"
+          }
+        }
+      }
+    },
+    "history.boundary.orthodox": {
+      "comment": "历史边界对照中的来源类别标签，表示正统时间线采用的起止时间。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正统"
+          }
+        }
+      }
+    },
+    "history.boundary.period": {
+      "comment": "历史起讫页面中正统时期记录的类别标签。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正统期"
+          }
+        }
+      }
+    },
+    "history.boundary.source.claimedEnd": {
+      "comment": "边界来源详情中朝代自称结束日期的字段标题。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "自称结束"
+          }
+        }
+      }
+    },
+    "history.boundary.source.claimedStart": {
+      "comment": "边界来源详情中朝代自称开始日期的字段标题。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "自称开始"
+          }
+        }
+      }
+    },
+    "history.boundary.source.detail": {
+      "comment": "边界来源详情；参数依次为精度/索引和未经改写的来源文本。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ · %@"
+          }
+        }
+      }
+    },
+    "history.boundary.source.notedDetail": {
+      "comment": "带备注的边界来源详情；参数依次为精度/索引、来源文本、来源备注。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ · %@ · %@"
+          }
+        }
+      }
+    },
+    "history.boundary.source.orthodoxEnd": {
+      "comment": "边界来源详情中正统时间线结束日期的字段标题。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正统结束"
+          }
+        }
+      }
+    },
+    "history.boundary.source.orthodoxStart": {
+      "comment": "边界来源详情中正统时间线开始日期的字段标题。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正统开始"
+          }
+        }
+      }
+    },
+    "history.boundary.source.title": {
+      "comment": "历史边界详情中展示原始来源及日期精度的分区标题。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "来源和精度"
+          }
+        }
+      }
+    },
+    "history.boundary.start": {
+      "comment": "历史边界对照中开始日期一行的标签。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "开始"
+          }
+        }
+      }
+    },
+    "history.boundary.timeline": {
+      "comment": "历史边界摘要中标识正统时间线所采用日期的栏目标题。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正统时间线"
+          }
+        }
+      }
+    },
+    "history.boundary.unknown": {
+      "comment": "历史边界缺少可确定日期时的简短占位文字。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "不详"
+          }
+        }
+      }
+    },
+    "history.date.beforeCommonEra": {
+      "comment": "历史年份简写；参数为公元前的正整数年份，不加千位分隔。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "前%@"
+          }
+        }
+      }
+    },
+    "history.date.duration": {
+      "comment": "在位或年号使用时长；参数为年数。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld 年"
+          }
+        }
+      }
+    },
+    "history.date.range": {
+      "comment": "历史日期区间；参数依次为已格式化的起点和终点。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@—%@"
+          }
+        }
+      }
+    },
+    "history.date.unknown": {
+      "comment": "历史日期格式化无法确定时间时的通用占位说明。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "时间待考"
+          }
+        }
+      }
+    },
+    "history.dynastyCard.statistics": {
+      "comment": "朝代卡片统计；参数依次为皇帝人数和年号数量。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld 位皇帝 · %lld 个年号"
+          }
+        }
+      }
+    },
+    "history.dynastyCard.unavailable": {
+      "comment": "朝代卡片缺少相关统计或边界资料时的占位说明。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "资料暂缺"
+          }
+        }
+      }
+    },
+    "history.dynastyDetail.fact.emperorUnit": {
+      "comment": "朝代详情皇帝数量事实卡中，紧随数量展示的计数单位。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "位皇帝"
+          }
+        }
+      }
+    },
+    "history.dynastyDetail.fact.emperorsAccessibilityLabel": {
+      "comment": "皇帝入口朗读；参数依次为朝代简称和皇帝人数。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "查看%@朝 %lld 位皇帝"
+          }
+        }
+      }
+    },
+    "history.dynastyDetail.fact.reignEraUnit": {
+      "comment": "朝代详情年号数量事实卡中，紧随数量展示的计数单位。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "个年号"
+          }
+        }
+      }
+    },
+    "history.dynastyDetail.fact.reignErasAccessibilityLabel": {
+      "comment": "年号入口朗读；参数依次为朝代简称和年号数量。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "查看%@朝 %lld 个年号"
+          }
+        }
+      }
+    },
+    "history.dynastyDetail.fact.spanAccessibilityLabel": {
+      "comment": "国祚入口朗读；参数依次为朝代简称和国祚年数。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "查看%@朝国祚与起讫，共 %lld 年"
+          }
+        }
+      }
+    },
+    "history.dynastyDetail.fact.unknownSpanAccessibilityLabel": {
+      "comment": "国祚资料不全的入口朗读；参数为朝代简称。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "查看%@朝国祚与起讫，国祚暂无"
+          }
+        }
+      }
+    },
+    "history.dynastyDetail.fact.yearUnit": {
+      "comment": "朝代详情国祚时长事实卡中，紧随年数展示的时间单位。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "年"
+          }
+        }
+      }
+    },
+    "history.dynastyDetail.unavailable.message": {
+      "comment": "按朝代进入详情但记录不存在时，解释内容不可用的原因。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "这个朝代记录不在当前 SwiftData store 中。"
+          }
+        }
+      }
+    },
+    "history.dynastyDetail.unavailable.periodMessage": {
+      "comment": "按正统时期进入朝代详情但关联记录不存在时，解释内容不可用的原因。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "对应的朝代或正统期记录不在当前 SwiftData store 中。"
+          }
+        }
+      }
+    },
+    "history.dynastyDetail.unavailable.title": {
+      "comment": "朝代详情无法找到目标记录时的不可用状态标题。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "没有找到朝代"
+          }
+        }
+      }
+    },
+    "history.dynastySpan.boundaryEyebrow": {
+      "comment": "朝代起讫页面边界对照区域的辅助栏目标签。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "边界对照"
+          }
+        }
+      }
+    },
+    "history.dynastySpan.boundaryTitle": {
+      "comment": "朝代起讫页面中对照自称日期与正统时期的分区标题。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "朝代自称与正统期"
+          }
+        }
+      }
+    },
+    "history.dynastySpan.duration": {
+      "comment": "国祚时长；参数为两边界之间的年数。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "国祚 %lld 年"
+          }
+        }
+      }
+    },
+    "history.dynastySpan.eventsEyebrow": {
+      "comment": "朝代起讫页面边界事件区域的辅助栏目标签。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "相关说明"
+          }
+        }
+      }
+    },
+    "history.dynastySpan.eventsTitle": {
+      "comment": "朝代起讫页面中说明关键边界变动的事件分区标题。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "关键边界事件"
+          }
+        }
+      }
+    },
+    "history.dynastySpan.subtitle": {
+      "comment": "朝代起讫副标题；参数为朝代简称或名称。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ · 正统时间线"
+          }
+        }
+      }
+    },
+    "history.dynastySpan.title": {
+      "comment": "展示朝代自称起止、正统时期及国祚的详情页面标题。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "朝代起讫"
+          }
+        }
+      }
+    },
+    "history.dynastySpan.unavailable.title": {
+      "comment": "朝代起讫详情缺少目标记录时的不可用状态标题。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "没有找到朝代起讫"
+          }
+        }
+      }
+    },
+    "history.dynastySpan.unavailableDuration": {
+      "comment": "朝代起讫页面无法计算国祚年数时的占位说明。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "国祚暂无"
+          }
+        }
+      }
+    },
+    "history.emperorCard.accessibilityIntroduction": {
+      "comment": "皇帝卡片朗读开头；参数依次为列表序号和姓名。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "第 %@ 位，%@"
+          }
+        }
+      }
+    },
+    "history.emperorCard.eraNamesAccessibilityLabel": {
+      "comment": "年号标签组朗读；参数为本地化连接的年号名称列表。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "年号：%@"
+          }
+        }
+      }
+    },
+    "history.emperorCard.multipleReignsDuration": {
+      "comment": "多段在位的时长；参数依次为段数和合计年数。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld 段在位 · %lld 年"
+          }
+        }
+      }
+    },
+    "history.emperorCard.twoReignsDuration": {
+      "comment": "两段在位的时长；参数为合计年数。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "两度在位 · %lld 年"
+          }
+        }
+      }
+    },
+    "history.emperorCard.unknownReign": {
+      "comment": "皇帝卡片缺少在位区间资料时的占位说明。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在位时间待考"
+          }
+        }
+      }
+    },
+    "history.emperorDetail.dynastyLabel": {
+      "comment": "皇帝详情基本资料中所属朝代字段的标签。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "朝代"
+          }
+        }
+      }
+    },
+    "history.emperorDetail.eraCount": {
+      "comment": "皇帝年号数量；参数为个数。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld 个"
+          }
+        }
+      }
+    },
+    "history.emperorDetail.namesTitle": {
+      "comment": "皇帝详情中汇总本名、庙号及谥号的称号分区标题。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "称号"
+          }
+        }
+      }
+    },
+    "history.emperorDetail.personalNameLabel": {
+      "comment": "皇帝详情称号分区中出生姓名字段的标签。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "本名"
+          }
+        }
+      }
+    },
+    "history.emperorDetail.posthumousNameLabel": {
+      "comment": "皇帝详情称号分区中谥号或来源保留称号字段的标签。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "谥号/称号"
+          }
+        }
+      }
+    },
+    "history.emperorDetail.reignErasTitle": {
+      "comment": "皇帝详情中展示其使用年号的分区标题。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "年号"
+          }
+        }
+      }
+    },
+    "history.emperorDetail.reignLabel": {
+      "comment": "皇帝详情基本资料中在位时间字段的标签。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在位"
+          }
+        }
+      }
+    },
+    "history.emperorDetail.segmentCount": {
+      "comment": "皇帝在位区间数量；参数为段数。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld 段"
+          }
+        }
+      }
+    },
+    "history.emperorDetail.segmentTitle": {
+      "comment": "在位区间标题；参数为从 1 开始的区间序号。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "第 %lld 段在位"
+          }
+        }
+      }
+    },
+    "history.emperorDetail.segmentsTitle": {
+      "comment": "皇帝详情中按记录分别展示各次在位区间的分区标题。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在位区间"
+          }
+        }
+      }
+    },
+    "history.emperorDetail.templeNameLabel": {
+      "comment": "皇帝详情称号分区中庙号字段的标签。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "庙号"
+          }
+        }
+      }
+    },
+    "history.emperorDetail.unavailable.message": {
+      "comment": "皇帝详情记录不存在时，解释当前存储缺少该人物资料。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "这个皇帝记录不在当前 SwiftData store 中。"
+          }
+        }
+      }
+    },
+    "history.emperorDetail.unavailable.title": {
+      "comment": "皇帝详情无法找到目标人物时的不可用状态标题。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "没有找到皇帝"
+          }
+        }
+      }
+    },
+    "history.emperorList.empty.message": {
+      "comment": "朝代帝王列表为空时，解释当前存储没有该朝代的皇帝记录。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "当前 store 中没有这个朝代的皇帝记录。"
+          }
+        }
+      }
+    },
+    "history.emperorList.empty.title": {
+      "comment": "朝代帝王列表没有记录时的空状态标题。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "没有帝王资料"
+          }
+        }
+      }
+    },
+    "history.emperorList.summary": {
+      "comment": "皇帝列表摘要；参数依次为人数和在位区间数。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld 位皇帝 · %lld 段纪年"
+          }
+        }
+      }
+    },
+    "history.emperorList.title": {
+      "comment": "展示某朝代皇帝与在位记录的列表页面标题。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "帝王"
+          }
+        }
+      }
+    },
+    "history.emperorSummary.missingNames": {
+      "comment": "皇帝摘要缺少来源中其他姓名或称号时的占位说明。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未记录别名"
+          }
+        }
+      }
+    },
+    "history.emperorSummary.subtitle": {
+      "comment": "皇帝摘要；参数依次为本名/庙号/称号列表、在位段数、年号数量。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ · %lld 段在位 · %lld 个年号"
+          }
+        }
+      }
+    },
+    "history.reignEraCard.emperor": {
+      "comment": "年号卡片所属皇帝；参数依次为姓名和庙号/称号。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ · %@"
+          }
+        }
+      }
+    },
+    "history.reignEraDetail.boundaryEyebrow": {
+      "comment": "年号详情日期边界区域的辅助栏目标签，表示年号使用范围。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "使用区间"
+          }
+        }
+      }
+    },
+    "history.reignEraDetail.boundaryTitle": {
+      "comment": "年号详情中展示启用与结束时间的边界分区标题。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "纪年边界"
+          }
+        }
+      }
+    },
+    "history.reignEraDetail.emperorSequence": {
+      "comment": "所属皇帝卡片副标题；参数为朝代简称。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@朝皇帝序列"
+          }
+        }
+      }
+    },
+    "history.reignEraDetail.emperorTitle": {
+      "comment": "年号详情中展示使用该年号的皇帝的分区标题。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "所属皇帝"
+          }
+        }
+      }
+    },
+    "history.reignEraDetail.noteSeal": {
+      "comment": "年号交接说明旁的单字装饰印记，表示此处有资料备注。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "记"
+          }
+        }
+      }
+    },
+    "history.reignEraDetail.notesEyebrow": {
+      "comment": "年号详情来源备注区域的辅助栏目标签。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "沿革说明"
+          }
+        }
+      }
+    },
+    "history.reignEraDetail.notesTitle": {
+      "comment": "年号详情中解释沿用、交接等来源备注的分区标题。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "年号交接"
+          }
+        }
+      }
+    },
+    "history.reignEraDetail.subtitle": {
+      "comment": "年号详情副标题；参数依次为朝代名和从 1 开始的年号序号。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ · 第 %lld 个年号"
+          }
+        }
+      }
+    },
+    "history.reignEraDetail.unavailable.message": {
+      "comment": "年号详情记录不存在时，解释当前存储缺少该年号资料。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "这个年号记录不在当前 SwiftData store 中。"
+          }
+        }
+      }
+    },
+    "history.reignEraDetail.unavailable.title": {
+      "comment": "年号详情无法找到目标记录时的不可用状态标题。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "没有找到年号"
+          }
+        }
+      }
+    },
+    "history.reignEraList.count": {
+      "comment": "年号列表摘要；参数为年号数量。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld 个年号"
+          }
+        }
+      }
+    },
+    "history.reignEraList.empty.message": {
+      "comment": "朝代年号列表为空时，解释当前存储没有该朝代的年号记录。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "当前 store 中没有这个朝代的年号记录。"
+          }
+        }
+      }
+    },
+    "history.reignEraList.empty.title": {
+      "comment": "朝代年号列表没有记录时的空状态标题。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "没有年号资料"
+          }
+        }
+      }
+    },
+    "history.reignEraList.summary": {
+      "comment": "年号列表摘要；参数依次为年号数量和朝代起讫日期。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld 个年号 · %@"
+          }
+        }
+      }
+    },
+    "history.reignEraList.title": {
+      "comment": "展示某朝代年号及其使用区间的列表页面标题。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "年号"
+          }
+        }
+      }
+    },
+    "history.timeline.empty.message": {
+      "comment": "历史首页时间线为空时，解释当前存储没有默认正统传统的记录。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "当前 store 没有默认正统传统的时间线记录。"
+          }
+        }
+      }
+    },
+    "history.timeline.empty.title": {
+      "comment": "历史首页没有可展示的朝代时间线时的空状态标题。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "没有可显示的朝代"
+          }
+        }
+      }
+    },
+    "history.timeline.listTitle": {
+      "comment": "历史首页按时间浏览朝代的列表分区标题。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "朝代序列"
+          }
+        }
+      }
+    },
+    "history.timeline.sortLabel": {
+      "comment": "历史首页朝代列表的排序说明，表示以起始年代排列。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "按起始年代"
+          }
+        }
+      }
+    },
+    "history.timeline.subtitle": {
+      "comment": "历史首页导航说明，引导用户沿正统时间线进入朝代纪年资料。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "沿正统时间线，进入一个朝代的纪年体系"
+          }
+        }
+      }
+    },
+    "history.timeline.title": {
+      "comment": "历史 Tab 及朝代时间线首页的导航标题。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "朝代"
+          }
+        }
+      }
+    },
+    "settings.appearance.dark": {
+      "comment": "设置页颜色模式选项，表示始终使用深色外观。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "深色"
+          }
+        }
+      }
+    },
+    "settings.appearance.light": {
+      "comment": "设置页颜色模式选项，表示始终使用浅色外观。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "浅色"
+          }
+        }
+      }
+    },
+    "settings.appearance.pickerLabel": {
+      "comment": "设置页用于选择跟随系统、浅色或深色外观的控件标签。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "颜色模式"
+          }
+        }
+      }
+    },
+    "settings.appearance.system": {
+      "comment": "设置页颜色模式选项，表示使用系统当前的外观设置。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "跟随系统"
+          }
+        }
+      }
+    },
+    "settings.appearance.title": {
+      "comment": "设置页包含颜色模式选择器的外观分区标题。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "外观"
+          }
+        }
+      }
+    },
+    "settings.clearData.action": {
+      "comment": "设置页发起删除已下载日期数据及缓存的操作名称。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "清空已下载数据"
+          }
+        }
+      }
+    },
+    "settings.clearData.confirmationMessage": {
+      "comment": "清空下载数据前的确认说明，告知会取消下载、删除缓存并恢复内置基础数据。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "这会取消正在进行的完整数据下载，删除下载缓存，并恢复到内置基础日历数据。"
+          }
+        }
+      }
+    },
+    "settings.clearData.confirmationTitle": {
+      "comment": "设置页执行清空下载数据前的确认弹窗标题。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "清空已下载数据？"
+          }
+        }
+      }
+    },
+    "settings.clearData.failureTitle": {
+      "comment": "设置页清空下载数据失败时的结果弹窗标题。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "清空失败"
+          }
+        }
+      }
+    },
+    "settings.clearData.progress": {
+      "comment": "设置页正在清空下载数据时的操作状态文字。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在清空"
+          }
+        }
+      }
+    },
+    "settings.clearData.successMessage": {
+      "comment": "清空操作成功后的结果说明，告知已恢复为内置基础数据。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已删除下载数据，并恢复到内置基础日历数据。"
+          }
+        }
+      }
+    },
+    "settings.clearData.successTitle": {
+      "comment": "设置页清空下载数据成功时的结果弹窗标题。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已清空"
+          }
+        }
+      }
+    },
+    "settings.data.base.message": {
+      "comment": "设置页正在使用基础数据时，说明仍可清理未完成下载留下的缓存。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "没有已安装的完整日期数据；仍可清理未完成的下载缓存。"
+          }
+        }
+      }
+    },
+    "settings.data.base.title": {
+      "comment": "设置页数据状态标题，表示当前正在使用内置年份和月份资料。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在使用内置基础数据"
+          }
+        }
+      }
+    },
+    "settings.data.downloading.message": {
+      "comment": "设置页下载进行中的说明，告知清空操作会取消下载并删除临时文件。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "清空会取消当前下载，并删除已经保存的临时文件。"
+          }
+        }
+      }
+    },
+    "settings.data.downloading.title": {
+      "comment": "设置页数据状态标题，表示完整日期数据正在下载。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "完整数据下载中"
+          }
+        }
+      }
+    },
+    "settings.data.full.message": {
+      "comment": "设置页完整日期数据状态的说明，告知清空后逐日浏览需要重新下载。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "清空后会回到基础数据，日级记录需要重新下载完整数据后才能浏览。"
+          }
+        }
+      }
+    },
+    "settings.data.full.title": {
+      "comment": "设置页数据状态标题，表示完整日期数据已经可用。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已安装完整日期数据"
+          }
+        }
+      }
+    },
+    "settings.data.preparing.message": {
+      "comment": "设置页准备数据期间的说明，告知准备完成后可以清理缓存。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "日历数据准备完成后可以清理下载缓存。"
+          }
+        }
+      }
+    },
+    "settings.data.recovery.message": {
+      "comment": "设置页数据异常时的恢复建议，提示可清空下载数据并回到内置基础数据。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "可以尝试清空下载数据并恢复内置基础数据。"
+          }
+        }
+      }
+    },
+    "settings.data.recovery.title": {
+      "comment": "设置页数据状态标题，表示当前日历数据需要恢复。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "日历数据需要恢复"
+          }
+        }
+      }
+    },
+    "settings.data.title": {
+      "comment": "设置页展示数据安装状态及清空操作的分区标题。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "数据"
+          }
+        }
+      }
+    },
+    "settings.debug.downloadPreview": {
+      "comment": "设置页打开固定下载阶段及布局检查页面的入口名称。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "下载进度布局预览"
+          }
+        }
+      }
+    },
+    "settings.debug.downloadPreview.accessibilitySize": {
+      "comment": "下载布局调试页的字号选项，表示使用最大的辅助功能字号。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "辅助功能最大"
+          }
+        }
+      }
+    },
+    "settings.debug.downloadPreview.defaultSize": {
+      "comment": "下载布局调试页的字号选项，表示使用默认字号。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "默认"
+          }
+        }
+      }
+    },
+    "settings.debug.downloadPreview.detailsTitle": {
+      "comment": "下载布局调试页中完整列出各阶段状态说明的分区标题。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "完整阶段说明"
+          }
+        }
+      }
+    },
+    "settings.debug.downloadPreview.downloadFinished": {
+      "comment": "调试页固定文件传输阶段；百分比为模拟值。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "下载（100%，尚未校验）"
+          }
+        }
+      }
+    },
+    "settings.debug.downloadPreview.downloadStarted": {
+      "comment": "调试页固定文件传输阶段；百分比为模拟值。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "下载（0%）"
+          }
+        }
+      }
+    },
+    "settings.debug.downloadPreview.downloading": {
+      "comment": "调试页固定文件传输阶段；百分比为模拟值。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "下载（50%）"
+          }
+        }
+      }
+    },
+    "settings.debug.downloadPreview.instructions": {
+      "comment": "下载布局调试页的操作指引，说明滚动标签栏和旋转设备的检查方法。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "向下浏览列表可收起标签栏，向上返回可展开。也可旋转设备，检查不同可用宽度。"
+          }
+        }
+      }
+    },
+    "settings.debug.downloadPreview.instructionsTitle": {
+      "comment": "下载布局调试页中展示人工检查指引的分区标题。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "检查方式"
+          }
+        }
+      }
+    },
+    "settings.debug.downloadPreview.largeSize": {
+      "comment": "下载布局调试页的字号选项，表示使用加大的文字尺寸。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "加大"
+          }
+        }
+      }
+    },
+    "settings.debug.downloadPreview.message": {
+      "comment": "下载布局调试页的说明，告知固定进度展示不会执行真实下载或修改数据。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "这里只展示固定进度，不会下载或修改日历数据。"
+          }
+        }
+      }
+    },
+    "settings.debug.downloadPreview.scenariosTab": {
+      "comment": "下载布局调试页中切换固定进度场景的标签名称。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "进度场景"
+          }
+        }
+      }
+    },
+    "settings.debug.downloadPreview.sizePicker": {
+      "comment": "下载布局调试页的系统文字大小选择器标签。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dynamic Type"
+          }
+        }
+      }
+    },
+    "settings.debug.downloadPreview.sizeTitle": {
+      "comment": "下载布局调试页包含文字大小选择器的分区标题。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "字号"
+          }
+        }
+      }
+    },
+    "settings.debug.downloadPreview.stagesTitle": {
+      "comment": "下载布局调试页中可手动选择的固定下载阶段分区标题。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "固定下载阶段"
+          }
+        }
+      }
+    },
+    "settings.debug.downloadPreview.switchMessage": {
+      "comment": "下载布局调试页的切换检查说明，提示检查底部进度保留及详情入口。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "切换标签后，底部应保留当前进度。点击附件可查看完整说明。"
+          }
+        }
+      }
+    },
+    "settings.debug.downloadPreview.switchTab": {
+      "comment": "下载布局调试页用于验证切换标签后进度状态的标签名称。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "切换检查"
+          }
+        }
+      }
+    },
+    "settings.debug.downloadPreview.title": {
+      "comment": "用于检查固定下载进度布局的调试页面标题。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "下载进度预览"
+          }
+        }
+      }
+    },
+    "settings.debug.message": {
+      "comment": "设置页调试功能的说明，告知模拟过程不访问网络或修改实际日历数据库。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "只模拟下载进度，不访问网络、写入文件或替换日历数据库。"
+          }
+        }
+      }
+    },
+    "settings.debug.simulateDownload": {
+      "comment": "设置页启动完整数据下载进度模拟的操作名称。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "模拟完整数据下载"
+          }
+        }
+      }
+    },
+    "settings.debug.title": {
+      "comment": "设置页包含下载模拟与布局预览入口的调试分区标题。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "调试"
+          }
+        }
+      }
+    },
+    "settings.title": {
+      "comment": "设置 Tab 及其根页面的导航标题。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "设置"
+          }
+        }
+      }
+    },
+    "settings.unavailable.message": {
+      "comment": "设置页面因数据尚未准备完成而不可用时的原因说明。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "当前日历数据尚未准备完成。"
+          }
+        }
+      }
+    },
+    "settings.unavailable.title": {
+      "comment": "设置页面暂时无法打开时的不可用状态标题。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无法打开设置"
+          }
+        }
+      }
+    },
+    "store.bootstrap.failureTitle": {
+      "comment": "App 启动时无法打开日历存储的错误页面标题。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无法打开日历数据"
+          }
+        }
+      }
+    },
+    "store.bootstrap.preparing": {
+      "comment": "App 启动准备日历存储期间的加载状态说明。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在准备日历数据"
+          }
+        }
+      }
+    },
+    "store.contentLevel.base": {
+      "comment": "数据层级的显示名称，表示只包含年份和月份的内置资料。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "基础数据"
+          }
+        }
+      }
+    },
+    "store.contentLevel.full": {
+      "comment": "数据层级的显示名称，表示包含可逐日浏览的完整日期资料。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "完整日期数据"
+          }
+        }
+      }
+    },
+    "store.download.banner.action": {
+      "comment": "完整数据下载提示横幅中启动下载的按钮名称。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "下载"
+          }
+        }
+      }
+    },
+    "store.download.banner.title": {
+      "comment": "日历只使用基础数据时，提示可下载完整日期数据的横幅标题。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "可下载完整日期数据"
+          }
+        }
+      }
+    },
+    "store.download.completed.detail": {
+      "comment": "完整数据安装成功后的说明，提示现在可浏览逐日干支与对应民用日期。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "现在可以浏览每日干支和对应民用日期。"
+          }
+        }
+      }
+    },
+    "store.download.completed.shortTitle": {
+      "comment": "底部紧凑下载进度中表示全部数据已可用的简短状态标题。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已就绪"
+          }
+        }
+      }
+    },
+    "store.download.completed.summary": {
+      "comment": "完整数据下载流程成功结束时的状态摘要。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "完整日历数据已就绪"
+          }
+        }
+      }
+    },
+    "store.download.completed.title": {
+      "comment": "下载详情阶段列表中表示整个流程结束的阶段标题。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "完成"
+          }
+        }
+      }
+    },
+    "store.download.downloading.detail": {
+      "comment": "文件传输进度说明；第一个参数为 0 到 1 的下载比例，显示为整数百分比。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "文件已下载 %@。"
+          }
+        }
+      }
+    },
+    "store.download.downloading.shortTitle": {
+      "comment": "底部紧凑下载进度中正在传输文件的简短阶段标题。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "下载"
+          }
+        }
+      }
+    },
+    "store.download.downloading.title": {
+      "comment": "下载详情中正在传输完整数据文件的阶段标题。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "下载文件"
+          }
+        }
+      }
+    },
+    "store.download.failureTitle": {
+      "comment": "完整日期数据下载失败时的错误提示标题。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "完整数据下载失败"
+          }
+        }
+      }
+    },
+    "store.download.installing.detail": {
+      "comment": "下载详情中解释当前正在将完整数据安装到本地存储的状态说明。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在安装完整日历数据。"
+          }
+        }
+      }
+    },
+    "store.download.installing.shortTitle": {
+      "comment": "底部紧凑下载进度中安装文件的简短阶段标题。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "安装"
+          }
+        }
+      }
+    },
+    "store.download.installing.title": {
+      "comment": "下载详情中安装完整日期数据的阶段标题。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "安装数据"
+          }
+        }
+      }
+    },
+    "store.download.preparing.detail": {
+      "comment": "下载详情中解释当前正在获取下载所需信息的状态说明。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在准备下载所需的信息。"
+          }
+        }
+      }
+    },
+    "store.download.preparing.shortTitle": {
+      "comment": "底部紧凑下载进度中准备下载信息的简短阶段标题。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "准备"
+          }
+        }
+      }
+    },
+    "store.download.preparing.title": {
+      "comment": "下载详情中准备下载地址与文件信息的阶段标题。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "准备下载"
+          }
+        }
+      }
+    },
+    "store.download.progress.accessibilityHint": {
+      "comment": "底部下载进度入口的无障碍提示，说明激活后会打开完整状态详情。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "查看完整下载状态"
+          }
+        }
+      }
+    },
+    "store.download.progress.detailInputLabel": {
+      "comment": "下载进度详情入口的无障碍输入名称，供语音控制定位。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "查看下载状态"
+          }
+        }
+      }
+    },
+    "store.download.progress.inputLabel": {
+      "comment": "底部下载进度控件的无障碍输入名称，供语音控制定位。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "下载进度"
+          }
+        }
+      }
+    },
+    "store.download.progress.stage": {
+      "comment": "下载进度标题；参数依次为当前步骤序号、步骤总数和已本地化的阶段名称。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "第 %lld/%lld 步 · %@"
+          }
+        }
+      }
+    },
+    "store.download.step.completed": {
+      "comment": "下载详情阶段列表中，已完成步骤的状态标记。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已完成"
+          }
+        }
+      }
+    },
+    "store.download.step.current": {
+      "comment": "下载详情阶段列表中，当前正在执行步骤的状态标记。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "进行中"
+          }
+        }
+      }
+    },
+    "store.download.step.pending": {
+      "comment": "下载详情阶段列表中，尚未开始步骤的状态标记。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "等待开始"
+          }
+        }
+      }
+    },
+    "store.download.title": {
+      "comment": "展示完整日期数据下载、校验及安装过程的详情页面标题。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "完整数据下载"
+          }
+        }
+      }
+    },
+    "store.download.validating.detail": {
+      "comment": "下载详情中解释当前正在检查文件完整性的状态说明。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在确认下载文件完整。"
+          }
+        }
+      }
+    },
+    "store.download.validating.shortTitle": {
+      "comment": "底部紧凑下载进度中检查文件完整性的简短阶段标题。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "校验"
+          }
+        }
+      }
+    },
+    "store.download.validating.title": {
+      "comment": "下载详情中检查下载文件完整性的阶段标题。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "校验文件"
+          }
+        }
+      }
+    },
+    "store.error.clear": {
+      "comment": "日历数据操作失败时的用户提示与恢复建议；不暴露内部文件路径或诊断错误。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无法清空已下载数据，请稍后重试。"
+          }
+        }
+      }
+    },
+    "store.error.download": {
+      "comment": "日历数据操作失败时的用户提示与恢复建议；不暴露内部文件路径或诊断错误。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无法完成完整数据下载，请稍后重试。"
+          }
+        }
+      }
+    },
+    "store.error.expiredDownload": {
+      "comment": "日历数据操作失败时的用户提示与恢复建议；不暴露内部文件路径或诊断错误。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "下载缓存已经失效，请重新下载。"
+          }
+        }
+      }
+    },
+    "store.error.incompatible": {
+      "comment": "日历数据操作失败时的用户提示与恢复建议；不暴露内部文件路径或诊断错误。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "下载数据与当前 App 版本不兼容，请更新 App 后重试。"
+          }
+        }
+      }
+    },
+    "store.error.invalidFile": {
+      "comment": "日历数据操作失败时的用户提示与恢复建议；不暴露内部文件路径或诊断错误。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "下载文件不完整或校验失败，请重新下载。"
+          }
+        }
+      }
+    },
+    "store.error.invalidManifest": {
+      "comment": "日历数据操作失败时的用户提示与恢复建议；不暴露内部文件路径或诊断错误。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "下载信息无效，请稍后重试。"
+          }
+        }
+      }
+    },
+    "store.error.missingContainer": {
+      "comment": "日历数据操作失败时的用户提示与恢复建议；不暴露内部文件路径或诊断错误。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无法访问日历数据存储位置，请重新打开 App 后重试。"
+          }
+        }
+      }
+    },
+    "store.error.missingResource": {
+      "comment": "日历数据操作失败时的用户提示与恢复建议；不暴露内部文件路径或诊断错误。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "内置日历数据缺失，请重新安装 App 后重试。"
+          }
+        }
+      }
+    },
+    "store.error.network": {
+      "comment": "日历数据操作失败时的用户提示与恢复建议；不暴露内部文件路径或诊断错误。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无法连接下载服务，请检查网络连接后重试。"
+          }
+        }
+      }
+    },
+    "store.error.permission": {
+      "comment": "日历数据操作失败时的用户提示与恢复建议；不暴露内部文件路径或诊断错误。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无法访问日历数据文件，请重新打开 App 后重试。"
+          }
+        }
+      }
+    },
+    "store.error.prepare": {
+      "comment": "日历数据操作失败时的用户提示与恢复建议；不暴露内部文件路径或诊断错误。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无法读取日历数据，请重试；如果问题持续，请重新打开 App。"
+          }
+        }
+      }
+    },
+    "store.error.server": {
+      "comment": "服务端下载失败；参数为 HTTP 状态码，不加千位分隔。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "下载服务暂时不可用（HTTP %@），请稍后重试。"
+          }
+        }
+      }
+    },
+    "store.error.storage": {
+      "comment": "日历数据操作失败时的用户提示与恢复建议；不暴露内部文件路径或诊断错误。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "设备存储空间不足，请释放空间后重试。"
+          }
+        }
+      }
+    },
+    "store.error.timedOut": {
+      "comment": "日历数据操作失败时的用户提示与恢复建议；不暴露内部文件路径或诊断错误。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "下载连接超时，请稍后重试。"
+          }
+        }
+      }
+    }
+  },
+  "version": "1.0"
+}

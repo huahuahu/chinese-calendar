@@ -1,3 +1,4 @@
+import ChineseCalendarLocalization
 import ChineseCalendarPersistence
 import SFSafeSymbols
 import SwiftData
@@ -37,7 +38,7 @@ struct CalendarHistoryHomeView: View {
         ScrollView {
             timelineContent
         }
-        .navigationTitle("朝代")
+        .navigationTitle(CalendarStringKey.History.Timeline.title)
         #if os(iOS)
             .navigationBarTitleDisplayMode(.large)
         #endif
@@ -54,7 +55,7 @@ struct CalendarHistoryHomeView: View {
     }
 
     private var timelineIntroduction: some View {
-        Text("沿正统时间线，进入一个朝代的纪年体系")
+        Text(CalendarStringKey.History.Timeline.subtitle)
             .font(.subheadline)
             .foregroundStyle(.secondary)
             .padding(.bottom, Constants.introductionBottomPadding)
@@ -72,9 +73,9 @@ struct CalendarHistoryHomeView: View {
 
     private var emptyTimelineState: some View {
         ContentUnavailableView {
-            Label("没有可显示的朝代", systemSymbol: .timelineSelection)
+            Label(CalendarStringKey.History.Timeline.Empty.title, systemSymbol: .timelineSelection)
         } description: {
-            Text("当前 store 没有默认正统传统的时间线记录。")
+            Text(CalendarStringKey.History.Timeline.Empty.message)
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical)
@@ -82,13 +83,13 @@ struct CalendarHistoryHomeView: View {
 
     private var timelineSectionHeader: some View {
         HStack(alignment: .firstTextBaseline, spacing: Constants.sectionHeaderSpacing) {
-            Text("朝代序列")
+            Text(CalendarStringKey.History.Timeline.listTitle)
                 .font(.headline)
                 .bold()
 
             Spacer(minLength: Constants.sectionHeaderMinimumSpacerLength)
 
-            Text("按起始年代")
+            Text(CalendarStringKey.History.Timeline.sortLabel)
                 .font(.caption)
                 .foregroundStyle(.secondary)
         }

@@ -61,6 +61,9 @@ jobs:
       - name: Run lint
         run: ./Scripts/lint.sh
 
+      - name: Verify localized copy
+        run: python3 ./Scripts/validate_localized_copy.py
+
   test:
     name: Test
     runs-on: xcode-27

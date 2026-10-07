@@ -1,3 +1,4 @@
+import ChineseCalendarLocalization
 import SFSafeSymbols
 import SwiftUI
 
@@ -38,8 +39,11 @@ struct FullStoreDownloadBottomProgressView: View {
             .accessibilityValue(Text(progress.detail))
         }
         .buttonStyle(.plain)
-        .accessibilityHint("查看完整下载状态")
-        .accessibilityInputLabels([Text("下载进度"), Text("查看下载状态")])
+        .accessibilityHint(CalendarStringKey.Store.Download.Progress.accessibilityHint)
+        .accessibilityInputLabels([
+            Text(CalendarStringKey.Store.Download.Progress.inputLabel),
+            Text(CalendarStringKey.Store.Download.Progress.detailInputLabel)
+        ])
     }
 
     @ViewBuilder
@@ -88,20 +92,24 @@ struct FullStoreDownloadBottomProgressView: View {
 
     private var stageTitle: Text {
         if progress.phase == .completed {
-            return Text("完整日历数据已就绪")
+            return Text(CalendarStringKey.Store.Download.Completed.summary)
         }
 
         let stepCount = FullStoreDownloadPhase.allCases.count
-        return Text("第 \(progress.phase.rawValue)/\(stepCount) 步 · \(Text(progress.phase.title))")
+        return Text(CalendarStringKey.Store.Download.Progress.stage(
+            step: progress.phase.rawValue,
+            count: stepCount,
+            title: progress.phase.title
+        ))
     }
 
     private var compactTitle: Text {
         switch progress.phase {
-        case .preparingManifest: Text("准备")
-        case .downloading: Text("下载")
-        case .validating: Text("校验")
-        case .installing: Text("安装")
-        case .completed: Text("已就绪")
+        case .preparingManifest: Text(CalendarStringKey.Store.Download.Preparing.shortTitle)
+        case .downloading: Text(CalendarStringKey.Store.Download.Downloading.shortTitle)
+        case .validating: Text(CalendarStringKey.Store.Download.Validating.shortTitle)
+        case .installing: Text(CalendarStringKey.Store.Download.Installing.shortTitle)
+        case .completed: Text(CalendarStringKey.Store.Download.Completed.shortTitle)
         }
     }
 }

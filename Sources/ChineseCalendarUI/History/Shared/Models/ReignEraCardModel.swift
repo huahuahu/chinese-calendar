@@ -1,3 +1,4 @@
+import ChineseCalendarLocalization
 import ChineseCalendarPersistence
 
 struct ReignEraCardModel: Identifiable {
@@ -18,7 +19,7 @@ struct ReignEraCardModel: Identifiable {
         durationText = HistoryDateRangeFormatter.usageDurationYears(
             start: reignEra.startDate,
             exclusiveEnd: reignEra.endDate
-        ).map { "\($0) 年" }
+        ).map { String(localized: CalendarStringKey.History.Date.duration(years: $0)) }
         emperorName = reignEra.emperor.personalName ?? reignEra.emperor.displayName
         emperorTitle = reignEra.emperor.templeName ?? reignEra.emperor.posthumousName
     }
@@ -41,15 +42,14 @@ struct ReignEraCardModel: Identifiable {
 
     var emperorText: String {
         if let emperorTitle {
-            "\(emperorName) · \(emperorTitle)"
+            String(localized: CalendarStringKey.History.ReignEraCard.emperor(name: emperorName, title: emperorTitle))
         } else {
             emperorName
         }
     }
 
     var accessibilityLabel: String {
-        [name, usageRangeText, durationText, emperorText]
-            .compactMap(\.self)
-            .joined(separator: "，")
+        CalendarStringKey.Common.List.names([name, usageRangeText, durationText, emperorText]
+            .compactMap(\.self))
     }
 }

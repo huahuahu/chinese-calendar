@@ -1,3 +1,4 @@
+import ChineseCalendarLocalization
 import SFSafeSymbols
 import SwiftUI
 
@@ -28,11 +29,11 @@ struct FullStoreDownloadDetailView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding()
             }
-            .navigationTitle("完整数据下载")
+            .navigationTitle(CalendarStringKey.Store.Download.title)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("关闭", systemSymbol: .xmark) {
+                    Button(CalendarStringKey.Common.Action.close, systemSymbol: .xmark) {
                         dismiss()
                     }
                 }

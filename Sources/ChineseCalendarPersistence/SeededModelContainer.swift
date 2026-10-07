@@ -17,12 +17,12 @@ public enum ChineseCalendarSeedStoreContentLevel: String, Codable, Sendable {
     case full
 }
 
-enum ChineseCalendarStoreError: Error, LocalizedError {
+public enum ChineseCalendarStoreError: Error, LocalizedError {
     case missingAppGroupContainer(String)
     case missingSeedResource(String)
     case missingSeedStore(URL)
 
-    var errorDescription: String? {
+    public var errorDescription: String? {
         switch self {
         case let .missingAppGroupContainer(identifier):
             "Unable to open the app group container for \(identifier). Check the App Groups entitlement."

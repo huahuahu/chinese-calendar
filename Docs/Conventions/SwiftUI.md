@@ -16,6 +16,7 @@
 
 - 使用嵌套在对应 View 内的 `private struct Constants`，集中管理仅供该 View 使用的间距、内边距、尺寸、圆角、透明度等展示常量。
 - 业务数据，以及 `.tint`、`.secondary`、`.headline` 等具有明确系统语义的样式，不放入 `Constants`。
+- 用户可见文案遵循[文案与本地化规范](Localization.md)，不放进 View 的 `Constants` 或局部字面量。
 
 ## 验证与维护
 

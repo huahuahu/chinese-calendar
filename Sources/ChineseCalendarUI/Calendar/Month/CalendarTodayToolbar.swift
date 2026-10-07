@@ -1,3 +1,4 @@
+import ChineseCalendarLocalization
 import SFSafeSymbols
 import SwiftUI
 
@@ -10,8 +11,12 @@ struct CalendarTodayToolbar: ToolbarContent {
 
     var body: some ToolbarContent {
         ToolbarItem(placement: .primaryAction) {
-            Button("今天", systemSymbol: .calendarBadgeClock, action: selectToday)
-                .labelStyle(TodayLabelStyle(showsTitle: toolbarVerticalEdge == nil))
+            Button(
+                CalendarStringKey.Calendar.MonthNavigation.today,
+                systemSymbol: .calendarBadgeClock,
+                action: selectToday
+            )
+            .labelStyle(TodayLabelStyle(showsTitle: toolbarVerticalEdge == nil))
         }
     }
 

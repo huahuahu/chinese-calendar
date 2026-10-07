@@ -1,3 +1,4 @@
+import ChineseCalendarLocalization
 import ChineseCalendarPersistence
 import SFSafeSymbols
 import SwiftData
@@ -51,7 +52,7 @@ struct EmperorListView: View {
         ScrollView {
             emperorListContent
         }
-        .navigationTitle("帝王")
+        .navigationTitle(CalendarStringKey.History.EmperorList.title)
         #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
         #endif
@@ -68,17 +69,20 @@ struct EmperorListView: View {
     }
 
     private var listSummary: some View {
-        Text("\(emperors.count) 位皇帝 · \(reignSegmentCount) 段纪年")
-            .font(.caption)
-            .foregroundStyle(.secondary)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.horizontal, Constants.summaryHorizontalInset)
-            .padding(.bottom, Constants.summaryBottomPadding)
-            .overlay(alignment: .bottom) {
-                Rectangle()
-                    .fill(.quaternary)
-                    .frame(height: Constants.separatorHeight)
-            }
+        Text(String(localized: CalendarStringKey.History.EmperorList.summary(
+            emperorCount: emperors.count,
+            segmentCount: reignSegmentCount
+        )))
+        .font(.caption)
+        .foregroundStyle(.secondary)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal, Constants.summaryHorizontalInset)
+        .padding(.bottom, Constants.summaryBottomPadding)
+        .overlay(alignment: .bottom) {
+            Rectangle()
+                .fill(.quaternary)
+                .frame(height: Constants.separatorHeight)
+        }
     }
 
     @ViewBuilder
@@ -94,18 +98,18 @@ struct EmperorListView: View {
 
     private var emptyEmperorListState: some View {
         ContentUnavailableView {
-            Label("没有帝王资料", systemSymbol: .personCropCircleBadgeQuestionmark)
+            Label(CalendarStringKey.History.EmperorList.Empty.title, systemSymbol: .personCropCircleBadgeQuestionmark)
         } description: {
-            Text("当前 store 中没有这个朝代的皇帝记录。")
+            Text(CalendarStringKey.History.EmperorList.Empty.message)
         }
         .frame(maxWidth: .infinity)
     }
 
     private var missingDynastyState: some View {
         ContentUnavailableView {
-            Label("没有找到朝代", systemSymbol: .buildingColumns)
+            Label(CalendarStringKey.History.DynastyDetail.Unavailable.title, systemSymbol: .buildingColumns)
         } description: {
-            Text("这个朝代记录不在当前 SwiftData store 中。")
+            Text(CalendarStringKey.History.DynastyDetail.Unavailable.message)
         }
     }
 

@@ -2,7 +2,7 @@ import SwiftUI
 
 /// 显示在选中日详情卡片中，用于呈现一项日期属性。
 struct CalendarFactTile: View {
-    let title: String
+    let title: LocalizedStringResource
     let value: String
 
     var body: some View {

@@ -1,3 +1,4 @@
+import ChineseCalendarLocalization
 import ChineseCalendarPersistence
 import SFSafeSymbols
 import SwiftUI
@@ -21,17 +22,29 @@ struct DynastyBoundarySourceDetailsView: View {
         DisclosureGroup {
             sourceDetails
         } label: {
-            Label("来源和精度", systemSymbol: .infoCircle)
+            Label(CalendarStringKey.History.Boundary.Source.title, systemSymbol: .infoCircle)
                 .font(.callout)
         }
     }
 
     private var sourceDetails: some View {
         VStack(alignment: .leading, spacing: Constants.sourceSpacing) {
-            sourceDetailRow("自称开始", date: claimedStartDate)
-            sourceDetailRow("正统开始", date: orthodoxStartDate)
-            sourceDetailRow("自称结束", date: claimedEndDate)
-            sourceDetailRow("正统结束", date: orthodoxEndDate)
+            sourceDetailRow(
+                String(localized: CalendarStringKey.History.Boundary.Source.claimedStart),
+                date: claimedStartDate
+            )
+            sourceDetailRow(
+                String(localized: CalendarStringKey.History.Boundary.Source.orthodoxStart),
+                date: orthodoxStartDate
+            )
+            sourceDetailRow(
+                String(localized: CalendarStringKey.History.Boundary.Source.claimedEnd),
+                date: claimedEndDate
+            )
+            sourceDetailRow(
+                String(localized: CalendarStringKey.History.Boundary.Source.orthodoxEnd),
+                date: orthodoxEndDate
+            )
 
             if let note {
                 Text(note)
@@ -57,36 +70,36 @@ struct DynastyBoundarySourceDetailsView: View {
 
     private func detailText(for date: ChineseDateExpression?) -> String {
         guard let date else {
-            return "不详"
+            return String(localized: CalendarStringKey.History.Boundary.unknown)
         }
 
-        var parts = [precisionText(for: date)]
-
-        if let index = date.index {
-            parts.append("index \(index)")
-        }
-
-        parts.append(date.sourceText)
-
+        let precision = date.index.map {
+            String(localized: CalendarStringKey.Common.DatePrecision.indexed(
+                precision: precisionText(for: date), index: $0
+            ))
+        } ?? precisionText(for: date)
         if let note = date.note {
-            parts.append(note)
+            return String(localized: CalendarStringKey.History.Boundary.Source.notedDetail(
+                precision: precision, source: date.sourceText, note: note
+            ))
         }
-
-        return parts.joined(separator: " · ")
+        return String(localized: CalendarStringKey.History.Boundary.Source.detail(
+            precision: precision, source: date.sourceText
+        ))
     }
 
     private func precisionText(for date: ChineseDateExpression) -> String {
         switch date.precision {
         case .year:
-            "年精度"
+            String(localized: CalendarStringKey.Common.DatePrecision.year)
         case .month:
-            "月精度"
+            String(localized: CalendarStringKey.Common.DatePrecision.month)
         case .day:
-            "日精度"
+            String(localized: CalendarStringKey.Common.DatePrecision.day)
         case .range:
-            "范围精度"
+            String(localized: CalendarStringKey.Common.DatePrecision.range)
         case .unknown:
-            "精度未知"
+            String(localized: CalendarStringKey.Common.DatePrecision.unknown)
         }
     }
 }

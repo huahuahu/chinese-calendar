@@ -1,4 +1,5 @@
 import ChineseCalendarCore
+import ChineseCalendarLocalization
 import ChineseCalendarPersistence
 import SwiftUI
 
@@ -80,7 +81,7 @@ struct LunarDayGridCell: View {
 
     private var civilDateTitle: String {
         guard let julianDayNumber = day.calendarDay?.julianDayNumber else {
-            return "-"
+            return String(localized: CalendarStringKey.Common.Value.unavailable)
         }
 
         return LunarCalendarFormatting.civilDateTitle(
@@ -90,10 +91,14 @@ struct LunarDayGridCell: View {
     }
 
     private var accessibilityLabel: String {
-        let components: [String?] = [dayTitle, isToday ? "今天" : nil, "日干支", daySubtitle, civilDateTitle]
-        return components
-            .compactMap(\.self)
-            .joined(separator: "，")
+        let resource = isToday
+            ? CalendarStringKey.Calendar.MonthGrid.Day.todayAccessibilityLabel(
+                day: dayTitle, stemBranch: daySubtitle, civilDate: civilDateTitle
+            )
+            : CalendarStringKey.Calendar.MonthGrid.Day.accessibilityLabel(
+                day: dayTitle, stemBranch: daySubtitle, civilDate: civilDateTitle
+            )
+        return String(localized: resource)
     }
 
     private var showsTodayOutline: Bool {

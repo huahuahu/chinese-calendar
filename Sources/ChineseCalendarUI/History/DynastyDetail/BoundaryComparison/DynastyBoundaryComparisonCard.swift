@@ -1,3 +1,4 @@
+import ChineseCalendarLocalization
 import ChineseCalendarPersistence
 import SwiftUI
 
@@ -68,14 +69,14 @@ struct DynastyBoundaryComparisonCard: View {
                     .frame(width: Constants.rowTitleWidth)
                     .accessibilityHidden(true)
 
-                tableHeader("自称")
-                tableHeader("正统")
+                tableHeader(String(localized: CalendarStringKey.History.Boundary.claimed))
+                tableHeader(String(localized: CalendarStringKey.History.Boundary.orthodox))
             }
 
             Divider()
 
             DynastyBoundaryComparisonRow(
-                title: "开始",
+                title: String(localized: CalendarStringKey.History.Boundary.start),
                 claimedDate: claimedStartDate,
                 orthodoxDate: orthodoxStartDate
             )
@@ -83,7 +84,7 @@ struct DynastyBoundaryComparisonCard: View {
             Divider()
 
             DynastyBoundaryComparisonRow(
-                title: "结束",
+                title: String(localized: CalendarStringKey.History.Boundary.end),
                 claimedDate: claimedEndDate,
                 orthodoxDate: orthodoxEndDate
             )
@@ -123,12 +124,16 @@ struct DynastyBoundaryComparisonCard: View {
     }
 
     private var differenceSummary: String? {
-        let parts = [
-            startDifferenceText.map { "开始\($0)" },
-            endDifferenceText.map { "结束\($0)" }
-        ].compactMap(\.self)
-
-        return parts.isEmpty ? nil : parts.joined(separator: "，")
+        switch (startDifferenceText, endDifferenceText) {
+        case let (start?, end?):
+            String(localized: CalendarStringKey.History.Boundary.Comparison.summary(start: start, end: end))
+        case let (start?, nil):
+            String(localized: CalendarStringKey.History.Boundary.Comparison.startSummary(difference: start))
+        case let (nil, end?):
+            String(localized: CalendarStringKey.History.Boundary.Comparison.endSummary(difference: end))
+        case (nil, nil):
+            nil
+        }
     }
 
     private func tableHeader(_ title: String) -> some View {
