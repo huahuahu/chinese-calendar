@@ -10,7 +10,6 @@ struct CalendarPageView: View {
     private struct Constants {
         static let sectionSpacing: CGFloat = 16
         static let headerCornerRadius: CGFloat = 28
-        static let maximumContentWidth: CGFloat = 980
         static let unavailableMinimumHeight: CGFloat = 320
     }
 
@@ -45,7 +44,7 @@ struct CalendarPageView: View {
                 }
             }
             .padding()
-            .frame(maxWidth: Constants.maximumContentWidth, alignment: .leading)
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
         .background(.calendarSystemBackground)
         .navigationTitle(CalendarStringKey.Calendar.title)
@@ -147,4 +146,45 @@ private struct CalendarPagePreviewContent: View {
     NavigationStack {
         CalendarPagePreviewContent()
     }
+}
+
+// 固定尺寸仅用于回归预览；生产页面始终接受当前窗口提供的宽度。
+#Preview("窄屏 · 375×812", traits: .fixedLayout(width: 375, height: 812), .sampleData) {
+    NavigationStack {
+        CalendarPagePreviewContent()
+    }
+}
+
+#Preview("窄屏 · 辅助功能 5", traits: .fixedLayout(width: 375, height: 812), .sampleData) {
+    NavigationStack {
+        CalendarPagePreviewContent()
+    }
+    .environment(\.dynamicTypeSize, .accessibility5)
+}
+
+#Preview("宽屏竖向 · 1024×1366", traits: .fixedLayout(width: 1024, height: 1366), .sampleData) {
+    NavigationStack {
+        CalendarPagePreviewContent()
+    }
+}
+
+#Preview("宽屏横向 · 1366×1024", traits: .fixedLayout(width: 1366, height: 1024), .sampleData) {
+    NavigationStack {
+        CalendarPagePreviewContent()
+    }
+}
+
+#Preview("分屏宽度 · 辅助功能 5", traits: .fixedLayout(width: 507, height: 1024), .sampleData) {
+    NavigationStack {
+        CalendarPagePreviewContent()
+    }
+    .environment(\.dynamicTypeSize, .accessibility5)
+}
+
+#Preview("窄屏空状态 · 辅助功能 5", traits: .fixedLayout(width: 375, height: 812), .emptySampleData) {
+    NavigationStack {
+        CalendarPageView(selectedDayIndex: nil)
+            .environment(\.calendarStoreContentLevel, .base)
+    }
+    .environment(\.dynamicTypeSize, .accessibility5)
 }
