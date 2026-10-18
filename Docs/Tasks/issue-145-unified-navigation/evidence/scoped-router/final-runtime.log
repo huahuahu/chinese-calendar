@@ -1,0 +1,401 @@
+2026-10-07 22:23:53.848864+0800 [89159:13563659] [app] Launching iOS app
+
+2026-10-07 22:23:57.109519+0800 [89159:13563659] [persistence] Opening shared SwiftData container
+
+2026-10-07 22:23:57.115336+0800 [89159:13563659] [persistence] Keeping installed full seed store instead of reinstalling bundled base store
+
+2026-10-07 22:23:57.115370+0800 [89159:13563659] [persistence] Bundled seed store is already installed
+
+2026-10-07 22:23:57.115441+0800 [89159:13563659] [persistence] Creating model container at /Users/tigerguo/Library/Developer/CoreSimulator/Devices/16A9CAA7-45CE-46D5-8915-F61531FC617C/data/Containers/Shared/AppGroup/E73729E7-DAAD-45FA-BB30-218203C4D6B9/ChineseCalendarStore/ChineseCalendar.sqlite, allowsSave: false
+
+2026-10-07 22:23:57.718943+0800 [89159:13563659] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 22:23:57.719160+0800 [89159:13563659] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 22:23:57.732709+0800 [89159:13563659] [XPCErrors] non-launching port is incompatible with service identifier "com.apple.PointerUI.pointeruid.default-service"
+
+2026-10-07 22:23:57.739794+0800 [89159:13563659] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 22:23:57.739840+0800 [89159:13563659] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 22:23:58.169043+0800 [89159:13563659] [AXValidations] AX Safe category class 'SFBarButtonGroupContainerAccessibility' was not found!
+
+objc[89159]: Class UIAccessibilityLoaderWebShared is implemented in both /Library/Developer/CoreSimulator/Volumes/iOS_24A434/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 27.0.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebKit.axbundle/WebKit (0x11e800398) and /Library/Developer/CoreSimulator/Volumes/iOS_24A434/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 27.0.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebCore.axbundle/WebCore (0x11e8f4310). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
+
+2026-10-07 22:23:58.307919+0800 [89159:13563659] void * _Nullable NSMapGet(NSMapTable * _Nonnull, const void * _Nullable): map table argument is NULL
+
+2026-10-07 22:23:58.378725+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x10c696bc0>
+
+2026-10-07 22:23:58.402323+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x10c694820>
+
+2026-10-07 22:23:58.404156+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x10c695d60>
+
+2026-10-07 22:23:58.511367+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de93f20>
+
+2026-10-07 22:23:58.532119+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x10c696da0>
+
+2026-10-07 22:23:58.532306+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x10c697020>
+
+2026-10-07 22:23:58.532435+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x10c6970c0>
+
+2026-10-07 22:23:58.532701+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x10c697980>
+
+2026-10-07 22:23:58.532829+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x10c697a20>
+
+2026-10-07 22:23:58.532952+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x10c697ca0>
+
+2026-10-07 22:23:58.533070+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x10c697f20>
+
+2026-10-07 22:23:58.533186+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x107ec32a0>
+
+2026-10-07 22:23:58.533303+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x1050cc960>
+
+2026-10-07 22:23:58.533421+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x1050cff20>
+
+2026-10-07 22:23:58.533535+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de900a0>
+
+2026-10-07 22:23:58.533651+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de90320>
+
+2026-10-07 22:23:58.533763+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de905a0>
+
+2026-10-07 22:23:58.533878+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de90820>
+
+2026-10-07 22:23:58.533993+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de90aa0>
+
+2026-10-07 22:23:58.534344+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de90d20>
+
+2026-10-07 22:23:58.534468+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de90fa0>
+
+2026-10-07 22:23:58.534585+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de91220>
+
+2026-10-07 22:23:58.534702+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de914a0>
+
+2026-10-07 22:23:58.534822+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de91720>
+
+2026-10-07 22:23:58.534939+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de919a0>
+
+2026-10-07 22:23:58.535053+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de91c20>
+
+2026-10-07 22:23:58.535167+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de91ea0>
+
+2026-10-07 22:23:58.535294+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de92120>
+
+2026-10-07 22:23:58.535408+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de923a0>
+
+2026-10-07 22:23:58.535525+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de92620>
+
+2026-10-07 22:23:58.535815+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de928a0>
+
+2026-10-07 22:23:58.535931+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de92b20>
+
+2026-10-07 22:23:58.536041+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de92da0>
+
+2026-10-07 22:23:58.536149+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de93020>
+
+2026-10-07 22:23:58.536257+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de932a0>
+
+2026-10-07 22:23:58.536365+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de93520>
+
+2026-10-07 22:23:58.536473+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de937a0>
+
+2026-10-07 22:23:58.536582+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de93a20>
+
+2026-10-07 22:23:58.536695+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de93de0>
+
+2026-10-07 22:23:58.559580+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x10c696ee0>
+
+2026-10-07 22:23:58.559724+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x10c696f80>
+
+2026-10-07 22:23:58.571921+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x10c697ac0>
+
+2026-10-07 22:23:58.572067+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x10c697b60>
+
+2026-10-07 22:23:58.572177+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x10c697c00>
+
+2026-10-07 22:23:58.572571+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x10c697d40>
+
+2026-10-07 22:23:58.572683+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x10c697de0>
+
+2026-10-07 22:23:58.572793+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x10c697e80>
+
+2026-10-07 22:23:58.573175+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x107ec0320>
+
+2026-10-07 22:23:58.573286+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x107ec2ee0>
+
+2026-10-07 22:23:58.573395+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x107ec30c0>
+
+2026-10-07 22:23:58.573779+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x107ec3480>
+
+2026-10-07 22:23:58.573889+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x107ec3660>
+
+2026-10-07 22:23:58.573998+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x107ec3840>
+
+2026-10-07 22:23:58.574382+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x1050cef80>
+
+2026-10-07 22:23:58.574491+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x1050cda40>
+
+2026-10-07 22:23:58.574603+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x1050cf200>
+
+2026-10-07 22:23:58.574982+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x1050cd9a0>
+
+2026-10-07 22:23:58.575093+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x1050cdae0>
+
+2026-10-07 22:23:58.575201+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de90000>
+
+2026-10-07 22:23:58.575577+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de90140>
+
+2026-10-07 22:23:58.575686+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de901e0>
+
+2026-10-07 22:23:58.575793+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de90280>
+
+2026-10-07 22:23:58.576174+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de903c0>
+
+2026-10-07 22:23:58.576282+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de90460>
+
+2026-10-07 22:23:58.576394+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de90500>
+
+2026-10-07 22:23:58.576771+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de90640>
+
+2026-10-07 22:23:58.576963+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de906e0>
+
+2026-10-07 22:23:58.577075+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de90780>
+
+2026-10-07 22:23:58.577455+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de908c0>
+
+2026-10-07 22:23:58.577580+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de90960>
+
+2026-10-07 22:23:58.577689+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de90a00>
+
+2026-10-07 22:23:58.578068+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de90b40>
+
+2026-10-07 22:23:58.578176+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de90be0>
+
+2026-10-07 22:23:58.578285+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de90c80>
+
+2026-10-07 22:23:58.578666+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de90dc0>
+
+2026-10-07 22:23:58.578778+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de90e60>
+
+2026-10-07 22:23:58.578887+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de90f00>
+
+2026-10-07 22:23:58.579268+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de91040>
+
+2026-10-07 22:23:58.579376+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de910e0>
+
+2026-10-07 22:23:58.579484+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de91180>
+
+2026-10-07 22:23:58.579864+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de912c0>
+
+2026-10-07 22:23:58.579976+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de91360>
+
+2026-10-07 22:23:58.580090+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de91400>
+
+2026-10-07 22:23:58.580470+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de91540>
+
+2026-10-07 22:23:58.580584+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de915e0>
+
+2026-10-07 22:23:58.580697+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de91680>
+
+2026-10-07 22:23:58.581085+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de917c0>
+
+2026-10-07 22:23:58.581198+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de91860>
+
+2026-10-07 22:23:58.581309+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de91900>
+
+2026-10-07 22:23:58.581688+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de91a40>
+
+2026-10-07 22:23:58.581801+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de91ae0>
+
+2026-10-07 22:23:58.581912+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de91b80>
+
+2026-10-07 22:23:58.584522+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de91cc0>
+
+2026-10-07 22:23:58.584644+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de91d60>
+
+2026-10-07 22:23:58.584762+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de91e00>
+
+2026-10-07 22:23:58.590888+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de91f40>
+
+2026-10-07 22:23:58.591020+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de91fe0>
+
+2026-10-07 22:23:58.591137+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de92080>
+
+2026-10-07 22:23:58.591550+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de921c0>
+
+2026-10-07 22:23:58.591670+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de92260>
+
+2026-10-07 22:23:58.591787+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de92300>
+
+2026-10-07 22:23:58.592190+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de92440>
+
+2026-10-07 22:23:58.592309+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de924e0>
+
+2026-10-07 22:23:58.592427+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de92580>
+
+2026-10-07 22:23:58.592840+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de926c0>
+
+2026-10-07 22:23:58.592957+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de92760>
+
+2026-10-07 22:23:58.593071+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de92800>
+
+2026-10-07 22:23:58.593477+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de92940>
+
+2026-10-07 22:23:58.593595+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de929e0>
+
+2026-10-07 22:23:58.593712+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de92a80>
+
+2026-10-07 22:23:58.594110+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de92bc0>
+
+2026-10-07 22:23:58.594229+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de92c60>
+
+2026-10-07 22:23:58.594346+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de92d00>
+
+2026-10-07 22:23:58.594743+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de92e40>
+
+2026-10-07 22:23:58.594862+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de92ee0>
+
+2026-10-07 22:23:58.594978+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de92f80>
+
+2026-10-07 22:23:58.595376+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de930c0>
+
+2026-10-07 22:23:58.595495+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de93160>
+
+2026-10-07 22:23:58.595612+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de93200>
+
+2026-10-07 22:23:58.596015+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de93340>
+
+2026-10-07 22:23:58.596132+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de933e0>
+
+2026-10-07 22:23:58.596250+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de93480>
+
+2026-10-07 22:23:58.596652+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de935c0>
+
+2026-10-07 22:23:58.596775+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de93660>
+
+2026-10-07 22:23:58.596898+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de93700>
+
+2026-10-07 22:23:58.597295+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de93840>
+
+2026-10-07 22:23:58.597415+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de938e0>
+
+2026-10-07 22:23:58.597531+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de93980>
+
+2026-10-07 22:23:58.597950+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de93ac0>
+
+2026-10-07 22:23:58.598069+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de93b60>
+
+2026-10-07 22:23:58.598185+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de93c00>
+
+2026-10-07 22:23:58.598300+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x11de93ca0>
+
+2026-10-07 22:23:58.598418+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityLazyLayoutNode: 0x11de93d40>
+
+2026-10-07 22:23:58.608095+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x10c697160>
+
+2026-10-07 22:23:58.608223+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x10c697200>
+
+2026-10-07 22:23:58.608335+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x10c6972a0>
+
+2026-10-07 22:23:58.608445+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x10c697340>
+
+2026-10-07 22:23:58.608555+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x10c6973e0>
+
+2026-10-07 22:23:58.608663+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x10c697480>
+
+2026-10-07 22:23:58.608771+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x10c697520>
+
+2026-10-07 22:23:58.610757+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x10c6975c0>
+
+2026-10-07 22:23:58.610872+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x10c697660>
+
+2026-10-07 22:23:58.610982+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x10c697700>
+
+2026-10-07 22:23:58.611092+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x10c6977a0>
+
+2026-10-07 22:23:58.611200+0800 [89159:13563659] [AXUIA] This child can't be serialized correctly: <SwiftUI.AccessibilityNode: 0x10c697840>
+
+2026-10-07 22:23:59.050048+0800 [89159:13563659] [AXValidations] AX Safe category class 'SLHighlightDisambiguationPillViewAccessibility' was not found!
+
+2026-10-07 22:24:16.347187+0800 [89159:13563659] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 22:24:16.347415+0800 [89159:13563659] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 22:24:16.347450+0800 [89159:13563659] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 22:24:16.923862+0800 [89159:13563659] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 22:24:16.923921+0800 [89159:13563659] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 22:24:37.374732+0800 [89159:13563659] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 22:24:37.374838+0800 [89159:13563659] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 22:24:37.374867+0800 [89159:13563659] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 22:24:37.920814+0800 [89159:13563659] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 22:24:37.920883+0800 [89159:13563659] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 22:24:51.503732+0800 [89159:13563659] [navigation] Set scope path; path count: 1
+
+2026-10-07 22:24:51.580434+0800 [89159:13563659] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 22:24:51.580527+0800 [89159:13563659] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 22:24:51.580557+0800 [89159:13563659] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 22:24:51.630214+0800 [89159:13563659] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 22:24:51.630297+0800 [89159:13563659] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 22:24:51.630327+0800 [89159:13563659] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 22:24:52.338570+0800 [89159:13563659] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 22:24:52.338629+0800 [89159:13563659] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 22:24:52.338656+0800 [89159:13563659] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 22:24:52.338680+0800 [89159:13563659] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 22:24:53.014826+0800 [89159:13563659] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 22:24:53.014971+0800 [89159:13563659] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 22:24:53.015002+0800 [89159:13563659] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 22:24:53.593643+0800 [89159:13563659] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 22:24:53.593709+0800 [89159:13563659] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 22:26:18.854665+0800 [89159:13563659] [navigation] Set scope path; path count: 1
+
+2026-10-07 22:26:34.593619+0800 [89159:13563659] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 22:26:34.593759+0800 [89159:13563659] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 22:26:34.593790+0800 [89159:13563659] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 22:26:35.208559+0800 [89159:13563659] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 22:26:35.208627+0800 [89159:13563659] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 22:27:30.191323+0800 [89159:13563659] [navigation] Set scope path; path count: 1
+
+2026-10-07 22:27:31.440506+0800 [89159:13563659] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 22:27:31.440649+0800 [89159:13563659] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 22:27:31.440682+0800 [89159:13563659] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 22:27:32.042093+0800 [89159:13563659] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 22:27:32.042149+0800 [89159:13563659] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 22:28:15.774036+0800 [89159:13563659] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 22:28:15.776036+0800 [89159:13563659] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 22:28:15.776093+0800 [89159:13563659] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 22:28:15.776119+0800 [89159:13563659] [API] cannot add handler to 0 from 0 - dropping

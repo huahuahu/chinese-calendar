@@ -1,0 +1,59 @@
+2026-10-07 13:23:21.921128+0800 [74650:12136360] [app] Launching iOS app
+
+2026-10-07 13:23:24.897291+0800 [74650:12136360] [persistence] Opening shared SwiftData container
+
+2026-10-07 13:23:24.904442+0800 [74650:12136360] [persistence] Keeping installed full seed store instead of reinstalling bundled base store
+
+2026-10-07 13:23:24.904498+0800 [74650:12136360] [persistence] Bundled seed store is already installed
+
+2026-10-07 13:23:24.904587+0800 [74650:12136360] [persistence] Creating model container at /Users/tigerguo/Library/Developer/CoreSimulator/Devices/16A9CAA7-45CE-46D5-8915-F61531FC617C/data/Containers/Shared/AppGroup/E73729E7-DAAD-45FA-BB30-218203C4D6B9/ChineseCalendarStore/ChineseCalendar.sqlite, allowsSave: false
+
+2026-10-07 13:23:25.522171+0800 [74650:12136360] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:23:25.522355+0800 [74650:12136360] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:23:25.535393+0800 [74650:12136360] [XPCErrors] non-launching port is incompatible with service identifier "com.apple.PointerUI.pointeruid.default-service"
+
+2026-10-07 13:23:25.647115+0800 [74650:12136360] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:23:25.647186+0800 [74650:12136360] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:23:25.950650+0800 [74650:12136360] [AXValidations] AX Safe category class 'SFBarButtonGroupContainerAccessibility' was not found!
+
+objc[74650]: Class UIAccessibilityLoaderWebShared is implemented in both /Library/Developer/CoreSimulator/Volumes/iOS_24A434/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 27.0.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebKit.axbundle/WebKit (0x11faf4398) and /Library/Developer/CoreSimulator/Volumes/iOS_24A434/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 27.0.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebCore.axbundle/WebCore (0x121428310). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
+
+2026-10-07 13:23:26.849726+0800 [74650:12136360] [AXValidations] AX Safe category class 'SLHighlightDisambiguationPillViewAccessibility' was not found!
+
+2026-10-07 13:25:32.595952+0800 [74650:12136360] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:25:32.598568+0800 [74650:12136360] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:25:32.598620+0800 [74650:12136360] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:25:32.598649+0800 [74650:12136360] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:25:50.786220+0800 [74650:12136360] [navigation] Presented root sheet
+
+2026-10-07 13:25:50.958014+0800 [74650:12136360] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:25:50.958137+0800 [74650:12136360] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:25:50.958170+0800 [74650:12136360] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:25:51.502424+0800 [74650:12136360] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:25:51.502495+0800 [74650:12136360] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:26:04.817728+0800 [74650:12136360] [ui] Issue145 controlled in-memory container switch completed
+
+2026-10-07 13:26:04.962779+0800 [74650:12136360] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:26:04.971524+0800 [74650:12136360] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:26:04.971652+0800 [74650:12136360] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:26:04.971683+0800 [74650:12136360] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:26:06.868410+0800 [74650:12136360] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:26:06.868499+0800 [74650:12136360] [API] cannot add handler to 0 from 0 - dropping

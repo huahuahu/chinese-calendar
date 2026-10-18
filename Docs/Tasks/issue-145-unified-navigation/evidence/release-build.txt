@@ -1,0 +1,11 @@
+XcodeBuildMCP build_sim / Release / 2026-10-07
+Native BuildProject has no configuration parameter; used supported fallback.
+Duration: 157.2s.
+Full log SHA256: 95f9f0cd7c02b209164c31799ed70c5e1b447a1dd19a9ea332231cb9ebab90d4
+
+Command line invocation:
+    /Applications/Xcode-27.1.0-Release.Candidate.app/Contents/Developer/usr/bin/xcodebuild -project /Users/tigerguo/.codex/worktrees/d18d/Chinese-date/ChineseCalendar.xcodeproj -scheme ChineseCalendar-iOS -configuration Release -skipMacroValidation -destination "platform=iOS Simulator,id=16A9CAA7-45CE-46D5-8915-F61531FC617C" -collect-test-diagnostics never -derivedDataPath /Users/tigerguo/.codex/worktrees/d18d/Chinese-date/.output/issue-145/release-derived -disableAutomaticPackageResolution -onlyUsePackageVersionsFromResolvedFile -clonedSourcePackagesDirPath /Users/tigerguo/Library/Developer/Xcode/DerivedData/ChineseCalendar-cspkfnsgsbvonnabdmhkhszuppkq/SourcePackages build
+
+Resolve Package Graph
+
+** BUILD SUCCEEDED **

@@ -1,0 +1,2 @@
+ChineseCalendarLocalization: 已核对 282 项资源的 key、默认值、插值和注释
+UI: 已检查 21 个剩余生产字符串（含英文和插值），例外见脚本与迁移清单

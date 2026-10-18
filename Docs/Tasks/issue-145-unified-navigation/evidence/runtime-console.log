@@ -1,0 +1,549 @@
+2026-10-07 10:57:37.713095+0800 [29157:11806043] [app] Launching iOS app
+
+2026-10-07 10:57:40.214833+0800 [29157:11806043] [persistence] Opening shared SwiftData container
+
+2026-10-07 10:57:40.221832+0800 [29157:11806043] [persistence] Keeping installed full seed store instead of reinstalling bundled base store
+
+2026-10-07 10:57:40.221870+0800 [29157:11806043] [persistence] Bundled seed store is already installed
+
+2026-10-07 10:57:40.221987+0800 [29157:11806043] [persistence] Creating model container at /Users/tigerguo/Library/Developer/CoreSimulator/Devices/16A9CAA7-45CE-46D5-8915-F61531FC617C/data/Containers/Shared/AppGroup/E73729E7-DAAD-45FA-BB30-218203C4D6B9/ChineseCalendarStore/ChineseCalendar.sqlite, allowsSave: false
+
+2026-10-07 10:57:40.966675+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 10:57:40.966882+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 10:57:40.996781+0800 [29157:11806043] [XPCErrors] non-launching port is incompatible with service identifier "com.apple.PointerUI.pointeruid.default-service"
+
+2026-10-07 10:57:41.010627+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 10:57:41.010705+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 10:57:41.334476+0800 [29157:11806043] [AXValidations] AX Safe category class 'SFBarButtonGroupContainerAccessibility' was not found!
+
+objc[29157]: Class UIAccessibilityLoaderWebShared is implemented in both /Library/Developer/CoreSimulator/Volumes/iOS_24A434/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 27.0.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebKit.axbundle/WebKit (0x120780398) and /Library/Developer/CoreSimulator/Volumes/iOS_24A434/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 27.0.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebCore.axbundle/WebCore (0x120c78310). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
+
+2026-10-07 10:57:42.150283+0800 [29157:11806043] [AXValidations] AX Safe category class 'SLHighlightDisambiguationPillViewAccessibility' was not found!
+
+2026-10-07 10:58:22.151810+0800 [29157:11806043] [navigation] Presented root sheet
+
+2026-10-07 10:58:22.751435+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 10:58:22.751570+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 10:58:22.751601+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 10:58:23.335001+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 10:58:23.335061+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 10:58:55.083530+0800 [29157:11806043] [navigation] Presented root sheet
+
+2026-10-07 10:58:55.468836+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 10:58:55.468954+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 10:58:55.468986+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 10:58:56.025790+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 10:58:56.025856+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 10:59:10.315133+0800 [29157:11806043] [navigation] Presented root sheet
+
+2026-10-07 10:59:10.685018+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 10:59:10.685134+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 10:59:10.685163+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 10:59:11.247838+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 10:59:11.247915+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 10:59:33.649833+0800 [29157:11806043] [navigation] Presented root sheet
+
+2026-10-07 10:59:34.037169+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 10:59:34.037295+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 10:59:34.037322+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 10:59:34.588881+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 10:59:34.588938+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 10:59:54.565458+0800 [29157:11806043] [navigation] Presented root sheet
+
+2026-10-07 10:59:54.973592+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 10:59:54.973747+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 10:59:54.973778+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 10:59:55.555145+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 10:59:55.555216+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:00:16.932866+0800 [29157:11806043] [navigation] Presented root sheet
+
+2026-10-07 11:00:17.360239+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:00:17.360393+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:00:17.360423+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:00:17.940012+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:00:17.940076+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:00:49.993060+0800 [29157:11806043] [navigation] Dismissed all presentation trees
+
+2026-10-07 11:00:49.993086+0800 [29157:11806043] [navigation] Deferred navigation request until presentations dismiss
+
+2026-10-07 11:00:50.752341+0800 [29157:11806043] [navigation] Set scope path; path count: 1
+
+2026-10-07 11:00:50.752386+0800 [29157:11806043] [navigation] Applied deferred navigation request
+
+2026-10-07 11:00:50.889401+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:00:50.889506+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:00:50.889533+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:00:50.953361+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:00:50.953466+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:00:50.953494+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:00:51.432472+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:00:51.432562+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:00:51.432595+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:00:51.432622+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:01:31.066157+0800 [29157:11806043] [navigation] Presented root sheet
+
+2026-10-07 11:01:31.480978+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:01:31.481123+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:01:31.481153+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:01:32.070588+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:01:32.070651+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:02:18.946690+0800 [29157:11806043] [navigation] Dismissed all presentation trees
+
+2026-10-07 11:02:18.946719+0800 [29157:11806043] [navigation] Deferred navigation request until presentations dismiss
+
+2026-10-07 11:02:19.548119+0800 [29157:11806043] [navigation] Set scope path; path count: 1
+
+2026-10-07 11:02:19.548166+0800 [29157:11806043] [navigation] Applied deferred navigation request
+
+2026-10-07 11:02:39.383119+0800 [29157:11806043] [navigation] Presented root sheet
+
+2026-10-07 11:02:39.824369+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:02:39.824495+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:02:39.824532+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:02:40.407454+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:02:40.407510+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:02:59.605732+0800 [29157:11806043] [navigation] Set scope path; path count: 0
+
+2026-10-07 11:02:59.650624+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:02:59.650729+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:02:59.650764+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:03:00.138813+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:03:00.138916+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:03:00.138951+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:03:00.138979+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:03:14.425298+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:03:14.427711+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:03:14.427786+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:03:14.427814+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:03:32.968856+0800 [29157:11806043] [navigation] Presented root sheet
+
+2026-10-07 11:03:33.081526+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:03:33.081670+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:03:33.081701+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:03:33.628561+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:03:33.628626+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:03:39.017832+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:03:39.017971+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:04:01.050354+0800 [29157:11806043] [navigation] Presented root sheet
+
+2026-10-07 11:04:01.147584+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:04:01.147743+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:04:01.147779+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:04:01.690507+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:04:01.690579+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:04:06.483643+0800 [29157:11806043] [navigation] Presented root sheet
+
+2026-10-07 11:04:06.583893+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:04:06.584033+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:04:06.584068+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:04:07.122797+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:04:07.122864+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:04:16.887599+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:04:16.887698+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:04:40.400547+0800 [29157:11806043] [navigation] Presented root sheet
+
+2026-10-07 11:04:40.492794+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:04:40.492918+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:04:40.492954+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:04:41.039581+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:04:41.039642+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:04:42.290225+0800 [29157:11806043] [navigation] Dismissed all presentation trees
+
+2026-10-07 11:04:42.290254+0800 [29157:11806043] [navigation] Deferred navigation request until presentations dismiss
+
+2026-10-07 11:04:42.874702+0800 [29157:11806043] [navigation] Set scope path; path count: 1
+
+2026-10-07 11:04:42.874737+0800 [29157:11806043] [navigation] Applied deferred navigation request
+
+2026-10-07 11:04:42.977920+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:04:42.978024+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:04:42.978053+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:04:42.999802+0800 [29157:11806043] [Snapshotting] Snapshotting a view (0x10e9ecf00, _UINavigationBarLargeTitleView) that has not been rendered at least once requires afterScreenUpdates:YES.
+
+2026-10-07 11:04:43.027610+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:04:43.027729+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:04:43.028945+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:04:43.028985+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:04:43.517093+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:04:43.517187+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:04:43.517214+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:04:43.517236+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:05:01.055309+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:05:01.082361+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:05:01.085850+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:05:01.086458+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:05:10.835647+0800 [29157:11806043] [navigation] Presented root full screen
+
+2026-10-07 11:05:11.088808+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:05:11.088890+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:05:11.089000+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:05:11.089032+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:05:11.749876+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:05:11.749948+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:05:11.749977+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:05:39.653681+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:05:47.790062+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:06:00.717760+0800 [29157:11806043] [navigation] Presented nested sheet
+
+2026-10-07 11:06:00.788285+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:06:00.788371+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:06:00.788434+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:06:00.788460+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:06:00.788484+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:06:01.433537+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:06:01.433686+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:06:01.433736+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:06:11.784120+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:06:26.405755+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:06:26.405875+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:06:26.408425+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:06:26.408504+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:06:26.408544+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:06:26.408616+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:06:35.465523+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:06:35.465646+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:06:35.467544+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:06:35.467717+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:06:35.467883+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:06:35.468004+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:07:00.287242+0800 [29157:11806043] [navigation] Presented root full screen
+
+2026-10-07 11:07:00.425611+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:07:00.425720+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:07:00.425832+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:07:00.425858+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:07:00.933725+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:07:00.933815+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:07:00.933845+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:07:01.887562+0800 [29157:11806043] [navigation] Dismissed all presentation trees
+
+2026-10-07 11:07:01.887587+0800 [29157:11806043] [navigation] Deferred navigation request until presentations dismiss
+
+2026-10-07 11:07:02.430730+0800 [29157:11806043] [navigation] Set scope path; path count: 1
+
+2026-10-07 11:07:02.430773+0800 [29157:11806043] [navigation] Applied deferred navigation request
+
+2026-10-07 11:07:02.609424+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:07:02.611154+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:07:02.611298+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:07:02.611360+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:07:24.288682+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:07:24.290451+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:07:24.290520+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:07:24.290546+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:07:26.835529+0800 [29157:11806043] [navigation] Presented root full screen
+
+2026-10-07 11:07:26.966592+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:07:26.966671+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:07:26.966742+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:07:26.966767+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:07:27.483916+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:07:27.484029+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:07:27.484061+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:07:28.318222+0800 [29157:11806043] [navigation] Presented nested sheet
+
+2026-10-07 11:07:28.377003+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:07:28.377101+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:07:28.377167+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:07:28.377193+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:07:28.377218+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:07:29.017385+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:07:29.017546+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:07:29.017585+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:07:30.138252+0800 [29157:11806043] [navigation] Dismissed all presentation trees
+
+2026-10-07 11:07:30.138286+0800 [29157:11806043] [navigation] Deferred navigation request until presentations dismiss
+
+2026-10-07 11:07:30.150682+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:07:30.779839+0800 [29157:11806043] [navigation] Set scope path; path count: 1
+
+2026-10-07 11:07:30.779895+0800 [29157:11806043] [navigation] Applied deferred navigation request
+
+2026-10-07 11:07:30.911567+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:07:30.912883+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:07:30.912925+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:07:30.912950+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:07:54.904222+0800 [29157:11806043] [navigation] Presented root sheet
+
+2026-10-07 11:07:55.316956+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:07:55.317074+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:07:55.317101+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:07:55.895777+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:07:55.895839+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:07:56.292742+0800 [29157:11806043] [navigation] Dismissed all presentation trees
+
+2026-10-07 11:07:56.292767+0800 [29157:11806043] [navigation] Deferred navigation request until presentations dismiss
+
+2026-10-07 11:07:56.452882+0800 [29157:11806043] [navigation] Deferred navigation request until presentations dismiss
+
+2026-10-07 11:07:56.904084+0800 [29157:11806043] [navigation] Set scope path; path count: 1
+
+2026-10-07 11:07:56.904129+0800 [29157:11806043] [navigation] Applied deferred navigation request
+
+2026-10-07 11:08:28.532361+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:08:28.534574+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:08:28.534629+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:08:28.534656+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:08:38.535224+0800 [29157:11806043] [navigation] Set scope path; path count: 1
+
+2026-10-07 11:08:38.582056+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:08:38.582153+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:08:38.582235+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:08:38.614906+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:08:38.614981+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:08:38.615010+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:08:39.101006+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:08:39.101089+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:08:39.101124+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:08:39.101150+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:08:53.653415+0800 [29157:11806043] [navigation] Set scope path; path count: 2
+
+2026-10-07 11:08:53.857567+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:08:53.857640+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:08:53.857670+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:08:54.351083+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:08:54.351191+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:08:54.351226+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:08:54.351255+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:09:01.268522+0800 [29157:11806043] [navigation] Set scope path; path count: 3
+
+2026-10-07 11:09:01.401807+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:09:01.401901+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:09:01.401931+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:09:01.884541+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:09:01.884598+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:09:01.884624+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:09:01.884648+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:09:09.789657+0800 [29157:11806043] [navigation] Set scope path; path count: 2
+
+2026-10-07 11:09:09.830185+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:09:09.830277+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:09:09.830312+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:09:10.317775+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:09:10.317847+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:09:10.317874+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:09:10.317899+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:09:19.684557+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:09:19.686029+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:09:19.686078+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:09:19.686101+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:09:29.610750+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:09:29.612624+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:09:29.612699+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 11:09:29.612751+0800 [29157:11806043] [API] cannot add handler to 0 from 0 - dropping

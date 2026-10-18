@@ -1,0 +1,15 @@
+Debug actions final iOS tests
+Date: 2026-10-11 21:02 +08:00
+Tool: native Xcode RunAllTests
+Workspace: /Users/tigerguo/.codex/worktrees/d18d/Chinese-date/ChineseCalendar.xcodeproj
+Scheme: ChineseCalendar-iOS
+Simulator: chinesedate iPhone 18 Pro Max (885f), iOS 27.0
+Simulator UUID: 16A9CAA7-45CE-46D5-8915-F61531FC617C
+Source snapshot: source-sha256.txt (225 Swift files + String Catalog; 226 entries)
+Result: 245 tests: 245 passed, 0 failed, 0 skipped, 0 expected failures, 0 not run
+New test: CalendarNavigationContextTests/debugRoutesCannotBecomePersistentNavigationState() — Passed
+Related: CalendarNavigationContextTests/historyModalPushAndNestedPresentationPreserveTabNavigation() — Passed
+Related: CalendarNavigationContextTests/appDeepLinkCancelAndApprovalUseTheCoreTransaction() — Passed
+Raw summary (local): /var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/RunAllTests/22EB964C-80AB-47AF-896D-B01B35FFC30D.txt
+xcresult (local): /var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/RunAllTests/Test-ChineseCalendar-iOS-2026.10.11_21-02-10-+0800.xcresult
+Boundary: tests verify navigation state; this run does not prove SwiftUI touch interactions.

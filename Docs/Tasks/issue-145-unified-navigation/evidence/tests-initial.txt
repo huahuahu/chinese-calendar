@@ -1,0 +1,232 @@
+Native Xcode RunAllTests, 2026-10-07 10:56 (Asia/Shanghai)
+ChineseCalendar-iOS / configured iOS Simulator
+226 passed; 0 failed, skipped, not run.
+Source: first navigation implementation, before duplicate-open guards and typed picker scroll IDs.
+
+State | Target | Identifier | Display name
+Passed | ChineseCalendarLocalizationTests | CalendarStringKeyTests/catalogUsesThePackageBundleAndChineseFallback() | catalogUsesThePackageBundleAndChineseFallback()
+Passed | ChineseCalendarLocalizationTests | CalendarStringKeyTests/downloadInterpolationUsesPercent(progress:expected:) | 0.0, "0%"
+Passed | ChineseCalendarLocalizationTests | CalendarStringKeyTests/downloadInterpolationUsesPercent(progress:expected:) | 0.5, "50%"
+Passed | ChineseCalendarLocalizationTests | CalendarStringKeyTests/downloadInterpolationUsesPercent(progress:expected:) | 1.0, "100%"
+Passed | ChineseCalendarLocalizationTests | CalendarStringKeyTests/fixedDebugPercentagesKeepOnePercentSign() | fixedDebugPercentagesKeepOnePercentSign()
+Passed | ChineseCalendarLocalizationTests | CalendarStringKeyTests/nestedResourcePreservesThePhaseTitle() | nestedResourcePreservesThePhaseTitle()
+Passed | ChineseCalendarLocalizationTests | CalendarStringKeyTests/countsKeepEveryArgument(count:) | 0
+Passed | ChineseCalendarLocalizationTests | CalendarStringKeyTests/countsKeepEveryArgument(count:) | 1
+Passed | ChineseCalendarLocalizationTests | CalendarStringKeyTests/countsKeepEveryArgument(count:) | 12
+Passed | ChineseCalendarLocalizationTests | CalendarStringKeyTests/accessibilityKeepsNamesAndTodaySeparate() | accessibilityKeepsNamesAndTodaySeparate()
+Passed | ChineseCalendarLocalizationTests | CalendarStringKeyTests/datePrecisionPreservesBoundsAndIndices() | datePrecisionPreservesBoundsAndIndices()
+Passed | ChineseCalendarLocalizationTests | CalendarStringKeyTests/defaultListFormattingMatchesChineseFallback(locale:) | "en-US"
+Passed | ChineseCalendarLocalizationTests | CalendarStringKeyTests/defaultListFormattingMatchesChineseFallback(locale:) | "fr-FR"
+Passed | ChineseCalendarLocalizationTests | dateCatalogUsesLocalizationBundleWithoutYearGrouping() | dateCatalogUsesLocalizationBundleWithoutYearGrouping()
+Passed | ChineseCalendarCoreTests | civilDateFormattingAlwaysUsesUTC() | civilDateFormattingAlwaysUsesUTC()
+Passed | ChineseCalendarCoreTests | civilDateRangeUsesLocalizedIntervalFormatting() | civilDateRangeUsesLocalizedIntervalFormatting()
+Passed | ChineseCalendarCoreTests | civilDatesBeforeCommonEraIncludeTheEra() | civilDatesBeforeCommonEraIncludeTheEra()
+Passed | ChineseCalendarCoreTests | civilDateTitleFollowsLocaleAndIncludesYearOnFirstDayOfCivilYear() | civilDateTitleFollowsLocaleAndIncludesYearOnFirstDayOfCivilYear()
+Passed | ChineseCalendarCoreTests | codableRoundTripPreservesValue() | codableRoundTripPreservesValue()
+Passed | ChineseCalendarCoreTests | dayTitleUsesLunarDayNameOnly() | dayTitleUsesLunarDayNameOnly()
+Passed | ChineseCalendarCoreTests | defaultsLeapMonthFlagToFalse() | defaultsLeapMonthFlagToFalse()
+Passed | ChineseCalendarCoreTests | fullCivilDateTitleFollowsLocale() | fullCivilDateTitleFollowsLocale()
+Passed | ChineseCalendarCoreTests | gregorianCalendarPreservesThe1582ReformBoundary() | gregorianCalendarPreservesThe1582ReformBoundary()
+Passed | ChineseCalendarCoreTests | localGregorianDateUsesTheUsersTimeZone() | localGregorianDateUsesTheUsersTimeZone()
+Passed | ChineseCalendarCoreTests | lunarMonthDecodesOldPayloadWithoutNameStyle() | lunarMonthDecodesOldPayloadWithoutNameStyle()
+Passed | ChineseCalendarCoreTests | monthTitleIncludesLunarMonthSizeWhenKnown() | monthTitleIncludesLunarMonthSizeWhenKnown()
+Passed | ChineseCalendarCoreTests | monthTitleUsesPostMonthStyleForZhuanxuIntercalaryMonth() | monthTitleUsesPostMonthStyleForZhuanxuIntercalaryMonth()
+Passed | ChineseCalendarCoreTests | preservesLeapMonthFlag() | preservesLeapMonthFlag()
+Passed | ChineseCalendarCoreTests | sexagenaryNameUsesCyclicStemAndBranchIndexes() | sexagenaryNameUsesCyclicStemAndBranchIndexes()
+Passed | ChineseCalendarCoreTests | supportsHistoricalPostMonthDisplayName() | supportsHistoricalPostMonthDisplayName()
+Passed | ChineseCalendarCoreTests | yearNumberUsesChineseCalendarYearBoundary() | yearNumberUsesChineseCalendarYearBoundary()
+Passed | ChineseCalendarCoreTests | yearTitleUsesHistoricalEra(lunarYearNumber:expectedTitle:) | -220, "公元前 221 年"
+Passed | ChineseCalendarCoreTests | yearTitleUsesHistoricalEra(lunarYearNumber:expectedTitle:) | -1, "公元前 2 年"
+Passed | ChineseCalendarCoreTests | yearTitleUsesHistoricalEra(lunarYearNumber:expectedTitle:) | 0, "公元前 1 年"
+Passed | ChineseCalendarCoreTests | yearTitleUsesHistoricalEra(lunarYearNumber:expectedTitle:) | 1, "公元 1 年"
+Passed | ChineseCalendarCoreTests | yearTitleUsesHistoricalEra(lunarYearNumber:expectedTitle:) | 2026, "公元 2026 年"
+Passed | ChineseCalendarCoreTests | localMidnightAdvancesJulianDayNumber(secondsFromGMT:year:month:day:utcHourAtLocalMidnight:) | 28800, 2025, 12, 31, 16
+Passed | ChineseCalendarCoreTests | localMidnightAdvancesJulianDayNumber(secondsFromGMT:year:month:day:utcHourAtLocalMidnight:) | -28800, 2026, 1, 1, 8
+Passed | ChineseCalendarDataTests | placeholderRepositoryPreservesRequestedGregorianDate() | placeholderRepositoryPreservesRequestedGregorianDate()
+Passed | ChineseCalendarDataTests | placeholderRepositoryReturnsStablePlaceholderLunarDate() | placeholderRepositoryReturnsStablePlaceholderLunarDate()
+Passed | ChineseCalendarDataTests | 农历月保留闰月显示() | 农历月保留闰月显示()
+Passed | ChineseCalendarDataTests | 农历月解码旧数据时默认使用闰月名称样式() | 农历月解码旧数据时默认使用闰月名称样式()
+Passed | ChineseCalendarDataTests | 干支历日期默认使用正月初一年界() | 干支历日期默认使用正月初一年界()
+Passed | ChineseCalendarDataTests | 干支年可以从中文名称构造() | 干支年可以从中文名称构造()
+Passed | ChineseCalendarDataTests | 干支年暴露标准名称() | 干支年暴露标准名称()
+Passed | ChineseCalendarDataTests | 苹果农历从唐代开始匹配样本数据() | 苹果农历从唐代开始匹配样本数据()
+Passed | ChineseCalendarDataTests | 苹果农历保留上古样本差异说明() | 苹果农历保留上古样本差异说明()
+Passed | ChineseCalendarDataTests | 苹果农历没有表达太初改历十五个月农历年() | 苹果农历没有表达太初改历十五个月农历年()
+Passed | ChineseCalendarLoggingTests | exposesOneLoggerPerModule() | exposesOneLoggerPerModule()
+Passed | ChineseCalendarLoggingTests | moduleCategoriesAreStable() | moduleCategoriesAreStable()
+Passed | ChineseCalendarLoggingTests | subsystemUsesAppBundlePrefix() | subsystemUsesAppBundlePrefix()
+Passed | ChineseCalendarPersistenceTests | FullSeedStoreDownloadTests/rejectedOffsetDiscardsPartialAndRetriesWithoutRange() | rejectedOffsetDiscardsPartialAndRetriesWithoutRange()
+Passed | ChineseCalendarPersistenceTests | FullSeedStoreDownloadTests/invalidRangeOnRetryDoesNotStartAThirdRequest(statusCode:) | 206
+Passed | ChineseCalendarPersistenceTests | FullSeedStoreDownloadTests/invalidRangeOnRetryDoesNotStartAThirdRequest(statusCode:) | 416
+Passed | ChineseCalendarPersistenceTests | FullSeedStoreDownloadTests/invalidRangeWithoutExistingPartialDoesNotRetry(statusCode:) | 206
+Passed | ChineseCalendarPersistenceTests | FullSeedStoreDownloadTests/invalidRangeWithoutExistingPartialDoesNotRetry(statusCode:) | 416
+Passed | ChineseCalendarPersistenceTests | FullSeedStoreDownloadTests/failedPartialRemovalIsReportedWithoutRetry(statusCode:) | 206
+Passed | ChineseCalendarPersistenceTests | FullSeedStoreDownloadTests/failedPartialRemovalIsReportedWithoutRetry(statusCode:) | 416
+Passed | ChineseCalendarPersistenceTests | FullSeedStoreDownloadTests/invalidPartialSizeRemovalFailureStopsBeforeRequest() | invalidPartialSizeRemovalFailureStopsBeforeRequest()
+Passed | ChineseCalendarPersistenceTests | FullSeedStoreDownloadTests/ordinaryNetworkFailureKeepsPartialWithoutRetry(code:) | Code(rawValue: -1005)
+Passed | ChineseCalendarPersistenceTests | FullSeedStoreDownloadTests/ordinaryNetworkFailureKeepsPartialWithoutRetry(code:) | Code(rawValue: -1001)
+Passed | ChineseCalendarPersistenceTests | FullSeedStoreDownloadTests/ordinaryHTTPFailureKeepsPartialWithoutRetry(statusCode:) | 404
+Passed | ChineseCalendarPersistenceTests | FullSeedStoreDownloadTests/ordinaryHTTPFailureKeepsPartialWithoutRetry(statusCode:) | 503
+Passed | ChineseCalendarPersistenceTests | FullSeedStoreDownloadTests/reportsProgressBeforeResponseFinishes(includesContentLength:) | true
+Passed | ChineseCalendarPersistenceTests | FullSeedStoreDownloadTests/reportsProgressBeforeResponseFinishes(includesContentLength:) | false
+Passed | ChineseCalendarPersistenceTests | FullSeedStoreDownloadTests/resumedDownloadCountsExistingBytes() | resumedDownloadCountsExistingBytes()
+Passed | ChineseCalendarPersistenceTests | FullSeedStoreDownloadTests/ignoredRangeRestartsProgressAndReplacesOldPartial() | ignoredRangeRestartsProgressAndReplacesOldPartial()
+Passed | ChineseCalendarPersistenceTests | FullSeedStoreDownloadTests/cancellationStopsAnUnfinishedResponse() | cancellationStopsAnUnfinishedResponse()
+Passed | ChineseCalendarPersistenceTests | FullSeedStoreDownloadTests/failedResponseDoesNotReportDownloadedErrorPage() | failedResponseDoesNotReportDownloadedErrorPage()
+Passed | ChineseCalendarPersistenceTests | FullSeedStoreDownloadTests/invalidManifestSizeIsRejectedBeforeAnyRequest(byteCount:) | 0
+Passed | ChineseCalendarPersistenceTests | FullSeedStoreDownloadTests/invalidManifestSizeIsRejectedBeforeAnyRequest(byteCount:) | -1
+Passed | ChineseCalendarPersistenceTests | FullSeedStoreDownloadTests/newInstallerResumesPersistedHalfAfterInterruption(networkFailure:) | false
+Passed | ChineseCalendarPersistenceTests | FullSeedStoreDownloadTests/newInstallerResumesPersistedHalfAfterInterruption(networkFailure:) | true
+Passed | ChineseCalendarPersistenceTests | FullSeedStoreDownloadTests/differentFullHashesNeverReuseTheSamePartial() | differentFullHashesNeverReuseTheSamePartial()
+Passed | ChineseCalendarPersistenceTests | FullSeedStoreDownloadTests/invalidContentRangeRestartsWithoutAppendingWrongData(contentRange:) | "bytes 0-1048575/1048576"
+Passed | ChineseCalendarPersistenceTests | FullSeedStoreDownloadTests/invalidContentRangeRestartsWithoutAppendingWrongData(contentRange:) | "bytes 262144-1048575/2097152"
+Passed | ChineseCalendarPersistenceTests | FullSeedStoreDownloadTests/invalidContentRangeRestartsWithoutAppendingWrongData(contentRange:) | "invalid"
+Passed | ChineseCalendarPersistenceTests | FullSeedStoreDownloadTests/completePartialSkipsNetwork() | completePartialSkipsNetwork()
+Passed | ChineseCalendarPersistenceTests | FullSeedStoreDownloadTests/invalidChecksumIsRejectedBeforeAnyRequest(checksum:) | "../invalid"
+Passed | ChineseCalendarPersistenceTests | FullSeedStoreDownloadTests/invalidChecksumIsRejectedBeforeAnyRequest(checksum:) | "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz"
+Passed | ChineseCalendarPersistenceTests | FullSeedStoreDownloadTests/invalidChecksumIsRejectedBeforeAnyRequest(checksum:) | "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+Passed | ChineseCalendarPersistenceTests | RelationshipStoreTests/dayIdentityAndMonthDayUniquenessSurviveReopening() | dayIdentityAndMonthDayUniquenessSurviveReopening()
+Passed | ChineseCalendarPersistenceTests | RelationshipStoreTests/relationshipCollectionsFollowReassignedParentsOnDisk() | relationshipCollectionsFollowReassignedParentsOnDisk()
+Passed | ChineseCalendarPersistenceTests | RelationshipStoreTests/incompleteRelationshipsAreRejected() | incompleteRelationshipsAreRejected()
+Passed | ChineseCalendarPersistenceTests | RelationshipStoreTests/boundaryWithoutDateIsRejectedAfterReopening() | boundaryWithoutDateIsRejectedAfterReopening()
+Passed | ChineseCalendarPersistenceTests | RelationshipStoreTests/oldRemoteManifestIsRejectedBeforeDownloading(schemaVersion:) | "1.2.0"
+Passed | ChineseCalendarPersistenceTests | RelationshipStoreTests/oldRemoteManifestIsRejectedBeforeDownloading(schemaVersion:) | "1.3.0"
+Passed | ChineseCalendarPersistenceTests | RelationshipStoreTests/detachingParentsRemovesChildrenFromRelationshipCollections() | detachingParentsRemovesChildrenFromRelationshipCollections()
+Passed | ChineseCalendarPersistenceTests | SeededModelContainerTests/provenanceOnlyManifestChangesDoNotReinstall() | provenanceOnlyManifestChangesDoNotReinstall()
+Passed | ChineseCalendarPersistenceTests | SeededModelContainerTests/changedArtifactVersionReinstallsBundledBaseStore() | changedArtifactVersionReinstallsBundledBaseStore()
+Passed | ChineseCalendarPersistenceTests | SeededModelContainerTests/compatibleInstalledFullStoreIsPreserved() | compatibleInstalledFullStoreIsPreserved()
+Passed | ChineseCalendarPersistenceTests | SeededModelContainerTests/incompatibleInstalledFullStoreIsReplacedWithBundledBaseStore(schemaVersion:) | "1.2.0"
+Passed | ChineseCalendarPersistenceTests | SeededModelContainerTests/incompatibleInstalledFullStoreIsReplacedWithBundledBaseStore(schemaVersion:) | "1.3.0"
+Passed | ChineseCalendarPersistenceTests | SeededModelContainerTests/installedFullStoreWithoutSchemaVersionIsReplaced() | installedFullStoreWithoutSchemaVersionIsReplaced()
+Passed | ChineseCalendarPersistenceTests | SeededModelContainerTests/missingInstalledManifestRequiresInstallation() | missingInstalledManifestRequiresInstallation()
+Passed | ChineseCalendarPersistenceTests | SeededModelContainerTests/incompatibleBaseIsReplacedEvenWhenArtifactMatches(schemaVersion:) | "1.2.0"
+Passed | ChineseCalendarPersistenceTests | SeededModelContainerTests/incompatibleBaseIsReplacedEvenWhenArtifactMatches(schemaVersion:) | "1.3.0"
+Passed | ChineseCalendarPersistenceTests | SeededModelContainerTests/firstInstallationRequiresBundledStore() | firstInstallationRequiresBundledStore()
+Passed | ChineseCalendarPersistenceTests | SeededModelContainerTests/identityTokenPrefersArtifactThenDatasetAndNeverUsesGeneratedAt() | identityTokenPrefersArtifactThenDatasetAndNeverUsesGeneratedAt()
+Passed | NavigationCoreTests | applyingDeferredRequestIsIdempotent() | applyingDeferredRequestIsIdempotent()
+Passed | NavigationCoreTests | dismissalWithoutADeferredRequestAllowsReopening() | dismissalWithoutADeferredRequestAllowsReopening()
+Passed | NavigationCoreTests | dismissingChildReturnsToParentNode() | dismissingChildReturnsToParentNode()
+Passed | NavigationCoreTests | latestRequestWinsWhilePresentationDismissalIsInProgress() | latestRequestWinsWhilePresentationDismissalIsInProgress()
+Passed | NavigationCoreTests | manualRootDismissalAlsoDefersNewRequestsUntilCompletion() | manualRootDismissalAlsoDefersNewRequestsUntilCompletion()
+Passed | NavigationCoreTests | navigationRequestCasesUpdateTheirTargetScope() | navigationRequestCasesUpdateTheirTargetScope()
+Passed | NavigationCoreTests | presentationHostAcceptsAnArbitraryDestinationBuilder() | presentationHostAcceptsAnArbitraryDestinationBuilder()
+Passed | NavigationCoreTests | presentationNestsAtFrontmostNode() | presentationNestsAtFrontmostNode()
+Passed | NavigationCoreTests | presentedPushDoesNotChangeScopePath() | presentedPushDoesNotChangeScopePath()
+Passed | NavigationCoreTests | requestDismissesPresentationTreeAndWaitsForDismissalCompletion() | requestDismissesPresentationTreeAndWaitsForDismissalCompletion()
+Passed | NavigationCoreTests | rootPresentationsCreateIndependentNodes() | rootPresentationsCreateIndependentNodes()
+Passed | NavigationCoreTests | scopePathsAreIndependent() | scopePathsAreIndependent()
+Passed | NavigationCoreTests | settingRootClearsOnlyItsScopePath() | settingRootClearsOnlyItsScopePath()
+Passed | NavigationCoreTests | targetedDismissalRemovesOnlyThatSubtree() | targetedDismissalRemovesOnlyThatSubtree()
+Passed | ChineseCalendarUITests | binarySearchFindsFirstMiddleAndLastElements() | binarySearchFindsFirstMiddleAndLastElements()
+Passed | ChineseCalendarUITests | binarySearchReturnsNilForMissingElementsAndEmptyCollections() | binarySearchReturnsNilForMissingElementsAndEmptyCollections()
+Passed | ChineseCalendarUITests | PreviewSampleDataTests/historicalMonthsHaveCompleteStableRelationships() | historicalMonthsHaveCompleteStableRelationships()
+Passed | ChineseCalendarUITests | PreviewSampleDataTests/eraBoundaryResolvesBothDirectionsWithoutADisplayedYearZero() | eraBoundaryResolvesBothDirectionsWithoutADisplayedYearZero()
+Passed | ChineseCalendarUITests | PreviewSampleDataTests/postNinthMonthRetainsNameIdentityAndAncientYearBoundary() | postNinthMonthRetainsNameIdentityAndAncientYearBoundary()
+Passed | ChineseCalendarUITests | PreviewSampleDataTests/civilEraBoundaryIsInsideALunarMonth() | civilEraBoundaryIsInsideALunarMonth()
+Passed | ChineseCalendarUITests | PreviewSampleDataTests/emptyAndModernScenariosRemainAvailable() | emptyAndModernScenariosRemainAvailable()
+Passed | ChineseCalendarUITests | CalendarSelectionResolverTests/dayLandingSelectsExactDayInsteadOfToday() | dayLandingSelectsExactDayInsteadOfToday()
+Passed | ChineseCalendarUITests | CalendarSelectionResolverTests/missingLandingTargetCannotProduceASelection(landing:) | .year(number: 9999)
+Passed | ChineseCalendarUITests | CalendarSelectionResolverTests/missingLandingTargetCannotProduceASelection(landing:) | .month(index: 99999)
+Passed | ChineseCalendarUITests | CalendarSelectionResolverTests/missingLandingTargetCannotProduceASelection(landing:) | .day(index: 9999999)
+Passed | ChineseCalendarUITests | CalendarSelectionResolverTests/monthLandingSelectsTodayWhenTodayBelongsToThatMonth() | monthLandingSelectsTodayWhenTodayBelongsToThatMonth()
+Passed | ChineseCalendarUITests | CalendarSelectionResolverTests/monthLandingSelectsFirstDayWhenTodayIsElsewhere() | monthLandingSelectsFirstDayWhenTodayIsElsewhere()
+Passed | ChineseCalendarUITests | CalendarSelectionResolverTests/yearLandingSelectsTodayWhenTodayBelongsToThatYear() | yearLandingSelectsTodayWhenTodayBelongsToThatYear()
+Passed | ChineseCalendarUITests | CalendarSelectionResolverTests/yearLandingSelectsFirstDayOnTheContinuousMonthTimeline() | yearLandingSelectsFirstDayOnTheContinuousMonthTimeline()
+Passed | ChineseCalendarUITests | CalendarSelectionResolverTests/yearTransitionSelectsTheDestinationBoundaryMonth() | yearTransitionSelectsTheDestinationBoundaryMonth()
+Passed | ChineseCalendarUITests | CalendarSelectionResolverTests/adjacentMonthsUseTheGlobalContinuousMonthIndex() | adjacentMonthsUseTheGlobalContinuousMonthIndex()
+Passed | ChineseCalendarUITests | CalendarSelectionResolverTests/incompleteSelectedDayCannotResolveAValidCalendarPosition() | incompleteSelectedDayCannotResolveAValidCalendarPosition()
+Passed | ChineseCalendarUITests | CalendarSelectionResolverTests/yearWithoutDaysCannotProduceASelection() | yearWithoutDaysCannotProduceASelection()
+Passed | ChineseCalendarUITests | CalendarSelectionResolverTests/monthWithoutDaysCannotProduceASelection() | monthWithoutDaysCannotProduceASelection()
+Passed | ChineseCalendarUITests | CalendarLocalizationPresentationTests/datePrecisionMapsToLocalizedResources() | datePrecisionMapsToLocalizedResources()
+Passed | ChineseCalendarUITests | CalendarLocalizationPresentationTests/errorMappingDoesNotExposeTechnicalDescriptions() | errorMappingDoesNotExposeTechnicalDescriptions()
+Passed | ChineseCalendarUITests | civilDateWrapsAtTheAssignedColumnWidth() | civilDateWrapsAtTheAssignedColumnWidth()
+Passed | ChineseCalendarUITests | coldLaunchDeepLinkAppliesImmediately() | coldLaunchDeepLinkAppliesImmediately()
+Passed | ChineseCalendarUITests | coordinatorPreventsConcurrentSimulatedAndRealDownloads() | coordinatorPreventsConcurrentSimulatedAndRealDownloads()
+Passed | ChineseCalendarUITests | dayCellMinimumComesFromSingleLineContent() | dayCellMinimumComesFromSingleLineContent()
+Passed | ChineseCalendarUITests | dayGridCacheHandlesRepeatedAndDifferentWidthProposals() | dayGridCacheHandlesRepeatedAndDifferentWidthProposals()
+Passed | ChineseCalendarUITests | dayGridCacheInvalidatesWhenContentChanges() | dayGridCacheInvalidatesWhenContentChanges()
+Passed | ChineseCalendarUITests | dayGridCacheInvalidatesWhenSpacingChanges() | dayGridCacheInvalidatesWhenSpacingChanges()
+Passed | ChineseCalendarUITests | dayGridCacheUpdatesWhenDynamicTypeChanges() | dayGridCacheUpdatesWhenDynamicTypeChanges()
+Passed | ChineseCalendarUITests | dayGridColumnCountRespectsSpacingAndItemCount(width:items:expected:) | 0.0, 30, 1
+Passed | ChineseCalendarUITests | dayGridColumnCountRespectsSpacingAndItemCount(width:items:expected:) | 207.0, 30, 2
+Passed | ChineseCalendarUITests | dayGridColumnCountRespectsSpacingAndItemCount(width:items:expected:) | 208.0, 30, 3
+Passed | ChineseCalendarUITests | dayGridColumnCountRespectsSpacingAndItemCount(width:items:expected:) | 600.0, 1, 1
+Passed | ChineseCalendarUITests | dayGridColumnCountRespectsSpacingAndItemCount(width:items:expected:) | 600.0, 0, 0
+Passed | ChineseCalendarUITests | dayGridFitsAvailableWidth(width:typeSize:) | 320.0, .large
+Passed | ChineseCalendarUITests | dayGridFitsAvailableWidth(width:typeSize:) | 320.0, .accessibility1
+Passed | ChineseCalendarUITests | dayGridFitsAvailableWidth(width:typeSize:) | 320.0, .accessibility5
+Passed | ChineseCalendarUITests | dayGridFitsAvailableWidth(width:typeSize:) | 393.0, .large
+Passed | ChineseCalendarUITests | dayGridFitsAvailableWidth(width:typeSize:) | 393.0, .accessibility1
+Passed | ChineseCalendarUITests | dayGridFitsAvailableWidth(width:typeSize:) | 393.0, .accessibility5
+Passed | ChineseCalendarUITests | dayGridFitsAvailableWidth(width:typeSize:) | 768.0, .large
+Passed | ChineseCalendarUITests | dayGridFitsAvailableWidth(width:typeSize:) | 768.0, .accessibility1
+Passed | ChineseCalendarUITests | dayGridFitsAvailableWidth(width:typeSize:) | 768.0, .accessibility5
+Passed | ChineseCalendarUITests | dayGridUsesTheTallestCellInEachRow() | dayGridUsesTheTallestCellInEachRow()
+Passed | ChineseCalendarUITests | downloadedFileStillRequiresValidationAndInstallation() | downloadedFileStillRequiresValidationAndInstallation()
+Passed | ChineseCalendarUITests | downloadPercentageOnlyRepresentsFileTransfer() | downloadPercentageOnlyRepresentsFileTransfer()
+Passed | ChineseCalendarUITests | dynamicTypeIncreasesMeasuredMinimumAndReducesColumns() | dynamicTypeIncreasesMeasuredMinimumAndReducesColumns()
+Passed | ChineseCalendarUITests | dynastyDeepLinkSelectsHistoryTab() | dynastyDeepLinkSelectsHistoryTab()
+Passed | ChineseCalendarUITests | emperorDeepLinkSelectsHistoryTab() | emperorDeepLinkSelectsHistoryTab()
+Passed | ChineseCalendarUITests | emperorReignRangesUseTheCatalogLanguage() | emperorReignRangesUseTheCatalogLanguage()
+Passed | ChineseCalendarUITests | fileProgressHandlesInvalidAndOutOfRangeValues() | fileProgressHandlesInvalidAndOutOfRangeValues()
+Passed | ChineseCalendarUITests | historyDestinationIDsIncludeEveryStableRecordID() | historyDestinationIDsIncludeEveryStableRecordID()
+Passed | ChineseCalendarUITests | historyFiltersUsePersistedTraditionAndDynastyRelationships() | historyFiltersUsePersistedTraditionAndDynastyRelationships()
+Passed | ChineseCalendarUITests | historyPathPushPopAndTabRestorationKeepIndependentDestinations() | historyPathPushPopAndTabRestorationKeepIndependentDestinations()
+Passed | ChineseCalendarUITests | historyRoutePreservesOrthodoxPeriodIdentity() | historyRoutePreservesOrthodoxPeriodIdentity()
+Passed | ChineseCalendarUITests | hotDeepLinkDismissesActivePresentationTreeBeforeRouting() | hotDeepLinkDismissesActivePresentationTreeBeforeRouting()
+Passed | ChineseCalendarUITests | importedReignEraNoteExposesOnlyTheSourceExplanation() | importedReignEraNoteExposesOnlyTheSourceExplanation()
+Passed | ChineseCalendarUITests | insufficientPrecisionPreservesSourceTextAndDoesNotInventDuration() | insufficientPrecisionPreservesSourceTextAndDoesNotInventDuration()
+Passed | ChineseCalendarUITests | julianDayRangeIsAbsentWithoutCivilDates() | julianDayRangeIsAbsentWithoutCivilDates()
+Passed | ChineseCalendarUITests | julianDayRangeUsesAvailableExtremesRegardlessOfOrder() | julianDayRangeUsesAvailableExtremesRegardlessOfOrder()
+Passed | ChineseCalendarUITests | longCivilDateDoesNotIncreaseCellMinimumWidth() | longCivilDateDoesNotIncreaseCellMinimumWidth()
+Passed | ChineseCalendarUITests | LunarYearTransitionDirectionTests/laterYearMovesForwardAlongTheTimeline() | laterYearMovesForwardAlongTheTimeline()
+Passed | ChineseCalendarUITests | LunarYearTransitionDirectionTests/earlierYearMovesBackwardAlongTheTimeline() | earlierYearMovesBackwardAlongTheTimeline()
+Passed | ChineseCalendarUITests | LunarYearTransitionDirectionTests/equalYearHasNoTransition() | equalYearHasNoTransition()
+Passed | ChineseCalendarUITests | LunarYearTransitionDirectionTests/directionRemainsChronologicalAcrossCommonEraBoundary() | directionRemainsChronologicalAcrossCommonEraBoundary()
+Passed | ChineseCalendarUITests | LunarYearTransitionDirectionTests/laterYearLeavesFromTheCurrentYearsLastMonth() | laterYearLeavesFromTheCurrentYearsLastMonth()
+Passed | ChineseCalendarUITests | LunarYearTransitionDirectionTests/earlierYearLeavesFromTheCurrentYearsFirstMonth() | earlierYearLeavesFromTheCurrentYearsFirstMonth()
+Passed | ChineseCalendarUITests | LunarYearTransitionDirectionTests/laterYearStartsAtItsFirstMonth() | laterYearStartsAtItsFirstMonth()
+Passed | ChineseCalendarUITests | LunarYearTransitionDirectionTests/earlierYearStartsAtItsLastMonth() | earlierYearStartsAtItsLastMonth()
+Passed | ChineseCalendarUITests | LunarYearTransitionDirectionTests/aYearWithoutMonthsHasNoDestinationMonth() | aYearWithoutMonthsHasNoDestinationMonth()
+Passed | ChineseCalendarUITests | LunarYearTransitionDirectionTests/aYearWithoutMonthsHasNoSourceMonth() | aYearWithoutMonthsHasNoSourceMonth()
+Passed | ChineseCalendarUITests | monthNavigationSubtitleShowsOnlyCivilDateRangeWhenAvailable() | monthNavigationSubtitleShowsOnlyCivilDateRangeWhenAvailable()
+Passed | ChineseCalendarUITests | monthNavigationSubtitleUsesMonthSummaryWithoutCivilDates() | monthNavigationSubtitleUsesMonthSummaryWithoutCivilDates()
+Passed | ChineseCalendarUITests | orthodoxPeriodRangeAndSpanUsePoliticalBoundaries() | orthodoxPeriodRangeAndSpanUsePoliticalBoundaries()
+Passed | ChineseCalendarUITests | parserSupportsDynastyURLs() | parserSupportsDynastyURLs()
+Passed | ChineseCalendarUITests | parserSupportsEmperorURLs() | parserSupportsEmperorURLs()
+Passed | ChineseCalendarUITests | parserSupportsLaunchArguments() | parserSupportsLaunchArguments()
+Passed | ChineseCalendarUITests | parserSupportsYearURLs() | parserSupportsYearURLs()
+Passed | ChineseCalendarUITests | plainButtonPreservesTheCellsMeasuredMinimum() | plainButtonPreservesTheCellsMeasuredMinimum()
+Passed | ChineseCalendarUITests | previewSampleDataProvidesConnectedContentAndEmptyState() | previewSampleDataProvidesConnectedContentAndEmptyState()
+Passed | ChineseCalendarUITests | pushUpdatesSelectedTabPath() | pushUpdatesSelectedTabPath()
+Passed | ChineseCalendarUITests | reignEraCardDerivesDurationFromBoundaries() | reignEraCardDerivesDurationFromBoundaries()
+Passed | ChineseCalendarUITests | replacingYearsPathChangesItsCurrentDestination() | replacingYearsPathChangesItsCurrentDestination()
+Passed | ChineseCalendarUITests | simulatedDownloadObservesCancellation() | simulatedDownloadObservesCancellation()
+Passed | ChineseCalendarUITests | simulatedDownloadProducesTheCompleteProgressSequenceWithoutWaiting() | simulatedDownloadProducesTheCompleteProgressSequenceWithoutWaiting()
+Passed | ChineseCalendarUITests | singleYearUsageRangeDoesNotRenderARepeatedRange() | singleYearUsageRangeDoesNotRenderARepeatedRange()
+Passed | ChineseCalendarUITests | tabPathsDoNotPolluteEachOther() | tabPathsDoNotPolluteEachOther()
+Passed | ChineseCalendarUITests | usageRangeConvertsExclusiveEndToLastUsedYear() | usageRangeConvertsExclusiveEndToLastUsedYear()
+Passed | ChineseCalendarUITests | yearPickerGroupsYearsIntoChronologicalIndexedSections() | yearPickerGroupsYearsIntoChronologicalIndexedSections()
+Passed | ChineseCalendarUITests | yearPickerInitialScrollTargetFindsSelectedYear() | yearPickerInitialScrollTargetFindsSelectedYear()
+Passed | ChineseCalendarUITests | yearPickerInitialScrollTargetIsNilWhenSelectionIsUnavailable() | yearPickerInitialScrollTargetIsNilWhenSelectionIsUnavailable()
+Passed | ChineseCalendarUITests | yearPickerInitialScrollTargetIsNilWithoutSelection() | yearPickerInitialScrollTargetIsNilWithoutSelection()
+Passed | ChineseCalendarUITests | yearPickerMapsYearsToSignedCenturies(lunarYearNumber:expectedCentury:) | -220, -3
+Passed | ChineseCalendarUITests | yearPickerMapsYearsToSignedCenturies(lunarYearNumber:expectedCentury:) | -199, -2
+Passed | ChineseCalendarUITests | yearPickerMapsYearsToSignedCenturies(lunarYearNumber:expectedCentury:) | -100, -2
+Passed | ChineseCalendarUITests | yearPickerMapsYearsToSignedCenturies(lunarYearNumber:expectedCentury:) | -99, -1
+Passed | ChineseCalendarUITests | yearPickerMapsYearsToSignedCenturies(lunarYearNumber:expectedCentury:) | 0, -1
+Passed | ChineseCalendarUITests | yearPickerMapsYearsToSignedCenturies(lunarYearNumber:expectedCentury:) | 1, 1
+Passed | ChineseCalendarUITests | yearPickerMapsYearsToSignedCenturies(lunarYearNumber:expectedCentury:) | 100, 1
+Passed | ChineseCalendarUITests | yearPickerMapsYearsToSignedCenturies(lunarYearNumber:expectedCentury:) | 101, 2
+Passed | ChineseCalendarUITests | yearPickerMapsYearsToSignedCenturies(lunarYearNumber:expectedCentury:) | 2026, 21
+Passed | ChineseCalendarUITests | lunarDayGridCellStateMapping(isToday:isSelected:expectedState:) | false, false, .normal
+Passed | ChineseCalendarUITests | lunarDayGridCellStateMapping(isToday:isSelected:expectedState:) | false, true, .selected
+Passed | ChineseCalendarUITests | lunarDayGridCellStateMapping(isToday:isSelected:expectedState:) | true, false, .today
+Passed | ChineseCalendarUITests | lunarDayGridCellStateMapping(isToday:isSelected:expectedState:) | true, true, .todaySelected
+Passed | ChineseCalendarUITests | CalendarPresentationTests/yearSelectionReturnsOnlyToItsOriginatingPage() | yearSelectionReturnsOnlyToItsOriginatingPage()
+Passed | ChineseCalendarUITests | CalendarPresentationTests/cancelledYearPickerCannotDeliverAStaleResult() | cancelledYearPickerCannotDeliverAStaleResult()
+Passed | ChineseCalendarUITests | CalendarPresentationTests/storeChangeInvalidatesPickerButPreservesDownloadAndPaths() | storeChangeInvalidatesPickerButPreservesDownloadAndPaths()
+Passed | ChineseCalendarUITests | CalendarPresentationTests/disappearingDownloadDoesNotDismissAnotherPresentation() | disappearingDownloadDoesNotDismissAnotherPresentation()
+Passed | ChineseCalendarUITests | CalendarPresentationTests/storeChangeDoesNotLoseLatestDeferredDeepLink() | storeChangeDoesNotLoseLatestDeferredDeepLink()
+Passed | ChineseCalendarUITests | CalendarPresentationTests/rebuildingDataPagesDoesNotReplayColdLaunchLink() | rebuildingDataPagesDoesNotReplayColdLaunchLink()
+Passed | ChineseCalendarUITests | CalendarPresentationTests/previewDetailsShareFeatureStateAndRemainInTheSameTree() | previewDetailsShareFeatureStateAndRemainInTheSameTree()

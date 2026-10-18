@@ -1,0 +1,23 @@
+{
+  "schema": "xcodebuildmcp.output.build-result",
+  "schemaVersion": "3",
+  "didError": false,
+  "error": null,
+  "data": {
+    "summary": {
+      "status": "SUCCEEDED",
+      "durationMs": 121601,
+      "target": "simulator"
+    },
+    "artifacts": {
+      "buildLogPath": "~/Library/Developer/XcodeBuildMCP/workspaces/Chinese-date-d3fe835e2bc5/logs/build_sim_2026-10-07T14-27-29-464Z_pid55709_8eeb7e43.log"
+    },
+    "diagnostics": {
+      "warnings": [],
+      "errors": []
+    }
+  },
+  "nextSteps": [
+    "Get built app path in simulator derived data: get_sim_app_path({ simulatorId: \"16A9CAA7-45CE-46D5-8915-F61531FC617C\", scheme: \"ChineseCalendar-iOS\", platform: \"iOS Simulator\", derivedDataPath: \"/Users/tigerguo/.codex/worktrees/d18d/Chinese-date/.output/issue-145/release-derived\" })"
+  ]
+}

@@ -1,0 +1,7 @@
+Temporary store-switch harness removed; all 206 Swift source hashes match no-core/source-sha256.txt.
+Manifest SHA256: 7dd1e2afe7c109dbe2dac4b57420c68c5e53d00a27b067f957846202588ffeb0
+NavigationCore source, tests, README and Sources/Package.swift: zero diff from HEAD.
+Native DeviceInteractionInstallAndRun succeeded after restoration, with commandLineArguments ["$(inherited)"], no harness argument.
+Format --check, strict lint, git diff --check passed again after restoration.
+Final smoke passed: full data remains installed, full year list and selected 2026 restored, dismiss/reopen succeeds. Independent agent verified 206/206 hashes.
+Native DeviceInteractionEndSession succeeded: Session stopped.

@@ -1,0 +1,48 @@
+{
+  "date": "2026-10-13",
+  "workspace": "/Users/tigerguo/.codex/worktrees/d18d/Chinese-date",
+  "workspaceIdentifier": "workspace-mGmPzxhRA3",
+  "scheme": "ChineseCalendar-iOS",
+  "destination": "chinesedate iPhone 18 Pro Max (885f)",
+  "simulatorId": "16A9CAA7-45CE-46D5-8915-F61531FC617C",
+  "os": "iOS 27.0",
+  "tests": {
+    "tool": "mcp__xcode__RunAllTests",
+    "counts": {
+      "expectedFailures": 0,
+      "failed": 0,
+      "notRun": 0,
+      "passed": 263,
+      "skipped": 0,
+      "total": 263
+    },
+    "fullConsoleLogsPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/RunAllTests/test-console-log-2026-10-13T22-11-36+08-00.txt",
+    "fullSummaryPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/RunAllTests/EE9063A6-6F1D-4499-AE2E-E264C995F8B9.txt",
+    "schemeName": "ChineseCalendar-iOS",
+    "summary": "263 tests: 263 passed, 0 failed, 0 skipped, 0 expected failures, 0 not run",
+    "totalResults": 263,
+    "truncated": true,
+    "xcresultBundlePath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/RunAllTests/Test-ChineseCalendar-iOS-2026.10.13_22-11-36-+0800.xcresult"
+  },
+  "build": {
+    "tool": "mcp__xcode__BuildProject",
+    "buildResult": "The project built successfully.",
+    "elapsedTime": 1.652,
+    "errors": [],
+    "fullLogPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/BuildProject/BuildProject-Log-20261013-221329.txt"
+  },
+  "staticChecks": {
+    "format": {
+      "command": "./Scripts/format.sh --check",
+      "exitCode": 0
+    },
+    "lint": {
+      "command": "./Scripts/lint.sh",
+      "exitCode": 0
+    },
+    "diff": {
+      "command": "git diff --check",
+      "exitCode": 0
+    }
+  }
+}

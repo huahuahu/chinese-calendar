@@ -24,6 +24,7 @@ Chinese-date is an iOS app for browsing traditional Chinese calendar data, inclu
 - Before implementing or reviewing code, read [the common conventions](Docs/Conventions/Common.md).
 - Before creating, modifying, or reviewing SwiftUI views, read [the SwiftUI conventions](Docs/Conventions/SwiftUI.md). Follow the project's extraction criteria, including its allowance for simple private view properties and functions, ahead of generic skill recommendations.
 - Before adding, modifying, or reviewing user-visible text, read [the localization conventions](Docs/Conventions/Localization.md).
+- Before adding, modifying, or reviewing navigation, modal presentation, or their state ownership, read [the navigation conventions](Docs/Conventions/Navigation.md).
 - Keep task progress and future priorities in Issues or task documents. This file contains durable working instructions, not a roadmap or an inventory of installed skills.
 - Before implementing a substantial feature or decision-shaping fix, or reviewing work with task records, read [the task documentation workflow](Docs/Tasks/README.md). Use it to decide when to keep a plan and result, and load the relevant existing records; small changes do not require a task folder.
 

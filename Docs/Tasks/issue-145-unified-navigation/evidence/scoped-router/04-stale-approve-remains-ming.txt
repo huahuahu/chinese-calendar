@@ -1,0 +1,49 @@
+Device orientation: Portrait
+------------------------
+Application bundle identifier: com.tiger.suzhou.ChineseCalendar
+Application UI orientation: Portrait
+Application, pid: 74006, label: 'Chinese Calendar'
+ Window, {{0.0, 0.0}, {440.0, 956.0}}, hitPoint: {220.0, 478.0}
+  Other, {{0.0, 0.0}, {440.0, 956.0}}, hitPoint: {220.0, 478.0}
+   Other, {{-440.0, -956.0}, {1320.0, 2868.0}}, hitPoint: {220.0, 478.0}
+   Other, {{0.0, 62.0}, {440.0, 894.0}}, hitPoint: {220.0, 509.0}
+    Other, {{0.0, 62.0}, {440.0, 894.0}}, hitPoint: {220.0, 509.0}
+     Other, {{0.0, 62.0}, {440.0, 894.0}}, hitPoint: {220.0, 509.0}
+      Other, {{0.0, 62.0}, {440.0, 894.0}}, hitPoint: {220.0, 509.0}
+       Other, {{0.0, 62.0}, {440.0, 894.0}}, hitPoint: {220.0, 509.0}
+        NavigationBar, {{0.0, 82.0}, {440.0, 54.0}}, identifier: '明', hitPoint: {220.0, 109.0}
+         Other, {{24.0, 86.0}, {64.3, 36.0}}, hitPoint: {56.2, 104.0}
+          Other, {{24.0, 86.0}, {64.3, 36.0}}, hitPoint: {56.2, 104.0}
+           Button, {{24.0, 86.0}, {64.3, 36.0}}, label: '关闭', hitPoint: {56.2, 104.0}
+         StaticText, {{209.7, 91.3}, {20.3, 25.3}}, label: '明', hitPoint: {219.8, 104.0}
+        Other, {{0.0, 62.0}, {440.0, 894.0}}, hitPoint: {220.0, 509.0}
+         Other, {{0.0, 62.0}, {440.0, 894.0}}, hitPoint: {220.0, 509.0}
+          Other, {{0.0, 62.0}, {440.0, 894.0}}, hitPoint: {220.0, 509.0}
+           Other, {{0.0, 62.0}, {440.0, 894.0}}, hitPoint: {220.0, 509.0}
+            ScrollView, {{0.0, 62.0}, {440.0, 894.0}}, hitPoint: {220.0, 509.0}
+             Other, {{0.0, 62.0}, {440.0, 894.0}}, hitPoint: {220.0, 509.0}
+              Other, {{0.0, 62.0}, {440.0, 114.0}}, hitPoint: {220.0, 119.0}
+             Other, {{0.0, 62.0}, {440.0, 894.0}}, hitPoint: {220.0, 509.0}
+             Other, {{0.0, 136.0}, {440.0, 304.0}}, hitPoint: {220.0, 288.0}
+              Other, {{18.0, 148.0}, {404.0, 280.0}}, hitPoint: {220.0, 288.0}
+               Button, {{18.0, 148.0}, {404.0, 88.0}}, label: '查看明朝 16 位皇帝', hitPoint: {220.0, 192.0}
+                StaticText, {{32.0, 176.3}, {31.7, 31.3}}, label: '16', hitPoint: {47.8, 192.0}
+                StaticText, {{108.0, 183.0}, {56.7, 23.0}}, label: '位皇帝', hitPoint: {136.3, 194.5}
+                Image, {{398.7, 187.7}, {8.3, 14.7}}, identifier: 'chevron.right', label: '前进', hitPoint: {402.8, 195.0}
+               Button, {{18.0, 244.0}, {404.0, 88.0}}, label: '查看明朝 17 个年号', hitPoint: {220.0, 288.0}
+                StaticText, {{32.0, 272.3}, {31.7, 31.3}}, label: '17', hitPoint: {47.8, 288.0}
+                StaticText, {{108.0, 279.0}, {56.7, 23.0}}, label: '个年号', hitPoint: {136.3, 290.5}
+                Image, {{398.7, 283.7}, {8.3, 14.7}}, identifier: 'chevron.right', label: '前进', hitPoint: {402.8, 291.0}
+               Button, {{18.0, 340.0}, {404.0, 88.0}}, label: '查看明朝国祚与起讫，共 276 年', hitPoint: {220.0, 384.0}
+                StaticText, {{32.0, 368.3}, {47.3, 31.3}}, label: '276', hitPoint: {55.7, 384.0}
+                StaticText, {{108.0, 375.0}, {19.0, 23.0}}, label: '年', hitPoint: {117.5, 386.5}
+                Image, {{398.7, 379.7}, {8.3, 14.7}}, identifier: 'chevron.right', label: '前进', hitPoint: {402.8, 387.0}
+             Other, {{407.0, 136.0}, {30.0, 758.0}}, label: '垂直滚动条, 1页', value: 0%, hitPoint: {422.0, 515.0}
+              Other, {{434.0, 621.0}, {3.0, 270.0}}, hitPoint: {435.5, 756.0}
+             Other, {{407.0, 136.0}, {30.0, 758.0}}, label: '垂直滚动条, 1页', value: 0%, hitPoint: {422.0, 515.0}
+              Other, {{434.0, 621.0}, {3.0, 270.0}}, hitPoint: {435.5, 756.0}
+        Toolbar, {{0.0, 62.0}, {440.0, 894.0}}, identifier: 'Toolbar', label: '工具栏', hitPoint: {220.0, 509.0}
+         Other, {{0.0, 62.0}, {440.0, 894.0}}, hitPoint: {220.0, 509.0}
+ Window, {{0.0, 0.0}, {440.0, 956.0}}, hitPoint: {220.0, 478.0}
+  Other, {{0.0, 0.0}, {440.0, 956.0}}, hitPoint: {220.0, 478.0}
+   Other, {{0.0, 0.0}, {440.0, 956.0}}, hitPoint: {220.0, 478.0}

@@ -1,0 +1,81 @@
+2026-10-11 22:29:40.226623+0800 [90367:26102798] [app] Launching iOS app
+
+2026-10-11 22:29:42.551624+0800 [90367:26102798] [persistence] Opening shared SwiftData container
+
+2026-10-11 22:29:42.555912+0800 [90367:26102798] [persistence] Keeping installed full seed store instead of reinstalling bundled base store
+
+2026-10-11 22:29:42.555967+0800 [90367:26102798] [persistence] Bundled seed store is already installed
+
+2026-10-11 22:29:42.556027+0800 [90367:26102798] [persistence] Creating model container at /Users/tigerguo/Library/Developer/CoreSimulator/Devices/16A9CAA7-45CE-46D5-8915-F61531FC617C/data/Containers/Shared/AppGroup/E73729E7-DAAD-45FA-BB30-218203C4D6B9/ChineseCalendarStore/ChineseCalendar.sqlite, allowsSave: false
+
+2026-10-11 22:29:43.128525+0800 [90367:26102798] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-11 22:29:43.128743+0800 [90367:26102798] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-11 22:29:43.179248+0800 [90367:26102798] [XPCErrors] non-launching port is incompatible with service identifier "com.apple.PointerUI.pointeruid.default-service"
+
+2026-10-11 22:29:43.225790+0800 [90367:26102798] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-11 22:29:43.225852+0800 [90367:26102798] [API] cannot add handler to 0 from 0 - dropping
+
+objc[90367]: Class UIAccessibilityLoaderWebShared is implemented in both /Library/Developer/CoreSimulator/Volumes/iOS_24A434/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 27.0.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebKit.axbundle/WebKit (0x12102c398) and /Library/Developer/CoreSimulator/Volumes/iOS_24A434/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 27.0.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebCore.axbundle/WebCore (0x121120310). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
+
+2026-10-11 22:29:43.478348+0800 [90367:26102798] [AXValidations] AX Safe category class 'SFBarButtonGroupContainerAccessibility' was not found!
+
+2026-10-11 22:29:43.761914+0800 [90367:26102798] void * _Nullable NSMapGet(NSMapTable * _Nonnull, const void * _Nullable): map table argument is NULL
+
+2026-10-11 22:29:44.193351+0800 [90367:26102798] [AXValidations] AX Safe category class 'SLHighlightDisambiguationPillViewAccessibility' was not found!
+
+2026-10-11 22:29:44.761208+0800 [90367:26102798] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-11 22:29:44.764053+0800 [90367:26102798] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-11 22:29:44.764156+0800 [90367:26102798] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-11 22:29:44.764184+0800 [90367:26102798] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-11 22:29:47.382587+0800 [90367:26102798] [UILog] Called -[UIContextMenuInteraction updateVisibleMenuWithBlock:] while no context menu is visible. This won't do anything.
+
+2026-10-11 22:29:51.898230+0800 [90367:26102798] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-11 22:29:52.442241+0800 [90367:26102798] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-11 22:29:52.442311+0800 [90367:26102798] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-11 22:29:54.160475+0800 [90367:26102798] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-11 22:29:54.160571+0800 [90367:26102798] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-11 22:29:54.673837+0800 [90367:26102798] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-11 22:29:54.673963+0800 [90367:26102798] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-11 22:29:54.673993+0800 [90367:26102798] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-11 22:29:55.524435+0800 [90367:26102798] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-11 22:29:55.524507+0800 [90367:26102798] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-11 22:29:55.524535+0800 [90367:26102798] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-11 22:29:58.512672+0800 [90367:26102798] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-11 22:29:58.512772+0800 [90367:26102798] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-11 22:29:59.007158+0800 [90367:26102798] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-11 22:30:00.246062+0800 [90367:26102798] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-11 22:30:00.246157+0800 [90367:26102798] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-11 22:30:00.246185+0800 [90367:26102798] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-11 22:30:00.267086+0800 [90367:26102798] [Snapshotting] Snapshotting a view (0x10a608f00, _UINavigationBarLargeTitleView) that has not been rendered at least once requires afterScreenUpdates:YES.
+
+2026-10-11 22:30:00.299869+0800 [90367:26102798] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-11 22:30:00.300024+0800 [90367:26102798] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-11 22:30:00.301258+0800 [90367:26102798] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-11 22:30:00.301296+0800 [90367:26102798] [API] cannot add handler to 0 from 0 - dropping

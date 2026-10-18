@@ -1,0 +1,10 @@
+Commands: ./Scripts/format.sh --check; ./Scripts/lint.sh; git diff --check
+Exit status: 0 for all three
+
+(lint mode - no files will be changed.)
+Reading config file at /Users/tigerguo/.codex/worktrees/d18d/Chinese-date/.swiftformat
+SwiftFormat completed in 0.43s.
+0/216 files require formatting, 38 files skipped.
+
+Linting 'ChineseCalendariOSApp.swift' (205/205)
+Done linting! Found 0 violations, 0 serious in 205 files.

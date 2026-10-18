@@ -1,0 +1,10 @@
+./Scripts/format.sh --check (exit 0)
+(lint mode - no files will be changed.)
+Reading config file at /Users/tigerguo/.codex/worktrees/d18d/Chinese-date/.swiftformat
+SwiftFormat completed in 0.36s.
+0/245 files require formatting, 53 files skipped.
+
+./Scripts/lint.sh (exit 0)
+Done linting! Found 0 violations, 0 serious in 234 files.
+
+git diff --check (exit 0, no output)

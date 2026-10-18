@@ -1,0 +1,20 @@
+diff --git a/Sources/ChineseCalendarUI/App/Store/ChineseCalendarStoreCoordinator.swift b/Sources/ChineseCalendarUI/App/Store/ChineseCalendarStoreCoordinator.swift
+index bc5f4630..b9cdbcf4 100644
+--- a/Sources/ChineseCalendarUI/App/Store/ChineseCalendarStoreCoordinator.swift
++++ b/Sources/ChineseCalendarUI/App/Store/ChineseCalendarStoreCoordinator.swift
+@@ -211,6 +211,15 @@ public final class ChineseCalendarStoreCoordinator {
+                 try await fullStoreDownloadSimulator.run { progress in
+                     fullStoreDownloadProgress = progress
+                 }
++                if ProcessInfo.processInfo.arguments.contains("--issue-145-memory-switch") {
++                    let container = try PreviewSampleData.makeModelContainer()
++                    state = .ready(
++                        container: container,
++                        contentLevel: .full,
++                        identityToken: "issue-145-memory-" + UUID().uuidString
++                    )
++                    ChineseCalendarLog.ui.notice("Issue145 controlled in-memory container switch completed")
++                }
+                 fullStoreDownloadTask = nil
+                 isSimulatingFullStoreDownload = false
+                 clearCompletedDownloadProgressAfterDelay()

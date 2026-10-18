@@ -1,0 +1,11 @@
+✔ dataset identity is stable across provenance changes and changes with semantic input (17.328958ms)
+✔ artifact identity changes with schema, format, content level, and recipe (14.912416ms)
+✔ manifest validation ignores provenance but rejects a stale artifact (8.926041ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 97.089291
