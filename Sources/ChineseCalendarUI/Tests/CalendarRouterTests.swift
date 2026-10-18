@@ -82,13 +82,17 @@ import Testing
 }
 
 @MainActor
-@Test func hotDeepLinkDismissesActivePresentationTreeBeforeRouting() {
+@Test func hotDeepLinkConfirmsThenDismissesActivePresentationTreeBeforeRouting() throws {
     let router = CalendarRouter(yearsPath: [.lunarYear(2024)])
     let coordinator = CalendarHomeCoordinator(router: router)
     router.presentSheet(.lunarYear(2025))
 
     coordinator.openDeepLink(.lunarYear(2026, monthIndex: 26001))
 
+    #expect(router.sheet != nil)
+    #expect(router.navigation.deferredRequest == nil)
+    let confirmation = try #require(router.navigation.pendingConfirmation)
+    router.navigation.confirmNavigation(id: confirmation.id)
     #expect(router.sheet == nil)
     #expect(
         router.navigation.deferredRequest
@@ -96,7 +100,7 @@ import Testing
     )
     #expect(router.currentDestination(on: .years) == .lunarYear(2024))
 
-    router.navigation.applyDeferredRequestIfReady()
+    coordinator.rootPresentationDidDismiss()
 
     #expect(router.navigation.deferredRequest == nil)
     #expect(router.currentDestination(on: .years) == .lunarYear(2026, monthIndex: 26001))

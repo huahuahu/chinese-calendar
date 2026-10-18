@@ -1,3 +1,4 @@
+import ChineseCalendarLocalization
 import SFSafeSymbols
 import SwiftUI
 
@@ -17,12 +18,17 @@ struct DynastyFactCard: View {
         static let borderWidth: CGFloat = 1
     }
 
+    @Environment(CalendarNavigationContext.self) private var navigation
+
     let model: DynastyFactCardModel
 
     var body: some View {
-        NavigationLink(value: model.destination) {
+        Button {
+            navigation.push(model.destination)
+        } label: {
             cardLabel
         }
+        .calendarPresentationMenu(destination: model.destination)
         .buttonStyle(
             HistoryPressButtonStyle(
                 cornerRadius: Constants.cardCornerRadius
@@ -103,8 +109,8 @@ struct DynastyFactCard: View {
     }
 }
 
-#Preview {
-    NavigationStack {
+#Preview(traits: .sampleData) {
+    SampleNavigationPreview(tab: .history) {
         DynastyFactCard(
             model: DynastyFactCardModel(
                 value: "16",

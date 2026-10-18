@@ -1,0 +1,28 @@
+import Foundation
+import NavigationCore
+
+/// 业务提示的路由数据，与页面 destination 分开；临时错误文案通过消息 ID 关联。
+nonisolated enum CalendarAlert: NavigationAlertRoute, Codable {
+    case clearDownloadedData
+    case clearDataSucceeded
+    case clearDataFailed(messageID: UUID)
+    case downloadFailed(messageID: UUID)
+    #if DEBUG
+        case debugNotice(Int)
+        case debugNavigationChoice
+    #endif
+
+    enum Action: Hashable {
+        case acknowledge, cancel, clearDownloadedData
+        #if DEBUG
+            case openHistory
+        #endif
+    }
+
+    var messageID: UUID? {
+        switch self {
+        case let .clearDataFailed(id), let .downloadFailed(id): id
+        default: nil
+        }
+    }
+}

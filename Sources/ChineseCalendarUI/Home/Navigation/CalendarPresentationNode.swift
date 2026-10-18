@@ -1,3 +1,3 @@
 import NavigationCore
 
-typealias CalendarPresentationNode = NavigationPresentationNode<CalendarDestination>
+typealias CalendarPresentationNode = NavigationPresentationNode<CalendarTab, CalendarDestination, CalendarAlert>

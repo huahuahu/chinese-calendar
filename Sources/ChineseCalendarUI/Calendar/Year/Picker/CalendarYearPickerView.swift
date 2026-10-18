@@ -13,6 +13,7 @@ struct CalendarYearPickerView: View {
     let selectYear: (Int) -> Void
 
     @State private var hasResolvedInitialScrollTarget = false
+    @State private var isListReady = false
 
     init(selectYear: @escaping (Int) -> Void) {
         self.selectYear = selectYear
@@ -26,6 +27,15 @@ struct CalendarYearPickerView: View {
                 selectYear: selectYear
             )
             .onChange(of: availableYearNumbers, initial: true) {
+                positionInitiallyIfNeeded(using: proxy)
+            }
+            .onChange(of: selectedYearNumber) {
+                positionInitiallyIfNeeded(using: proxy)
+            }
+            .onScrollGeometryChange(for: Bool.self) { geometry in
+                geometry.containerSize.height > 0 && geometry.contentSize.height > 0
+            } action: { _, isReady in
+                isListReady = isReady
                 positionInitiallyIfNeeded(using: proxy)
             }
         }
@@ -59,16 +69,8 @@ struct CalendarYearPickerView: View {
     }
 
     private func positionInitiallyIfNeeded(using proxy: ScrollViewProxy) {
-        guard !hasResolvedInitialScrollTarget else {
-            return
-        }
-
-        guard selectedYearNumber != nil else {
-            hasResolvedInitialScrollTarget = true
-            return
-        }
-
-        guard !availableYearNumbers.isEmpty else {
+        // 模态内容先建立数据、后完成 List 布局，首个 onChange 可能早于滚动容器就绪。
+        guard isListReady, !hasResolvedInitialScrollTarget else {
             return
         }
 
@@ -76,13 +78,17 @@ struct CalendarYearPickerView: View {
             selectedYearNumber: selectedYearNumber,
             availableYearNumbers: availableYearNumbers
         ) else {
-            hasResolvedInitialScrollTarget = true
             return
         }
 
         hasResolvedInitialScrollTarget = true
-        proxy.scrollTo(target, anchor: .center)
+        proxy.scrollTo(CalendarYearPickerScrollTarget.year(target), anchor: .center)
     }
+}
+
+/// 年份与世纪分组可能使用相同整数，滚动目标必须与分组身份分开。
+private enum CalendarYearPickerScrollTarget: Hashable {
+    case year(Int)
 }
 
 private struct CalendarYearPickerList: View {
@@ -116,7 +122,7 @@ private struct CalendarYearPickerSection: View {
                     isSelected: year.lunarYearNumber == selectedYearNumber,
                     selectYear: selectYear
                 )
-                .id(year.lunarYearNumber)
+                .id(CalendarYearPickerScrollTarget.year(year.lunarYearNumber))
             }
         }
         .sectionIndexLabel(section.indexTitle)

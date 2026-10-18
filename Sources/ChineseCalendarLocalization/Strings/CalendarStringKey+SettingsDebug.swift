@@ -34,8 +34,8 @@ public extension CalendarStringKey.Settings.Debug {
     static var message: LocalizedStringResource {
         CalendarStringKey.resource(
             "settings.debug.message",
-            defaultValue: "只模拟下载进度，不访问网络、写入文件或替换日历数据库。",
-            comment: "设置页调试功能的说明，告知模拟过程不访问网络或修改实际日历数据库。"
+            defaultValue: "下载调试只模拟进度，不访问网络、写入文件或替换日历数据库。",
+            comment: "设置页下载调试功能的说明，告知模拟过程不访问网络或修改实际日历数据库。"
         )
     }
 }

@@ -11,11 +11,7 @@ public struct CalendarSettingsView: View {
     @Environment(\.dismiss) private var dismiss
     @AppStorage(CalendarColorSchemePreference.storageKey)
     private var colorSchemePreference = CalendarColorSchemePreference.system
-    @State private var isConfirmingClear = false
-    @State private var resultMessage: SettingsResultMessage?
-    #if DEBUG
-        @State private var isShowingDownloadPreview = false
-    #endif
+    @Environment(CalendarPresentationContext.self) private var presentation
 
     public init(coordinator: ChineseCalendarStoreCoordinator, showsDoneButton: Bool = true) {
         self.coordinator = coordinator
@@ -44,7 +40,7 @@ public struct CalendarSettingsView: View {
                 .padding(.vertical, 4)
 
                 Button(role: .destructive) {
-                    isConfirmingClear = true
+                    presentation.present(.alert(.clearDownloadedData))
                 } label: {
                     if coordinator.isClearingDownloadedData {
                         Label {
@@ -61,16 +57,7 @@ public struct CalendarSettingsView: View {
 
             #if DEBUG
                 Section(CalendarStringKey.Settings.Debug.title) {
-                    Button(
-                        CalendarStringKey.Settings.Debug.simulateDownload,
-                        systemSymbol: .arrowDownCircle,
-                        action: startSimulatedFullStoreDownload
-                    )
-                    .disabled(!coordinator.canStartSimulatedFullStoreDownload)
-
-                    Button(CalendarStringKey.Settings.Debug.downloadPreview, systemSymbol: .eye) {
-                        isShowingDownloadPreview = true
-                    }
+                    CalendarDebugActionsMenu(storeCoordinator: coordinator)
 
                     Text(CalendarStringKey.Settings.Debug.message)
                         .font(.footnote)
@@ -88,43 +75,7 @@ public struct CalendarSettingsView: View {
                 }
             }
         }
-        .confirmationDialog(
-            CalendarStringKey.Settings.ClearData.confirmationTitle,
-            isPresented: $isConfirmingClear,
-            titleVisibility: .visible
-        ) {
-            Button(CalendarStringKey.Settings.ClearData.action, role: .destructive) {
-                clearDownloadedData()
-            }
-        } message: {
-            Text(CalendarStringKey.Settings.ClearData.confirmationMessage)
-        }
-        .alert(
-            resultMessage?.title ?? CalendarStringKey.Common.Value.empty,
-            isPresented: resultMessageIsPresented,
-            presenting: resultMessage
-        ) { _ in
-            Button(CalendarStringKey.Common.Action.ok, role: .cancel) {}
-        } message: { resultMessage in
-            Text(resultMessage.message)
-        }
         .calendarColorSchemePreference()
-        #if DEBUG
-            .fullScreenCover(isPresented: $isShowingDownloadPreview) {
-                FullStoreDownloadPreview()
-            }
-        #endif
-    }
-
-    private var resultMessageIsPresented: Binding<Bool> {
-        Binding(
-            get: { resultMessage != nil },
-            set: { isPresented in
-                if !isPresented {
-                    resultMessage = nil
-                }
-            }
-        )
     }
 
     private var dataStatusTitle: LocalizedStringResource {
@@ -177,33 +128,4 @@ public struct CalendarSettingsView: View {
             return .externaldriveBadgeExclamationmark
         }
     }
-
-    private func clearDownloadedData() {
-        Task {
-            do {
-                try await coordinator.clearDownloadedData()
-                resultMessage = SettingsResultMessage(
-                    title: CalendarStringKey.Settings.ClearData.successTitle,
-                    message: CalendarStringKey.Settings.ClearData.successMessage
-                )
-            } catch {
-                resultMessage = SettingsResultMessage(
-                    title: CalendarStringKey.Settings.ClearData.failureTitle,
-                    message: CalendarStoreErrorPresentation.message(for: error, operation: .clear)
-                )
-            }
-        }
-    }
-
-    #if DEBUG
-        private func startSimulatedFullStoreDownload() {
-            coordinator.startSimulatedFullStoreDownload()
-        }
-    #endif
-}
-
-private struct SettingsResultMessage: Identifiable {
-    let id = UUID()
-    let title: LocalizedStringResource
-    let message: LocalizedStringResource
 }

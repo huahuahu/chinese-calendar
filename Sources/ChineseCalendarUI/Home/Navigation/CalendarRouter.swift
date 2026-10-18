@@ -1,10 +1,11 @@
+import Foundation
 import NavigationCore
 import Observation
 
 @MainActor
 @Observable
 final class CalendarRouter {
-    let navigation: NavigationRouter<CalendarTab, CalendarDestination>
+    let navigation: NavigationRouter<CalendarTab, CalendarDestination, CalendarAlert>
 
     var selectedTab: CalendarTab {
         get { navigation.selectedScope }
@@ -22,13 +23,11 @@ final class CalendarRouter {
     }
 
     var sheet: CalendarPresentationNode? {
-        get { navigation.sheet }
-        set { navigation.sheet = newValue }
+        navigation.sheet
     }
 
     var fullScreen: CalendarPresentationNode? {
-        get { navigation.fullScreen }
-        set { navigation.fullScreen = newValue }
+        navigation.fullScreen
     }
 
     var selectedDestination: CalendarDestination? {
@@ -37,6 +36,31 @@ final class CalendarRouter {
 
     var hasActivePresentation: Bool {
         navigation.hasActivePresentation
+    }
+
+    var isAwaitingPresentationDismissal: Bool {
+        navigation.isAwaitingPresentationDismissal
+    }
+
+    var presentations: [CalendarPresentationNode] {
+        navigation.presentations
+    }
+
+    /// 示例恢复边界：只暴露可以从业务地址重新查询内容的导航树。
+    var restorableSnapshot: NavigationSnapshot<CalendarTab, CalendarDestination, CalendarAlert>? {
+        let snapshot = navigation.snapshot
+        guard !isAwaitingPresentationDismissal, navigation.pendingConfirmation == nil,
+              !navigation.hasActiveAlert, navigation.requestWaitingForAlert == nil,
+              snapshot.destinations.allSatisfy(\.supportsStateRestoration),
+              snapshot.presentation?.alerts.isEmpty ?? true else { return nil }
+        return snapshot
+    }
+
+    @discardableResult
+    func restore(_ snapshot: NavigationSnapshot<CalendarTab, CalendarDestination, CalendarAlert>) -> Bool {
+        guard snapshot.destinations.allSatisfy(\.supportsStateRestoration),
+              snapshot.presentation?.alerts.isEmpty ?? true else { return false }
+        return navigation.restore(snapshot)
     }
 
     init(
@@ -51,38 +75,31 @@ final class CalendarRouter {
     }
 
     func path(for tab: CalendarTab) -> [CalendarDestination] {
-        tab == .settings ? [] : navigation.path(for: tab)
+        navigation.path(for: tab)
     }
 
     func setPath(_ path: [CalendarDestination], for tab: CalendarTab) {
-        switch tab {
-        case .years:
-            navigation.setPath(path, for: .years)
-        case .history:
-            navigation.setPath(path, for: .history)
-        case .settings:
-            break
-        }
+        navigation.setPath(path, for: tab)
     }
 
     func currentDestination(on tab: CalendarTab) -> CalendarDestination? {
-        tab == .settings ? nil : navigation.currentDestination(on: tab)
+        navigation.currentDestination(on: tab)
     }
 
     func push(_ destination: CalendarDestination, on tab: CalendarTab? = nil) {
-        let targetTab = tab ?? selectedTab
-        guard targetTab != .settings else {
-            return
-        }
-        navigation.push(destination, on: targetTab)
+        navigation.push(destination, on: tab)
     }
 
     func presentSheet(_ destination: CalendarDestination) {
+        guard !isAwaitingPresentationDismissal else { return }
         navigation.presentSheet(destination)
     }
 
-    func presentFullScreen(_ destination: CalendarDestination) {
-        navigation.presentFullScreen(destination)
+    func presentFullScreen(
+        _ destination: CalendarDestination, initialStack: NavigationStackID<CalendarTab> = .primary
+    ) {
+        guard !isAwaitingPresentationDismissal else { return }
+        navigation.presentFullScreen(destination, initialStack: initialStack)
     }
 
     func dismissSheet() {
@@ -93,16 +110,25 @@ final class CalendarRouter {
         navigation.dismissFullScreen()
     }
 
-    func openDeepLink(_ deepLink: CalendarDeepLink) -> NavigationRequestResult {
-        navigation.submit(navigationRequest(for: deepLink))
+    @discardableResult
+    func dismissPresentation(id: UUID) -> Bool {
+        navigation.dismissPresentation(id: id)
+    }
+
+    func rootPresentationDidDismiss() {
+        navigation.presentationDidDismiss(isRoot: true)
+    }
+
+    func openDeepLink(
+        _ deepLink: CalendarDeepLink,
+        confirmIfPresented: Bool = false
+    ) -> NavigationRequestResult {
+        navigation.submit(navigationRequest(for: deepLink), confirmIfPresented: confirmIfPresented)
     }
 
     func openColdLaunchDeepLink(_ deepLink: CalendarDeepLink?) -> NavigationRequestResult? {
-        guard let deepLink else {
-            return nil
-        }
-
-        return navigation.submit(navigationRequest(for: deepLink))
+        guard let deepLink else { return nil }
+        return navigation.submit(navigationRequest(for: deepLink), confirmIfPresented: true)
     }
 
     private func navigationRequest(

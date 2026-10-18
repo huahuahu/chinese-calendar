@@ -15,7 +15,7 @@ private enum TestDestination: Hashable {
 
 @MainActor
 @Test func scopePathsAreIndependent() {
-    let router = NavigationRouter<TestScope, TestDestination>(selectedScope: .primary)
+    let router = NavigationRouter<TestScope, TestDestination, NoNavigationAlert>(selectedScope: .primary)
 
     router.push(.first, on: .primary)
     router.push(.second, on: .secondary)
@@ -27,7 +27,7 @@ private enum TestDestination: Hashable {
 
 @MainActor
 @Test func settingRootClearsOnlyItsScopePath() {
-    let router = NavigationRouter<TestScope, TestDestination>(
+    let router = NavigationRouter<TestScope, TestDestination, NoNavigationAlert>(
         selectedScope: .primary,
         paths: [.primary: [.first], .secondary: [.second]]
     )
@@ -41,8 +41,8 @@ private enum TestDestination: Hashable {
 
 @MainActor
 @Test func rootPresentationsCreateIndependentNodes() {
-    let sheetRouter = NavigationRouter<TestScope, TestDestination>(selectedScope: .primary)
-    let fullScreenRouter = NavigationRouter<TestScope, TestDestination>(selectedScope: .primary)
+    let sheetRouter = NavigationRouter<TestScope, TestDestination, NoNavigationAlert>(selectedScope: .primary)
+    let fullScreenRouter = NavigationRouter<TestScope, TestDestination, NoNavigationAlert>(selectedScope: .primary)
 
     sheetRouter.presentSheet(.first)
     fullScreenRouter.presentFullScreen(.second)
@@ -55,7 +55,7 @@ private enum TestDestination: Hashable {
 
 @MainActor
 @Test func presentationNestsAtFrontmostNode() throws {
-    let router = NavigationRouter<TestScope, TestDestination>(selectedScope: .primary)
+    let router = NavigationRouter<TestScope, TestDestination, NoNavigationAlert>(selectedScope: .primary)
     router.presentSheet(.first)
     let parent = try #require(router.sheet)
 
@@ -69,11 +69,11 @@ private enum TestDestination: Hashable {
 
 @MainActor
 @Test func presentedPushDoesNotChangeScopePath() throws {
-    let router = NavigationRouter<TestScope, TestDestination>(selectedScope: .primary)
+    let router = NavigationRouter<TestScope, TestDestination, NoNavigationAlert>(selectedScope: .primary)
     router.presentSheet(.first)
 
     let sheet = try #require(router.sheet)
-    sheet.push(.second)
+    router.context(for: sheet).push(.second)
 
     #expect(sheet.path == [.second])
     #expect(router.path(for: .primary).isEmpty)
@@ -81,12 +81,12 @@ private enum TestDestination: Hashable {
 
 @MainActor
 @Test func dismissingChildReturnsToParentNode() throws {
-    let router = NavigationRouter<TestScope, TestDestination>(selectedScope: .primary)
+    let router = NavigationRouter<TestScope, TestDestination, NoNavigationAlert>(selectedScope: .primary)
     router.presentSheet(.first)
     let parent = try #require(router.sheet)
-    parent.presentSheet(.second)
+    router.presentationContext(for: parent).present(.second)
 
-    parent.dismissSheet()
+    try router.dismissPresentation(id: #require(parent.sheet).id)
 
     #expect(router.sheet === parent)
     #expect(parent.sheet == nil)
@@ -94,7 +94,7 @@ private enum TestDestination: Hashable {
 
 @MainActor
 @Test func navigationRequestCasesUpdateTheirTargetScope() {
-    let router = NavigationRouter<TestScope, TestDestination>(
+    let router = NavigationRouter<TestScope, TestDestination, NoNavigationAlert>(
         selectedScope: .primary,
         rootDestinations: [.secondary: .first],
         paths: [.secondary: [.second]]
@@ -119,13 +119,13 @@ private enum TestDestination: Hashable {
 
 @MainActor
 @Test func requestDismissesPresentationTreeAndWaitsForDismissalCompletion() throws {
-    let router = NavigationRouter<TestScope, TestDestination>(
+    let router = NavigationRouter<TestScope, TestDestination, NoNavigationAlert>(
         selectedScope: .primary,
         rootDestinations: [.primary: .first]
     )
     router.presentSheet(.second)
     let sheet = try #require(router.sheet)
-    sheet.presentFullScreen(.third)
+    router.presentationContext(for: sheet).present(.third, style: .fullScreen)
 
     let result = router.submit(.setRoot(.second, on: .secondary))
 
@@ -149,7 +149,7 @@ private enum TestDestination: Hashable {
 
 @MainActor
 @Test func latestRequestWinsWhilePresentationDismissalIsInProgress() {
-    let router = NavigationRouter<TestScope, TestDestination>(selectedScope: .primary)
+    let router = NavigationRouter<TestScope, TestDestination, NoNavigationAlert>(selectedScope: .primary)
     router.presentFullScreen(.first)
 
     #expect(router.submit(.push(.second, on: .primary)) == .deferredUntilPresentationDismisses)
@@ -165,7 +165,7 @@ private enum TestDestination: Hashable {
 
 @MainActor
 @Test func applyingDeferredRequestIsIdempotent() {
-    let router = NavigationRouter<TestScope, TestDestination>(selectedScope: .primary)
+    let router = NavigationRouter<TestScope, TestDestination, NoNavigationAlert>(selectedScope: .primary)
     router.presentSheet(.first)
     router.submit(.push(.second, on: .primary))
 
@@ -175,10 +175,11 @@ private enum TestDestination: Hashable {
 }
 
 @MainActor
-@Test func presentationHostAcceptsAnArbitraryDestinationBuilder() {
-    let node = NavigationPresentationNode(destination: TestDestination.first)
-
-    _ = NavigationPresentationNodeView(node: node) { destination, _ in
+@Test func presentationHostAcceptsAnArbitraryDestinationBuilder() throws {
+    let router = NavigationRouter<TestScope, TestDestination, NoNavigationAlert>(selectedScope: .primary)
+    router.rootPresentation.present(.first)
+    let node = try #require(router.presentedNode)
+    _ = NavigationPresentationNodeView(node: node, context: router.presentationContext(for: node)) { destination in
         Text(String(describing: destination))
     }
 }

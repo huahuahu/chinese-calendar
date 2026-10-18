@@ -2,7 +2,7 @@ import ChineseCalendarLocalization
 import Foundation
 import SFSafeSymbols
 
-enum CalendarTab: Hashable, CaseIterable, Identifiable {
+enum CalendarTab: Codable, Hashable, CaseIterable, Identifiable {
     case years
     case history
     case settings
