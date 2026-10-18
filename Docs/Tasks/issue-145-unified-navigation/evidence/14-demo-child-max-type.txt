@@ -1,0 +1,55 @@
+Device orientation: Portrait
+------------------------
+Application bundle identifier: com.tiger.suzhou.ChineseCalendar
+Application UI orientation: Portrait
+Application, pid: 29157, label: 'Chinese Calendar'
+ Window, {{0.0, 0.0}, {440.0, 956.0}}, hitPoint: {220.0, 478.0}
+  Other, {{0.0, 0.0}, {440.0, 956.0}}, hitPoint: {220.0, 478.0}
+   Other, {{-440.0, -956.0}, {1320.0, 2868.0}}, hitPoint: {220.0, 478.0}
+   Other, {{0.0, 62.0}, {440.0, 894.0}}, hitPoint: {220.0, 509.0}
+    Image, {{-150.0, -88.0}, {740.0, 1194.0}}, hitPoint: {220.0, 478.0}
+    Other, {{0.0, 62.0}, {440.0, 894.0}}, hitPoint: {220.0, 509.0}
+     Other, {{0.0, 62.0}, {440.0, 894.0}}, hitPoint: {220.0, 509.0}
+      Other, {{0.0, 62.0}, {440.0, 894.0}}, hitPoint: {220.0, 509.0}
+       Other, {{0.0, 62.0}, {440.0, 894.0}}, hitPoint: {220.0, 509.0}
+        NavigationBar, {{0.0, 82.0}, {440.0, 54.0}}, identifier: '完整数据下载', hitPoint: {220.0, 109.0}
+         StaticText, {{159.7, 91.3}, {120.3, 25.3}}, label: '完整数据下载', hitPoint: {219.8, 104.0}
+         Button, {{380.0, 86.0}, {36.0, 36.0}}, label: '关闭', hitPoint: {398.0, 104.0}
+        Other, {{0.0, 62.0}, {440.0, 894.0}}, hitPoint: {220.0, 509.0}
+         Other, {{0.0, 62.0}, {440.0, 894.0}}, hitPoint: {220.0, 509.0}
+          Other, {{0.0, 62.0}, {440.0, 894.0}}, hitPoint: {220.0, 509.0}
+           Other, {{0.0, 62.0}, {440.0, 894.0}}, hitPoint: {220.0, 509.0}
+            ScrollView, {{0.0, 62.0}, {440.0, 894.0}}, hitPoint: {220.0, 509.0}
+             Other, {{0.0, 62.0}, {440.0, 894.0}}, hitPoint: {220.0, 509.0}
+              Other, {{0.0, 62.0}, {440.0, 114.0}}, hitPoint: {220.0, 119.0}
+             Other, {{0.0, 62.0}, {440.0, 894.0}}, hitPoint: {220.0, 509.0}
+             Other, {{0.0, 136.0}, {440.0, 864.0}}, hitPoint: {220.0, 546.0}
+              StaticText, {{22.3, 152.0}, {277.7, 152.0}}, label: '准备下载、已完成', hitPoint: {161.2, 228.0}
+               Image, {{22.3, 158.3}, {55.0, 55.0}}, identifier: 'checkmark.circle.fill', label: '已选择', Selected, hitPoint: {49.8, 185.8}
+               StaticText, {{99.7, 152.0}, {200.3, 63.3}}, label: '准备下载', hitPoint: {199.8, 183.7}
+               StaticText, {{99.7, 223.3}, {139.0, 58.7}}, label: '已完成', hitPoint: {169.2, 252.7}
+              StaticText, {{21.7, 310.0}, {402.3, 222.0}}, label: '下载文件、文件已下载 100%。', value: 进行中, hitPoint: {222.8, 421.0}
+               ActivityIndicator, {{21.7, 315.7}, {56.3, 56.3}}, value: 1, hitPoint: {49.8, 343.8}
+                ActivityIndicator, {{21.7, 315.7}, {56.3, 56.3}}, value: 1, hitPoint: {49.8, 343.8}
+               StaticText, {{99.7, 310.0}, {200.3, 63.3}}, label: '下载文件', hitPoint: {199.8, 341.7}
+               StaticText, {{99.7, 381.3}, {241.7, 116.7}}, label: '文件已下载 100%。', hitPoint: {220.5, 439.7}
+               ProgressIndicator, {{99.7, 506.0}, {324.3, 4.0}}, value: 100%, hitPoint: {261.8, 508.0}
+                ProgressIndicator, {{99.7, 496.0}, {324.3, 24.0}}, value: 100%, hitPoint: {261.8, 508.0}
+              StaticText, {{22.3, 538.0}, {277.7, 152.0}}, label: '校验文件、等待开始', hitPoint: {161.2, 614.0}
+               Image, {{22.3, 544.3}, {55.0, 55.0}}, identifier: 'circle', label: '圆形', hitPoint: {49.8, 571.8}
+               StaticText, {{99.7, 538.0}, {200.3, 63.3}}, label: '校验文件', hitPoint: {199.8, 569.7}
+               StaticText, {{99.7, 609.3}, {185.0, 58.7}}, label: '等待开始', hitPoint: {192.2, 638.7}
+              StaticText, {{22.3, 696.0}, {277.7, 152.0}}, label: '安装数据、等待开始', hitPoint: {161.2, 772.0}
+               Image, {{22.3, 702.3}, {55.0, 55.0}}, identifier: 'circle', label: '圆形', hitPoint: {49.8, 729.8}
+               StaticText, {{99.7, 696.0}, {200.3, 63.3}}, label: '安装数据', hitPoint: {199.8, 727.7}
+               StaticText, {{99.7, 767.3}, {185.0, 58.7}}, label: '等待开始', hitPoint: {192.2, 796.7}
+              StaticText, {{22.3, 854.0}, {262.3, 130.0}}, label: '完成、等待开始', hitPoint: {153.5, 905.0}
+               Image, {{22.3, 860.3}, {55.0, 55.0}}, identifier: 'circle', label: '圆形', hitPoint: {49.8, 887.8}
+               StaticText, {{99.7, 854.0}, {100.3, 63.3}}, label: '完成', hitPoint: {149.8, 885.7}
+               StaticText, {{99.7, 925.3}, {185.0, 58.7}}, label: '等待开始', hitPoint: {192.2, 940.7}
+             Other, {{407.0, 136.0}, {30.0, 758.0}}, label: '垂直滚动条, 2页', value: 0%, hitPoint: {422.0, 515.0}
+              Other, {{434.0, 139.0}, {3.0, 691.7}}, hitPoint: {435.5, 484.8}
+             Other, {{407.0, 136.0}, {30.0, 758.0}}, label: '垂直滚动条, 2页', value: 0%, hitPoint: {422.0, 515.0}
+              Other, {{434.0, 139.0}, {3.0, 691.7}}, hitPoint: {435.5, 484.8}
+        Toolbar, {{0.0, 62.0}, {440.0, 894.0}}, identifier: 'Toolbar', label: '工具栏', hitPoint: {220.0, 509.0}
+         Other, {{0.0, 62.0}, {440.0, 894.0}}, hitPoint: {220.0, 509.0}

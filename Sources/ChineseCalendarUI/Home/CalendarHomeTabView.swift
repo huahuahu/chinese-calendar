@@ -1,5 +1,6 @@
 import ChineseCalendarCore
 import ChineseCalendarLocalization
+import NavigationCore
 import SFSafeSymbols
 import SwiftUI
 
@@ -15,25 +16,36 @@ struct CalendarHomeTabView<BottomStatusBar: View>: View {
 
         TabView(selection: $router.selectedTab) {
             Tab(value: CalendarTab.years) {
-                NavigationStack(path: $router.yearsPath) {
+                NavigationScopeView(
+                    context: router.navigation.context(for: .years),
+                    presentation: router.navigation.rootPresentation
+                ) {
                     LunarYearDestinationView(landing: .year(number: ChineseLunarCalendar.yearNumber()))
-                        .calendarDestinations()
+                } destinationContent: { destination in
+                    CalendarDestinationView(destination: destination)
                 }
             } label: {
                 Label(CalendarTab.years.title, systemSymbol: CalendarTab.years.systemSymbol)
             }
 
             Tab(value: CalendarTab.history) {
-                NavigationStack(path: $router.historyPath) {
+                NavigationScopeView(
+                    context: router.navigation.context(for: .history),
+                    presentation: router.navigation.rootPresentation
+                ) {
                     CalendarHistoryHomeView()
-                        .calendarDestinations()
+                } destinationContent: { destination in
+                    CalendarDestinationView(destination: destination)
                 }
             } label: {
                 Label(CalendarTab.history.title, systemSymbol: CalendarTab.history.systemSymbol)
             }
 
             Tab(value: CalendarTab.settings) {
-                NavigationStack {
+                NavigationScopeView(
+                    context: router.navigation.context(for: .settings),
+                    presentation: router.navigation.rootPresentation
+                ) {
                     if let settingsCoordinator {
                         CalendarSettingsView(coordinator: settingsCoordinator, showsDoneButton: false)
                     } else {
@@ -43,6 +55,8 @@ struct CalendarHomeTabView<BottomStatusBar: View>: View {
                             Text(CalendarStringKey.Settings.Unavailable.message)
                         }
                     }
+                } destinationContent: { destination in
+                    CalendarDestinationView(destination: destination)
                 }
             } label: {
                 Label(CalendarTab.settings.title, systemSymbol: CalendarTab.settings.systemSymbol)

@@ -8,7 +8,7 @@ import SwiftUI
 @MainActor
 public struct ChineseCalendarRootView: View {
     @State private var coordinator: ChineseCalendarStoreCoordinator
-    @State private var isShowingDownloadDetails = false
+    @State private var homeCoordinator = CalendarHomeCoordinator()
 
     public init(coordinator: ChineseCalendarStoreCoordinator) {
         _coordinator = State(initialValue: coordinator)
@@ -41,22 +41,12 @@ public struct ChineseCalendarRootView: View {
         .task {
             await coordinator.prepareStoreIfNeeded()
         }
-        .alert(CalendarStringKey.Store.Download.failureTitle, isPresented: downloadErrorIsPresented) {
-            Button(CalendarStringKey.Common.Action.ok, role: .cancel) {}
-        } message: {
-            Text(coordinator.downloadErrorMessage ?? CalendarStringKey.Common.Error.retryLater)
-        }
         .calendarColorSchemePreference()
-        .sheet(isPresented: $isShowingDownloadDetails) {
-            if let progress = coordinator.fullStoreDownloadProgress {
-                FullStoreDownloadDetailView(progress: progress)
-            }
-        }
-        .onChange(of: coordinator.fullStoreDownloadProgress) { _, progress in
-            if progress == nil {
-                isShowingDownloadDetails = false
-            }
-        }
+        .calendarNavigationHost(
+            coordinator: homeCoordinator,
+            storeCoordinator: coordinator,
+            handlesExternalNavigation: true
+        )
     }
 
     private func readyCalendarHome(
@@ -64,7 +54,8 @@ public struct ChineseCalendarRootView: View {
         contentLevel: ChineseCalendarSeedStoreContentLevel,
         identityToken: String?
     ) -> some View {
-        CalendarHomeView(
+        CalendarHomeTabView(
+            coordinator: homeCoordinator,
             settingsCoordinator: coordinator,
             bottomStatusBarIsPresented: bottomStatusBarIsPresented(contentLevel: contentLevel)
         ) {
@@ -79,22 +70,11 @@ public struct ChineseCalendarRootView: View {
         coordinator.fullStoreDownloadProgress != nil || coordinator.canDownloadFullStore(contentLevel: contentLevel)
     }
 
-    private var downloadErrorIsPresented: Binding<Bool> {
-        Binding(
-            get: { coordinator.downloadErrorMessage != nil },
-            set: { isPresented in
-                if !isPresented {
-                    coordinator.dismissDownloadError()
-                }
-            }
-        )
-    }
-
     @ViewBuilder
     private func bottomStatusBar(contentLevel: ChineseCalendarSeedStoreContentLevel) -> some View {
         if let progress = coordinator.fullStoreDownloadProgress {
             FullStoreDownloadBottomProgressView(progress: progress) {
-                isShowingDownloadDetails = true
+                homeCoordinator.presentDownloadDetails()
             }
         } else if coordinator.canDownloadFullStore(contentLevel: contentLevel) {
             FullStoreDownloadBanner(action: startFullStoreDownload)

@@ -121,6 +121,7 @@ struct CalendarHistoryHomeView: View {
                 DynastyCard(model: model, showsDisclosureIndicator: true)
             }
             .buttonStyle(HistoryPressButtonStyle())
+            .calendarPresentationMenu(destination: .dynasty(orthodoxPeriodID: period.id))
         } else {
             DynastyCard(model: model, showsDisclosureIndicator: false)
         }

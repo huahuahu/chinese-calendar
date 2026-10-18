@@ -1,0 +1,16 @@
+[
+  {
+    "url": "chinesecalendar://year/2020",
+    "start_monotonic": 270857.30940975,
+    "end_monotonic": 270857.718710291,
+    "returncode": 0,
+    "stderr": ""
+  },
+  {
+    "url": "chinesecalendar://year/2021",
+    "start_monotonic": 270857.718715375,
+    "end_monotonic": 270857.888378333,
+    "returncode": 0,
+    "stderr": ""
+  }
+]

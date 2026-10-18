@@ -18,6 +18,8 @@ struct YearMonthHeader: View {
         static let yearSelectionDuration: TimeInterval = 0.35
     }
 
+    @Environment(CalendarPresentationContext.self) private var presentation
+    @Environment(CalendarHomeCoordinator.self) private var homeCoordinator
     @Environment(CalendarSelection.self) private var selection
     @Environment(CalendarToday.self) private var today
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -26,7 +28,6 @@ struct YearMonthHeader: View {
 
     let month: ChineseLunarMonth
 
-    @State private var isYearPickerPresented = false
     @State private var pendingYearTransition: LunarYearTransitionRequest?
     @State private var yearTransitionContext = LunarYearTransitionContext()
 
@@ -98,18 +99,6 @@ struct YearMonthHeader: View {
                     )
                     .labelStyle(.titleOnly)
                 }
-            }
-        }
-        .sheet(isPresented: $isYearPickerPresented) {
-            NavigationStack {
-                CalendarYearPickerView(selectYear: selectYearFromPicker)
-                    .toolbar {
-                        ToolbarItem(placement: .cancellationAction) {
-                            Button(CalendarStringKey.Common.Action.close) {
-                                isYearPickerPresented = false
-                            }
-                        }
-                    }
             }
         }
     }
@@ -187,7 +176,12 @@ private extension YearMonthHeader {
 
     private var titleContent: some View {
         Button {
-            isYearPickerPresented = true
+            homeCoordinator.presentYearPicker(
+                selection: selection,
+                modelContext: modelContext,
+                presentation: presentation,
+                selectYear: selectYear
+            )
         } label: {
             VStack(alignment: .leading, spacing: Constants.titleSpacing) {
                 Text(monthNavigationTitle)
@@ -273,11 +267,6 @@ private extension YearMonthHeader {
             ChineseCalendarLog.ui.error("无法选择今天：\(error.localizedDescription)")
             selection.select(dayIndex: nil)
         }
-    }
-
-    private func selectYearFromPicker(_ yearNumber: Int) {
-        isYearPickerPresented = false
-        selectYear(yearNumber)
     }
 
     private func selectYear(_ yearNumber: Int) {

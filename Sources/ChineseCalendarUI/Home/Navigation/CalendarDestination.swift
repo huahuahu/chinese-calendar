@@ -1,4 +1,6 @@
-enum CalendarDestination: Hashable, Identifiable {
+import Foundation
+
+enum CalendarDestination: Codable, Hashable, Identifiable {
     case lunarYear(Int, monthIndex: Int? = nil, dayIndex: Int? = nil)
     case dynasty(orthodoxPeriodID: String)
     case emperorList(dynastyID: String)
@@ -6,6 +8,13 @@ enum CalendarDestination: Hashable, Identifiable {
     case dynastySpan(orthodoxPeriodID: String)
     case reignEra(reignEraID: String)
     case emperor(String)
+    case yearPicker(sessionID: UUID)
+    case downloadDetails
+    #if DEBUG
+        case debugNavigation(id: UUID)
+        case downloadPreview(sessionID: UUID)
+        case downloadPreviewDetails(sessionID: UUID)
+    #endif
 
     var id: String {
         switch self {
@@ -23,6 +32,18 @@ enum CalendarDestination: Hashable, Identifiable {
             "reign-era-\(reignEraID)"
         case let .emperor(emperorID):
             "emperor-\(emperorID)"
+        case let .yearPicker(sessionID):
+            "year-picker-\(sessionID)"
+        case .downloadDetails:
+            "download-details"
+        #if DEBUG
+            case let .debugNavigation(id):
+                "debug-navigation-\(id)"
+            case let .downloadPreview(sessionID):
+                "download-preview-\(sessionID)"
+            case let .downloadPreviewDetails(sessionID):
+                "download-preview-details-\(sessionID)"
+        #endif
         }
     }
 
@@ -30,8 +51,37 @@ enum CalendarDestination: Hashable, Identifiable {
         switch self {
         case let .lunarYear(yearNumber, _, _):
             yearNumber
-        case .dynasty, .emperorList, .reignEraList, .dynastySpan, .reignEra, .emperor:
+        default:
             nil
         }
+    }
+
+    var usesPresentationNavigationStack: Bool {
+        #if DEBUG
+            if case .downloadPreview = self { return false }
+        #endif
+        return true
+    }
+
+    /// 临时会话依赖当前进程中的回调或下载状态，不能仅凭 ID 跨启动重建。
+    var supportsStateRestoration: Bool {
+        switch self {
+        case .yearPicker, .downloadDetails:
+            false
+        #if DEBUG
+            case .debugNavigation, .downloadPreview, .downloadPreviewDetails:
+                false
+        #endif
+        default:
+            true
+        }
+    }
+
+    var isDownloadDetail: Bool {
+        if case .downloadDetails = self { return true }
+        #if DEBUG
+            if case .downloadPreviewDetails = self { return true }
+        #endif
+        return false
     }
 }

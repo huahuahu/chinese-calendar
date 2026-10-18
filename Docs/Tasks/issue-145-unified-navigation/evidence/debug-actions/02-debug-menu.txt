@@ -1,0 +1,37 @@
+Device orientation: Portrait
+------------------------
+Application bundle identifier: com.tiger.suzhou.ChineseCalendar
+Application UI orientation: Portrait
+Application, pid: 23915, label: 'Chinese Calendar'
+ Window, {{0.0, 0.0}, {440.0, 956.0}}, hitPoint: {220.0, 478.0}
+  Other, {{0.0, 0.0}, {440.0, 956.0}}, hitPoint: {220.0, 478.0}
+   Other, {{0.0, 0.0}, {440.0, 956.0}}, hitPoint: {220.0, 478.0}
+    Other, {{40.0, 489.7}, {250.0, 120.7}}, hitPoint: {165.0, 550.0}
+     Other, {{40.0, 489.7}, {250.0, 120.7}}, hitPoint: {165.0, 550.0}
+      Other, {{40.0, 489.7}, {250.0, 120.7}}, hitPoint: {165.0, 550.0}
+       CollectionView, {{40.0, 489.7}, {250.0, 956.0}}, hitPoint: {165.0, 722.8}
+        Cell, {{40.0, 499.7}, {250.0, 50.3}}, hitPoint: {165.0, 524.8}
+         Button, {{40.0, 499.7}, {250.0, 50.3}}, identifier: 'arrow.triangle.branch', label: '导航测试', hitPoint: {165.0, 524.8}
+          Image, {{250.7, 517.0}, {12.0, 16.0}}, identifier: 'chevron.forward', label: '前进', hitPoint: {256.7, 525.0}
+          Image, {{72.0, 514.0}, {24.0, 22.7}}, identifier: 'arrow.trianglehead.branch', label: '分叉为两条路径的三角形箭头', hitPoint: {84.0, 525.3}
+        Cell, {{40.0, 550.0}, {250.0, 50.3}}, hitPoint: {165.0, 575.2}
+         Button, {{40.0, 550.0}, {250.0, 50.3}}, identifier: 'arrow.down.circle', label: '下载调试', hitPoint: {165.0, 575.2}
+          Image, {{250.7, 567.3}, {12.0, 16.0}}, identifier: 'chevron.forward', label: '前进', hitPoint: {256.7, 575.3}
+          Image, {{72.0, 563.0}, {24.3, 24.3}}, identifier: 'arrow.down.circle', label: '箭头向下圆圈', hitPoint: {84.2, 575.2}
+        Other, {{257.0, 519.7}, {30.0, 60.7}}, label: '垂直滚动条, 1页', value: 0%, hitPoint: {272.0, 550.0}
+         Other, {{284.0, 522.7}, {3.0, 54.7}}, hitPoint: {285.5, 550.0}
+        Other, {{62.0, 547.3}, {228.0, 30.0}}, label: '水平滚动条, 1页', value: 0%, hitPoint: {176.0, 562.3}
+         Other, {{65.0, 574.3}, {222.0, 3.0}}, hitPoint: {176.0, 575.8}
+        Other, {{257.0, 519.7}, {30.0, 60.7}}, label: '垂直滚动条, 1页', value: 0%, hitPoint: {272.0, 550.0}
+         Other, {{284.0, 522.7}, {3.0, 54.7}}, hitPoint: {285.5, 550.0}
+        Other, {{62.0, 547.3}, {228.0, 30.0}}, label: '水平滚动条, 1页', value: 0%, hitPoint: {176.0, 562.3}
+         Other, {{65.0, 574.3}, {222.0, 3.0}}, hitPoint: {176.0, 575.8}
+       Other, {{40.0, 489.7}, {250.0, 120.7}}, hitPoint: {165.0, 550.0}
+      Other, {{40.0, 489.7}, {250.0, 120.7}}, hitPoint: {165.0, 550.0}
+       Other, {{40.0, 489.7}, {250.0, 120.7}}, hitPoint: {165.0, 550.0}
+        Other, {{40.0, 489.7}, {250.0, 120.7}}, hitPoint: {165.0, 550.0}
+         Other, {{40.0, 489.7}, {250.0, 120.7}}, hitPoint: {165.0, 550.0}
+          Other, {{40.0, 489.7}, {250.0, 120.7}}, hitPoint: {165.0, 550.0}
+           Other, {{40.0, 489.7}, {250.0, 44.0}}, hitPoint: {165.0, 511.7}
+         Other, {{40.0, 489.7}, {250.0, 120.7}}, hitPoint: {165.0, 550.0}
+          Other, {{40.0, 489.7}, {250.0, 44.0}}, hitPoint: {165.0, 511.7}

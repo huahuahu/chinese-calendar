@@ -1,0 +1,169 @@
+Native Xcode RunSomeTests, 2026-10-07 11:10 (Asia/Shanghai)
+Final navigation source; before temporary container harness.
+================================================================================
+TEST RESULTS SUMMARY
+================================================================================
+Generated: 2026-10-07T03:11:01Z
+Total Results: 13
+================================================================================
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 1/13
+TEST_TARGET: ChineseCalendarUITests
+TEST_IDENTIFIER: yearPickerGroupsYearsIntoChronologicalIndexedSections()
+TEST_DISPLAY_NAME: yearPickerGroupsYearsIntoChronologicalIndexedSections()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarUI/Tests/CalendarYearPickerViewTests.swift
+TEST_LINE_NUMBER: 22
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 2/13
+TEST_TARGET: ChineseCalendarUITests
+TEST_IDENTIFIER: yearPickerInitialScrollTargetFindsSelectedYear()
+TEST_DISPLAY_NAME: yearPickerInitialScrollTargetFindsSelectedYear()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarUI/Tests/CalendarYearPickerViewTests.swift
+TEST_LINE_NUMBER: 43
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 3/13
+TEST_TARGET: ChineseCalendarUITests
+TEST_IDENTIFIER: yearPickerInitialScrollTargetIsNilWhenSelectionIsUnavailable()
+TEST_DISPLAY_NAME: yearPickerInitialScrollTargetIsNilWhenSelectionIsUnavailable()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarUI/Tests/CalendarYearPickerViewTests.swift
+TEST_LINE_NUMBER: 61
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 4/13
+TEST_TARGET: ChineseCalendarUITests
+TEST_IDENTIFIER: yearPickerInitialScrollTargetIsNilWithoutSelection()
+TEST_DISPLAY_NAME: yearPickerInitialScrollTargetIsNilWithoutSelection()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarUI/Tests/CalendarYearPickerViewTests.swift
+TEST_LINE_NUMBER: 52
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 5/13
+TEST_TARGET: ChineseCalendarUITests
+TEST_IDENTIFIER: yearPickerMapsYearsToSignedCenturies(lunarYearNumber:expectedCentury:)
+TEST_DISPLAY_NAME: -100, -2
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarUI/Tests/CalendarYearPickerViewTests.swift
+TEST_LINE_NUMBER: 4
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 6/13
+TEST_TARGET: ChineseCalendarUITests
+TEST_IDENTIFIER: CalendarPresentationTests/yearSelectionReturnsOnlyToItsOriginatingPage()
+TEST_DISPLAY_NAME: yearSelectionReturnsOnlyToItsOriginatingPage()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarUI/Tests/CalendarPresentationTests.swift
+TEST_LINE_NUMBER: 8
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 7/13
+TEST_TARGET: ChineseCalendarUITests
+TEST_IDENTIFIER: CalendarPresentationTests/cancelledYearPickerCannotDeliverAStaleResult()
+TEST_DISPLAY_NAME: cancelledYearPickerCannotDeliverAStaleResult()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarUI/Tests/CalendarPresentationTests.swift
+TEST_LINE_NUMBER: 43
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 8/13
+TEST_TARGET: ChineseCalendarUITests
+TEST_IDENTIFIER: CalendarPresentationTests/repeatedYearPickerActionKeepsTheOriginalSession()
+TEST_DISPLAY_NAME: repeatedYearPickerActionKeepsTheOriginalSession()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarUI/Tests/CalendarPresentationTests.swift
+TEST_LINE_NUMBER: 63
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 9/13
+TEST_TARGET: ChineseCalendarUITests
+TEST_IDENTIFIER: CalendarPresentationTests/storeChangeInvalidatesPickerButPreservesDownloadAndPaths()
+TEST_DISPLAY_NAME: storeChangeInvalidatesPickerButPreservesDownloadAndPaths()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarUI/Tests/CalendarPresentationTests.swift
+TEST_LINE_NUMBER: 81
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 10/13
+TEST_TARGET: ChineseCalendarUITests
+TEST_IDENTIFIER: CalendarPresentationTests/disappearingDownloadDoesNotDismissAnotherPresentation()
+TEST_DISPLAY_NAME: disappearingDownloadDoesNotDismissAnotherPresentation()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarUI/Tests/CalendarPresentationTests.swift
+TEST_LINE_NUMBER: 106
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 11/13
+TEST_TARGET: ChineseCalendarUITests
+TEST_IDENTIFIER: CalendarPresentationTests/storeChangeDoesNotLoseLatestDeferredDeepLink()
+TEST_DISPLAY_NAME: storeChangeDoesNotLoseLatestDeferredDeepLink()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarUI/Tests/CalendarPresentationTests.swift
+TEST_LINE_NUMBER: 121
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 12/13
+TEST_TARGET: ChineseCalendarUITests
+TEST_IDENTIFIER: CalendarPresentationTests/rebuildingDataPagesDoesNotReplayColdLaunchLink()
+TEST_DISPLAY_NAME: rebuildingDataPagesDoesNotReplayColdLaunchLink()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarUI/Tests/CalendarPresentationTests.swift
+TEST_LINE_NUMBER: 135
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 13/13
+TEST_TARGET: ChineseCalendarUITests
+TEST_IDENTIFIER: CalendarPresentationTests/previewDetailsShareFeatureStateAndRemainInTheSameTree()
+TEST_DISPLAY_NAME: previewDetailsShareFeatureStateAndRemainInTheSameTree()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarUI/Tests/CalendarPresentationTests.swift
+TEST_LINE_NUMBER: 146
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+
+================================================================================
+END OF TEST RESULTS SUMMARY
+================================================================================

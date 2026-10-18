@@ -1,0 +1,29 @@
+原生 Xcode RunAllTests
+Generated: 2026-10-13T14:12:11Z
+Scheme: ChineseCalendar-iOS
+Destination: chinesedate iPhone 18 Pro Max (885f) (16A9CAA7-45CE-46D5-8915-F61531FC617C); iOS 27.0
+263 tests: 263 passed, 0 failed, 0 skipped, 0 expected failures, 0 not run
+
+按 target 汇总：
+ChineseCalendarCoreTests: 24
+ChineseCalendarDataTests: 10
+ChineseCalendarLocalizationTests: 14
+ChineseCalendarLoggingTests: 3
+ChineseCalendarPersistenceTests: 48
+ChineseCalendarUITests: 125
+NavigationCoreTests: 39
+
+本次独立栈状态与相关生命周期回归摘录：
+Passed | NavigationContextTests/inactiveTabCannotPresentOverCurrentTab() | issues: 0
+Passed | NavigationContextTests/separateContextsDoNotKeepTheRouterAlive() | issues: 0
+Passed | NavigationContextTests/restoreRejectsBusyStateAndStaleContextWithReusedID() | issues: 0
+Passed | NavigationContextTests/snapshotRestoresAllModalStacksAndTheirSelectedStack() | issues: 0
+Passed | NavigationContextTests/staleLayerCannotReacquireStacksAfterRestoreWithTheSameID() | issues: 0
+Passed | NavigationStackStateTests/contextWorksWithoutRouterOrPresentationLayer() | issues: 0
+Passed | NavigationStackStateTests/replacingAllPathsKeepsExistingContextsConnected() | issues: 0
+Passed | NavigationStackStateTests/acquiringContextsDoesNotWriteEmptyPathsIntoSnapshots() | issues: 0
+Passed | NavigationStackStateTests/observingAPathTracksThatStackInsteadOfEveryTabsPath() | issues: 0
+Passed | NavigationStackStateTests/rootContextRemainsConnectedAfterSnapshotRestoration() | issues: 0
+Passed | NavigationStackStateTests/rootStackWritesRespectConfirmationAndDismissalTransactions() | issues: 0
+
+完整原始结果的本机路径及 xcresult 见 validation.json；此文件保留关键结果摘录。

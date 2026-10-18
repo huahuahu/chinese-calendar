@@ -5,6 +5,7 @@ struct SampleDataPreviewHost: View {
     private let content: PreviewModifierContent
     private let context: SampleDataPreviewContext
 
+    @State private var navigationCoordinator = CalendarHomeCoordinator()
     @State private var selection: CalendarSelection
     @State private var today: CalendarToday
 
@@ -22,6 +23,7 @@ struct SampleDataPreviewHost: View {
 
     var body: some View {
         content
+            .calendarNavigationHost(coordinator: navigationCoordinator)
             .modelContainer(context.modelContainer)
             .environment(selection)
             .environment(today)

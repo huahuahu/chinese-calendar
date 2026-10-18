@@ -1,0 +1,11 @@
+Compared to 88e3b74ae7bab044389a9a471346e16f9880bd1c
+All 9 tracked files byte-identical to HEAD:
+Sources/NavigationCore/NavigationCoreLog.swift
+Sources/NavigationCore/NavigationPresentationModifiers.swift
+Sources/NavigationCore/NavigationPresentationNode.swift
+Sources/NavigationCore/NavigationPresentationNodeView.swift
+Sources/NavigationCore/NavigationRequest.swift
+Sources/NavigationCore/NavigationRequestResult.swift
+Sources/NavigationCore/NavigationRouter.swift
+Sources/NavigationCore/README.md
+Sources/NavigationCoreTests/NavigationRouterTests.swift

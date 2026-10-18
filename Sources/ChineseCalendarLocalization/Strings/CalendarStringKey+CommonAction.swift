@@ -5,6 +5,14 @@ public extension CalendarStringKey.Common {
 }
 
 public extension CalendarStringKey.Common.Action {
+    static var cancel: LocalizedStringResource {
+        CalendarStringKey.resource(
+            "common.action.cancel",
+            defaultValue: "取消",
+            comment: "放弃提示中的待确认操作，并关闭当前提示的通用按钮名称。"
+        )
+    }
+
     static var ok: LocalizedStringResource {
         CalendarStringKey.resource(
             "common.action.ok",

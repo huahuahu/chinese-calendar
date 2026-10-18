@@ -1,0 +1,178 @@
+2026-10-14 最终工作区测试
+原生 Xcode RunAllTests；ChineseCalendar-iOS；chinesedate iPhone 18 Pro Max (885f)
+278 passed / 0 failed / 0 skipped / 0 not run
+
+ChineseCalendarCoreTests: 24 Passed
+ChineseCalendarDataTests: 10 Passed
+ChineseCalendarLocalizationTests: 14 Passed
+ChineseCalendarLoggingTests: 3 Passed
+ChineseCalendarPersistenceTests: 48 Passed
+ChineseCalendarUITests: 125 Passed
+NavigationCoreTests: 54 Passed
+
+本轮新增 alert 场景的原始结果：
+
+TEST_RESULT_INDEX: 111/278
+TEST_TARGET: NavigationCoreTests
+TEST_IDENTIFIER: NavigationAlertTests/rootAlertQueuesNavigationUntilActualDismissal()
+TEST_DISPLAY_NAME: rootAlertQueuesNavigationUntilActualDismissal()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/NavigationCoreTests/NavigationAlertTests.swift
+TEST_LINE_NUMBER: 20
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+TEST_RESULT_INDEX: 112/278
+TEST_TARGET: NavigationCoreTests
+TEST_IDENTIFIER: NavigationAlertTests/modalAlertFinishesBeforeLeaveConfirmation(style:)
+TEST_DISPLAY_NAME: .sheet
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/NavigationCoreTests/NavigationAlertTests.swift
+TEST_LINE_NUMBER: 40
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+TEST_RESULT_INDEX: 113/278
+TEST_TARGET: NavigationCoreTests
+TEST_IDENTIFIER: NavigationAlertTests/modalAlertFinishesBeforeLeaveConfirmation(style:)
+TEST_DISPLAY_NAME: .fullScreen
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/NavigationCoreTests/NavigationAlertTests.swift
+TEST_LINE_NUMBER: 40
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+TEST_RESULT_INDEX: 114/278
+TEST_TARGET: NavigationCoreTests
+TEST_IDENTIFIER: NavigationAlertTests/cancelLeaveConfirmationKeepsOriginalModalAndPaths()
+TEST_DISPLAY_NAME: cancelLeaveConfirmationKeepsOriginalModalAndPaths()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/NavigationCoreTests/NavigationAlertTests.swift
+TEST_LINE_NUMBER: 66
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+TEST_RESULT_INDEX: 115/278
+TEST_TARGET: NavigationCoreTests
+TEST_IDENTIFIER: NavigationAlertTests/queuedAlertsKeepOrderAndNavigationWaitsForAllOfThem()
+TEST_DISPLAY_NAME: queuedAlertsKeepOrderAndNavigationWaitsForAllOfThem()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/NavigationCoreTests/NavigationAlertTests.swift
+TEST_LINE_NUMBER: 82
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+TEST_RESULT_INDEX: 116/278
+TEST_TARGET: NavigationCoreTests
+TEST_IDENTIFIER: NavigationAlertTests/latestExternalRequestKeepsItsOwnConfirmationRequirement()
+TEST_DISPLAY_NAME: latestExternalRequestKeepsItsOwnConfirmationRequirement()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/NavigationCoreTests/NavigationAlertTests.swift
+TEST_LINE_NUMBER: 102
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+TEST_RESULT_INDEX: 117/278
+TEST_TARGET: NavigationCoreTests
+TEST_IDENTIFIER: NavigationAlertTests/businessActionCanQueueResultBeforeExternalNavigationContinues()
+TEST_DISPLAY_NAME: businessActionCanQueueResultBeforeExternalNavigationContinues()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/NavigationCoreTests/NavigationAlertTests.swift
+TEST_LINE_NUMBER: 116
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+TEST_RESULT_INDEX: 118/278
+TEST_TARGET: NavigationCoreTests
+TEST_IDENTIFIER: NavigationAlertTests/alertActionNavigationWaitsForAlertAndThenModalDismissal()
+TEST_DISPLAY_NAME: alertActionNavigationWaitsForAlertAndThenModalDismissal()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/NavigationCoreTests/NavigationAlertTests.swift
+TEST_LINE_NUMBER: 133
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+TEST_RESULT_INDEX: 119/278
+TEST_TARGET: NavigationCoreTests
+TEST_IDENTIFIER: NavigationAlertTests/dismissingModalWaitsForAlertAndInvalidatesItsContext()
+TEST_DISPLAY_NAME: dismissingModalWaitsForAlertAndInvalidatesItsContext()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/NavigationCoreTests/NavigationAlertTests.swift
+TEST_LINE_NUMBER: 148
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+TEST_RESULT_INDEX: 120/278
+TEST_TARGET: NavigationCoreTests
+TEST_IDENTIFIER: NavigationAlertTests/backgroundTabCannotPresentAlert()
+TEST_DISPLAY_NAME: backgroundTabCannotPresentAlert()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/NavigationCoreTests/NavigationAlertTests.swift
+TEST_LINE_NUMBER: 167
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+TEST_RESULT_INDEX: 121/278
+TEST_TARGET: NavigationCoreTests
+TEST_IDENTIFIER: NavigationAlertTests/closingModalDiscardsItsQueuedAlerts()
+TEST_DISPLAY_NAME: closingModalDiscardsItsQueuedAlerts()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/NavigationCoreTests/NavigationAlertTests.swift
+TEST_LINE_NUMBER: 173
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+TEST_RESULT_INDEX: 122/278
+TEST_TARGET: NavigationCoreTests
+TEST_IDENTIFIER: NavigationAlertTests/customConfirmationCancellationResumesQueuedAlert()
+TEST_DISPLAY_NAME: customConfirmationCancellationResumesQueuedAlert()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/NavigationCoreTests/NavigationAlertTests.swift
+TEST_LINE_NUMBER: 190
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+TEST_RESULT_INDEX: 123/278
+TEST_TARGET: NavigationCoreTests
+TEST_IDENTIFIER: NavigationAlertTests/childDismissalFinishesBeforeParentShowsConfirmation()
+TEST_DISPLAY_NAME: childDismissalFinishesBeforeParentShowsConfirmation()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/NavigationCoreTests/NavigationAlertTests.swift
+TEST_LINE_NUMBER: 203
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+TEST_RESULT_INDEX: 124/278
+TEST_TARGET: NavigationCoreTests
+TEST_IDENTIFIER: NavigationAlertTests/snapshotPreservesAlertDataWithoutCreatingAStackForIt()
+TEST_DISPLAY_NAME: snapshotPreservesAlertDataWithoutCreatingAStackForIt()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/NavigationCoreTests/NavigationAlertTests.swift
+TEST_LINE_NUMBER: 216
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+TEST_RESULT_INDEX: 125/278
+TEST_TARGET: NavigationCoreTests
+TEST_IDENTIFIER: NavigationAlertTests/cannotRestoreWhileAlertIsClosingOrItsActionIsRunning()
+TEST_DISPLAY_NAME: cannotRestoreWhileAlertIsClosingOrItsActionIsRunning()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/NavigationCoreTests/NavigationAlertTests.swift
+TEST_LINE_NUMBER: 232
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0

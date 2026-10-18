@@ -27,12 +27,15 @@ Agent 指令和专项报告使用英文。最终的 `summary.md` 和对用户的
 | `CONTEXT.md` 和 `Docs/` 中相关领域文档 | 领域术语、日历行为、模型边界和已接受的设计决策 |
 | `Docs/Conventions/Common.md` | 编写或审查代码时；注释和日志等共用规范 |
 | `Docs/Conventions/SwiftUI.md` | 编写或审查 SwiftUI 时；View 拆分和展示常量的项目规则 |
+| `Docs/Conventions/Navigation.md` | 涉及导航、模态及其状态归属时；共用规则 NAV-01–NAV-06 |
 | `.agents/skills/swiftui-pro/SKILL.md` | 编写或审查 SwiftUI 时 |
 | `.agents/skills/swiftdata-pro/SKILL.md` | 涉及 SwiftData 模型、关系、查询或存储时 |
 | `.agents/skills/swift-concurrency-pro/SKILL.md` | 涉及隔离、任务生命周期、取消和异步状态更新时 |
 | `.xcodebuildmcp/config.yaml` 和仓库的 Xcode 约定 | 执行构建、测试、Preview 或 Simulator 操作前 |
 
 用户当前的要求优先于本地指导；项目规范与通用技能建议不一致时，遵循项目规范。区分强制规则、偏好和建议。报告违反规则时，引用准确的适用条款，并解释为什么满足其适用条件。核实被引用的文件和 API，名称本身不构成证据。要求中出现未知文件时，先确认文件，再执行该规则。
+
+导航相关改动需要沿真实 App 入口追踪状态所有者、呈现宿主、发起上下文、关闭及外部请求协调，引用适用 NAV 条款与实际调用链。报告系统 API 问题前先核对规范中的允许场景：仅搜到 `.sheet` 或 `NavigationStack` 不构成充分证据，DEBUG／PreviewSupport 路径本身也不能证明它属于纯 Preview 例外。
 
 ## 3. 确定范围并创建记录
 

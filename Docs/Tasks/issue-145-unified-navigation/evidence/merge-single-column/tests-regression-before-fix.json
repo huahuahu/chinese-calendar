@@ -1,0 +1,36 @@
+{
+  "counts": {
+    "expectedFailures": 0,
+    "failed": 2,
+    "notRun": 0,
+    "passed": 278,
+    "skipped": 0,
+    "total": 280
+  },
+  "summary": "280 tests: 278 passed, 2 failed, 0 skipped, 0 expected failures, 0 not run",
+  "fullSummaryPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/RunAllTests/C609E254-E146-4AE3-A7BB-5190C2C20362.txt",
+  "xcresultBundlePath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/RunAllTests/Test-ChineseCalendar-iOS-2026.10.18_20-51-45-+0800.xcresult",
+  "failures": [
+    {
+      "displayName": "true",
+      "errorMessages": [
+        "ChineseCalendar/Packages/Sources/NavigationCoreTests/NavigationAlertTests.swift:148 NavigationAlertTests/latestRequestAfterAlertWinsDuringModalDismissal(requiresConfirmation:): Expectation failed: router.requestWaitingForAlert == nil\nrouter.requestWaitingForAlert → push(NavigationCoreTests.NavigationAlertTests.(unknown context at $108d819d0).Route.second, on: NavigationCoreTests.NavigationAlertTests.(unknown context at $108d819a8).Tab.history)",
+        "ChineseCalendar/Packages/Sources/NavigationCoreTests/NavigationAlertTests.swift:153 NavigationAlertTests/latestRequestAfterAlertWinsDuringModalDismissal(requiresConfirmation:): Expectation failed: confirmation.request == .push(.third, on: .history)\nconfirmation.request → push(NavigationCoreTests.NavigationAlertTests.(unknown context at $108d819d0).Route.second, on: NavigationCoreTests.NavigationAlertTests.(unknown context at $108d819a8).Tab.history)\n.push(.third, on: .history) → push(NavigationCoreTests.NavigationAlertTests.(unknown context at $108d819d0).Route.third, on: NavigationCoreTests.NavigationAlertTests.(unknown context at $108d819a8).Tab.history)",
+        "ChineseCalendar/Packages/Sources/NavigationCoreTests/NavigationAlertTests.swift:157 NavigationAlertTests/latestRequestAfterAlertWinsDuringModalDismissal(requiresConfirmation:): Expectation failed: router.path(for: .history) == [.third]\nrouter.path(for: .history) → [NavigationCoreTests.NavigationAlertTests.(unknown context at $108d819d0).Route.second]\n[.third] → [NavigationCoreTests.NavigationAlertTests.(unknown context at $108d819d0).Route.third]"
+      ],
+      "identifier": "NavigationAlertTests/latestRequestAfterAlertWinsDuringModalDismissal(requiresConfirmation:)",
+      "state": "Failed",
+      "targetName": "NavigationCoreTests"
+    },
+    {
+      "displayName": "false",
+      "errorMessages": [
+        "ChineseCalendar/Packages/Sources/NavigationCoreTests/NavigationAlertTests.swift:148 NavigationAlertTests/latestRequestAfterAlertWinsDuringModalDismissal(requiresConfirmation:): Expectation failed: router.requestWaitingForAlert == nil\nrouter.requestWaitingForAlert → push(NavigationCoreTests.NavigationAlertTests.(unknown context at $108d819d0).Route.second, on: NavigationCoreTests.NavigationAlertTests.(unknown context at $108d819a8).Tab.history)",
+        "ChineseCalendar/Packages/Sources/NavigationCoreTests/NavigationAlertTests.swift:157 NavigationAlertTests/latestRequestAfterAlertWinsDuringModalDismissal(requiresConfirmation:): Expectation failed: router.path(for: .history) == [.third]\nrouter.path(for: .history) → [NavigationCoreTests.NavigationAlertTests.(unknown context at $108d819d0).Route.third, NavigationCoreTests.NavigationAlertTests.(unknown context at $108d819d0).Route.second]\n[.third] → [NavigationCoreTests.NavigationAlertTests.(unknown context at $108d819d0).Route.third]"
+      ],
+      "identifier": "NavigationAlertTests/latestRequestAfterAlertWinsDuringModalDismissal(requiresConfirmation:)",
+      "state": "Failed",
+      "targetName": "NavigationCoreTests"
+    }
+  ]
+}

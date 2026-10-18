@@ -1,0 +1,1 @@
+Validated 919377 JSONL records in Data/Processed/swiftdata_import.

@@ -1,0 +1,236 @@
+{
+  "recorded": "2026-10-14",
+  "comparison": "pre-unified-alert working tree backup",
+  "files": [
+    {
+      "path": "Sources/NavigationCore/README.md",
+      "status": "modified",
+      "sha256": "428814f0c7552785b5ea89e5c22cebabfa6c4e3ffa95fda9e7a7b893e9819675"
+    },
+    {
+      "path": "Sources/NavigationCore/Restoration/NavigationLayerSnapshot.swift",
+      "status": "modified",
+      "sha256": "a8139eebefd4e286e8a65458365ede98116479dc51dcf8a25f5f77e3c9b23a22"
+    },
+    {
+      "path": "Sources/NavigationCore/Restoration/NavigationPresentationSnapshot.swift",
+      "status": "modified",
+      "sha256": "da3aa8e81202afce7078a2bef611d307288757607ef3ab8ef67272b77dcef715"
+    },
+    {
+      "path": "Sources/NavigationCore/Restoration/NavigationSnapshot.swift",
+      "status": "modified",
+      "sha256": "1815bb5100141e726e0d52cb371ad16c75b91d25d7de75b4859ff17e84ed6122"
+    },
+    {
+      "path": "Sources/NavigationCore/Routing/NavigationPresentationContext+Alerts.swift",
+      "status": "added",
+      "sha256": "06d187377a4c1b18b05fefe9901c08583f89bc02ceb9e132db621182cbf68cc6"
+    },
+    {
+      "path": "Sources/NavigationCore/Routing/NavigationPresentationContext.swift",
+      "status": "modified",
+      "sha256": "0d47759cb7f9637ce43c1d76217ac603985910825c3d583510be790c0553ffa8"
+    },
+    {
+      "path": "Sources/NavigationCore/Routing/NavigationPresentationRequest.swift",
+      "status": "added",
+      "sha256": "f2c1ef016509d06735e4783028c291ad379645f0ae2dc4cde4d5c78371bd116a"
+    },
+    {
+      "path": "Sources/NavigationCore/Routing/NavigationRequestResult.swift",
+      "status": "modified",
+      "sha256": "0243698286a46c378d139f48d69185d6f1c00c9a672e611a4aef676e5ae99b0e"
+    },
+    {
+      "path": "Sources/NavigationCore/Routing/NavigationRouter+Alerts.swift",
+      "status": "added",
+      "sha256": "49a6b994e90da816162c352f086b3d3f54b909431bf6749dc0dac4666e4c8554"
+    },
+    {
+      "path": "Sources/NavigationCore/Routing/NavigationRouter+Contexts.swift",
+      "status": "modified",
+      "sha256": "2499b4dddb8a60a9d254ed43695d0904de2e9cb14c41d04b7b62cd9760c80a76"
+    },
+    {
+      "path": "Sources/NavigationCore/Routing/NavigationRouter.swift",
+      "status": "modified",
+      "sha256": "473cc4be949658689be82686571de3a5606f5cef062857aa7f597804222a0903"
+    },
+    {
+      "path": "Sources/NavigationCore/State/NavigationAlertNode.swift",
+      "status": "added",
+      "sha256": "ddb544149fcbd4a3be136ad5aaf43d51e65d24046b4512629f54b8e26223acf5"
+    },
+    {
+      "path": "Sources/NavigationCore/State/NavigationAlertRoute.swift",
+      "status": "added",
+      "sha256": "77dc30c4e7487cf67aae88b553111dfca44970191584de9eee5c86450adc0762"
+    },
+    {
+      "path": "Sources/NavigationCore/State/NavigationAlertSession.swift",
+      "status": "added",
+      "sha256": "15ec9dde6d01d59f13e3946b8951a0e9e55e35b131ac1381a50d6e8f692f4f07"
+    },
+    {
+      "path": "Sources/NavigationCore/State/NavigationLayer.swift",
+      "status": "modified",
+      "sha256": "76607d25b9770f68044bfd7f7ceafd87115fa6ccd72017dd1a98d3ee328e12f8"
+    },
+    {
+      "path": "Sources/NavigationCore/State/NavigationPresentation.swift",
+      "status": "added",
+      "sha256": "189ba5c6c00c8ede4003aa0ebf0c2954e25ca87193317a815cbc0363b1e496e1"
+    },
+    {
+      "path": "Sources/NavigationCore/State/NavigationPresentationNode.swift",
+      "status": "modified",
+      "sha256": "d48947ba69f96c67bd6b723744fe37d7ee9eba0e204e24df66e37f9a8ba68139"
+    },
+    {
+      "path": "Sources/NavigationCore/SwiftUI/NavigationAlertContent.swift",
+      "status": "added",
+      "sha256": "1d932a5914373070cf5d994f7b4963462d8d5139af03ea408ad3d0fe7b1766c8"
+    },
+    {
+      "path": "Sources/NavigationCore/SwiftUI/NavigationAlertHost.swift",
+      "status": "added",
+      "sha256": "fa777217ff52ce519ab9cc9fa81901ff495d1511b9f66c7841b1d3660e7c785d"
+    },
+    {
+      "path": "Sources/NavigationCore/SwiftUI/NavigationConfirmationHost.swift",
+      "status": "deleted",
+      "sha256": null
+    },
+    {
+      "path": "Sources/NavigationCore/SwiftUI/NavigationPresentationHost.swift",
+      "status": "modified",
+      "sha256": "b258cd36e5d00fc1e6e549a46b621e600037c61bc2dbdfed1bf8656f450255e6"
+    },
+    {
+      "path": "Sources/NavigationCore/SwiftUI/NavigationPresentationNodeView.swift",
+      "status": "modified",
+      "sha256": "e8143cdc414b497b84169ba0323cc3b64dbba931adf7ca18cd3652bee72982ca"
+    },
+    {
+      "path": "Sources/NavigationCore/SwiftUI/NavigationScopeView.swift",
+      "status": "modified",
+      "sha256": "bc62f2863629721324d97387c56a66478827742b91970501068d956e18e77557"
+    },
+    {
+      "path": "Sources/NavigationCore/SwiftUI/NavigationSystemAlert.swift",
+      "status": "added",
+      "sha256": "2ecafa974a4488189837192c163de438e8302f3d6a0da5612e90738dcffe3542"
+    },
+    {
+      "path": "Sources/NavigationCore/SwiftUI/NavigationSystemAlertHost.swift",
+      "status": "added",
+      "sha256": "23cb806b6c8cd96b56040a505724b7b3446a22bd85333397061f7ac119d58e6e"
+    },
+    {
+      "path": "Sources/NavigationCoreTests/NavigationAlertTests.swift",
+      "status": "added",
+      "sha256": "ee25d8e18981d723fc3a7d8d5e5b5ac06a4e022f3b68c431bb0409386cc1abfb"
+    },
+    {
+      "path": "Sources/NavigationCoreTests/NavigationContextTests.swift",
+      "status": "modified",
+      "sha256": "2c7130a4006bd0dc267a78b0bceacbd0802b8a7d0a1341d80bedd62b96079713"
+    },
+    {
+      "path": "Sources/NavigationCoreTests/NavigationRouterTests.swift",
+      "status": "modified",
+      "sha256": "6757f91bd3e67c8014ad5fa6fbbfdaef44e1b6d7568ccf930c044526df9c0dd2"
+    },
+    {
+      "path": "Sources/NavigationCoreTests/NavigationStackStateTests.swift",
+      "status": "modified",
+      "sha256": "676232e585dc6abb2454367cc78aa72a8c874a700be821a05c8bd34ca84fdb18"
+    },
+    {
+      "path": "Sources/ChineseCalendarUI/App/ChineseCalendarRootView.swift",
+      "status": "modified",
+      "sha256": "19edadf7b4a16786cbaa263d32952326040364c693a3b8f20f3b7401c337bba2"
+    },
+    {
+      "path": "Sources/ChineseCalendarUI/Debug/CalendarDebugNavigationActions.swift",
+      "status": "modified",
+      "sha256": "5002ec7708ac823635eb5931b4d55a9aafa907f95f4a8380571fe26ecb3f083a"
+    },
+    {
+      "path": "Sources/ChineseCalendarUI/Home/CalendarHomeCoordinator.swift",
+      "status": "modified",
+      "sha256": "742ac2c14de7fe2470ff638b9bf5d6c6736aeafe2cbc1a7fb716cc09eec11ae9"
+    },
+    {
+      "path": "Sources/ChineseCalendarUI/Home/CalendarHomeTabView.swift",
+      "status": "modified",
+      "sha256": "836421664d26da1ef4dd59dcf2f78d0cac00da0bfcb98ee61a8a7be587fd24d1"
+    },
+    {
+      "path": "Sources/ChineseCalendarUI/Home/Navigation/CalendarAlert.swift",
+      "status": "added",
+      "sha256": "2e41362baa57b99bb78f22a2d1f9c4c2277912e338dd83726ed6c199b1742b03"
+    },
+    {
+      "path": "Sources/ChineseCalendarUI/Home/Navigation/CalendarAlertContent.swift",
+      "status": "added",
+      "sha256": "5e139eddb72688e13dd6823858f65954d048edd55da93f9be94f84a70c0c1523"
+    },
+    {
+      "path": "Sources/ChineseCalendarUI/Home/Navigation/CalendarHomeCoordinator+Alerts.swift",
+      "status": "added",
+      "sha256": "b7e170704fa52049396c53e772a563d83ab8d6fc00159dbfd89c643f1ea74da8"
+    },
+    {
+      "path": "Sources/ChineseCalendarUI/Home/Navigation/CalendarNavigationContext.swift",
+      "status": "modified",
+      "sha256": "f1abf8949cc51bbc46b617ea05e14e87ac971182d1fab0d3eabc4c2d1f4c4ef2"
+    },
+    {
+      "path": "Sources/ChineseCalendarUI/Home/Navigation/CalendarNavigationHost.swift",
+      "status": "modified",
+      "sha256": "f1af3953f6054c942a6b3949c5c302a3adedb583f8b72ca3671935d76c3a1315"
+    },
+    {
+      "path": "Sources/ChineseCalendarUI/Home/Navigation/CalendarPresentationNode.swift",
+      "status": "modified",
+      "sha256": "39946ccbbdaa6b04a6a2cef262d7570252a12ae9a3d0ea286c4f5f1652b5c94c"
+    },
+    {
+      "path": "Sources/ChineseCalendarUI/Home/Navigation/CalendarRouter.swift",
+      "status": "modified",
+      "sha256": "847f49b0f79db7e47adbb20fd8ff412fae15af2b2f580608b1e46c5f999a3556"
+    },
+    {
+      "path": "Sources/ChineseCalendarUI/PreviewSupport/FullStoreDownloadPreview.swift",
+      "status": "modified",
+      "sha256": "f94cefad45158406b10a68395d77b23c9d819943f4fc2bbf038412de6548ab6e"
+    },
+    {
+      "path": "Sources/ChineseCalendarUI/Settings/CalendarSettingsView.swift",
+      "status": "modified",
+      "sha256": "245dfa9198d7adb13910a2a16286ba2bad027a432844b828ebb8629864b72c6d"
+    },
+    {
+      "path": "Sources/ChineseCalendarUI/Tests/CalendarNavigationContextTests.swift",
+      "status": "modified",
+      "sha256": "04abd994f546f7a14311658ef9b41e188e0ed9af70b21e62cc8cce613c404957"
+    },
+    {
+      "path": "Sources/ChineseCalendarLocalization/Resources/Calendar.xcstrings",
+      "status": "modified",
+      "sha256": "0f666cda60273d4d73b95e792e67ddff2802265af12886ad64c07228475309a4"
+    },
+    {
+      "path": "Sources/ChineseCalendarLocalization/Strings/CalendarStringKey+CommonAction.swift",
+      "status": "modified",
+      "sha256": "f096161741a75e2c97f4983b7bb01c450e943d0d54203ac187cf2be591b2e90a"
+    },
+    {
+      "path": "Sources/ChineseCalendarLocalization/Strings/CalendarStringKey+DebugAlert.swift",
+      "status": "added",
+      "sha256": "561120b63177e919cefc7d51b16dc89c35231f668691a5a3e7a2cfa40698a3e1"
+    }
+  ]
+}

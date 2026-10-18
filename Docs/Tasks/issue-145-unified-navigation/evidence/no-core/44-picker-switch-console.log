@@ -1,0 +1,67 @@
+2026-10-07 13:26:27.528558+0800 [75691:12146356] [app] Launching iOS app
+
+2026-10-07 13:26:29.979933+0800 [75691:12146356] [persistence] Opening shared SwiftData container
+
+2026-10-07 13:26:29.984050+0800 [75691:12146356] [persistence] Keeping installed full seed store instead of reinstalling bundled base store
+
+2026-10-07 13:26:29.984097+0800 [75691:12146356] [persistence] Bundled seed store is already installed
+
+2026-10-07 13:26:29.984155+0800 [75691:12146356] [persistence] Creating model container at /Users/tigerguo/Library/Developer/CoreSimulator/Devices/16A9CAA7-45CE-46D5-8915-F61531FC617C/data/Containers/Shared/AppGroup/E73729E7-DAAD-45FA-BB30-218203C4D6B9/ChineseCalendarStore/ChineseCalendar.sqlite, allowsSave: false
+
+2026-10-07 13:26:30.533665+0800 [75691:12146356] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:26:30.533878+0800 [75691:12146356] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:26:30.548945+0800 [75691:12146356] [XPCErrors] non-launching port is incompatible with service identifier "com.apple.PointerUI.pointeruid.default-service"
+
+2026-10-07 13:26:30.585819+0800 [75691:12146356] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:26:30.594712+0800 [75691:12146356] [API] cannot add handler to 0 from 0 - dropping
+
+objc[75691]: Class UIAccessibilityLoaderWebShared is implemented in both /Library/Developer/CoreSimulator/Volumes/iOS_24A434/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 27.0.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebKit.axbundle/WebKit (0x11cdcc398) and /Library/Developer/CoreSimulator/Volumes/iOS_24A434/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 27.0.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebCore.axbundle/WebCore (0x11cec0310). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
+
+2026-10-07 13:26:31.020390+0800 [75691:12146356] [AXValidations] AX Safe category class 'SFBarButtonGroupContainerAccessibility' was not found!
+
+2026-10-07 13:26:31.432899+0800 [75691:12146356] [AXValidations] AX Safe category class 'SLHighlightDisambiguationPillViewAccessibility' was not found!
+
+2026-10-07 13:26:37.971518+0800 [75691:12146356] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:26:37.974220+0800 [75691:12146356] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:26:37.974281+0800 [75691:12146356] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:26:37.974308+0800 [75691:12146356] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:27:02.146622+0800 [75691:12146356] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:27:02.148034+0800 [75691:12146356] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:27:02.148082+0800 [75691:12146356] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:27:02.148106+0800 [75691:12146356] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:27:04.986354+0800 [75691:12146356] [navigation] Presented root sheet
+
+2026-10-07 13:27:05.475065+0800 [75691:12146356] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:27:05.475246+0800 [75691:12146356] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:27:05.475279+0800 [75691:12146356] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:27:06.094528+0800 [75691:12146356] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:27:06.094588+0800 [75691:12146356] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:27:16.570305+0800 [75691:12146356] [ui] Issue145 controlled in-memory container switch completed
+
+2026-10-07 13:27:17.026638+0800 [75691:12146356] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:27:17.026806+0800 [75691:12146356] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:27:17.026835+0800 [75691:12146356] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:27:17.028887+0800 [75691:12146356] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:27:17.028939+0800 [75691:12146356] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:27:17.028964+0800 [75691:12146356] [API] cannot add handler to 0 from 0 - dropping

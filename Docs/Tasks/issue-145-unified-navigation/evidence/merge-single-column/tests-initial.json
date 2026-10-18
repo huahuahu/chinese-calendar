@@ -1,0 +1,14 @@
+{
+  "counts": {
+    "expectedFailures": 0,
+    "failed": 0,
+    "notRun": 0,
+    "passed": 278,
+    "skipped": 0,
+    "total": 278
+  },
+  "summary": "278 tests: 278 passed, 0 failed, 0 skipped, 0 expected failures, 0 not run",
+  "fullSummaryPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/RunAllTests/C8CE1A76-BC4F-4C8A-AF0B-8F53260C8286.txt",
+  "xcresultBundlePath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/RunAllTests/Test-ChineseCalendar-iOS-2026.10.18_20-40-56-+0800.xcresult",
+  "failures": []
+}

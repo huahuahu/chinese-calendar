@@ -481,6 +481,18 @@
         }
       }
     },
+    "common.action.cancel": {
+      "comment": "放弃提示中的待确认操作，并关闭当前提示的通用按钮名称。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "取消"
+          }
+        }
+      }
+    },
     "common.action.close": {
       "comment": "用于关闭当前弹出页面或详情的通用按钮名称。",
       "extractionState": "manual",
@@ -657,6 +669,330 @@
           "stringUnit": {
             "state": "translated",
             "value": "-"
+          }
+        }
+      }
+    },
+    "debug.actions": {
+      "comment": "设置页 Debug 分区中打开调试动作菜单的按钮与无障碍名称。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "调试操作"
+          }
+        }
+      }
+    },
+    "debug.alert.navigateWhilePresented": {
+      "comment": "导航调试中先显示业务提示并提交跨标签页请求，验证关闭顺序。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alert 期间请求跳转历史"
+          }
+        }
+      }
+    },
+    "debug.alert.navigationChoice": {
+      "comment": "导航调试中展示带跳转按钮的提示，用于验证按钮执行与关闭顺序。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "从 Alert 按钮跳转"
+          }
+        }
+      }
+    },
+    "debug.alert.navigationMessage": {
+      "comment": "导航调试中说明按钮跳转的关闭顺序。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "确认后先关闭这个提示，再前往历史标签页。"
+          }
+        }
+      }
+    },
+    "debug.alert.navigationTitle": {
+      "comment": "导航调试中通过提示按钮发起跳转的标题。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "前往历史页面？"
+          }
+        }
+      }
+    },
+    "debug.alert.noticeMessage": {
+      "comment": "导航调试业务提示的说明，说明后续请求的等待规则。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "这是业务提示。关闭它后，才会处理等待中的提示或导航请求。"
+          }
+        }
+      }
+    },
+    "debug.alert.noticeTitle": {
+      "comment": "导航调试业务提示的标题；参数为提示序号，用于检查连续提示的顺序。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "业务提示 %lld"
+          }
+        }
+      }
+    },
+    "debug.alert.queue": {
+      "comment": "导航调试中依次展示两个提示，用于验证提示不会重叠。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "连续显示两个 Alert"
+          }
+        }
+      }
+    },
+    "debug.alert.show": {
+      "comment": "导航调试中展示一个业务提示，提示结束前保留当前页面。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "显示业务 Alert"
+          }
+        }
+      }
+    },
+    "debug.downloadActions": {
+      "comment": "调试操作菜单中包含下载进度模拟和布局预览的分组名称。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "下载调试"
+          }
+        }
+      }
+    },
+    "debug.navigation.deepLink": {
+      "comment": "模拟日历业务收到今年链接；有模态时触发离开确认，无模态时直接前往。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "模拟打开今年的 Deep Link"
+          }
+        }
+      }
+    },
+    "debug.navigation.dismiss": {
+      "comment": "关闭当前模态及其子层；位于 Tab 导航栈时禁用。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "关闭当前模态"
+          }
+        }
+      }
+    },
+    "debug.navigation.externalActions": {
+      "comment": "导航测试中由根 Router 协调跨标签页与外部链接的操作分组标题。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "跨 Tab 与外部链接"
+          }
+        }
+      }
+    },
+    "debug.navigation.fullScreen": {
+      "comment": "在当前作用域上以全屏模态展示新导航测试页的按钮。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "全屏打开测试页"
+          }
+        }
+      }
+    },
+    "debug.navigation.localActions": {
+      "comment": "导航测试中作用于当前 Tab 或当前模态的操作分组标题。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "当前层导航"
+          }
+        }
+      }
+    },
+    "debug.navigation.message": {
+      "comment": "导航测试页说明如何使用页面标识和操作检查作用域、嵌套模态及外部导航。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "每次打开生成新的页面 ID。Push 和返回只改变当前层，关闭模态回到父层。可连续打开弹窗或全屏页，再模拟 Deep Link 检查取消与整层关闭。"
+          }
+        }
+      }
+    },
+    "debug.navigation.modalScope": {
+      "comment": "导航测试页表示当前处于独立模态导航上下文的状态文字。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "模态作用域"
+          }
+        }
+      }
+    },
+    "debug.navigation.pageIdentity": {
+      "comment": "导航测试页展示路由携带的唯一标识，便于核对返回后是否保留原页面。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "页面 ID"
+          }
+        }
+      }
+    },
+    "debug.navigation.pathDepth": {
+      "comment": "导航测试页展示当前作用域路径长度的字段标题，不包含模态根页。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "当前层 Push 页数"
+          }
+        }
+      }
+    },
+    "debug.navigation.pop": {
+      "comment": "移除当前作用域路径的最后一页；路径为空时禁用。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pop 返回上一页"
+          }
+        }
+      }
+    },
+    "debug.navigation.push": {
+      "comment": "在当前作用域的导航路径中压入一个新导航测试页的按钮。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Push 新测试页"
+          }
+        }
+      }
+    },
+    "debug.navigation.pushOnHistory": {
+      "comment": "切换到历史标签页并压入新导航测试页；有模态时先确认关闭。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在历史 Tab Push 测试页"
+          }
+        }
+      }
+    },
+    "debug.navigation.returnActions": {
+      "comment": "导航测试中返回上一个栈页面与关闭当前模态的操作分组标题。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "返回与关闭"
+          }
+        }
+      }
+    },
+    "debug.navigation.rootScope": {
+      "comment": "导航测试页表示当前使用根 Router 上下文的状态文字。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "根作用域"
+          }
+        }
+      }
+    },
+    "debug.navigation.scope": {
+      "comment": "导航测试页展示当前导航作用域的字段标题。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "当前作用域"
+          }
+        }
+      }
+    },
+    "debug.navigation.sheet": {
+      "comment": "在当前作用域上以弹窗展示新导航测试页的按钮，可重复嵌套。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sheet 打开测试页"
+          }
+        }
+      }
+    },
+    "debug.navigation.title": {
+      "comment": "调试操作中的导航分组名称与导航测试页标题。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "导航测试"
           }
         }
       }
@@ -1957,6 +2293,114 @@
         }
       }
     },
+    "navigation.confirmMessage": {
+      "comment": "外部导航确认说明；参数为目标页面的本地化描述。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "将关闭当前弹出页面及其子页面，前往%@。"
+          }
+        }
+      }
+    },
+    "navigation.confirmTitle": {
+      "comment": "收到外部链接时，请用户确认是否离开当前模态流程的提示标题。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "离开当前页面？"
+          }
+        }
+      }
+    },
+    "navigation.continueAction": {
+      "comment": "确认关闭当前模态流程并打开外部链接目标的按钮。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "关闭并前往"
+          }
+        }
+      }
+    },
+    "navigation.dynastyTarget": {
+      "comment": "外部导航确认中描述朝代详情目标。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "链接中的朝代详情"
+          }
+        }
+      }
+    },
+    "navigation.emperorTarget": {
+      "comment": "外部导航确认中描述皇帝详情目标。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "链接中的皇帝详情"
+          }
+        }
+      }
+    },
+    "navigation.linkTarget": {
+      "comment": "外部导航确认中描述其他页面目标。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "链接中的页面"
+          }
+        }
+      }
+    },
+    "navigation.openFullScreen": {
+      "comment": "历史资料入口的上下文菜单，以全屏模态流程浏览资料。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "全屏打开"
+          }
+        }
+      }
+    },
+    "navigation.openSheet": {
+      "comment": "历史资料入口的上下文菜单，使用独立模态流程浏览资料。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在弹窗中打开"
+          }
+        }
+      }
+    },
+    "navigation.stayAction": {
+      "comment": "取消外部导航并保留当前页面的按钮。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "留在当前页面"
+          }
+        }
+      }
+    },
     "settings.appearance.dark": {
       "comment": "设置页颜色模式选项，表示始终使用深色外观。",
       "extractionState": "manual",
@@ -2438,13 +2882,13 @@
       }
     },
     "settings.debug.message": {
-      "comment": "设置页调试功能的说明，告知模拟过程不访问网络或修改实际日历数据库。",
+      "comment": "设置页下载调试功能的说明，告知模拟过程不访问网络或修改实际日历数据库。",
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "只模拟下载进度，不访问网络、写入文件或替换日历数据库。"
+            "value": "下载调试只模拟进度，不访问网络、写入文件或替换日历数据库。"
           }
         }
       }

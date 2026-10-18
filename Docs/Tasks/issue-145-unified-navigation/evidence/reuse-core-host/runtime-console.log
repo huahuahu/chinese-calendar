@@ -1,0 +1,145 @@
+2026-10-07 13:44:53.463943+0800 [86395:12218710] [app] Launching iOS app
+
+2026-10-07 13:44:56.621104+0800 [86395:12218710] [persistence] Opening shared SwiftData container
+
+2026-10-07 13:44:56.632508+0800 [86395:12218710] [persistence] Keeping installed full seed store instead of reinstalling bundled base store
+
+2026-10-07 13:44:56.632565+0800 [86395:12218710] [persistence] Bundled seed store is already installed
+
+2026-10-07 13:44:56.632780+0800 [86395:12218710] [persistence] Creating model container at /Users/tigerguo/Library/Developer/CoreSimulator/Devices/16A9CAA7-45CE-46D5-8915-F61531FC617C/data/Containers/Shared/AppGroup/E73729E7-DAAD-45FA-BB30-218203C4D6B9/ChineseCalendarStore/ChineseCalendar.sqlite, allowsSave: false
+
+2026-10-07 13:44:57.414038+0800 [86395:12218710] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:44:57.414232+0800 [86395:12218710] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:44:57.427958+0800 [86395:12218710] [XPCErrors] non-launching port is incompatible with service identifier "com.apple.PointerUI.pointeruid.default-service"
+
+2026-10-07 13:44:57.436213+0800 [86395:12218710] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:44:57.438906+0800 [86395:12218710] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:44:57.906569+0800 [86395:12218710] [AXValidations] AX Safe category class 'SFBarButtonGroupContainerAccessibility' was not found!
+
+objc[86395]: Class UIAccessibilityLoaderWebShared is implemented in both /Library/Developer/CoreSimulator/Volumes/iOS_24A434/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 27.0.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebKit.axbundle/WebKit (0x11f3ec398) and /Library/Developer/CoreSimulator/Volumes/iOS_24A434/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 27.0.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebCore.axbundle/WebCore (0x120cd0310). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
+
+2026-10-07 13:44:58.929506+0800 [86395:12218710] [AXValidations] AX Safe category class 'SLHighlightDisambiguationPillViewAccessibility' was not found!
+
+2026-10-07 13:46:02.684995+0800 [86395:12218710] [navigation] Presented root sheet
+
+2026-10-07 13:46:03.321335+0800 [86395:12218710] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:46:03.321522+0800 [86395:12218710] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:46:03.321554+0800 [86395:12218710] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:46:03.955213+0800 [86395:12218710] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:46:03.955276+0800 [86395:12218710] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:46:41.040456+0800 [86395:12218710] [navigation] Presented root sheet
+
+2026-10-07 13:46:41.471178+0800 [86395:12218710] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:46:41.471299+0800 [86395:12218710] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:46:41.471330+0800 [86395:12218710] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:46:42.078913+0800 [86395:12218710] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:46:42.078983+0800 [86395:12218710] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:47:07.170988+0800 [86395:12218710] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:47:07.173329+0800 [86395:12218710] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:47:07.173392+0800 [86395:12218710] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:47:07.173418+0800 [86395:12218710] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:47:20.623852+0800 [86395:12218710] [navigation] Presented root full screen
+
+2026-10-07 13:47:20.855612+0800 [86395:12218710] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:47:20.855704+0800 [86395:12218710] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:47:20.855818+0800 [86395:12218710] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:47:20.855844+0800 [86395:12218710] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:47:21.413595+0800 [86395:12218710] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:47:21.413683+0800 [86395:12218710] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:47:21.413712+0800 [86395:12218710] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:47:46.606352+0800 [86395:12218710] [navigation] Presented nested sheet
+
+2026-10-07 13:47:46.689580+0800 [86395:12218710] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:47:46.689676+0800 [86395:12218710] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:47:46.689744+0800 [86395:12218710] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:47:46.689774+0800 [86395:12218710] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:47:46.689800+0800 [86395:12218710] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:47:47.338743+0800 [86395:12218710] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:47:47.338875+0800 [86395:12218710] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:47:47.338903+0800 [86395:12218710] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:48:01.272578+0800 [86395:12218710] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:48:14.289635+0800 [86395:12218710] [navigation] Presented nested sheet
+
+2026-10-07 13:48:14.355003+0800 [86395:12218710] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:48:14.355098+0800 [86395:12218710] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:48:14.355158+0800 [86395:12218710] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:48:14.355184+0800 [86395:12218710] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:48:14.355206+0800 [86395:12218710] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:48:14.972150+0800 [86395:12218710] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:48:14.972253+0800 [86395:12218710] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:48:14.972280+0800 [86395:12218710] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:48:31.589181+0800 [86395:12218710] [navigation] Dismissed all presentation trees
+
+2026-10-07 13:48:31.589210+0800 [86395:12218710] [navigation] Deferred navigation request until presentations dismiss
+
+2026-10-07 13:48:31.605565+0800 [86395:12218710] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:48:32.227720+0800 [86395:12218710] [navigation] Set scope path; path count: 1
+
+2026-10-07 13:48:32.227756+0800 [86395:12218710] [navigation] Applied deferred navigation request
+
+2026-10-07 13:48:32.347994+0800 [86395:12218710] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:48:32.348119+0800 [86395:12218710] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:48:32.348150+0800 [86395:12218710] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:48:32.373507+0800 [86395:12218710] [Snapshotting] Snapshotting a view (0x109e1cf00, _UINavigationBarLargeTitleView) that has not been rendered at least once requires afterScreenUpdates:YES.
+
+2026-10-07 13:48:32.408938+0800 [86395:12218710] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:48:32.409089+0800 [86395:12218710] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:48:32.410661+0800 [86395:12218710] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:48:32.410707+0800 [86395:12218710] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:48:32.890042+0800 [86395:12218710] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:48:32.890111+0800 [86395:12218710] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:48:32.890140+0800 [86395:12218710] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-07 13:48:32.890163+0800 [86395:12218710] [API] cannot add handler to 0 from 0 - dropping

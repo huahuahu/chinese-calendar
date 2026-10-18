@@ -30,12 +30,15 @@ Read applicable `AGENTS.md` instructions and the requirement or acceptance crite
 | `CONTEXT.md` and relevant `Docs/` domain documents | Domain language, calendar behavior, model boundaries, and accepted design decisions |
 | `Docs/Conventions/Common.md` | Code implementation or review; shared conventions for comments and logging |
 | `Docs/Conventions/SwiftUI.md` | SwiftUI implementation or review; project rules for view decomposition and display constants |
+| `Docs/Conventions/Navigation.md` | Navigation, modal presentation, or their state ownership; shared rules NAV-01–NAV-06 |
 | `.agents/skills/swiftui-pro/SKILL.md` | SwiftUI generation or review |
 | `.agents/skills/swiftdata-pro/SKILL.md` | SwiftData models, relationships, queries, or storage |
 | `.agents/skills/swift-concurrency-pro/SKILL.md` | Isolation, task lifetime, cancellation, and async state changes |
 | `.xcodebuildmcp/config.yaml` and repository Xcode instructions | Before a build, test, Preview, or Simulator operation |
 
 Apply the user's current requirements ahead of local guidance, and project conventions ahead of generic skill recommendations where they differ. Distinguish mandatory rules from preferences and recommendations. When reporting a rule violation, cite the exact applicable rule and explain why its conditions are met. Verify referenced files and APIs; a name alone is not evidence. If a requirement names an unknown file, resolve it before enforcing it.
+
+For navigation-related changes, trace the actual App entry point through its state owner, presentation host, originating context, dismissal, and external-request coordination. Cite the applicable NAV rule and that execution path. Check the convention's allowed uses before reporting a system API: a `.sheet` or `NavigationStack` search hit alone is not sufficient evidence, and a DEBUG/PreviewSupport path alone does not prove a preview-only exception.
 
 ## 3. Establish scope and create a run
 

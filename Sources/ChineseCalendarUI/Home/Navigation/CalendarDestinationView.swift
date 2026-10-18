@@ -1,8 +1,12 @@
+import ChineseCalendarLocalization
+import SFSafeSymbols
 import SwiftUI
 
 /// 供导航容器使用，将 CalendarDestination 分发到对应页面。
 struct CalendarDestinationView: View {
     let destination: CalendarDestination
+    @Environment(CalendarPresentationContext.self) private var presentation
+    var storeCoordinator: ChineseCalendarStoreCoordinator?
 
     var body: some View {
         Group {
@@ -31,9 +35,39 @@ struct CalendarDestinationView: View {
                 ReignEraDetailView(reignEraID: reignEraID)
             case let .emperor(emperorID):
                 EmperorDetailView(emperorID: emperorID)
+            case let .yearPicker(sessionID):
+                CalendarYearPickerDestinationView(sessionID: sessionID)
+            case .downloadDetails:
+                if let progress = storeCoordinator?.fullStoreDownloadProgress {
+                    FullStoreDownloadDetailView(progress: progress)
+                }
+            #if DEBUG
+                case let .debugNavigation(id):
+                    CalendarDebugNavigationView(id: id)
+                case let .downloadPreview(sessionID):
+                    FullStoreDownloadPreviewDestinationView(sessionID: sessionID)
+                case let .downloadPreviewDetails(sessionID):
+                    FullStoreDownloadPreviewDetailView(sessionID: sessionID)
+            #endif
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(.calendarSystemBackground)
+        .toolbar {
+            if presentation.isPresented, destination.usesPresentationNavigationStack {
+                if destination.isDownloadDetail {
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button(
+                            CalendarStringKey.Common.Action.close, systemSymbol: .xmark,
+                            action: { presentation.dismiss() }
+                        )
+                    }
+                } else {
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button(CalendarStringKey.Common.Action.close, action: { presentation.dismiss() })
+                    }
+                }
+            }
+        }
     }
 }

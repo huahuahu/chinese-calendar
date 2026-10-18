@@ -1,0 +1,200 @@
+{
+  "tests": {
+    "counts": {
+      "expectedFailures": 0,
+      "failed": 0,
+      "notRun": 0,
+      "passed": 255,
+      "skipped": 0,
+      "total": 255
+    },
+    "fullConsoleLogsPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/RunAllTests/test-console-log-2026-10-11T22-12-55+08-00.txt",
+    "fullSummaryPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/RunAllTests/2F00853E-70DA-41EA-9CDA-53EA3E202D1C.txt",
+    "message": "Results truncated to 100 of 255 tests. Failed tests shown first. Full logs available at /var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/RunAllTests/2F00853E-70DA-41EA-9CDA-53EA3E202D1C.txt.",
+    "schemeName": "ChineseCalendar-iOS",
+    "summary": "255 tests: 255 passed, 0 failed, 0 skipped, 0 expected failures, 0 not run",
+    "totalResults": 255,
+    "truncated": true,
+    "xcresultBundlePath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/RunAllTests/Test-ChineseCalendar-iOS-2026.10.11_22-12-55-+0800.xcresult"
+  },
+  "release": {
+    "schema": "xcodebuildmcp.output.build-result",
+    "schemaVersion": "3",
+    "didError": false,
+    "error": null,
+    "data": {
+      "summary": {
+        "status": "SUCCEEDED",
+        "durationMs": 127736,
+        "target": "simulator"
+      },
+      "artifacts": {
+        "buildLogPath": "~/Library/Developer/XcodeBuildMCP/workspaces/Chinese-date-d3fe835e2bc5/logs/build_sim_2026-10-11T14-17-55-175Z_pid28432_9c7fa1a3.log"
+      },
+      "diagnostics": {
+        "warnings": [],
+        "errors": []
+      }
+    },
+    "nextSteps": [
+      "Get built app path in simulator derived data: get_sim_app_path({ simulatorId: \"16A9CAA7-45CE-46D5-8915-F61531FC617C\", scheme: \"ChineseCalendar-iOS\", platform: \"iOS Simulator\" })"
+    ]
+  },
+  "runtime": [
+    {
+      "name": "01-settings",
+      "applicationState": "Running",
+      "hierarchyPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/DeviceInteractionSynthesize/Presentation Layer Integration-22_26_28_544-hierarchy.txt",
+      "logsPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/DeviceInteractionSynthesize/Presentation Layer Integration-22_26_28_544-logs.txt",
+      "screenshotPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/DeviceInteractionSynthesize/Presentation Layer Integration-22_26_28_544-screenshot.png",
+      "thumbnailScreenshotPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/DeviceInteractionSynthesize/Presentation Layer Integration-22_26_28_544-thumbnailScreenshot.png"
+    },
+    {
+      "name": "02-modal-first-tab-50",
+      "applicationState": "Running",
+      "hierarchyPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/DeviceInteractionSynthesize/Presentation Layer Integration-22_26_38_096-hierarchy.txt",
+      "logsPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/DeviceInteractionSynthesize/Presentation Layer Integration-22_26_38_096-logs.txt",
+      "screenshotPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/DeviceInteractionSynthesize/Presentation Layer Integration-22_26_38_096-screenshot.png",
+      "thumbnailScreenshotPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/DeviceInteractionSynthesize/Presentation Layer Integration-22_26_38_096-thumbnailScreenshot.png"
+    },
+    {
+      "name": "03-modal-second-tab",
+      "applicationState": "Running",
+      "hierarchyPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/DeviceInteractionSynthesize/Presentation Layer Integration-22_26_39_420-hierarchy.txt",
+      "logsPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/DeviceInteractionSynthesize/Presentation Layer Integration-22_26_39_420-logs.txt",
+      "screenshotPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/DeviceInteractionSynthesize/Presentation Layer Integration-22_26_39_420-screenshot.png",
+      "thumbnailScreenshotPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/DeviceInteractionSynthesize/Presentation Layer Integration-22_26_39_420-thumbnailScreenshot.png"
+    },
+    {
+      "name": "04-child-sheet",
+      "applicationState": "Running",
+      "hierarchyPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/DeviceInteractionSynthesize/Presentation Layer Integration-22_26_42_001-hierarchy.txt",
+      "logsPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/DeviceInteractionSynthesize/Presentation Layer Integration-22_26_42_001-logs.txt",
+      "screenshotPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/DeviceInteractionSynthesize/Presentation Layer Integration-22_26_42_001-screenshot.png",
+      "thumbnailScreenshotPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/DeviceInteractionSynthesize/Presentation Layer Integration-22_26_42_001-thumbnailScreenshot.png"
+    },
+    {
+      "name": "05-child-closed",
+      "applicationState": "Running",
+      "hierarchyPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/DeviceInteractionSynthesize/Presentation Layer Integration-22_26_43_618-hierarchy.txt",
+      "logsPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/DeviceInteractionSynthesize/Presentation Layer Integration-22_26_43_618-logs.txt",
+      "screenshotPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/DeviceInteractionSynthesize/Presentation Layer Integration-22_26_43_618-screenshot.png",
+      "thumbnailScreenshotPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/DeviceInteractionSynthesize/Presentation Layer Integration-22_26_43_618-thumbnailScreenshot.png"
+    },
+    {
+      "name": "06-return-first-tab",
+      "applicationState": "Running",
+      "hierarchyPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/DeviceInteractionSynthesize/Presentation Layer Integration-22_26_44_810-hierarchy.txt",
+      "logsPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/DeviceInteractionSynthesize/Presentation Layer Integration-22_26_44_810-logs.txt",
+      "screenshotPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/DeviceInteractionSynthesize/Presentation Layer Integration-22_26_44_810-screenshot.png",
+      "thumbnailScreenshotPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/DeviceInteractionSynthesize/Presentation Layer Integration-22_26_44_810-thumbnailScreenshot.png"
+    },
+    {
+      "name": "07-parent-closed",
+      "applicationState": "Running",
+      "hierarchyPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/DeviceInteractionSynthesize/Presentation Layer Integration-22_26_47_718-hierarchy.txt",
+      "logsPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/DeviceInteractionSynthesize/Presentation Layer Integration-22_26_47_718-logs.txt",
+      "screenshotPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/DeviceInteractionSynthesize/Presentation Layer Integration-22_26_47_718-screenshot.png",
+      "thumbnailScreenshotPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/DeviceInteractionSynthesize/Presentation Layer Integration-22_26_47_718-thumbnailScreenshot.png"
+    },
+    {
+      "name": "08-tab-push",
+      "applicationState": "Running",
+      "hierarchyPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/DeviceInteractionSynthesize/Presentation Layer Integration-22_26_54_194-hierarchy.txt",
+      "logsPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/DeviceInteractionSynthesize/Presentation Layer Integration-22_26_54_194-logs.txt",
+      "screenshotPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/DeviceInteractionSynthesize/Presentation Layer Integration-22_26_54_194-screenshot.png",
+      "thumbnailScreenshotPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/DeviceInteractionSynthesize/Presentation Layer Integration-22_26_54_194-thumbnailScreenshot.png"
+    },
+    {
+      "name": "09-tab-push-again",
+      "applicationState": "Running",
+      "hierarchyPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/DeviceInteractionSynthesize/Presentation Layer Integration-22_26_56_185-hierarchy.txt",
+      "logsPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/DeviceInteractionSynthesize/Presentation Layer Integration-22_26_56_185-logs.txt",
+      "screenshotPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/DeviceInteractionSynthesize/Presentation Layer Integration-22_26_56_185-screenshot.png",
+      "thumbnailScreenshotPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/DeviceInteractionSynthesize/Presentation Layer Integration-22_26_56_185-thumbnailScreenshot.png"
+    },
+    {
+      "name": "10-tab-pop",
+      "applicationState": "Running",
+      "hierarchyPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/DeviceInteractionSynthesize/Presentation Layer Integration-22_26_57_435-hierarchy.txt",
+      "logsPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/DeviceInteractionSynthesize/Presentation Layer Integration-22_26_57_435-logs.txt",
+      "screenshotPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/DeviceInteractionSynthesize/Presentation Layer Integration-22_26_57_435-screenshot.png",
+      "thumbnailScreenshotPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/DeviceInteractionSynthesize/Presentation Layer Integration-22_26_57_435-thumbnailScreenshot.png"
+    },
+    {
+      "name": "11-parent-sheet",
+      "applicationState": "Running",
+      "hierarchyPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/DeviceInteractionSynthesize/Presentation Layer Integration-22_26_58_609-hierarchy.txt",
+      "logsPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/DeviceInteractionSynthesize/Presentation Layer Integration-22_26_58_609-logs.txt",
+      "screenshotPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/DeviceInteractionSynthesize/Presentation Layer Integration-22_26_58_609-screenshot.png",
+      "thumbnailScreenshotPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/DeviceInteractionSynthesize/Presentation Layer Integration-22_26_58_609-thumbnailScreenshot.png"
+    },
+    {
+      "name": "12-child-fullscreen",
+      "applicationState": "Running",
+      "hierarchyPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/DeviceInteractionSynthesize/Presentation Layer Integration-22_26_59_998-hierarchy.txt",
+      "logsPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/DeviceInteractionSynthesize/Presentation Layer Integration-22_26_59_998-logs.txt",
+      "screenshotPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/DeviceInteractionSynthesize/Presentation Layer Integration-22_26_59_998-screenshot.png",
+      "thumbnailScreenshotPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/DeviceInteractionSynthesize/Presentation Layer Integration-22_26_59_998-thumbnailScreenshot.png"
+    },
+    {
+      "name": "13-child-fullscreen-closed",
+      "applicationState": "Running",
+      "hierarchyPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/DeviceInteractionSynthesize/Presentation Layer Integration-22_27_01_383-hierarchy.txt",
+      "logsPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/DeviceInteractionSynthesize/Presentation Layer Integration-22_27_01_383-logs.txt",
+      "screenshotPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/DeviceInteractionSynthesize/Presentation Layer Integration-22_27_01_383-screenshot.png",
+      "thumbnailScreenshotPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/DeviceInteractionSynthesize/Presentation Layer Integration-22_27_01_383-thumbnailScreenshot.png"
+    },
+    {
+      "name": "14-modal-push",
+      "applicationState": "Running",
+      "hierarchyPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/DeviceInteractionSynthesize/Presentation Layer Deep Link-22_28_36_210-hierarchy.txt",
+      "logsPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/DeviceInteractionSynthesize/Presentation Layer Deep Link-22_28_36_210-logs.txt",
+      "screenshotPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/DeviceInteractionSynthesize/Presentation Layer Deep Link-22_28_36_210-screenshot.png",
+      "thumbnailScreenshotPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/DeviceInteractionSynthesize/Presentation Layer Deep Link-22_28_36_210-thumbnailScreenshot.png"
+    },
+    {
+      "name": "15-leave-confirmation",
+      "applicationState": "Running",
+      "hierarchyPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/DeviceInteractionSynthesize/Presentation Layer Deep Link-22_28_39_412-hierarchy.txt",
+      "logsPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/DeviceInteractionSynthesize/Presentation Layer Deep Link-22_28_39_412-logs.txt",
+      "screenshotPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/DeviceInteractionSynthesize/Presentation Layer Deep Link-22_28_39_412-screenshot.png",
+      "thumbnailScreenshotPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/DeviceInteractionSynthesize/Presentation Layer Deep Link-22_28_39_412-thumbnailScreenshot.png"
+    },
+    {
+      "name": "16-cancel-preserves-page",
+      "applicationState": "Running",
+      "hierarchyPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/DeviceInteractionSynthesize/Presentation Layer Deep Link-22_28_42_379-hierarchy.txt",
+      "logsPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/DeviceInteractionSynthesize/Presentation Layer Deep Link-22_28_42_379-logs.txt",
+      "screenshotPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/DeviceInteractionSynthesize/Presentation Layer Deep Link-22_28_42_379-screenshot.png",
+      "thumbnailScreenshotPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/DeviceInteractionSynthesize/Presentation Layer Deep Link-22_28_42_379-thumbnailScreenshot.png"
+    },
+    {
+      "name": "17-approve-confirmation",
+      "applicationState": "Running",
+      "hierarchyPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/DeviceInteractionSynthesize/Presentation Layer Approved Link-22_29_57_447-hierarchy.txt",
+      "logsPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/DeviceInteractionSynthesize/Presentation Layer Approved Link-22_29_57_447-logs.txt",
+      "screenshotPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/DeviceInteractionSynthesize/Presentation Layer Approved Link-22_29_57_447-screenshot.png",
+      "thumbnailScreenshotPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/DeviceInteractionSynthesize/Presentation Layer Approved Link-22_29_57_447-thumbnailScreenshot.png"
+    },
+    {
+      "name": "18-approved-calendar",
+      "applicationState": "Running",
+      "hierarchyPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/DeviceInteractionSynthesize/Presentation Layer Approved Link-22_30_00_215-hierarchy.txt",
+      "logsPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/DeviceInteractionSynthesize/Presentation Layer Approved Link-22_30_00_215-logs.txt",
+      "screenshotPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/DeviceInteractionSynthesize/Presentation Layer Approved Link-22_30_00_215-screenshot.png",
+      "thumbnailScreenshotPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/DeviceInteractionSynthesize/Presentation Layer Approved Link-22_30_00_215-thumbnailScreenshot.png"
+    }
+  ],
+  "checks": {
+    "multiTab": true,
+    "nested": true,
+    "cancel": true,
+    "approved": true
+  },
+  "pageIDs": {
+    "root": "2754135D-930D-4B77-A72B-D433595F1699",
+    "sheet": "FEECBA92-2D52-47DF-86B5-B788A48F7E92",
+    "cancel": "60EEB365-13F1-40B4-9C13-B1DCF8301321"
+  }
+}

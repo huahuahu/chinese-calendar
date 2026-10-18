@@ -1,0 +1,120 @@
+{
+  "moves": [
+    {
+      "from": "Sources/NavigationCore/NavigationLayer.swift",
+      "to": "Sources/NavigationCore/State/NavigationLayer.swift",
+      "sha256": "47ce0c73c4ad8bbf3a4e2e27616b7c626a602e3892d63f747f4b5e891383982f"
+    },
+    {
+      "from": "Sources/NavigationCore/NavigationLayerID.swift",
+      "to": "Sources/NavigationCore/State/NavigationLayerID.swift",
+      "sha256": "239ca51d14c838fe5c28a4b29bf415542143b0d91c00d17346e517a22252d06a"
+    },
+    {
+      "from": "Sources/NavigationCore/NavigationStackID.swift",
+      "to": "Sources/NavigationCore/State/NavigationStackID.swift",
+      "sha256": "0291382e30f3efebb5356e2cde9d861b0ce4dbdee4a2b4a47e588540d7dbe841"
+    },
+    {
+      "from": "Sources/NavigationCore/NavigationPresentationNode.swift",
+      "to": "Sources/NavigationCore/State/NavigationPresentationNode.swift",
+      "sha256": "819aff30e7bfce5ecced530e14f030c986fb4f61ca66d43f0c41657f89a99a62"
+    },
+    {
+      "from": "Sources/NavigationCore/NavigationPresentationStyle.swift",
+      "to": "Sources/NavigationCore/State/NavigationPresentationStyle.swift",
+      "sha256": "0f8c9c13df1deb7a6d8fa9407efd4cbedebd5cda3ad86937f025df34a9c63443"
+    },
+    {
+      "from": "Sources/NavigationCore/NavigationRouter.swift",
+      "to": "Sources/NavigationCore/Routing/NavigationRouter.swift",
+      "sha256": "2ab397ff7c836f3d1f6a47b61e2e371a19376bf3a58dca15f9ded3749c3ac52b"
+    },
+    {
+      "from": "Sources/NavigationCore/NavigationRouter+Contexts.swift",
+      "to": "Sources/NavigationCore/Routing/NavigationRouter+Contexts.swift",
+      "sha256": "9914c894d5cda0c79865c1b7946b28f3c8b50f5009bd1d89446a7e66f87698a4"
+    },
+    {
+      "from": "Sources/NavigationCore/NavigationContext.swift",
+      "to": "Sources/NavigationCore/Routing/NavigationContext.swift",
+      "sha256": "93ca58ed9051cd6726febc43ecabf9e1527166e3a99617991fda876b733fc4fd"
+    },
+    {
+      "from": "Sources/NavigationCore/NavigationContextID.swift",
+      "to": "Sources/NavigationCore/Routing/NavigationContextID.swift",
+      "sha256": "e1d93a1b20171a0114bcda02ef70a7beac6d1943f9cd070689ae1129c3815105"
+    },
+    {
+      "from": "Sources/NavigationCore/NavigationPresentationContext.swift",
+      "to": "Sources/NavigationCore/Routing/NavigationPresentationContext.swift",
+      "sha256": "ffa41fe745d261f687c1be1822f644782b1f9821185710995afb2ef40f47c812"
+    },
+    {
+      "from": "Sources/NavigationCore/NavigationRequest.swift",
+      "to": "Sources/NavigationCore/Routing/NavigationRequest.swift",
+      "sha256": "61a4925e65563b23428dfa83310e4821b56cd44f9d291430ba2335d3fd6847e5"
+    },
+    {
+      "from": "Sources/NavigationCore/NavigationRequestResult.swift",
+      "to": "Sources/NavigationCore/Routing/NavigationRequestResult.swift",
+      "sha256": "30bf27d10f3e98819c941257fc4cd8b23f70ba3bb5f65fcdfa214ff582d1f8ee"
+    },
+    {
+      "from": "Sources/NavigationCore/NavigationConfirmation.swift",
+      "to": "Sources/NavigationCore/Routing/NavigationConfirmation.swift",
+      "sha256": "62c079c830d26d6e068179816c9bbed3a64272bfa7a930b759e99aa253ed4079"
+    },
+    {
+      "from": "Sources/NavigationCore/NavigationSnapshot.swift",
+      "to": "Sources/NavigationCore/Restoration/NavigationSnapshot.swift",
+      "sha256": "d0b1163ba6aa02620eec0499852825022ce9ae4fa44a43f1cf59b13895eb2198"
+    },
+    {
+      "from": "Sources/NavigationCore/NavigationLayerSnapshot.swift",
+      "to": "Sources/NavigationCore/Restoration/NavigationLayerSnapshot.swift",
+      "sha256": "fd8d96a62931c96e4902b99a94f2d153b60acb7d54ed8788518dc70a56b47d92"
+    },
+    {
+      "from": "Sources/NavigationCore/NavigationPresentationSnapshot.swift",
+      "to": "Sources/NavigationCore/Restoration/NavigationPresentationSnapshot.swift",
+      "sha256": "8aea39c09d6b96394fb4656f0acb0c6a0050851f02bdeaa1a9b45225387acf56"
+    },
+    {
+      "from": "Sources/NavigationCore/NavigationScopeView.swift",
+      "to": "Sources/NavigationCore/SwiftUI/NavigationScopeView.swift",
+      "sha256": "522a63b30402edf68be0c5809eeabee53eee1248ee31c0ea99977a3feb322074"
+    },
+    {
+      "from": "Sources/NavigationCore/NavigationPresentationHost.swift",
+      "to": "Sources/NavigationCore/SwiftUI/NavigationPresentationHost.swift",
+      "sha256": "cf55442ba3e45094128b3560e949991c8e3caf86400c6381082858d16f7001c7"
+    },
+    {
+      "from": "Sources/NavigationCore/NavigationPresentationNodeView.swift",
+      "to": "Sources/NavigationCore/SwiftUI/NavigationPresentationNodeView.swift",
+      "sha256": "c3438ece75cfe2e4418da1fa9b744da2c2454c82a1643d8587897d82dad4fbbb"
+    },
+    {
+      "from": "Sources/NavigationCore/NavigationPresentationModifiers.swift",
+      "to": "Sources/NavigationCore/SwiftUI/NavigationPresentationModifiers.swift",
+      "sha256": "761d626767012ece21470f404a8d1bd1e8bac38126bb37d5971320fa0ba987fd"
+    },
+    {
+      "from": "Sources/NavigationCore/NavigationConfirmationHost.swift",
+      "to": "Sources/NavigationCore/SwiftUI/NavigationConfirmationHost.swift",
+      "sha256": "34b5f4b27697c6c268f3213ddc847b1b83bd381a236f69e6aa802ce3eee661f1"
+    },
+    {
+      "from": "Sources/NavigationCore/NavigationConfirmationContent.swift",
+      "to": "Sources/NavigationCore/SwiftUI/NavigationConfirmationContent.swift",
+      "sha256": "e6cabfc42126418d82ebe3243ce7ac4a82958acb4e9938211c21679068d95867"
+    }
+  ],
+  "preserved": {
+    "Sources/Package.swift": "d775fd7f643977f7a27c5b58f7ddae7644c546a59d63cbd72de4a371383b54ab",
+    "Sources/NavigationCore/NavigationCoreLog.swift": "2346f7f17ec99245f2b495d5f32270d99febde023a51c20ea2d97b61544feaa0",
+    "Sources/NavigationCoreTests/NavigationRouterTests.swift": "2fab13e2b333a3cba4ab6b3ee775ea6c006ac9b58214dc4c806629417acd3ff3",
+    "Sources/NavigationCoreTests/NavigationContextTests.swift": "0af4f0d35cbdd21d4e38a0e9f0f3a5f9a3032d26d00b4c3026cc4581f00a7230"
+  }
+}

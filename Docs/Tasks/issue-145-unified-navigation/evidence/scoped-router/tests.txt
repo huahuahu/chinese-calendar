@@ -1,0 +1,336 @@
+2026-10-07 native Xcode RunAllTests (final source)
+ChineseCalendar-iOS / chinesedate iPhone 18 Pro Max (885f), iOS 27.0
+244 tests: 244 passed, 0 failed, 0 skipped, 0 expected failures, 0 not run
+BuildProject buildForTesting: success (5.081 s)
+Source snapshot: source-sha256-final.txt
+Full summary: /var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/RunAllTests/BD1D4D45-0ED1-47D5-80BD-D752D900350C.txt
+Result bundle: /var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/RunAllTests/Test-ChineseCalendar-iOS-2026.10.07_22-31-01-+0800.xcresult
+
+Focused results extracted from full native summary:
+TEST_RESULT_INDEX: 111/244
+TEST_TARGET: NavigationCoreTests
+TEST_IDENTIFIER: NavigationContextTests/localOperationsKeepTabAndModalPathsIndependent()
+TEST_DISPLAY_NAME: localOperationsKeepTabAndModalPathsIndependent()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/NavigationCoreTests/NavigationContextTests.swift
+TEST_LINE_NUMBER: 11
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+
+TEST_RESULT_INDEX: 112/244
+TEST_TARGET: NavigationCoreTests
+TEST_IDENTIFIER: NavigationContextTests/childDismissalPreservesParentAndBlocksReopenUntilCompletion()
+TEST_DISPLAY_NAME: childDismissalPreservesParentAndBlocksReopenUntilCompletion()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/NavigationCoreTests/NavigationContextTests.swift
+TEST_LINE_NUMBER: 29
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+
+TEST_RESULT_INDEX: 113/244
+TEST_TARGET: NavigationCoreTests
+TEST_IDENTIFIER: NavigationContextTests/inactiveTabCannotPresentOverCurrentTab()
+TEST_DISPLAY_NAME: inactiveTabCannotPresentOverCurrentTab()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/NavigationCoreTests/NavigationContextTests.swift
+TEST_LINE_NUMBER: 54
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+
+TEST_RESULT_INDEX: 114/244
+TEST_TARGET: NavigationCoreTests
+TEST_IDENTIFIER: NavigationContextTests/rootDismissalWithoutRequestAllowsReopening(style:)
+TEST_DISPLAY_NAME: .sheet
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/NavigationCoreTests/NavigationContextTests.swift
+TEST_LINE_NUMBER: 64
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+
+TEST_RESULT_INDEX: 115/244
+TEST_TARGET: NavigationCoreTests
+TEST_IDENTIFIER: NavigationContextTests/rootDismissalWithoutRequestAllowsReopening(style:)
+TEST_DISPLAY_NAME: .fullScreen
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/NavigationCoreTests/NavigationContextTests.swift
+TEST_LINE_NUMBER: 64
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+
+TEST_RESULT_INDEX: 116/244
+TEST_TARGET: NavigationCoreTests
+TEST_IDENTIFIER: NavigationContextTests/confirmationIsVisibleOnlyOnTopModalAndCancelKeepsTheTree()
+TEST_DISPLAY_NAME: confirmationIsVisibleOnlyOnTopModalAndCancelKeepsTheTree()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/NavigationCoreTests/NavigationContextTests.swift
+TEST_LINE_NUMBER: 78
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+
+TEST_RESULT_INDEX: 117/244
+TEST_TARGET: NavigationCoreTests
+TEST_IDENTIFIER: NavigationContextTests/approvalWaitsForRootDismissalAndRejectsChildCompletion()
+TEST_DISPLAY_NAME: approvalWaitsForRootDismissalAndRejectsChildCompletion()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/NavigationCoreTests/NavigationContextTests.swift
+TEST_LINE_NUMBER: 99
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+
+TEST_RESULT_INDEX: 118/244
+TEST_TARGET: NavigationCoreTests
+TEST_IDENTIFIER: NavigationContextTests/repeatedAndReplacedRequestsCannotReuseOldApproval()
+TEST_DISPLAY_NAME: repeatedAndReplacedRequestsCannotReuseOldApproval()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/NavigationCoreTests/NavigationContextTests.swift
+TEST_LINE_NUMBER: 120
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+
+TEST_RESULT_INDEX: 119/244
+TEST_TARGET: NavigationCoreTests
+TEST_IDENTIFIER: NavigationContextTests/requestDuringApprovedDismissalRequiresItsOwnApproval()
+TEST_DISPLAY_NAME: requestDuringApprovedDismissalRequiresItsOwnApproval()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/NavigationCoreTests/NavigationContextTests.swift
+TEST_LINE_NUMBER: 140
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+
+TEST_RESULT_INDEX: 120/244
+TEST_TARGET: NavigationCoreTests
+TEST_IDENTIFIER: NavigationContextTests/disappearingModalDoesNotImplicitlyApprovePendingRequest()
+TEST_DISPLAY_NAME: disappearingModalDoesNotImplicitlyApprovePendingRequest()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/NavigationCoreTests/NavigationContextTests.swift
+TEST_LINE_NUMBER: 155
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+
+TEST_RESULT_INDEX: 121/244
+TEST_TARGET: NavigationCoreTests
+TEST_IDENTIFIER: NavigationContextTests/coldRequestDoesNotRequireConfirmation()
+TEST_DISPLAY_NAME: coldRequestDoesNotRequireConfirmation()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/NavigationCoreTests/NavigationContextTests.swift
+TEST_LINE_NUMBER: 173
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+
+TEST_RESULT_INDEX: 122/244
+TEST_TARGET: NavigationCoreTests
+TEST_IDENTIFIER: NavigationContextTests/snapshotRoundTripRestoresIdentityAndIndependentNavigation()
+TEST_DISPLAY_NAME: snapshotRoundTripRestoresIdentityAndIndependentNavigation()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/NavigationCoreTests/NavigationContextTests.swift
+TEST_LINE_NUMBER: 180
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+
+TEST_RESULT_INDEX: 123/244
+TEST_TARGET: NavigationCoreTests
+TEST_IDENTIFIER: NavigationContextTests/restoreRejectsBusyStateAndStaleContextWithReusedID()
+TEST_DISPLAY_NAME: restoreRejectsBusyStateAndStaleContextWithReusedID()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/NavigationCoreTests/NavigationContextTests.swift
+TEST_LINE_NUMBER: 202
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+
+TEST_RESULT_INDEX: 124/244
+TEST_TARGET: NavigationCoreTests
+TEST_IDENTIFIER: NavigationContextTests/malformedSnapshotsAreRejectedWithoutPartialMutation()
+TEST_DISPLAY_NAME: malformedSnapshotsAreRejectedWithoutPartialMutation()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/NavigationCoreTests/NavigationContextTests.swift
+TEST_LINE_NUMBER: 222
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+
+TEST_RESULT_INDEX: 125/244
+TEST_TARGET: ChineseCalendarUITests
+TEST_IDENTIFIER: CalendarNavigationContextTests/historyModalPushAndNestedPresentationPreserveTabNavigation()
+TEST_DISPLAY_NAME: historyModalPushAndNestedPresentationPreserveTabNavigation()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarUI/Tests/CalendarNavigationContextTests.swift
+TEST_LINE_NUMBER: 8
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+
+TEST_RESULT_INDEX: 126/244
+TEST_TARGET: ChineseCalendarUITests
+TEST_IDENTIFIER: CalendarNavigationContextTests/appDeepLinkCancelAndApprovalUseTheCoreTransaction()
+TEST_DISPLAY_NAME: appDeepLinkCancelAndApprovalUseTheCoreTransaction()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarUI/Tests/CalendarNavigationContextTests.swift
+TEST_LINE_NUMBER: 23
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+
+TEST_RESULT_INDEX: 127/244
+TEST_TARGET: ChineseCalendarUITests
+TEST_IDENTIFIER: CalendarNavigationContextTests/persistentAddressesRoundTripButTemporarySessionsAreRejected()
+TEST_DISPLAY_NAME: persistentAddressesRoundTripButTemporarySessionsAreRejected()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarUI/Tests/CalendarNavigationContextTests.swift
+TEST_LINE_NUMBER: 40
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+
+TEST_RESULT_INDEX: 237/244
+TEST_TARGET: ChineseCalendarUITests
+TEST_IDENTIFIER: CalendarPresentationTests/yearSelectionReturnsOnlyToItsOriginatingPage()
+TEST_DISPLAY_NAME: yearSelectionReturnsOnlyToItsOriginatingPage()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarUI/Tests/CalendarPresentationTests.swift
+TEST_LINE_NUMBER: 8
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+
+TEST_RESULT_INDEX: 238/244
+TEST_TARGET: ChineseCalendarUITests
+TEST_IDENTIFIER: CalendarPresentationTests/cancelledYearPickerCannotDeliverAStaleResult()
+TEST_DISPLAY_NAME: cancelledYearPickerCannotDeliverAStaleResult()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarUI/Tests/CalendarPresentationTests.swift
+TEST_LINE_NUMBER: 43
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+
+TEST_RESULT_INDEX: 239/244
+TEST_TARGET: ChineseCalendarUITests
+TEST_IDENTIFIER: CalendarPresentationTests/repeatedYearPickerActionKeepsTheOriginalSession()
+TEST_DISPLAY_NAME: repeatedYearPickerActionKeepsTheOriginalSession()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarUI/Tests/CalendarPresentationTests.swift
+TEST_LINE_NUMBER: 63
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+
+TEST_RESULT_INDEX: 240/244
+TEST_TARGET: ChineseCalendarUITests
+TEST_IDENTIFIER: CalendarPresentationTests/storeChangeInvalidatesPickerButPreservesDownloadAndPaths()
+TEST_DISPLAY_NAME: storeChangeInvalidatesPickerButPreservesDownloadAndPaths()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarUI/Tests/CalendarPresentationTests.swift
+TEST_LINE_NUMBER: 81
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+
+TEST_RESULT_INDEX: 241/244
+TEST_TARGET: ChineseCalendarUITests
+TEST_IDENTIFIER: CalendarPresentationTests/disappearingDownloadDoesNotDismissAnotherPresentation()
+TEST_DISPLAY_NAME: disappearingDownloadDoesNotDismissAnotherPresentation()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarUI/Tests/CalendarPresentationTests.swift
+TEST_LINE_NUMBER: 106
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+
+TEST_RESULT_INDEX: 242/244
+TEST_TARGET: ChineseCalendarUITests
+TEST_IDENTIFIER: CalendarPresentationTests/storeChangeDoesNotLoseLatestDeferredDeepLink()
+TEST_DISPLAY_NAME: storeChangeDoesNotLoseLatestDeferredDeepLink()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarUI/Tests/CalendarPresentationTests.swift
+TEST_LINE_NUMBER: 121
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+
+TEST_RESULT_INDEX: 243/244
+TEST_TARGET: ChineseCalendarUITests
+TEST_IDENTIFIER: CalendarPresentationTests/rebuildingDataPagesDoesNotReplayColdLaunchLink()
+TEST_DISPLAY_NAME: rebuildingDataPagesDoesNotReplayColdLaunchLink()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarUI/Tests/CalendarPresentationTests.swift
+TEST_LINE_NUMBER: 137
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+
+TEST_RESULT_INDEX: 244/244
+TEST_TARGET: ChineseCalendarUITests
+TEST_IDENTIFIER: CalendarPresentationTests/previewDetailsShareFeatureStateAndRemainInTheSameTree()
+TEST_DISPLAY_NAME: previewDetailsShareFeatureStateAndRemainInTheSameTree()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarUI/Tests/CalendarPresentationTests.swift
+TEST_LINE_NUMBER: 148
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+
+================================================================================
+END OF TEST RESULTS SUMMARY
+================================================================================
