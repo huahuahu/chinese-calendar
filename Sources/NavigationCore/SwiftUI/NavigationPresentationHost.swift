@@ -14,7 +14,7 @@ private struct NavigationPresentationHost<
             .sheet(item: binding(for: .sheet), onDismiss: didDismiss, content: { node in
                 presentation(node)
             })
-            .navigationFullScreenCover(
+            .fullScreenCover(
                 item: binding(for: .fullScreen),
                 onDismiss: didDismiss,
                 content: { node in
