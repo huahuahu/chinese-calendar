@@ -14,7 +14,7 @@ import ChineseCalendarLocalization
             TabView(selection: $presentation.selectedStack) {
                 Tab(value: NavigationStackID<CalendarTab>.scope(.years)) {
                     NavigationScopeView(
-                        context: presentation.context(for: .scope(.years)), presentation: presentation
+                        stack: .scope(.years), presentation: presentation
                     ) {
                         scenarios
                             .navigationTitle(CalendarStringKey.Settings.Debug.DownloadPreview.title)
@@ -26,8 +26,6 @@ import ChineseCalendarLocalization
                                     }
                                 }
                             }
-                    } destinationContent: { destination in
-                        CalendarDestinationView(destination: destination)
                     }
                 } label: {
                     Label(CalendarStringKey.Settings.Debug.DownloadPreview.scenariosTab, systemSymbol: .arrowDownCircle)
@@ -35,13 +33,11 @@ import ChineseCalendarLocalization
 
                 Tab(value: NavigationStackID<CalendarTab>.scope(.history)) {
                     NavigationScopeView(
-                        context: presentation.context(for: .scope(.history)), presentation: presentation
+                        stack: .scope(.history), presentation: presentation
                     ) {
                         Text(CalendarStringKey.Settings.Debug.DownloadPreview.switchMessage)
                             .padding()
                             .navigationTitle(CalendarStringKey.Settings.Debug.DownloadPreview.switchTab)
-                    } destinationContent: { destination in
-                        CalendarDestinationView(destination: destination)
                     }
                 } label: {
                     Label(CalendarStringKey.Settings.Debug.DownloadPreview.switchTab, systemSymbol: .checkmarkCircle)

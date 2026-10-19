@@ -3,8 +3,8 @@ import SwiftUI
 /// 业务提示和导航确认共用一个系统宿主，每次只展示一个 alert。
 struct NavigationAlertHost<Scope: Hashable, Destination: Hashable, AlertRoute: NavigationAlertRoute>: ViewModifier {
     let context: NavigationPresentationContext<Scope, Destination, AlertRoute>
-    let alertContent: ((AlertRoute) -> NavigationAlertContent<AlertRoute.Action>)?
-    let confirmationContent: ((NavigationRequest<Scope, Destination>) -> NavigationConfirmationContent)?
+    let alertContent: (AlertRoute) -> NavigationAlertContent<AlertRoute.Action>?
+    let confirmationContent: (NavigationRequest<Scope, Destination>) -> NavigationConfirmationContent?
     let onAction: @MainActor (
         AlertRoute,
         AlertRoute.Action,
@@ -21,14 +21,12 @@ struct NavigationAlertHost<Scope: Hashable, Destination: Hashable, AlertRoute: N
     }
 
     private var alert: NavigationSystemAlert? {
-        if let node = context.presentedAlert, let alertContent {
-            let copy = alertContent(node.destination)
+        if let node = context.presentedAlert, let copy = alertContent(node.destination) {
             return makeAlert(id: node.id, isConfirmation: false, copy: copy) { action in
                 await onAction(node.destination, action, context)
             }
         }
-        if let request = context.confirmation, let confirmationContent {
-            let copy = confirmationContent(request.request)
+        if let request = context.confirmation, let copy = confirmationContent(request.request) {
             return makeAlert(
                 id: request.id, isConfirmation: true,
                 copy: NavigationAlertContent(

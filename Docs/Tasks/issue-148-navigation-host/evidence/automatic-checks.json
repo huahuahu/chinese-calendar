@@ -1,0 +1,95 @@
+{
+  "baseCommit": "63eb6797",
+  "workspace": "/Users/tigerguo/.codex/worktrees/92c2/Chinese-date/ChineseCalendar.xcodeproj",
+  "scheme": "ChineseCalendar-iOS",
+  "simulator": {
+    "name": "chinesedate iPhone 18 Pro Max (885f)",
+    "id": "16A9CAA7-45CE-46D5-8915-F61531FC617C",
+    "os": "iOS 27.0"
+  },
+  "buildForTesting": {
+    "tool": "Xcode MCP BuildProject",
+    "result": "passed",
+    "log": "BuildProject-Log-20261019-065022.txt"
+  },
+  "format": "Running SwiftFormat...\n(lint mode - no files will be changed.)\nReading config file at /Users/tigerguo/.codex/worktrees/92c2/Chinese-date/.swiftformat\nSwiftFormat completed in 0.42s.\n0/267 files require formatting, 60 files skipped.",
+  "lintSummary": "Done linting! Found 0 violations, 0 serious in 256 files.",
+  "diffCheck": "passed",
+  "domainStateUnchanged": [
+    "Sources/NavigationCore/Routing",
+    "Sources/NavigationCore/State",
+    "Sources/NavigationCore/Restoration",
+    "Sources/ChineseCalendarUI/Calendar/Year/Picker",
+    "Sources/ChineseCalendarUI/Home/CalendarHomeCoordinator.swift"
+  ],
+  "tests": {
+    "regression": {
+      "tool": "Xcode MCP RunAllTests",
+      "counts": {
+        "expectedFailures": 0,
+        "failed": 0,
+        "notRun": 0,
+        "passed": 285,
+        "skipped": 0,
+        "total": 285
+      },
+      "summary": "285 tests: 285 passed, 0 failed, 0 skipped, 0 expected failures, 0 not run",
+      "summaryFile": "tests.txt",
+      "rawSummaryPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/RunAllTests/20DB3A8D-91BA-415E-9F31-2B88E9902319.txt",
+      "consoleLog": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/RunAllTests/test-console-log-2026-10-19T07-03-56+08-00.txt",
+      "xcresult": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/RunAllTests/Test-ChineseCalendar-iOS-2026.10.19_07-03-56-+0800.xcresult"
+    },
+    "hostRendering": {
+      "tool": "Xcode MCP RunSomeTests",
+      "counts": {
+        "expectedFailures": 0,
+        "failed": 0,
+        "notRun": 0,
+        "passed": 4,
+        "skipped": 0,
+        "total": 4
+      },
+      "summary": "4 tests: 4 passed, 0 failed, 0 skipped, 0 expected failures, 0 not run",
+      "summaryFile": "host-tests.txt",
+      "rawSummaryPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/RunSomeTests/A2708C49-A14F-4D80-9D18-BDA4F00C2B3E.txt",
+      "consoleLog": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/RunSomeTests/test-console-log-2026-10-19T07-05-10+08-00.txt",
+      "xcresult": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/RunSomeTests/Test-ChineseCalendar-iOS-2026.10.19_07-05-10-+0800.xcresult"
+    }
+  },
+  "testsSourceBoundary": "Full regression covers final app sources after harness removal and history Preview migration. Only test rendering assertions then changed from uiImage to cgImage; all four host tests reran and passed. No app implementation changed after regression.",
+  "sourceManifestSHA256": "24707a8ea6ad65daf5263308ac829885f79247c53ec3c7c721982a394b002bdf",
+  "finalAppInstallation": {
+    "tool": "Xcode MCP DeviceInteractionInstallAndRun",
+    "result": "Application installed and running",
+    "session": "Issue 148 Final"
+  },
+  "temporaryHarness": {
+    "patch": "modal-tabs-harness.patch",
+    "retainedInSource": false,
+    "restoredFileSHA256": "8619028b36f3d67c401fb60113427617cfb47763a9104a4f05ac8b065cbdf519"
+  },
+  "previews": {
+    "tool": "Xcode MCP RenderPreview",
+    "device": "iPhone Duo",
+    "os": "iOS 27.1",
+    "passed": [
+      "history sample data",
+      "history empty state"
+    ],
+    "downloadPreview": "Tool returned no errors, but two snapshots captured transition/blank root; not counted as stable rendering. Actual app interaction verified separately.",
+    "report": "previews/preview-report.md"
+  },
+  "runtimeReport": "runtime/runtime-report.md",
+  "finalRuntime": {
+    "session": "Issue 148 Final",
+    "result": "passed",
+    "report": "runtime/runtime-report.md",
+    "scenarios": [
+      "sheet push, dismiss and reopen with new identity and empty path",
+      "independent calendar pages preserve originating selection",
+      "download preview has no temporary controls and retains installed data",
+      "history NavigationLink opens Qin detail"
+    ],
+    "sessionEnded": "Session stopped"
+  }
+}

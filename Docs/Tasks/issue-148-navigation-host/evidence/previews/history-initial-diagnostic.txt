@@ -1,0 +1,36 @@
+原生 Xcode RenderPreview 初次渲染 CalendarHistoryHomeView.swift 时的诊断摘录。
+修复：ForEach 的方法引用改为显式闭包；重新 RenderPreview 成功，见 history-sample.png 与 history-empty.png。
+
+PreviewFailedError: Preview errored.
+
+==================================
+
+|  UpdateSessionError
+|
+|  Update session: 4-1 (canceled: false)
+|
+|  ==================================
+|
+|  |  CompileDylibError: Failed to build CalendarHistoryHomeView.swift
+|  |
+|  |  Compiling failed: ambiguous use of '__designTimeSelection'
+|  |
+|  |  /Users/tigerguo/.codex/worktrees/92c2/Chinese-date/Sources/ChineseCalendarUI/History/Timeline/CalendarHistoryHomeView.swift:102:13: error: ambiguous use of '__designTimeSelection'
+|  |  108 |     private var dynastyTimeline: some View {
+|  |  109 |         __designTimeSelection(LazyVStack(spacing: __designTimeSelection(Constants.listSpacing, "#1311.[5].[9].property.[0].[0].arg[0].value")) {
+|  |  110 |             __designTimeSelection(ForEach(__designTimeSelection(periods, "#1311.[5].[9].property.[0].[0].arg[1].value.[0].arg[0].value"), id: \.id, content: __designTimeSelection(dynastyTimelineRow, "#1311.[5].[9].property.[0].[0].arg[1].value.[0].arg[2].value")), "#1311.[5].[9].property.[0].[0].arg[1].value.[0]")
+|  |      |             `- error: ambiguous use of '__designTimeSelection'
+|  |  111 |         }
+|  |  112 |         .background(alignment: .leading) {
+|  |
+|  |  SwiftUI.__designTimeSelection:2:13: note: found this candidate in module 'SwiftUI'
+|  |  1 | @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
+|  |  2 | public func __designTimeSelection<T>(_ instance: T, _ identifier: String) -> T
+|  |    |             `- note: found this candidate in module 'SwiftUI'
+|  |
+|  |  SwiftUI.__designTimeSelection:2:13: note: found this candidate in module 'SwiftUI'
+|  |  1 | @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
+|  |  2 | public func __designTimeSelection<T>(_ instance: T, _ identifier: String) -> some View where T : View
+|  |    |             `- note: found this candidate in module 'SwiftUI'
+|  |  3 |
+|  |
