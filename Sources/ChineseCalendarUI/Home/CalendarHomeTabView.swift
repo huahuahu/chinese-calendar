@@ -17,12 +17,10 @@ struct CalendarHomeTabView<BottomStatusBar: View>: View {
         TabView(selection: $router.selectedTab) {
             Tab(value: CalendarTab.years) {
                 NavigationScopeView(
-                    context: router.navigation.context(for: .years),
+                    stack: .scope(.years),
                     presentation: router.navigation.rootPresentation
                 ) {
                     LunarYearDestinationView(landing: .year(number: ChineseLunarCalendar.yearNumber()))
-                } destinationContent: { destination in
-                    CalendarDestinationView(destination: destination)
                 }
             } label: {
                 Label(CalendarTab.years.title, systemSymbol: CalendarTab.years.systemSymbol)
@@ -30,12 +28,10 @@ struct CalendarHomeTabView<BottomStatusBar: View>: View {
 
             Tab(value: CalendarTab.history) {
                 NavigationScopeView(
-                    context: router.navigation.context(for: .history),
+                    stack: .scope(.history),
                     presentation: router.navigation.rootPresentation
                 ) {
                     CalendarHistoryHomeView()
-                } destinationContent: { destination in
-                    CalendarDestinationView(destination: destination)
                 }
             } label: {
                 Label(CalendarTab.history.title, systemSymbol: CalendarTab.history.systemSymbol)
@@ -43,7 +39,7 @@ struct CalendarHomeTabView<BottomStatusBar: View>: View {
 
             Tab(value: CalendarTab.settings) {
                 NavigationScopeView(
-                    context: router.navigation.context(for: .settings),
+                    stack: .scope(.settings),
                     presentation: router.navigation.rootPresentation
                 ) {
                     if let settingsCoordinator {
@@ -55,8 +51,6 @@ struct CalendarHomeTabView<BottomStatusBar: View>: View {
                             Text(CalendarStringKey.Settings.Unavailable.message)
                         }
                     }
-                } destinationContent: { destination in
-                    CalendarDestinationView(destination: destination)
                 }
             } label: {
                 Label(CalendarTab.settings.title, systemSymbol: CalendarTab.settings.systemSymbol)

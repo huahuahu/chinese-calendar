@@ -9,10 +9,9 @@ struct SampleNavigationPreview<Content: View>: View {
 
     var body: some View {
         NavigationScopeView(
-            context: coordinator.router.navigation.context(for: tab),
+            stack: .scope(tab),
             presentation: coordinator.router.navigation.rootPresentation,
-            root: content,
-            destinationContent: { CalendarDestinationView(destination: $0) }
+            root: content
         )
         .onAppear {
             coordinator.router.selectedTab = tab

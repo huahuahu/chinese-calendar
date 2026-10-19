@@ -10,20 +10,12 @@ private struct CalendarNavigationHost: ViewModifier {
 
     func body(content: Content) -> some View {
         content
-            .navigationPresentations(
+            .navigationHost(
                 context: coordinator.router.navigation.rootPresentation,
-                providesNavigationStack: \.usesPresentationNavigationStack,
-                confirmationContent: CalendarNavigationConfirmation.content,
-                alertContent: { CalendarAlertContent.content(for: $0, messages: coordinator.alertMessages) },
-                onAlertAction: { route, action, presentation in
-                    await coordinator.handleAlertAction(
-                        route, action: action, presentation: presentation, store: storeCoordinator
-                    )
-                },
-                onDismiss: coordinator.releaseDismissedContexts,
-                destinationContent: { destination in
-                    CalendarPresentedDestinationView(destination: destination, storeCoordinator: storeCoordinator)
-                }
+                configuration: CalendarNavigationConfiguration(
+                    coordinator: coordinator,
+                    storeCoordinator: storeCoordinator
+                )
             )
             .environment(coordinator)
             .onChange(of: storeCoordinator?.navigationStoreIdentity, initial: true) {

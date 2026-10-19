@@ -1,5 +1,4 @@
 @testable import NavigationCore
-import SwiftUI
 import Testing
 
 private enum TestScope: Hashable {
@@ -172,14 +171,4 @@ private enum TestDestination: Hashable {
     #expect(router.applyDeferredRequestIfReady() == .push(.second, on: .primary))
     #expect(router.applyDeferredRequestIfReady() == nil)
     #expect(router.path(for: .primary) == [.second])
-}
-
-@MainActor
-@Test func presentationHostAcceptsAnArbitraryDestinationBuilder() throws {
-    let router = NavigationRouter<TestScope, TestDestination, NoNavigationAlert>(selectedScope: .primary)
-    router.rootPresentation.present(.first)
-    let node = try #require(router.presentedNode)
-    _ = NavigationPresentationNodeView(node: node, context: router.presentationContext(for: node)) { destination in
-        Text(String(describing: destination))
-    }
 }

@@ -1,6 +1,6 @@
 # NavigationCore
 
-`NavigationCore` 用强类型数据表示 Tab、push path、递归页面模态和业务 alert。`present` 接收路由数据，宿主根据路由构建页面或系统提示。模块不解析 URL、不持有业务模型或查询、不保存 View 或页面回调。
+`NavigationCore` 用强类型数据表示 Tab、push path、递归页面模态和业务 alert。`present` 接收路由数据，宿主根据路由构建页面或系统提示。状态与路由层不解析 URL、不持有业务模型或查询、不保存 View 或页面回调；页面构建配置由 SwiftUI 宿主持有。
 
 ## 源码目录
 
@@ -13,7 +13,7 @@
 | [Restoration](Restoration/) | 根、层与模态快照，以及编码、结构校验和恢复 |
 | [SwiftUI](SwiftUI/) | 栈与模态宿主、系统呈现适配，以及业务 alert／确认提示的系统适配和文案 |
 
-理解状态结构可从 [NavigationLayer](State/NavigationLayer.swift) 开始；页面调用入口见 [NavigationContext](Routing/NavigationContext.swift)，界面接入见 [NavigationScopeView](SwiftUI/NavigationScopeView.swift) 与 [NavigationPresentationHost](SwiftUI/NavigationPresentationHost.swift)。模块日志入口保留在根目录，测试仍位于相邻的 `NavigationCoreTests` target。
+理解状态结构可从 [NavigationLayer](State/NavigationLayer.swift) 开始；页面调用入口见 [NavigationContext](Routing/NavigationContext.swift)，界面接入见 [NavigationScopeView](SwiftUI/NavigationScopeView.swift) 与 [NavigationHostConfiguration](SwiftUI/NavigationHostConfiguration.swift)。模块日志入口保留在根目录，测试仍位于相邻的 `NavigationCoreTests` target。
 
 ## 状态与作用域
 
@@ -61,22 +61,57 @@ NavigationRouter<Scope, Destination, AlertRoute>
 
 根 Router 的 `push(_:on:)` 用于明确切换 Tab 后 push；保留的 `presentSheet`／`presentFullScreen` 在整棵树最前节点继续嵌套。普通页面优先使用局部 context，不让全局操作猜测发起作用域。
 
-## 完整接入示例
+## 根宿主配置与完整示例
 
-下列示例独立于日历业务。每个 Tab 由 `NavigationScopeView` 提供一个栈；根只挂一次 `navigationPresentations`，后者递归提供模态栈和局部 context。栈宿主显式接收对应层的呈现入口，再给后代注入绑定了发起栈的环境。
+根 View 调用一次 `navigationHost(context:configuration:)`。`NavigationHostConfiguration` 用方法集中定义页面、容器策略、业务 alert 与离开确认；各栈只声明身份和根页面。配置通过当前子树的环境传递，相同路由类型的独立树仍可使用不同配置，没有全局注册。所有真实 `NavigationStack` 都由自己的 `NavigationScopeView` 注册 destination。
 
 ```swift
 import NavigationCore
 import SwiftUI
 
 enum AppTab: String, Codable, Hashable { case home, history }
-enum AppRoute: Codable, Hashable { case detail(String) }
+enum AppRoute: Codable, Hashable { case detail(String), tabs }
 nonisolated enum AppAlert: Codable, NavigationAlertRoute {
     case notice
     enum Action: Hashable { case acknowledge }
 }
 typealias AppNavigation = NavigationContext<AppTab, AppRoute>
 typealias AppPresentation = NavigationPresentationContext<AppTab, AppRoute, AppAlert>
+
+struct DemoConfiguration: @MainActor NavigationHostConfiguration {
+    typealias Scope = AppTab
+    typealias Destination = AppRoute
+    typealias AlertRoute = AppAlert
+
+    @ViewBuilder
+    func destination(for route: AppRoute) -> some View {
+        switch route {
+        case let .detail(title): DemoPage(title: title)
+        case .tabs: DemoModalTabs()
+        }
+    }
+
+    // presentedDestination 默认复用 destination；需要模态专用数据环境时可以单独实现。
+    func providesNavigationStack(for route: AppRoute) -> Bool { route != .tabs }
+
+    func confirmationContent(for request: NavigationRequest<AppTab, AppRoute>) -> NavigationConfirmationContent? {
+        NavigationConfirmationContent(
+            title: "离开当前页面？", message: "将关闭当前弹出页面并打开链接。",
+            confirm: "关闭并前往", cancel: "留在当前页面"
+        )
+    }
+
+    func alertContent(for route: AppAlert) -> NavigationAlertContent<AppAlert.Action>? {
+        NavigationAlertContent(
+            title: "提示", message: "这是一个业务提示。",
+            buttons: [NavigationAlertButton("知道了", action: .acknowledge)]
+        )
+    }
+
+    func handleAlertAction(_ route: AppAlert, action: AppAlert.Action, presentation: AppPresentation) async {
+        // 根据强类型 action 执行业务工作；系统提示已经关闭，Core 等待此方法完成。
+    }
+}
 
 struct DemoRoot: View {
     @State private var router = NavigationRouter<AppTab, AppRoute, AppAlert>(selectedScope: .home)
@@ -85,57 +120,32 @@ struct DemoRoot: View {
         @Bindable var router = router
         TabView(selection: $router.selectedScope) {
             Tab("首页", systemImage: "house", value: AppTab.home) {
-                NavigationScopeView(
-                    context: router.context(for: .home), presentation: router.rootPresentation
-                ) {
-                    DemoPage(route: .detail("首页"))
-                } destinationContent: { DemoPage(route: $0) }
+                NavigationScopeView(stack: .scope(.home), presentation: router.rootPresentation) {
+                    DemoPage(title: "首页")
+                }
             }
             Tab("历史", systemImage: "clock", value: AppTab.history) {
-                NavigationScopeView(
-                    context: router.context(for: .history), presentation: router.rootPresentation
-                ) {
-                    DemoPage(route: .detail("历史"))
-                } destinationContent: { DemoPage(route: $0) }
+                NavigationScopeView(stack: .scope(.history), presentation: router.rootPresentation) {
+                    DemoPage(title: "历史")
+                }
             }
         }
-        .navigationPresentations(
-            context: router.rootPresentation,
-            confirmationContent: { _ in
-                NavigationConfirmationContent(
-                    title: "离开当前页面？",
-                    message: "将关闭当前弹出页面并打开链接。",
-                    confirm: "关闭并前往",
-                    cancel: "留在当前页面"
-                )
-            },
-            alertContent: { alert in
-                switch alert {
-                case .notice:
-                    NavigationAlertContent(
-                        title: "提示", message: "这是一个业务提示。",
-                        buttons: [NavigationAlertButton("知道了", action: .acknowledge)]
-                    )
-                }
-            },
-            onAlertAction: { route, action, presentation in
-                // 根据 route 和 action 执行业务动作；异步工作可以在这里 await。
-                // 不需要手动关闭 alert，宿主调用此闭包时系统提示已关闭。
-            }
-        ) { DemoPage(route: $0) }
+        .navigationHost(context: router.rootPresentation, configuration: DemoConfiguration())
     }
 }
 
 struct DemoPage: View {
     @Environment(AppNavigation.self) private var navigation
     @Environment(AppPresentation.self) private var presentation
-    let route: AppRoute
+    let title: String
 
     var body: some View {
         List {
+            NavigationLink("资料", value: AppRoute.detail("资料"))
             Button("下一页") { navigation.push(.detail("下一页")) }
             Button("弹窗") { presentation.present(.sheet(.detail("弹窗"))) }
             Button("全屏") { presentation.present(.fullScreen(.detail("全屏"))) }
+            Button("多 Tab 弹窗") { presentation.present(.tabs, initialStack: .scope(.home)) }
             Button("业务提示") { presentation.present(.alert(.notice)) }
         }
         .navigationTitle(title)
@@ -145,22 +155,8 @@ struct DemoPage: View {
             }
         }
     }
-
-    private var title: String {
-        switch route { case let .detail(title): title }
-    }
 }
-```
 
-同一个 `DemoPage` 在 Tab 内 push，在 sheet 中 push，或在 sheet 上继续 present，均使用环境中的当前作用域。也可使用 `NavigationLink(value:)`；`NavigationScopeView` 已注册 destination，不应重复注册或再包同一层 `NavigationStack`。
-
-`rootDestinations` 保存可变根页面身份，`setRootDestination` 会清空相应 path；调用方的 root builder 负责读取并渲染该根身份。静态 Tab 根页可像示例一样直接构建。
-
-## 模态内部包含多个 Tab
-
-为多 Tab destination 设置 `providesNavigationStack: false`，让它自行组合多个 `NavigationScopeView`。呈现时用 `initialStack: .scope(...)` 指定初始 Tab；这些栈属于新模态层，不会复用根 Tab 的 path。下面的内容可以由任意对应的 destination builder 返回：
-
-```swift
 struct DemoModalTabs: View {
     @Environment(AppPresentation.self) private var presentation
 
@@ -168,33 +164,36 @@ struct DemoModalTabs: View {
         @Bindable var presentation = presentation
         TabView(selection: $presentation.selectedStack) {
             Tab("首页", systemImage: "house", value: NavigationStackID<AppTab>.scope(.home)) {
-                NavigationScopeView(
-                    context: presentation.context(for: .scope(.home)), presentation: presentation
-                ) {
-                    DemoPage(route: .detail("模态首页"))
-                } destinationContent: { DemoPage(route: $0) }
+                NavigationScopeView(stack: .scope(.home), presentation: presentation) {
+                    DemoPage(title: "模态首页")
+                }
             }
             Tab("历史", systemImage: "clock", value: NavigationStackID<AppTab>.scope(.history)) {
-                NavigationScopeView(
-                    context: presentation.context(for: .scope(.history)), presentation: presentation
-                ) {
-                    DemoPage(route: .detail("模态历史"))
-                } destinationContent: { DemoPage(route: $0) }
+                NavigationScopeView(stack: .scope(.history), presentation: presentation) {
+                    DemoPage(title: "模态历史")
+                }
             }
         }
     }
 }
+
+#Preview { DemoRoot() }
 ```
 
-两个栈注入不同的 `AppNavigation`，以及各自带发起栈身份的 `AppPresentation`。呈现入口的对象可以不同，但它们访问同一个层的选中栈、唯一子模态和确认状态。业务页面通过 navigation 调用 `push`／`pop`，通过 presentation 调用 `present`／`dismiss`；层级控件只取不绑定栈的 `AppPresentation`。这个容器不再挂第二个 `navigationPresentations`，子模态和确认由外部递归宿主承载。App 中的完整例子是 `FullStoreDownloadPreview`，其发起方指定 `initialStack: .scope(.years)`。
+同一 `DemoPage` 在根 Tab、sheet、full-screen、嵌套模态和多 Tab 模态中使用所在栈与层的 Context。页面不重复创建栈或注册 destination。多 Tab 模态不再挂 `navigationHost`：它属于已有导航树，框架已为本层提供唯一递归呈现宿主。只有独立导航树才再次配置根宿主。
 
-## 容器策略与提示
+`rootDestinations` 保存可变根页面身份，`setRootDestination` 清空相应 path；root builder 负责读取该身份。静态根页可直接构建。需要显式已有栈时仍可用 `NavigationScopeView(context:presentation:root:)`，也自动读取配置。
 
-- `navigationPresentations` 统一绑定 sheet/full-screen/alert、注入子 context、处理关闭完成及确认提示。`onDismiss` 在任意一层关闭完成后通知业务清理会话；不要再次从该回调执行全局导航。
-- `NavigationPresentationNodeView(node:context:...)` 是可单独组合的递归节点宿主，接收 `NavigationPresentationContext`；通常直接使用根 modifier 即可。
-- `providesNavigationStack` 默认对每个 destination 返回 true，宿主为它提供 `.primary` 栈。自带 Tab 的内容返回 false，并将内部 `NavigationScopeView` 绑定到本层命名栈；完全不需要 push 的内容也可返回 false，只使用呈现 context。不要另设局部 path 或重复包装栈。
-- 业务提示由 `AlertRoute` 驱动，按钮返回其关联的 `Action` 数据。离开提示由 `NavigationConfirmation` 驱动，两者共用系统 alert 宿主；alert 不拥有导航栈。没有业务提示的调用方可使用 `NoNavigationAlert` 作为第三个泛型。
-- sheet 的拖动指示器、detents 与导航栏是不同能力。导航栏由栈提供；需要指示器时在对应业务内容设置 `.presentationDragIndicator(.visible)`，不因缺少指示器再嵌套一层栈。
+## 配置与业务上下文
+
+- `destination(for:)` 用于根层各栈的 push；`presentedDestination(for:)` 用于模态根页及其内部各栈的 push，默认调用前者。保留两个入口以支持不同展示语义，不应把根页的 selection、ModelContext 或临时回调捕获为全树共享值。
+- 配置实现用值类型保存 coordinator 等依赖，并用方法构建 View。每次页面仍在所在栈内创建、读取当前环境。`CalendarNavigationConfiguration` 保留原有模态 store 环境注入；年份选择器按 session ID 获取发起页的 selection、ModelContext 和回调。
+- 环境默认配置为 nil，缺少宿主时构建目的页面会报接入错误。擦除发生在框架的页面构建边界，Router 与两个 Context 均不持有配置或 View。Swift 6 使用 MainActor 隔离的路由时，配置显式声明 `: @MainActor NavigationHostConfiguration`。
+- `providesNavigationStack(for:)` 默认 true；多 Tab 页面返回 false，内部各栈自动继承相同配置，各自 path 与 Context 仍独立。App 中的实例是 `FullStoreDownloadPreview`。
+- `confirmationContent(for:)` 和 `alertContent(for:)` 默认返回 nil。使用业务 alert 必须提供文案；省略确认文案时业务须自行处理 `context.confirmation`，它不会隐式批准请求。
+- `handleAlertAction` 在系统提示实际关闭后执行；框架等待异步动作完成，再推进队列或外部导航。`presentationDidDismiss` 在任意层子模态实际关闭、框架处理状态后调用，只用于释放业务会话，不重复执行全局导航。
+- `NavigationPresentationNodeView(node:context:)` 是递归节点宿主。单独组合时也须位于同一配置环境内；一般不需要手动创建它。
+- 独立 Preview 也配置自己的根宿主。App 的 `SampleDataPreviewHost` 已统一提供配置，`SampleNavigationPreview` 只声明栈和根内容；`FullStoreDownloadPreviewHost` 从自己的根配置打开多 Tab 模态。
 
 ## Deep link 与离开确认
 
@@ -229,12 +228,12 @@ router.submit(.push(.detail("链接目标"), on: .history), confirmIfPresented: 
 此时 `submit` 返回 `.deferredUntilAlertDismisses`，保留最新请求及其原本的确认要求，原页面和原业务提示保持不变：
 
 1. 用户回答当前业务提示，系统完成关闭动画。
-2. 宿主用强类型 `Action` 调用 `onAlertAction`，等待异步业务动作结束；重复关闭回调不会重复执行动作。
+2. 宿主用强类型 `Action` 调用 `handleAlertAction`，等待异步业务动作结束；重复关闭回调不会重复执行动作。
 3. 依次处理同层排队的业务提示。业务动作可以再 `present(.alert(...))` 显示结果；如果队列中是页面模态，则展示该页，等它关闭后继续队列。
 4. 队列处理完后，重新评估外部请求。有页面模态则显示离开确认；只有根 alert 的场景直接跳转。
 5. 用户取消离开则保留页面；同意则等模态实际关闭，再执行请求。
 
-业务 alert 的“确定”只处理业务动作，不表示批准等待中的 Deep Link。按钮本身明确要求导航时，可以在 `onAlertAction` 里 `submit` 已批准的请求，它也会等动作和系统关闭完成。请求之间采用 latest-wins，不复用之前请求的确认授权。
+业务 alert 的“确定”只处理业务动作，不表示批准等待中的 Deep Link。按钮本身明确要求导航时，可以在 `handleAlertAction` 里 `submit` 已批准的请求，它也会等动作和系统关闭完成。请求之间采用 latest-wins，不复用之前请求的确认授权。
 
 页面的关闭请求也会等活动 alert／业务动作完成，避免移除仍负责展示提示的页面。关闭后丢弃该层排队的提示，旧 Context 和旧回调不能控制新层。`router.alertRoutes` 可查询当前与排队中的业务路由，供 App 清理临时消息数据；它不包含导航确认。
 
@@ -262,7 +261,7 @@ App 示例的 `CalendarRouter.restorableSnapshot`／`restore` 只接受可以重
 ## App 示例与迁移
 
 - `CalendarHomeTabView`：三个 Tab 绑定各自 context。
-- `CalendarNavigationHost`：根宿主、外部请求、下载错误及数据生命周期协调。
+- `CalendarNavigationHost`／`CalendarNavigationConfiguration`：根宿主统一配置页面映射与呈现策略，保留外部请求、下载错误及数据生命周期协调。
 - `CalendarAlert`／`CalendarAlertContent`／`CalendarHomeCoordinator+Alerts`：提示路由、文案和按钮业务动作；设置清理确认及结果提示也走统一宿主。
 - `CalendarPresentedDestinationView`：从路由数据构建业务页面并提供数据环境。
 - `CalendarPresentationMenu`：历史列表／资料卡的 sheet 和 full-screen 入口。
@@ -273,12 +272,6 @@ App 示例的 `CalendarRouter.restorableSnapshot`／`restore` 只接受可以重
 
 新增 App 调试类别时，在 `CalendarDebugActionsMenu` 组合对应动作；新增业务测试页面仍先定义 destination，再由 `CalendarDestinationView` 构建。调试工具不进入 NavigationCore。入口、范围及验证见 [Debug 操作记录](../../Docs/Tasks/issue-145-unified-navigation/007-debug-actions.md)。
 
-本轮 alert 接入：Router、呈现 Context、模态节点、快照增加第三个 `AlertRoute` 泛型；栈 `NavigationContext` 仍只有两个泛型。`NavigationScopeView` 增加显式 `presentation:` 参数。接入业务提示时向宿主提供 `alertContent` 与 `onAlertAction`，并从页面调用 `presentation.present(.alert(route))`；`presentAlert(route)` 是等价便捷入口。
+本轮根宿主配置迁移：原 `navigationPresentations(context:..., destinationContent:)` 改为 `navigationHost(context:configuration:)`。将原 root push builder、模态 builder、`providesNavigationStack`、`confirmationContent`、`alertContent`、`onAlertAction` 与 `onDismiss` 分别移入配置协议的方法。各 `NavigationScopeView` 删除 `destinationContent` 参数；`NavigationPresentationNodeView` 只传 node 和 context。递归 `navigationPresentations` 成为框架内部实现，不由业务重复调用。
 
-此前版本的迁移点：`rootContext` 改为 `rootPresentation`；`navigationPresentations` 和 `NavigationPresentationNodeView` 改接收呈现 context（节点使用 `router.presentationContext(for: node)`）；节点类型增加 Scope 泛型参数。节点 path／sheet／fullScreen 改为只读查询，修改经对应 context。页面的模态和确认操作直接读取 `NavigationPresentationContext` 环境，不再通过栈 context 访问；`NavigationContext` 的 `presentation`、`isPresented`、`present` 和 `dismiss` 已移除。旧 `onChildDismiss` 改用 `onDismiss` 作为业务清理通知。App 已移除重复的 `CalendarPresentationNodeView` 和 destination 注册 helper。
-
-## 依赖与验证
-
-当前 UI 宿主面向 iOS，系统 alert 适配使用 UIKit；本轮没有验证 macOS 等其他平台。模块依赖 Foundation、Observation、SwiftUI、UIKit 及 `ChineseCalendarLogging`；日志只描述结构事件。不得引入具体业务模型、页面、路由规则或数据查询。
-
-`NavigationCoreTests` 使用无业务含义的枚举测试作用域、嵌套、关闭时序、请求确认和快照；`NavigationStackStateTests` 验证无 Router 的栈操作、跨入口单一状态、Observation 隔离、稀疏快照与根上下文恢复。App 集成测试负责业务地址和临时会话边界。真实系统动画、提示点击和环境继承还需 Simulator 交互验证。项目规范见[导航规范](../../Docs/Conventions/Navigation.md)，业务 alert 协调及验证见[011](../../Docs/Tasks/issue-145-unified-navigation/011-unified-alerts.md)，内部拆分结果见[010](../../Docs/Tasks/issue-145-unified-navigation/010-independent-stack-state.md)。
+前一轮 alert 接入增加 `AlertRoute` 泛型、独立呈现 Context 及强类型业务提示；这些状态 API 保持不变。旧 `rootContext` 已改为 `rootPresentation`，页面直接从呈现环境调用 present/dismiss，与栈环境的 push/pop 分离。

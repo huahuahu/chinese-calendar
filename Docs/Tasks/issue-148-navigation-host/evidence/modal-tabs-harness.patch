@@ -1,0 +1,23 @@
+--- a/Sources/ChineseCalendarUI/PreviewSupport/FullStoreDownloadPreview.swift
++++ b/Sources/ChineseCalendarUI/PreviewSupport/FullStoreDownloadPreview.swift
+@@ -35,8 +35,10 @@
+                     NavigationScopeView(
+                         stack: .scope(.history), presentation: presentation
+                     ) {
+-                        Text(CalendarStringKey.Settings.Debug.DownloadPreview.switchMessage)
+-                            .padding()
++                        Form {
++                            CalendarDebugNavigationActions()
++                            Text(CalendarStringKey.Settings.Debug.DownloadPreview.switchMessage)
++                        }
+                             .navigationTitle(CalendarStringKey.Settings.Debug.DownloadPreview.switchTab)
+                     }
+                 } label: {
+@@ -55,5 +57,7 @@
+         private var scenarios: some View {
+             Form {
++                CalendarDebugNavigationActions()
++
+                 Section(CalendarStringKey.Settings.Debug.DownloadPreview.sizeTitle) {
+                     Picker(CalendarStringKey.Settings.Debug.DownloadPreview.sizePicker, selection: $state.textSize) {
+                         Text(CalendarStringKey.Settings.Debug.DownloadPreview.defaultSize).tag(DynamicTypeSize.large)

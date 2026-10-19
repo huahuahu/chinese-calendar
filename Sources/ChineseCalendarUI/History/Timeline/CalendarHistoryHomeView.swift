@@ -99,7 +99,9 @@ struct CalendarHistoryHomeView: View {
 
     private var dynastyTimeline: some View {
         LazyVStack(spacing: Constants.listSpacing) {
-            ForEach(periods, id: \.id, content: dynastyTimelineRow)
+            ForEach(periods, id: \.id) { period in
+                dynastyTimelineRow(period)
+            }
         }
         .background(alignment: .leading) {
             Rectangle()
@@ -129,13 +131,13 @@ struct CalendarHistoryHomeView: View {
 }
 
 #Preview("示例数据", traits: .sampleData) {
-    NavigationStack {
+    SampleNavigationPreview(tab: .history) {
         CalendarHistoryHomeView()
     }
 }
 
 #Preview("空状态", traits: .emptySampleData) {
-    NavigationStack {
+    SampleNavigationPreview(tab: .history) {
         CalendarHistoryHomeView()
     }
 }
