@@ -42,15 +42,17 @@ public struct NavigationScopeView<
     }
 
     public var body: some View {
-        NavigationStack(path: $context.path) {
-            root()
-                .navigationDestination(for: Destination.self) { destination in
-                    NavigationConfiguredDestination(
-                        configuration: configuration, destination: destination, isPresented: presentation.id != .root
-                    )
-                }
+        if let configuration {
+            NavigationStack(path: $context.path) {
+                root()
+                    .navigationDestination(for: Destination.self) { destination in
+                        configuration.page(for: destination)
+                    }
+            }
+            .environment(context)
+            .environment(presentation.scoped(to: context.id))
+        } else {
+            missingNavigationConfiguration()
         }
-        .environment(context)
-        .environment(presentation.scoped(to: context.id))
     }
 }

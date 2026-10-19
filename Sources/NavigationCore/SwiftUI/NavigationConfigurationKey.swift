@@ -18,3 +18,8 @@ extension EnvironmentValues {
         set { self[NavigationConfigurationKey<Scope, Destination, AlertRoute>.self] = newValue }
     }
 }
+
+/// 缺少宿主属于接入错误，不能把一次有效导航静默渲染为空页面。
+func missingNavigationConfiguration() -> EmptyView {
+    preconditionFailure("NavigationScopeView requires an ancestor navigationHost(context:configuration:).")
+}

@@ -1,0 +1,85 @@
+{
+  "date": "2026-10-19",
+  "base_commit": "b33df5e9ec83b64f74a93404ce1646aac2da1c52",
+  "workspace": "/Users/tigerguo/.codex/worktrees/1db9/Chinese-date/ChineseCalendar.xcodeproj",
+  "scheme": "ChineseCalendar-iOS",
+  "simulator": "chinesedate iPhone 18 Pro Max (885f)",
+  "simulator_id": "16A9CAA7-45CE-46D5-8915-F61531FC617C",
+  "build": {
+    "tool": "native Xcode MCP BuildProject(buildForTesting: true)",
+    "result": "success",
+    "elapsed_seconds": 18.14
+  },
+  "tests": {
+    "tool": "native Xcode MCP RunAllTests",
+    "passed": 289,
+    "failed": 0,
+    "skipped": 0,
+    "not_run": 0,
+    "scope": "Final App implementation and initial environment tests; Query assertions added afterward and verified by the targeted rerun below"
+  },
+  "format": {
+    "command": "./Scripts/format.sh --check",
+    "files_requiring_change": 0,
+    "files_checked": 265
+  },
+  "lint": {
+    "command": "./Scripts/lint.sh",
+    "violations": 0,
+    "files_checked": 254,
+    "scope": "Final Swift sources including Query assertions"
+  },
+  "diff_check": "passed",
+  "source_sha256": {
+    "Sources/ChineseCalendarUI/App/ChineseCalendarRootView.swift": "62e90ac1418ae1b361bbeee9009954bdb7323262be38be6a4d5d5aa95cbc8577",
+    "Sources/ChineseCalendarUI/App/Store/CalendarStoreEnvironment.swift": "b60c3fa1a0bc34d6090000015045eac7da07b0f1d1a782993beb2dd95177e8b2",
+    "Sources/ChineseCalendarUI/Home/Navigation/CalendarDestinationView.swift": "50676e68f6555b468318ea9adf09296fc86c99917c3c841faa9371f2629c4966",
+    "Sources/ChineseCalendarUI/Home/Navigation/CalendarNavigationConfiguration.swift": "746aa92f2ff14616dbbe4cbc050aedba46e042255267db407dd3b1f669e43b68",
+    "Sources/ChineseCalendarUI/Home/Navigation/CalendarNavigationHost.swift": "395b0a129528cb00cbd9c2d7b66720fc0080860e42e7d591a99ca0aecdb0cb1e",
+    "Sources/ChineseCalendarUI/Home/Navigation/CalendarPresentedDestinationView.swift": null,
+    "Sources/ChineseCalendarUI/Tests/CalendarStoreEnvironmentTests.swift": "6028d1e8353d8708e4de093ac296d6abb87c79e290c53de127662c0c6ac629de",
+    "Sources/NavigationCore/SwiftUI/NavigationConfigurationKey.swift": "8a72d6139c146fd7dc69ddb888ad5e425d4528c1c2d8998d16b7e2bc270cbc2e",
+    "Sources/NavigationCore/SwiftUI/NavigationConfiguredDestination.swift": null,
+    "Sources/NavigationCore/SwiftUI/NavigationHostConfiguration.swift": "0a776a6ed36e2513c80641f22b457bf2a89d4bcbdd20aa119ca64b5c7eb54c68",
+    "Sources/NavigationCore/SwiftUI/NavigationPresentationNodeView.swift": "c9ac35fc78eed9710e7a3fa8c1873a9d74898db2c8dda0ae306f5d625fc6613e",
+    "Sources/NavigationCore/SwiftUI/NavigationScopeView.swift": "7ed608e7b3ddaee4fcc3295e6a01eec670a3ccff43425c80f5895080bbc606d9",
+    "Sources/NavigationCoreTests/NavigationHostTests.swift": "fa13a3af03040eebbd81e7b04e3506386d1f0bf5a9ede3da95e85ece20772863",
+    "Sources/NavigationCore/SwiftUI/NavigationPresentationHost.swift": "791d9d2e672be2bcb828f9b9390185c2a1031fe9f9abcc4f4eda02203ee1354a",
+    "Sources/NavigationCore/SwiftUI/NavigationPresentationModifiers.swift": null
+  },
+  "targeted_tests": {
+    "tool": "native Xcode MCP RunSomeTests",
+    "passed": 3,
+    "failed": 0,
+    "skipped": 0,
+    "not_run": 0,
+    "scope": "Final CalendarStoreEnvironmentTests including Query assertions",
+    "summary_file": "store-environment-tests.txt",
+    "identifiers": [
+      "CalendarStoreEnvironmentTests/rootAndModalShareStoreEnvironmentWhileKeepingTheirOwnPresentation()",
+      "CalendarStoreEnvironmentTests/replacingStoreUpdatesTheEnvironmentWithoutChangingPresentationIdentity()",
+      "CalendarStoreEnvironmentTests/unavailableStorePreservesAnInheritedPreviewEnvironment()"
+    ]
+  },
+  "runtime": {
+    "status": "partially_verified",
+    "report_file": "runtime-report.md",
+    "tool_limitations": [
+      "Native device interaction sessions lost twice",
+      "Third-party UI launch snapshot timed out and subsequent capture showed Home screen"
+    ],
+    "base_commit": "b33df5e9ec83b64f74a93404ce1646aac2da1c52",
+    "scope": "Runtime interaction before integrating e4768959; not repeated after integration"
+  },
+  "integration_base_commit": "e4768959073b3103e75d7dbebafe233534341c54",
+  "integration_tests": {
+    "tool": "native Xcode MCP RunAllTests",
+    "passed": 289,
+    "failed": 0,
+    "skipped": 0,
+    "not_run": 0,
+    "scope": "Final implementation after integrating origin/main e4768959, including strengthened Query assertions",
+    "selected_results": "final-selected-tests.txt"
+  },
+  "localization_check": "passed"
+}

@@ -8,13 +8,9 @@ public protocol NavigationHostConfiguration<Scope, Destination, AlertRoute> {
     associatedtype Destination: Hashable
     associatedtype AlertRoute: NavigationAlertRoute
     associatedtype DestinationContent: View
-    associatedtype PresentedContent: View
 
-    /// 根层各栈中的 push 页面，继承所在栈的业务环境。
+    /// 所有栈的 push 页面与模态初始页面，统一继承所在作用域的环境。
     @ViewBuilder func destination(for destination: Destination) -> DestinationContent
-
-    /// 模态初始页面及其内部各栈的 push 页面；默认复用普通页面映射。
-    @ViewBuilder func presentedDestination(for destination: Destination) -> PresentedContent
 
     /// 普通模态提供 primary 栈；自带多个栈的容器返回 false。
     func providesNavigationStack(for destination: Destination) -> Bool
@@ -33,10 +29,6 @@ public protocol NavigationHostConfiguration<Scope, Destination, AlertRoute> {
 }
 
 public extension NavigationHostConfiguration {
-    func presentedDestination(for destination: Destination) -> some View {
-        self.destination(for: destination)
-    }
-
     func providesNavigationStack(for destination: Destination) -> Bool {
         true
     }
@@ -57,4 +49,11 @@ public extension NavigationHostConfiguration {
         presentation: NavigationPresentationContext<Scope, Destination, AlertRoute>
     ) async {}
     func presentationDidDismiss() {}
+}
+
+extension NavigationHostConfiguration {
+    /// 在协议存在类型的调用边界擦除页面类型，不增加额外的 View 宿主。
+    func page(for destination: Destination) -> AnyView {
+        AnyView(self.destination(for: destination))
+    }
 }

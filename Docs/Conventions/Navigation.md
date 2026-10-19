@@ -69,9 +69,9 @@ Router 保存“去哪里”的页面身份和导航结构。业务层负责 des
 
 App 根 View 通过 `navigationHost(context:configuration:)` 集中提供 `NavigationHostConfiguration`，统一承载根与递归节点的 sheet/full-screen/alert、context 注入和确认提示。各栈只声明身份与根页面，自动读取所在导航树的配置，并在自己的真实 NavigationStack 内注册 destination；不能只在 TabView 外层注册一次。
 
-配置属于 View 宿主，不进入 Router 或两种操作 Context，不使用进程级注册。独立导航树可提供不同配置；同树的 Tab、模态及多 Tab 模态共享构建规则，保留各自状态与 Context。普通 push 与模态页面可以提供不同构建入口；页面的 selection、ModelContext 和回调仍按发起作用域传递，不能捕获根页固定业务上下文代替。
+配置属于 View 宿主，不进入 Router 或两种操作 Context，不使用进程级注册。独立导航树可提供不同配置；同树的 Tab、模态及多 Tab 模态统一调用 `destination(for:)`，保留各自状态与 Context。栈只绑定 path、显示根页并调用页面构建方法，不根据所在层选择不同 builder，也不增加转调 builder 的包装 View。App 共享的数据上下文、数据完整度和 store coordinator 在覆盖根呈现宿主的位置统一注入；每个模态在入口获得本层 presentation，每个栈注入自己的 navigation 与发起栈信息。页面的 selection、业务会话 ModelContext 和回调仍按发起作用域传递，不能捕获根页固定业务上下文代替。
 
-业务配置只提供页面、容器策略、提示文案及数据环境；`handleAlertAction` 处理业务动作，宿主等待它完成；`presentationDidDismiss` 仅用于业务上下文清理，不重复处理全局导航。独立 Preview 也提供根配置；已经属于导航树的多 Tab 模态不再挂第二个根宿主。
+业务配置提供页面、容器策略和提示文案；共享数据环境由 App 根部提供。`handleAlertAction` 处理业务动作，宿主等待它完成；`presentationDidDismiss` 仅用于业务上下文清理，不重复处理全局导航。独立 Preview 也提供根配置；已经属于导航树的多 Tab 模态不再挂第二个根宿主。
 
 快照包含页面身份、导航结构及当前业务 alert 路由，不包含排队请求、执行中的动作和转场。App 必须检查页面与提示的可恢复性，临时回调、ModelContext、下载状态及演示／错误消息会话不能仅凭 ID 跨进程恢复；恢复不能与当前模态或确认／关闭／业务动作事务竞争。日历 App 当前拒绝恢复业务 alert。
 
@@ -82,3 +82,5 @@ App 根 View 通过 `navigationHost(context:configuration:)` 集中提供 `Navig
 业务 alert 的统一呈现与导航排队见 [011](../Tasks/issue-145-unified-navigation/011-unified-alerts.md)。
 
 根宿主配置的迁移与验收见 [Issue #148](../Tasks/issue-148-navigation-host/000-plan.md)。
+
+统一页面构建方法与共享数据环境见 [Issue #148 后续调整](../Tasks/issue-148-navigation-host/002-unified-destination-builder.md)。

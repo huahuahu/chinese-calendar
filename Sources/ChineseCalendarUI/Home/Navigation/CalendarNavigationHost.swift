@@ -18,6 +18,7 @@ private struct CalendarNavigationHost: ViewModifier {
                 )
             )
             .environment(coordinator)
+            .environment(storeCoordinator)
             .onChange(of: storeCoordinator?.navigationStoreIdentity, initial: true) {
                 coordinator.storeIdentityDidChange(storeCoordinator?.navigationStoreIdentity)
             }

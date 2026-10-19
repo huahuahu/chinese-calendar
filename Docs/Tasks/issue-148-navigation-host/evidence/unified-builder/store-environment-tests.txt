@@ -1,0 +1,47 @@
+================================================================================
+TEST RESULTS SUMMARY
+================================================================================
+Generated: 2026-10-19T12:47:36Z
+Total Results: 3
+================================================================================
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 1/3
+TEST_TARGET: ChineseCalendarUITests
+TEST_IDENTIFIER: CalendarStoreEnvironmentTests/rootAndModalShareStoreEnvironmentWhileKeepingTheirOwnPresentation()
+TEST_DISPLAY_NAME: rootAndModalShareStoreEnvironmentWhileKeepingTheirOwnPresentation()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarUI/Tests/CalendarStoreEnvironmentTests.swift
+TEST_LINE_NUMBER: 10
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 2/3
+TEST_TARGET: ChineseCalendarUITests
+TEST_IDENTIFIER: CalendarStoreEnvironmentTests/replacingStoreUpdatesTheEnvironmentWithoutChangingPresentationIdentity()
+TEST_DISPLAY_NAME: replacingStoreUpdatesTheEnvironmentWithoutChangingPresentationIdentity()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarUI/Tests/CalendarStoreEnvironmentTests.swift
+TEST_LINE_NUMBER: 38
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 3/3
+TEST_TARGET: ChineseCalendarUITests
+TEST_IDENTIFIER: CalendarStoreEnvironmentTests/unavailableStorePreservesAnInheritedPreviewEnvironment()
+TEST_DISPLAY_NAME: unavailableStorePreservesAnInheritedPreviewEnvironment()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarUI/Tests/CalendarStoreEnvironmentTests.swift
+TEST_LINE_NUMBER: 71
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+
+================================================================================
+END OF TEST RESULTS SUMMARY
+================================================================================

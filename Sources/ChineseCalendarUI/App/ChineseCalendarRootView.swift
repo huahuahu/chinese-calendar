@@ -1,7 +1,6 @@
 import ChineseCalendarLocalization
 import ChineseCalendarPersistence
 import SFSafeSymbols
-import SwiftData
 import SwiftUI
 
 /// 应用根视图，负责准备日历数据并进入主浏览界面。
@@ -27,9 +26,8 @@ public struct ChineseCalendarRootView: View {
             switch coordinator.state {
             case .starting:
                 CalendarStoreProgressView(title: CalendarStringKey.Store.Bootstrap.preparing, progress: nil)
-            case let .ready(container, contentLevel, identityToken):
+            case let .ready(_, contentLevel, identityToken):
                 readyCalendarHome(
-                    container: container,
                     contentLevel: contentLevel,
                     identityToken: identityToken
                 )
@@ -47,10 +45,10 @@ public struct ChineseCalendarRootView: View {
             storeCoordinator: coordinator,
             handlesExternalNavigation: true
         )
+        .calendarStoreEnvironment(state: coordinator.state)
     }
 
     private func readyCalendarHome(
-        container: ModelContainer,
         contentLevel: ChineseCalendarSeedStoreContentLevel,
         identityToken: String?
     ) -> some View {
@@ -61,8 +59,6 @@ public struct ChineseCalendarRootView: View {
         ) {
             bottomStatusBar(contentLevel: contentLevel)
         }
-        .environment(\.calendarStoreContentLevel, contentLevel)
-        .modelContainer(container)
         .id(coordinator.storeIdentity(contentLevel: contentLevel, identityToken: identityToken))
     }
 

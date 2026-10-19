@@ -5,6 +5,8 @@
 - 日期：2026-10-19
 - 基线：`63eb6797`；分支：`codex/issue-148-navigation-host`；验收源码快照见 [source-manifest.json](evidence/source-manifest.json)。
 
+后续统一页面构建方法与共享数据环境的调整及独立验证见 [002-unified-destination-builder.md](002-unified-destination-builder.md)。本文件的证据仅对应首次迁移版本。
+
 ## 实际实现
 
 `NavigationHostConfiguration` 定义普通页面、模态及其 push 后代、容器策略、确认／alert 文案和业务动作。根 `navigationHost` 注入配置并安装根呈现宿主；各 `NavigationScopeView` 按所在环境读取规则，在自己的 NavigationStack 注册 destination。sheet、full-screen 和递归节点自动继承配置，多 Tab 模态保留内部栈和本层唯一呈现宿主。

@@ -4,6 +4,8 @@
 - 状态：已实施并完成本轮验收，见 [001-result.md](001-result.md)
 - 更新日期：2026-10-19
 
+后续调整：本方案的双 builder 和页面包装 View 已由用户要求改为统一方法，当前方案见 [002-unified-destination-builder.md](002-unified-destination-builder.md)。以下保留首次迁移时的决策。
+
 ## 目标与范围
 
 将各 Tab、普通模态、嵌套模态和多 Tab 模态重复传入的页面映射收敛到根 View 宿主。保留现有单栏导航结构、业务会话、alert 排队和实际关闭后执行外部导航的行为，不涉及 #146 的分栏设计。
