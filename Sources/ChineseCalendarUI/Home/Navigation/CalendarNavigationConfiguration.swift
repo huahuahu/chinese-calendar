@@ -14,10 +14,6 @@ struct CalendarNavigationConfiguration: @MainActor NavigationHostConfiguration {
         CalendarDestinationView(destination: destination)
     }
 
-    func presentedDestination(for destination: CalendarDestination) -> some View {
-        CalendarPresentedDestinationView(destination: destination, storeCoordinator: storeCoordinator)
-    }
-
     func providesNavigationStack(for destination: CalendarDestination) -> Bool {
         destination.usesPresentationNavigationStack
     }

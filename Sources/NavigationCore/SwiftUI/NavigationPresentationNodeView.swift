@@ -30,14 +30,10 @@ public struct NavigationPresentationNodeView<
         if let configuration {
             if configuration.providesNavigationStack(for: node.destination) {
                 NavigationScopeView(stack: .primary, presentation: context) {
-                    NavigationConfiguredDestination(
-                        configuration: configuration, destination: node.destination, isPresented: true
-                    )
+                    configuration.page(for: node.destination)
                 }
             } else {
-                NavigationConfiguredDestination(
-                    configuration: configuration, destination: node.destination, isPresented: true
-                )
+                configuration.page(for: node.destination)
             }
         } else {
             missingNavigationConfiguration()

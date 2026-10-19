@@ -29,11 +29,11 @@ struct NavigationHostTests {
         let inner = Router(selectedScope: .history)
         let recorder = HostTestRecorder()
         let content = VStack {
-            HostTestConfiguredPage(isPresented: false)
+            HostTestConfiguredPage()
                 .environment(\.locale, Locale(identifier: "zh_CN"))
-            HostTestConfiguredPage(isPresented: true)
+            HostTestConfiguredPage()
                 .environment(\.locale, Locale(identifier: "en_US"))
-            HostTestConfiguredPage(isPresented: false)
+            HostTestConfiguredPage()
                 .navigationHost(
                     context: inner.rootPresentation,
                     configuration: HostTestConfiguration(name: "inner", recorder: recorder)
@@ -46,23 +46,39 @@ struct NavigationHostTests {
         )
 
         #expect(ImageRenderer(content: content).cgImage != nil)
-        #expect(Set(recorder.pages) == ["outer:push:zh_CN", "outer:modal:en_US", "inner:push:ja_JP"])
+        #expect(Set(recorder.pages) == ["outer:zh_CN", "outer:en_US", "inner:ja_JP"])
         #expect(outer.snapshot.paths.isEmpty)
         #expect(inner.snapshot.paths.isEmpty)
     }
 
-    @Test func defaultPresentedMappingReusesTheConfiguredPageBuilder() {
+    @Test func pageMethodBuildsFromAnExistentialConfiguration() {
         let recorder = HostTestRecorder()
-        let configuration = HostTestDefaultConfiguration(recorder: recorder)
-        let content = NavigationConfiguredDestination(
-            configuration: configuration, destination: .detail, isPresented: true
-        )
-        .environment(\.locale, Locale(identifier: "zh_TW"))
+        let configuration: any NavigationHostConfiguration<Tab, Route, NoNavigationAlert> =
+            HostTestDefaultConfiguration(recorder: recorder)
+        let content = configuration.page(for: .detail)
+            .environment(\.locale, Locale(identifier: "zh_TW"))
 
         #expect(ImageRenderer(content: content).cgImage != nil)
-        #expect(Set(recorder.pages) == ["default:push:zh_TW"])
+        #expect(Set(recorder.pages) == ["default:zh_TW"])
         #expect(configuration.providesNavigationStack(for: .detail))
         #expect(configuration.confirmationContent(for: .selectScope(.home)) == nil)
+    }
+
+    @Test func modalEntryUsesTheSameBuilderAndInheritsTheHostEnvironment() throws {
+        let router = Router(selectedScope: .home)
+        let recorder = HostTestRecorder()
+        #expect(router.rootPresentation.present(.tabs, initialStack: .scope(.home)))
+        let node = try #require(router.presentedNode)
+        let modal = router.presentationContext(for: node)
+        let content = NavigationPresentationNodeView(node: node, context: modal)
+            .navigationHost(
+                context: router.rootPresentation,
+                configuration: HostTestConfiguration(name: "shared", recorder: recorder)
+            )
+            .environment(\.locale, Locale(identifier: "zh_CN"))
+
+        #expect(ImageRenderer(content: content).cgImage != nil)
+        #expect(Set(recorder.pages) == ["shared:zh_CN"])
     }
 
     @Test func configurationSupportsModalTabsWithoutChangingContextOwnership() throws {
@@ -98,7 +114,7 @@ private struct HostTestDefaultConfiguration: @MainActor NavigationHostConfigurat
     let recorder: HostTestRecorder
 
     func destination(for destination: NavigationHostTests.Route) -> some View {
-        HostTestPage(name: "default", mode: "push", recorder: recorder)
+        HostTestPage(name: "default", recorder: recorder)
     }
 }
 
@@ -110,11 +126,7 @@ private struct HostTestConfiguration: @MainActor NavigationHostConfiguration {
     let recorder: HostTestRecorder
 
     func destination(for destination: NavigationHostTests.Route) -> some View {
-        HostTestPage(name: name, mode: "push", recorder: recorder)
-    }
-
-    func presentedDestination(for destination: NavigationHostTests.Route) -> some View {
-        HostTestPage(name: name, mode: "modal", recorder: recorder)
+        HostTestPage(name: name, recorder: recorder)
     }
 
     func providesNavigationStack(for destination: NavigationHostTests.Route) -> Bool {
@@ -124,23 +136,23 @@ private struct HostTestConfiguration: @MainActor NavigationHostConfiguration {
 
 private struct HostTestPage: View {
     let name: String
-    let mode: String
     let recorder: HostTestRecorder
     @Environment(\.locale) private var locale
 
     var body: some View {
-        _ = recorder.pages.append("\(name):\(mode):\(locale.identifier)")
+        _ = recorder.pages.append("\(name):\(locale.identifier)")
         return Color.clear.frame(width: 10, height: 10)
     }
 }
 
 private struct HostTestConfiguredPage: View {
     @Environment(\.[navigation: NavigationHostTests.Key()]) private var configuration
-    let isPresented: Bool
 
     var body: some View {
-        NavigationConfiguredDestination(
-            configuration: configuration, destination: .detail, isPresented: isPresented
-        )
+        if let configuration {
+            configuration.page(for: .detail)
+        } else {
+            missingNavigationConfiguration()
+        }
     }
 }

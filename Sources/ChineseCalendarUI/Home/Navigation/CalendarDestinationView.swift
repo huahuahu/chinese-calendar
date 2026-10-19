@@ -6,7 +6,7 @@ import SwiftUI
 struct CalendarDestinationView: View {
     let destination: CalendarDestination
     @Environment(CalendarPresentationContext.self) private var presentation
-    var storeCoordinator: ChineseCalendarStoreCoordinator?
+    @Environment(ChineseCalendarStoreCoordinator.self) private var storeCoordinator: ChineseCalendarStoreCoordinator?
 
     var body: some View {
         Group {
@@ -51,6 +51,8 @@ struct CalendarDestinationView: View {
             #endif
             }
         }
+        // 数据替换只重建页面内容，所在栈和呈现宿主继续完成导航事务。
+        .id(storeCoordinator?.navigationStoreIdentity)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(.calendarSystemBackground)
         .toolbar {

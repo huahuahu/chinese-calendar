@@ -1,0 +1,2 @@
+02-history-root: 2026-10-19 20:17:28.784101+0800 [22516:59126511] [Invalid Configuration] Update NavigationRequestObserver tried to update multiple times per frame.
+13-settings-root: 2026-10-19 20:30:18.026462+0800 [27739:59158782] [Invalid Configuration] Update NavigationRequestObserver tried to update multiple times per frame.

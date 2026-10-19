@@ -91,7 +91,7 @@ struct DemoConfiguration: @MainActor NavigationHostConfiguration {
         }
     }
 
-    // presentedDestination 默认复用 destination；需要模态专用数据环境时可以单独实现。
+    // 页面映射统一；自带多个栈的模态只需要声明容器策略。
     func providesNavigationStack(for route: AppRoute) -> Bool { route != .tabs }
 
     func confirmationContent(for request: NavigationRequest<AppTab, AppRoute>) -> NavigationConfirmationContent? {
@@ -186,9 +186,9 @@ struct DemoModalTabs: View {
 
 ## 配置与业务上下文
 
-- `destination(for:)` 用于根层各栈的 push；`presentedDestination(for:)` 用于模态根页及其内部各栈的 push，默认调用前者。保留两个入口以支持不同展示语义，不应把根页的 selection、ModelContext 或临时回调捕获为全树共享值。
-- 配置实现用值类型保存 coordinator 等依赖，并用方法构建 View。每次页面仍在所在栈内创建、读取当前环境。`CalendarNavigationConfiguration` 保留原有模态 store 环境注入；年份选择器按 session ID 获取发起页的 selection、ModelContext 和回调。
-- 环境默认配置为 nil，缺少宿主时构建目的页面会报接入错误。擦除发生在框架的页面构建边界，Router 与两个 Context 均不持有配置或 View。Swift 6 使用 MainActor 隔离的路由时，配置显式声明 `: @MainActor NavigationHostConfiguration`。
+- `destination(for:)` 统一构建根栈 push、模态初始页面和模态内 push 页面。栈与模态入口直接调用 `page(for:)` 方法，不按是否模态分流，也没有转调 builder 的包装 View。
+- 配置实现用值类型保存 coordinator 等依赖，并用方法构建 View。App 共享的数据环境在根呈现宿主外统一提供；模态入口只提供本层 presentation，栈宿主提供 navigation 与发起栈信息。页面继承这些环境；年份选择器按 session ID 获取发起页的 selection、ModelContext 和回调。
+- 环境默认配置为 nil，栈或模态宿主缺少配置时会报接入错误。类型擦除只发生在 `page(for:)` 方法内，Router 与两个 Context 均不持有配置或 View。Swift 6 使用 MainActor 隔离的路由时，配置显式声明 `: @MainActor NavigationHostConfiguration`。
 - `providesNavigationStack(for:)` 默认 true；多 Tab 页面返回 false，内部各栈自动继承相同配置，各自 path 与 Context 仍独立。App 中的实例是 `FullStoreDownloadPreview`。
 - `confirmationContent(for:)` 和 `alertContent(for:)` 默认返回 nil。使用业务 alert 必须提供文案；省略确认文案时业务须自行处理 `context.confirmation`，它不会隐式批准请求。
 - `handleAlertAction` 在系统提示实际关闭后执行；框架等待异步动作完成，再推进队列或外部导航。`presentationDidDismiss` 在任意层子模态实际关闭、框架处理状态后调用，只用于释放业务会话，不重复执行全局导航。
@@ -263,7 +263,8 @@ App 示例的 `CalendarRouter.restorableSnapshot`／`restore` 只接受可以重
 - `CalendarHomeTabView`：三个 Tab 绑定各自 context。
 - `CalendarNavigationHost`／`CalendarNavigationConfiguration`：根宿主统一配置页面映射与呈现策略，保留外部请求、下载错误及数据生命周期协调。
 - `CalendarAlert`／`CalendarAlertContent`／`CalendarHomeCoordinator+Alerts`：提示路由、文案和按钮业务动作；设置清理确认及结果提示也走统一宿主。
-- `CalendarPresentedDestinationView`：从路由数据构建业务页面并提供数据环境。
+- `CalendarDestinationView`：统一从路由构建业务页面，读取所在作用域的环境；store identity 改变时重建页面内容，保留导航与呈现宿主。
+- `ChineseCalendarRootView`／`calendarStoreEnvironment`：在根导航宿主外统一提供当前容器的 ModelContext 与数据完整度，覆盖根页面及递归模态。
 - `CalendarPresentationMenu`：历史列表／资料卡的 sheet 和 full-screen 入口。
 - `DynastyFactCard`：同一页面组件在 Tab 或模态里调用当前 context.push。
 - `CalendarHomeCoordinator`：年份选择回传、演示状态等业务会话；它们不构成第二套模态状态。
@@ -273,5 +274,7 @@ App 示例的 `CalendarRouter.restorableSnapshot`／`restore` 只接受可以重
 新增 App 调试类别时，在 `CalendarDebugActionsMenu` 组合对应动作；新增业务测试页面仍先定义 destination，再由 `CalendarDestinationView` 构建。调试工具不进入 NavigationCore。入口、范围及验证见 [Debug 操作记录](../../Docs/Tasks/issue-145-unified-navigation/007-debug-actions.md)。
 
 本轮根宿主配置迁移：原 `navigationPresentations(context:..., destinationContent:)` 改为 `navigationHost(context:configuration:)`。将原 root push builder、模态 builder、`providesNavigationStack`、`confirmationContent`、`alertContent`、`onAlertAction` 与 `onDismiss` 分别移入配置协议的方法。各 `NavigationScopeView` 删除 `destinationContent` 参数；`NavigationPresentationNodeView` 只传 node 和 context。递归 `navigationPresentations` 成为框架内部实现，不由业务重复调用。
+
+后续简化统一使用 `destination(for:)`，删除模态专用 builder 和 `NavigationConfiguredDestination`。原模态 builder 中的共享数据注入移至 App 根环境，具体调整与验证见 [统一页面构建方法](../../Docs/Tasks/issue-148-navigation-host/002-unified-destination-builder.md)。
 
 前一轮 alert 接入增加 `AlertRoute` 泛型、独立呈现 Context 及强类型业务提示；这些状态 API 保持不变。旧 `rootContext` 已改为 `rootPresentation`，页面直接从呈现环境调用 present/dismiss，与栈环境的 push/pop 分离。
