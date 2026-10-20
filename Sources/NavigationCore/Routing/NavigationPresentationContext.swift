@@ -59,18 +59,15 @@ public final class NavigationPresentationContext<
     }
 
     /// 这一层当前选中的栈，可绑定模态内部 TabView 的 selection。
-    /// 切换时保留各栈的路径；根层只接受 scope，普通模态默认使用 primary。
+    /// 切换时保留各栈的路径；Core 提供的根层与模态层都只使用 primary。
     /// Context 失效、等待根模态关闭或等待用户确认时，赋值不会生效。
     /// 读取到某个栈 ID 并不代表 Context 仍然有效，需通过 isActive 判断。
     public var selectedStack: NavigationStackID<Scope> {
         get { layer?.selectedStack ?? .primary }
         set {
             guard canNavigate else { return }
-            // 根层各栈需要明确的 scope 名称，不允许切换到普通模态使用的 primary 栈。
-            if id == .root, newValue == .primary { return }
-            // 普通模态仅承载 primary 栈，不能切换到没有根页面的命名栈。
-            if id != .root, layer?.route.destination.providesNavigationContainer == false,
-               newValue != .primary { return }
+            // Core 提供的单栈只承载 primary，根层与模态层使用同一规则。
+            if layer?.route.destination.providesNavigationContainer == false, newValue != .primary { return }
             layer?.selectedStack = newValue
         }
     }
@@ -117,6 +114,13 @@ public final class NavigationPresentationContext<
         return context
     }
 
+    /// 取得不绑定发起栈的本层入口，供容器控件或同时可见的栏目使用。
+    /// 外部容器负责控制哪些栏目可发起呈现；已失效的 Context 不会连接到新层。
+    public func unscoped() -> NavigationPresentationContext {
+        guard let router, let layer, isActive else { return self }
+        return router.presentationContext(in: layer)
+    }
+
     /// 获取本层指定栈的 NavigationContext，复用该栈的路径，保留当前选中的 Tab。
     /// 如果本层已失效，返回的栈 Context 也失效，无法通过它操作后来恢复的同 ID 新层。
     public func context(for stack: NavigationStackID<Scope>) -> NavigationContext<Scope, Destination> {
@@ -139,19 +143,20 @@ public final class NavigationPresentationContext<
         _ destination: Destination,
         style: NavigationPresentationStyle = .sheet,
         initialStack: NavigationStackID<Scope> = .primary,
-        rootDestinations: [NavigationStackID<Scope>: Destination] = [:]
+        rootDestinations: [NavigationStackID<Scope>: Destination] = [:],
+        paths: [NavigationStackID<Scope>: [Destination]] = [:]
     ) -> Bool {
-        guard destination.supportsNavigationEntry(.presentation),
-              rootDestinations.values.allSatisfy({ $0.supportsNavigationEntry(.stackRoot) }),
-              destination.providesNavigationContainer || (initialStack == .primary && rootDestinations.isEmpty)
-        else { return false }
+        guard NavigationLayerSnapshot<Scope, Destination, AlertRoute>(
+            destination: destination, initialStack: initialStack,
+            rootDestinations: rootDestinations, paths: paths
+        ) != nil else { return false }
         guard let router, isActive, let layer, layer.presentation == nil,
               !layer.isAwaitingDismissal else { return false }
         guard sourceStack == nil || sourceStack == layer.selectedStack else { return false }
         let node = NavigationPresentationNode<Scope, Destination, AlertRoute>(
             destination: destination,
             style: style,
-            initialStack: initialStack, rootDestinations: rootDestinations
+            initialStack: initialStack, rootDestinations: rootDestinations, paths: paths
         )
         return router.enqueue(.page(node), in: layer)
     }

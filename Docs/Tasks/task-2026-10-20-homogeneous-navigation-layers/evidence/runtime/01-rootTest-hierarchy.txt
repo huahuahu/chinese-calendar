@@ -1,0 +1,27 @@
+Device orientation: Portrait
+Application bundle identifier: com.tiger.suzhou.ChineseCalendar
+Application, pid: 32476, label: 'Chinese Calendar'
+             NavigationBar, {{0.0, 62.0}, {440.0, 54.0}}, identifier: '导航测试', hitPoint: {220.0, 89.0}
+              Button, {{20.0, 62.0}, {44.0, 44.0}}, identifier: 'BackButton', label: '设置', hitPoint: {42.0, 84.0}
+              StaticText, {{179.7, 71.3}, {80.3, 25.3}}, label: '导航测试', hitPoint: {219.8, 84.0}
+                      StaticText, {{40.0, 166.5}, {100.3, 25.3}}, label: '当前作用域', hitPoint: {90.2, 179.2}
+                      StaticText, {{359.7, 166.5}, {40.3, 25.3}}, label: '设置', hitPoint: {379.8, 179.2}
+                      StaticText, {{40.0, 222.8}, {156.0, 25.3}}, label: '当前层 Push 页数', hitPoint: {118.0, 235.5}
+                      StaticText, {{390.7, 222.8}, {9.3, 25.3}}, label: '1', hitPoint: {395.3, 235.5}
+                      StaticText, {{40.0, 278.7}, {64.7, 25.3}}, label: '页面 ID', hitPoint: {72.3, 291.3}
+                      StaticText, {{40.0, 308.0}, {356.3, 19.3}}, label: 'C3D1D7CD-EAF4-438C-AEEC-59F88D592B9F', hitPoint: {218.2, 317.7}
+                      StaticText, {{20.0, 342.3}, {400.0, 94.3}}, label: '每次打开生成新的页面 ID。Push 和返回只改变当前层，关闭模态回到父层。可连续打开弹窗或全屏页，再模拟 Deep Link 检查取消与整层关闭。', hitPoint: {220.0, 389.5}
+                      StaticText, {{20.0, 436.7}, {400.0, 45.3}}, label: '当前层导航', hitPoint: {220.0, 459.3}
+                      Button, {{20.0, 482.0}, {400.0, 56.3}}, label: 'Push 新测试页', hitPoint: {220.0, 510.2}
+                      Button, {{20.0, 538.3}, {400.0, 56.3}}, label: 'Sheet 打开测试页', hitPoint: {220.0, 566.5}
+                      Button, {{20.0, 594.7}, {400.0, 56.3}}, label: '全屏打开测试页', hitPoint: {220.0, 622.8}
+                      Button, {{20.0, 651.0}, {400.0, 56.3}}, label: 'Sheet 打开主标签页', hitPoint: {220.0, 679.2}
+                      Button, {{20.0, 707.3}, {400.0, 56.3}}, label: '全屏打开主标签页', hitPoint: {220.0, 735.5}
+                      Button, {{20.0, 763.7}, {400.0, 56.3}}, label: '显示业务 Alert', hitPoint: {220.0, 791.8}
+                      Button, {{20.0, 820.0}, {400.0, 56.3}}, label: '连续显示两个 Alert', hitPoint: {220.0, 848.2}
+                      Button, {{20.0, 876.3}, {400.0, 56.3}}, label: '从 Alert 按钮跳转', hitPoint: {220.0, 904.5}
+                      StaticText, {{20.0, 950.3}, {400.0, 45.3}}, label: '返回与关闭', hitPoint: {220.0, 953.2}
+          TabBar, {{0.0, 873.0}, {440.0, 83.0}}, label: '标签页栏', hitPoint: {220.0, 914.5}
+             Button, {{87.0, 877.0}, {94.0, 54.0}}, label: '日历', hitPoint: {134.0, 904.0}
+             Button, {{173.0, 877.0}, {94.0, 54.0}}, label: '朝代', hitPoint: {220.0, 904.0}
+             Button, {{259.0, 877.0}, {94.0, 54.0}}, label: '设置', Selected, hitPoint: {306.0, 904.0}

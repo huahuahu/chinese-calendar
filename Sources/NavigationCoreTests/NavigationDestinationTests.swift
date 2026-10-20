@@ -3,82 +3,178 @@ import Foundation
 import Testing
 
 @MainActor
-@Suite("Destination 容器与层入口")
+@Suite("Destination 容器与同构导航层")
 struct NavigationDestinationTests {
     private enum Tab: String, Codable { case home, history }
     enum Route: String, Codable, NavigationDestination {
-        case root, tabs, home, detail, rootOnly, modalOnly, twoColumn, threeColumn
+        case tabs, split, home, detail
 
         var providesNavigationContainer: Bool {
-            self == .root || self == .tabs
-        }
-
-        var navigationContainer: NavigationContainerKind {
-            switch self {
-            case .twoColumn: .twoColumn
-            case .threeColumn: .threeColumn
-            default: .stack
-            }
-        }
-
-        var allowedNavigationEntries: Set<NavigationDestinationEntry> {
-            switch self {
-            case .root: [.root]
-            case .tabs: [.presentation]
-            case .rootOnly: [.root]
-            case .modalOnly: [.presentation]
-            default: [.root, .stackRoot, .presentation, .push]
-            }
+            self == .tabs || self == .split
         }
     }
 
     private typealias Router = NavigationRouter<Tab, Route, NoNavigationAlert>
     private typealias Snapshot = NavigationSnapshot<Tab, Route, NoNavigationAlert>
+    private typealias StackID = NavigationStackID<Tab>
+
+    private let tabRoots: [StackID: Route] = [.scope(.home): .home, .scope(.history): .detail]
 
     private func makeRouter() -> Router {
-        Router(rootDestination: .root, selectedScope: .home, rootDestinations: [.home: .home, .history: .detail])
+        Router(rootDestination: .tabs, initialStack: .scope(.home), rootDestinations: tabRoots)
     }
 
-    @Test func layerEntryIsIndependentOfTabRootsAndPaths() throws {
-        let router = makeRouter()
+    @Test(arguments: [NavigationPresentationStyle.sheet, .fullScreen])
+    func coreOwnedRootAndModalUseTheSamePrimaryStackRules(style: NavigationPresentationStyle) throws {
+        let router = Router(rootDestination: .home, paths: [.primary: [.detail]])
         let root = router.rootPresentation
-        let home = root.context(for: .scope(.home))
-        #expect(root.route == .root(destination: .root))
-        #expect(home.rootDestination == .home)
-        #expect(home.push(.detail))
-        root.selectedStack = .scope(.history)
-        #expect(root.destination == .root)
-        #expect(root.scoped(to: .scope(.history)).route == root.route)
-        #expect(root.present(.tabs, initialStack: .scope(.home), rootDestinations: [
-            .scope(.home): .home, .scope(.history): .detail
-        ]))
+        let rootStack = root.context(for: .primary)
+        let rootLayer = router.snapshot.layer
+        #expect(root.selectedStack == .primary)
+        #expect(rootStack.rootDestination == .home)
+        #expect(rootStack.path == [.detail])
+        #expect(root.present(.home, style: style, paths: [.primary: [.detail]]))
         let node = try #require(router.presentedNode)
         let modal = router.presentationContext(for: node)
-        #expect(modal.route == .presentation(id: node.id, destination: .tabs))
-        #expect(modal.context(for: .scope(.home)).rootDestination == .home)
-        #expect(modal.context(for: .scope(.home)).push(.detail))
+        let modalStack = modal.context(for: .primary)
+        if case let .node(_, _, _, modalLayer) = node.snapshot {
+            #expect(modalLayer == rootLayer)
+        } else {
+            Issue.record("页面模态必须保存自己的导航层")
+        }
+        #expect(modal.selectedStack == .primary)
+        #expect(!root.context(for: .scope(.history)).isActive)
+        #expect(!modal.context(for: .scope(.history)).isActive)
+        #expect(!root.context(for: .scope(.history)).push(.detail))
+        #expect(!modal.context(for: .scope(.history)).push(.detail))
+        #expect(modalStack.rootDestination == rootStack.rootDestination)
+        #expect(modalStack.path == rootStack.path)
+        root.selectedStack = .scope(.history)
         modal.selectedStack = .scope(.history)
-        #expect(modal.destination == .tabs)
-        #expect(node.destination == modal.destination)
-        #expect(home.path == [.detail])
-        #expect(modal.context(for: .scope(.history)).path.isEmpty)
+        #expect(root.selectedStack == .primary)
+        #expect(modal.selectedStack == .primary)
+        #expect(modalStack.push(.tabs))
+        #expect(rootStack.path == [.detail])
+        #expect(modalStack.path == [.detail, .tabs])
+        #expect(modalStack.pop())
+        #expect(modalStack.path == rootStack.path)
+        #expect(root.destination == .home)
+        #expect(modal.destination == .home)
+        #expect(!root.dismiss())
+        #expect(modal.dismiss())
+        #expect(!modalStack.isActive)
+        #expect(rootStack.isActive)
+        #expect(rootStack.path == [.detail])
     }
 
-    @Test func repeatedDestinationHasNewIdentityAndRestoredIdentityDoesNotReviveOldContexts() throws {
+    @Test func identicalContainerPagesOwnIndependentSelectionsPathsAndChildPresentation() throws {
+        let router = Router(
+            rootDestination: .tabs, initialStack: .scope(.history), rootDestinations: tabRoots,
+            paths: [.scope(.home): [.detail], .scope(.history): [.home]]
+        )
+        let root = router.rootPresentation
+        let home = root.context(for: .scope(.home))
+        let history = root.context(for: .scope(.history))
+        #expect(root.present(
+            .tabs, initialStack: .scope(.home), rootDestinations: tabRoots,
+            paths: [.scope(.history): [.detail]]
+        ))
+        let node = try #require(root.presentedNode)
+        let modal = router.presentationContext(for: node)
+        let modalHome = modal.context(for: .scope(.home))
+        let modalHistory = modal.context(for: .scope(.history))
+        #expect(modalHome !== home)
+        #expect(modalHome.push(.detail))
+        #expect(!modal.scoped(to: .scope(.history)).present(.home))
+        modal.selectedStack = .scope(.history)
+        #expect(modalHistory.push(.tabs))
+        #expect(modal.scoped(to: .scope(.history)).present(
+            .tabs, style: .fullScreen, initialStack: .scope(.home), rootDestinations: tabRoots
+        ))
+        let childNode = try #require(modal.presentedNode)
+        let child = router.presentationContext(for: childNode)
+        #expect(child.context(for: .scope(.home)).push(.home))
+        #expect(child.selectedStack == .scope(.home))
+        #expect(modal.selectedStack == .scope(.history))
+        #expect(root.selectedStack == .scope(.history))
+        #expect(home.path == [.detail])
+        #expect(history.path == [.home])
+        #expect(modalHome.path == [.detail])
+        #expect(modalHistory.path == [.detail, .tabs])
+        #expect(root.route == .root(destination: .tabs))
+        #expect(modal.route == .presentation(id: node.id, destination: .tabs))
+        #expect(child.route == .presentation(id: childNode.id, destination: .tabs))
+        #expect(child.dismiss())
+        #expect(!child.isActive)
+        #expect(modal.isActive)
+        #expect(modalHistory.path == [.detail, .tabs])
+        #expect(home.path == [.detail])
+        #expect(history.path == [.home])
+    }
+
+    @Test(arguments: [Route.home, .tabs, .split])
+    func everyDestinationCanEnterRootStackRootPushAndModal(route: Route) throws {
+        let directRoot = Router(rootDestination: route)
+        #expect(directRoot.rootPresentation.destination == route)
+        #expect(directRoot.restore(directRoot.snapshot))
+
+        let router = Router(
+            rootDestination: .tabs, initialStack: .scope(.home), rootDestinations: [.scope(.home): route]
+        )
+        let stack = router.rootPresentation.context(for: .scope(.home))
+        #expect(stack.rootDestination == route)
+        #expect(stack.push(route))
+        #expect(stack.path == [route])
+        #expect(router.rootPresentation.present(route))
+        #expect(router.presentedNode?.destination == route)
+        let snapshot = try JSONDecoder().decode(Snapshot.self, from: JSONEncoder().encode(router.snapshot))
+        let restored = makeRouter()
+        #expect(restored.restore(snapshot))
+        #expect(restored.snapshot == snapshot)
+        #expect(restored.context(for: .home).rootDestination == route)
+        #expect(restored.context(for: .home).path == [route])
+        #expect(restored.presentedNode?.destination == route)
+    }
+
+    @Test func pathAndRootMutationsDoNotReintroduceContainerEntryRestrictions() {
         let router = makeRouter()
-        #expect(router.rootPresentation.present(.detail))
+        let stack = router.context(for: .home)
+        stack.path = [.tabs, .split]
+        #expect(stack.path == [.tabs, .split])
+        router.push(.tabs, on: .history)
+        #expect(router.path(for: .history) == [.tabs])
+        router.setPath([.split], for: .history)
+        #expect(router.path(for: .history) == [.split])
+        router.paths = [.home: [.split], .history: [.tabs]]
+        #expect(stack.path == [.split])
+        #expect(router.path(for: .history) == [.tabs])
+        router.setRootDestination(.tabs, for: .home)
+        #expect(stack.rootDestination == .tabs)
+        #expect(stack.path.isEmpty)
+        #expect(router.submit(.push(.split, on: .home)) == .applied)
+        #expect(stack.path == [.split])
+        #expect(router.submit(.replacePath([.tabs, .split], on: .home)) == .applied)
+        #expect(stack.path == [.tabs, .split])
+        #expect(router.submit(.setRoot(.split, on: .home)) == .applied)
+        #expect(stack.rootDestination == .split)
+        #expect(stack.path.isEmpty)
+        #expect(router.rootPresentation.destination == .tabs)
+    }
+
+    @Test func repeatedDestinationAndRestoredUUIDNeverReviveOldContexts() throws {
+        let router = makeRouter()
+        #expect(router.rootPresentation.present(.tabs, initialStack: .scope(.home), rootDestinations: tabRoots))
         let first = try #require(router.presentedNode)
         let old = router.presentationContext(for: first)
-        let stack = old.context(for: .primary)
-        #expect(stack.rootDestination == .detail)
-        old.selectedStack = .scope(.history)
-        #expect(old.selectedStack == .primary)
+        let stack = old.context(for: .scope(.home))
+        let oldScoped = old.scoped(to: .scope(.home))
+        #expect(stack.push(.detail))
         let snapshot = router.snapshot
         #expect(old.dismiss())
         #expect(old.route == nil)
         #expect(stack.rootDestination == nil)
         router.rootPresentation.presentationDidDismiss()
-        #expect(router.rootPresentation.present(.detail))
+        #expect(router.rootPresentation.present(.tabs, initialStack: .scope(.home), rootDestinations: tabRoots))
         let second = try #require(router.presentedNode)
         #expect(second.id != first.id)
         #expect(router.presentationContext(for: second).dismiss())
@@ -86,106 +182,16 @@ struct NavigationDestinationTests {
         let decoded = try JSONDecoder().decode(Snapshot.self, from: JSONEncoder().encode(snapshot))
         #expect(router.restore(decoded))
         let restored = try #require(router.presentedNode)
+        let current = router.presentationContext(for: restored)
         #expect(restored.id == first.id)
-        #expect(router.rootPresentation.destination == .root)
-        #expect(router.presentationContext(for: restored).destination == .detail)
         #expect(!old.isActive)
         #expect(old.destination == nil)
-        #expect(!old.scoped(to: .primary).present(.detail))
+        #expect(!oldScoped.present(.detail))
         #expect(!stack.push(.detail))
-        #expect(!old.context(for: .primary).push(.detail))
-    }
-
-    @Test func containerPagesCannotEnterPathsThroughAnyPublicMutation() {
-        let router = makeRouter()
-        let stack = router.context(for: .home)
-        let before = router.snapshot
-        #expect(!stack.push(.tabs))
-        stack.path = [.detail, .tabs]
-        router.push(.tabs, on: .history)
-        router.setPath([.tabs], for: .history)
-        router.paths = [.home: [.detail], .history: [.tabs]]
-        router.setRootDestination(.tabs, for: .home)
-        #expect(router.submit(.push(.tabs, on: .history), confirmIfPresented: true) == .rejected)
-        #expect(router.submit(.replacePath([.detail, .tabs], on: .home)) == .rejected)
-        #expect(router.submit(.setRoot(.tabs, on: .home)) == .rejected)
-        #expect(!router.rootPresentation.present(.root))
-        #expect(router.snapshot == before)
-        #expect(router.pendingConfirmation == nil)
-    }
-
-    @Test(arguments: [Route.twoColumn, .threeColumn])
-    func unsupportedContainersAreRejectedWithoutPretendingToSupportSplitView(route: Route) {
-        let router = makeRouter()
-        let before = router.snapshot
-        #expect(!route.navigationContainer.isSupported)
-        #expect(!router.rootPresentation.present(route))
-        #expect(!router.context(for: .home).push(route))
-        #expect(!router.restore(Snapshot(rootDestination: route, selectedScope: .home)))
-        #expect(!router.restore(Snapshot(
-            rootDestination: .root,
-            selectedScope: .home,
-            rootDestinations: [.home: route]
-        )))
-        #expect(router.snapshot == before)
-    }
-
-    @Test func restorationValidatesAllEntrypointsBeforeChangingRootState() {
-        let router = makeRouter()
-        let before = router.snapshot
-        let invalidSnapshots: [Snapshot] = [
-            .init(rootDestination: .tabs, selectedScope: .history),
-            .init(rootDestination: .root, selectedScope: .history, paths: [.home: [.tabs]]),
-            .init(rootDestination: .root, selectedScope: .history, presentation: .node(
-                id: UUID(), destination: .root, style: .sheet, layer: .init()
-            )),
-            .init(rootDestination: .root, selectedScope: .history, presentation: .node(
-                id: UUID(), destination: .detail, style: .sheet, layer: .init()
-            )),
-            .init(rootDestination: .root, selectedScope: .history, presentation: .node(
-                id: UUID(), destination: .detail, style: .sheet,
-                layer: .init(rootDestinations: [.primary: .detail], paths: [.primary: [.tabs]])
-            ))
-        ]
-        for snapshot in invalidSnapshots {
-            #expect(!router.restore(snapshot))
-            #expect(router.snapshot == before)
-        }
-    }
-
-    @Test func ordinaryRootKeepsItsEntryDuringPushAndRestore() {
-        let router = Router(rootDestination: .home, selectedScope: .home)
-        #expect(router.rootPresentation.destination == .home)
-        #expect(router.context(for: .home).rootDestination == .home)
-        #expect(router.context(for: .home).push(.detail))
-        #expect(router.rootPresentation.destination == .home)
-        #expect(router.snapshot.rootDestination == .home)
-        #expect(router.restore(router.snapshot))
-    }
-
-    @Test func changingStackRootPreservesLayerEntryAndRoundTrips() throws {
-        let router = Router(rootDestination: .home, selectedScope: .home)
-        let context = router.context(for: .home)
-        router.setRootDestination(.detail, for: .home)
-        #expect(router.rootPresentation.destination == .home)
-        #expect(context.rootDestination == .detail)
-        let snapshot = try JSONDecoder().decode(Snapshot.self, from: JSONEncoder().encode(router.snapshot))
-        router.setRootDestination(.home, for: .home)
-        #expect(router.restore(snapshot))
-        #expect(router.rootPresentation.destination == .home)
-        #expect(context.rootDestination == .detail)
-        #expect(router.snapshot == snapshot)
-    }
-
-    @Test func ordinaryEntriesDoNotNeedExplicitTabRootPermissionToRestore() throws {
-        let router = Router(rootDestination: .rootOnly, selectedScope: .home)
-        #expect(router.restore(router.snapshot))
-        #expect(router.rootPresentation.present(.modalOnly))
-        let snapshot = router.snapshot
-        let node = try #require(router.presentedNode)
-        #expect(router.presentationContext(for: node).dismiss())
-        router.rootPresentation.presentationDidDismiss()
-        #expect(router.restore(snapshot))
-        #expect(router.presentedNode?.destination == .modalOnly)
+        #expect(!old.context(for: .scope(.history)).push(.detail))
+        #expect(!old.scoped(to: .scope(.history)).present(.detail))
+        #expect(current.context(for: .scope(.home)).path == [.detail])
+        #expect(current.context(for: .scope(.home)).push(.home))
+        #expect(current.present(.detail))
     }
 }

@@ -4,6 +4,8 @@
 - 状态：已实施；验证结果与边界见 [001-result.md](001-result.md)
 - 更新日期：2026-10-19
 
+> 2026-10-20 后续调整：[同构导航层](../task-2026-10-20-homogeneous-navigation-layers/000-plan.md) 替代本方案的入口白名单和 Core 多栏预留声明；保留原决策与验收作为历史记录。
+
 ## 目标与范围
 
 把 App 根页面、各 Tab 根页面和模态入口统一为 Destination，保留现有独立栈、唯一呈现宿主及真实 dismissal 后的导航协调。遵循 [通用规范](../../Conventions/Common.md)、[SwiftUI 规范](../../Conventions/SwiftUI.md) 与[导航规范](../../Conventions/Navigation.md)。

@@ -4,38 +4,38 @@ import NavigationCore
 import SFSafeSymbols
 import SwiftUI
 
-/// 供 CalendarHomeView 使用，以标签页组织日历、历史和设置界面。
+/// 以当前层的独立栈组织日历、历史和设置；根层与任意模态层均可复用。
 struct CalendarHomeTabView<BottomStatusBar: View>: View {
-    @Bindable var coordinator: CalendarHomeCoordinator
+    @Environment(CalendarPresentationContext.self) private var presentation
     let bottomStatusBarIsPresented: Bool
     let bottomStatusBar: () -> BottomStatusBar
 
     var body: some View {
-        @Bindable var router = coordinator.router
+        @Bindable var presentation = presentation
 
-        TabView(selection: $router.selectedTab) {
-            Tab(value: CalendarTab.years) {
+        TabView(selection: $presentation.selectedStack) {
+            Tab(value: NavigationStackID<CalendarTab>.scope(.years)) {
                 NavigationScopeView(
                     stack: .scope(.years),
-                    presentation: router.navigation.rootPresentation
+                    presentation: presentation
                 )
             } label: {
                 Label(CalendarTab.years.title, systemSymbol: CalendarTab.years.systemSymbol)
             }
 
-            Tab(value: CalendarTab.history) {
+            Tab(value: NavigationStackID<CalendarTab>.scope(.history)) {
                 NavigationScopeView(
                     stack: .scope(.history),
-                    presentation: router.navigation.rootPresentation
+                    presentation: presentation
                 )
             } label: {
                 Label(CalendarTab.history.title, systemSymbol: CalendarTab.history.systemSymbol)
             }
 
-            Tab(value: CalendarTab.settings) {
+            Tab(value: NavigationStackID<CalendarTab>.scope(.settings)) {
                 NavigationScopeView(
                     stack: .scope(.settings),
-                    presentation: router.navigation.rootPresentation
+                    presentation: presentation
                 )
             } label: {
                 Label(CalendarTab.settings.title, systemSymbol: CalendarTab.settings.systemSymbol)

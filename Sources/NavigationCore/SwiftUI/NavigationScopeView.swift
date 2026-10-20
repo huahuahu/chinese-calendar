@@ -15,20 +15,24 @@ public struct NavigationScopeView<
 >: View {
     @Bindable private var context: NavigationContext<Scope, Destination>
     private let presentation: NavigationPresentationContext<Scope, Destination, AlertRoute>
+    private let restrictsPresentationToSelectedStack: Bool
     private let root: (() -> Root)?
     @Environment(\.[navigation: NavigationConfigurationKey<Scope, Destination, AlertRoute>()]) private var configuration
 
     /// - Parameters:
     ///   - context: 要使用的栈 Context，从 Router 或本层呈现 Context 获取。
+    ///   - restrictsPresentationToSelectedStack: Tab 保持默认值；可同时交互的并列栏目设为 false。
     ///   - root: 构建栈的根页面，它不计入 path。根页面由路由数据决定时，在这里读取该数据。
     /// 所在导航树必须通过 navigationHost 提供配置；本栈独立注册 navigationDestination。
     public init(
         context: NavigationContext<Scope, Destination>,
         presentation: NavigationPresentationContext<Scope, Destination, AlertRoute>,
+        restrictsPresentationToSelectedStack: Bool = true,
         @ViewBuilder root: @escaping () -> Root
     ) {
         self.context = context
         self.presentation = presentation
+        self.restrictsPresentationToSelectedStack = restrictsPresentationToSelectedStack
         self.root = root
     }
 
@@ -36,9 +40,13 @@ public struct NavigationScopeView<
     public init(
         stack: NavigationStackID<Scope>,
         presentation: NavigationPresentationContext<Scope, Destination, AlertRoute>,
+        restrictsPresentationToSelectedStack: Bool = true,
         @ViewBuilder root: @escaping () -> Root
     ) {
-        self.init(context: presentation.context(for: stack), presentation: presentation, root: root)
+        self.init(
+            context: presentation.context(for: stack), presentation: presentation,
+            restrictsPresentationToSelectedStack: restrictsPresentationToSelectedStack, root: root
+        )
     }
 
     public var body: some View {
@@ -50,7 +58,9 @@ public struct NavigationScopeView<
                     }
             }
             .environment(context)
-            .environment(presentation.scoped(to: context.id))
+            .environment(
+                restrictsPresentationToSelectedStack ? presentation.scoped(to: context.id) : presentation.unscoped()
+            )
         } else {
             missingNavigationConfiguration()
         }
@@ -70,10 +80,12 @@ public struct NavigationScopeView<
     /// 生产页面从栈状态读取根 Destination，统一交给宿主配置构建。
     public init(
         stack: NavigationStackID<Scope>,
-        presentation: NavigationPresentationContext<Scope, Destination, AlertRoute>
+        presentation: NavigationPresentationContext<Scope, Destination, AlertRoute>,
+        restrictsPresentationToSelectedStack: Bool = true
     ) where Root == EmptyView {
         context = presentation.context(for: stack)
         self.presentation = presentation
+        self.restrictsPresentationToSelectedStack = restrictsPresentationToSelectedStack
         root = nil
     }
 }

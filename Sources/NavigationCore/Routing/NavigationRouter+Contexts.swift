@@ -104,6 +104,9 @@ extension NavigationRouter {
     func context(
         in layer: NavigationLayer<Scope, Destination, AlertRoute>, stack: NavigationStackID<Scope>
     ) -> NavigationContext<Scope, Destination> {
+        guard layer.route.destination.providesNavigationContainer || stack == .primary else {
+            return NavigationContext(id: stack, state: nil, access: .inactive)
+        }
         let id = NavigationContextID(layer: layer.id, stack: stack)
         let state = layer.stack(for: stack)
         if let existing = contexts[id], existing.state === state, existing.isActive { return existing }
@@ -112,9 +115,10 @@ extension NavigationRouter {
                 guard let self, let layer, let state else { return false }
                 return self.layer(id: layer.id) === layer && layer.stacks[stack] === state
             },
-            canMutate: { [weak self] in
-                guard let self else { return false }
-                return !isAwaitingPresentationDismissal && pendingConfirmation == nil && !hasActiveAlert
+            canMutate: { [weak self, weak layer] in
+                guard let self, let layer else { return false }
+                return (layer.route.destination.providesNavigationContainer || stack == .primary) &&
+                    !isAwaitingPresentationDismissal && pendingConfirmation == nil && !hasActiveAlert
             }
         )
         let context = NavigationContext(id: stack, state: state, access: access)

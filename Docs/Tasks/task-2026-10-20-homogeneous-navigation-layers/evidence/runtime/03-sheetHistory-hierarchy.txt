@@ -1,0 +1,44 @@
+Device orientation: Portrait
+Application bundle identifier: com.tiger.suzhou.ChineseCalendar
+Application, pid: 32476, label: 'Chinese Calendar'
+              NavigationBar, {{0.0, 82.0}, {440.0, 106.3}}, identifier: '朝代', hitPoint: {220.0, 135.2}
+                 Button, {{24.0, 86.0}, {64.3, 36.0}}, label: '关闭', hitPoint: {56.2, 104.0}
+               StaticText, {{20.0, 136.0}, {72.0, 45.7}}, label: '朝代', hitPoint: {56.0, 158.8}
+                     StaticText, {{18.0, 200.3}, {339.3, 23.0}}, label: '沿正统时间线，进入一个朝代的纪年体系', hitPoint: {187.7, 211.8}
+                     StaticText, {{20.0, 243.3}, {80.3, 25.3}}, label: '朝代序列', hitPoint: {60.2, 256.0}
+                     StaticText, {{340.3, 248.0}, {79.7, 19.3}}, label: '按起始年代', hitPoint: {380.2, 257.7}
+                      Button, {{18.0, 278.7}, {404.0, 92.0}}, label: '秦、前221—前206和3 位皇帝 · 0 个年号', hitPoint: {220.0, 324.7}
+                       StaticText, {{100.0, 299.8}, {143.0, 25.3}}, label: '前221—前206', hitPoint: {171.5, 312.5}
+                       StaticText, {{57.5, 310.3}, {23.0, 28.7}}, label: '秦', hitPoint: {69.0, 324.7}
+                       StaticText, {{100.0, 330.2}, {139.3, 19.3}}, label: '3 位皇帝 · 0 个年号', hitPoint: {169.7, 339.8}
+                      Button, {{18.0, 370.7}, {404.0, 92.0}}, label: '西汉、前206—8和13 位皇帝 · 43 个年号', hitPoint: {220.0, 416.7}
+                       StaticText, {{100.0, 391.8}, {93.7, 25.3}}, label: '前206—8', hitPoint: {146.8, 404.5}
+                       StaticText, {{48.0, 403.5}, {42.0, 26.3}}, label: '西汉', hitPoint: {69.0, 416.7}
+                       StaticText, {{100.0, 422.2}, {156.3, 19.3}}, label: '13 位皇帝 · 43 个年号', hitPoint: {178.2, 431.8}
+                      Button, {{18.0, 462.7}, {404.0, 92.0}}, label: '新、8—23和1 位皇帝 · 3 个年号', hitPoint: {220.0, 508.7}
+                       StaticText, {{100.0, 483.8}, {58.0, 25.3}}, label: '8—23', hitPoint: {129.0, 496.5}
+                       StaticText, {{57.5, 494.3}, {23.0, 28.7}}, label: '新', hitPoint: {69.0, 508.7}
+                       StaticText, {{100.0, 514.2}, {136.7, 19.3}}, label: '1 位皇帝 · 3 个年号', hitPoint: {168.3, 523.8}
+                      Button, {{18.0, 554.7}, {404.0, 92.0}}, label: '更始、23—25和1 位皇帝 · 1 个年号', hitPoint: {220.0, 600.7}
+                       StaticText, {{100.0, 575.8}, {71.0, 25.3}}, label: '23—25', hitPoint: {135.5, 588.5}
+                       StaticText, {{48.0, 587.5}, {42.0, 26.3}}, label: '更始', hitPoint: {69.0, 600.7}
+                       StaticText, {{100.0, 606.2}, {134.0, 19.3}}, label: '1 位皇帝 · 1 个年号', hitPoint: {167.0, 615.8}
+                      Button, {{18.0, 646.7}, {404.0, 92.0}}, label: '东汉、25—220和13 位皇帝 · 40 个年号', hitPoint: {220.0, 692.7}
+                       StaticText, {{100.0, 667.8}, {84.3, 25.3}}, label: '25—220', hitPoint: {142.2, 680.5}
+                       StaticText, {{48.0, 679.5}, {42.0, 26.3}}, label: '东汉', hitPoint: {69.0, 692.7}
+                       StaticText, {{100.0, 698.2}, {156.3, 19.3}}, label: '13 位皇帝 · 40 个年号', hitPoint: {178.2, 707.8}
+                      Button, {{18.0, 738.7}, {404.0, 92.0}}, label: '魏、220—265和5 位皇帝 · 10 个年号', hitPoint: {220.0, 784.7}
+                       StaticText, {{100.0, 759.8}, {97.7, 25.3}}, label: '220—265', hitPoint: {148.8, 772.5}
+                       StaticText, {{57.5, 770.3}, {23.0, 28.7}}, label: '魏', hitPoint: {69.0, 784.7}
+                       StaticText, {{100.0, 790.2}, {146.3, 19.3}}, label: '5 位皇帝 · 10 个年号', hitPoint: {173.2, 799.8}
+                      Button, {{18.0, 830.7}, {404.0, 92.0}}, label: '西晋、265—317和4 位皇帝 · 16 个年号', hitPoint: {220.0, 876.7}
+                       StaticText, {{100.0, 851.8}, {97.7, 25.3}}, label: '265—317', hitPoint: {148.8, 864.5}
+                       StaticText, {{48.0, 863.5}, {42.0, 26.3}}, label: '西晋', hitPoint: {69.0, 876.7}
+                       StaticText, {{100.0, 882.2}, {146.7, 19.3}}, label: '4 位皇帝 · 16 个年号', hitPoint: {173.3, 891.8}
+                      Button, {{18.0, 922.7}, {404.0, 92.0}}, label: '东晋、317—420和11 位皇帝 · 20 个年号', hitPoint: {220.0, 939.3}
+                       StaticText, {{100.0, 943.8}, {97.7, 25.3}}, label: '317—420', hitPoint: {148.8, 949.9}
+                       StaticText, {{48.0, 955.5}, {42.0, 26.3}}, label: '东晋', hitPoint: {69.0, 955.8}
+           TabBar, {{0.0, 873.0}, {440.0, 83.0}}, label: '标签页栏', hitPoint: {220.0, 914.5}
+              Button, {{87.0, 877.0}, {94.0, 54.0}}, identifier: 'calendar', label: '日历', hitPoint: {134.0, 904.0}
+              Button, {{173.0, 877.0}, {94.0, 54.0}}, identifier: 'timeline.selection', label: '朝代', Selected, hitPoint: {220.0, 904.0}
+              Button, {{259.0, 877.0}, {94.0, 54.0}}, identifier: 'gearshape', label: '设置', hitPoint: {306.0, 904.0}
