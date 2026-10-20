@@ -47,10 +47,16 @@ public final class NavigationContext<Scope: Hashable, Destination: NavigationDes
     /// 都会读写同一份路径。Context 失效时读到空数组；不允许修改时忽略赋值。
     public var path: [Destination] {
         get { isActive ? state?.path ?? [] : [] }
-        set {
-            guard canMutate, newValue.allSatisfy({ $0.supportsNavigationEntry(.push) }) else { return }
-            state?.path = newValue
-        }
+        set { setPath(newValue) }
+    }
+
+    /// 替换本栈的 push 路径。需要同步更新业务选择时，调用方应先确认路径修改成功。
+    /// - Returns: 接受完整路径时返回 true；Context 失效、不允许修改或包含非法 push 页面时返回 false。
+    @discardableResult
+    public func setPath(_ newPath: [Destination]) -> Bool {
+        guard canMutate, let state, newPath.allSatisfy({ $0.supportsNavigationEntry(.push) }) else { return false }
+        state.path = newPath
+        return true
     }
 
     /// 在当前栈中 push 一个页面，保留当前 Tab 选择和其他栈的路径。

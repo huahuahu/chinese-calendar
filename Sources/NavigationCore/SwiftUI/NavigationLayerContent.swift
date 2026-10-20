@@ -16,8 +16,6 @@ struct NavigationLayerContent<
                     switch destination.navigationContainer {
                     case .stack:
                         NavigationScopeView(stack: context.selectedStack, presentation: context)
-                    case .twoColumn, .threeColumn:
-                        unsupportedNavigationContainer()
                     }
                 }
             } else {
@@ -25,10 +23,6 @@ struct NavigationLayerContent<
             }
         }
     }
-}
-
-private func unsupportedNavigationContainer() -> EmptyView {
-    preconditionFailure("Split navigation containers are not implemented; see issue #146.")
 }
 
 func missingNavigationRoot() -> EmptyView {

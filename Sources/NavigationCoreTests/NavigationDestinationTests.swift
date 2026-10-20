@@ -7,18 +7,10 @@ import Testing
 struct NavigationDestinationTests {
     private enum Tab: String, Codable { case home, history }
     enum Route: String, Codable, NavigationDestination {
-        case root, tabs, home, detail, rootOnly, modalOnly, twoColumn, threeColumn
+        case root, tabs, home, detail, rootOnly, modalOnly
 
         var providesNavigationContainer: Bool {
             self == .root || self == .tabs
-        }
-
-        var navigationContainer: NavigationContainerKind {
-            switch self {
-            case .twoColumn: .twoColumn
-            case .threeColumn: .threeColumn
-            default: .stack
-            }
         }
 
         var allowedNavigationEntries: Set<NavigationDestinationEntry> {
@@ -77,6 +69,8 @@ struct NavigationDestinationTests {
         #expect(old.dismiss())
         #expect(old.route == nil)
         #expect(stack.rootDestination == nil)
+        #expect(!stack.setPath([.detail]))
+        #expect(first.path.isEmpty)
         router.rootPresentation.presentationDidDismiss()
         #expect(router.rootPresentation.present(.detail))
         let second = try #require(router.presentedNode)
@@ -92,8 +86,10 @@ struct NavigationDestinationTests {
         #expect(!old.isActive)
         #expect(old.destination == nil)
         #expect(!old.scoped(to: .primary).present(.detail))
+        #expect(!stack.setPath([.detail]))
         #expect(!stack.push(.detail))
         #expect(!old.context(for: .primary).push(.detail))
+        #expect(router.context(for: restored).path.isEmpty)
     }
 
     @Test func containerPagesCannotEnterPathsThroughAnyPublicMutation() {
@@ -101,6 +97,7 @@ struct NavigationDestinationTests {
         let stack = router.context(for: .home)
         let before = router.snapshot
         #expect(!stack.push(.tabs))
+        #expect(!stack.setPath([.detail, .tabs]))
         stack.path = [.detail, .tabs]
         router.push(.tabs, on: .history)
         router.setPath([.tabs], for: .history)
@@ -112,22 +109,6 @@ struct NavigationDestinationTests {
         #expect(!router.rootPresentation.present(.root))
         #expect(router.snapshot == before)
         #expect(router.pendingConfirmation == nil)
-    }
-
-    @Test(arguments: [Route.twoColumn, .threeColumn])
-    func unsupportedContainersAreRejectedWithoutPretendingToSupportSplitView(route: Route) {
-        let router = makeRouter()
-        let before = router.snapshot
-        #expect(!route.navigationContainer.isSupported)
-        #expect(!router.rootPresentation.present(route))
-        #expect(!router.context(for: .home).push(route))
-        #expect(!router.restore(Snapshot(rootDestination: route, selectedScope: .home)))
-        #expect(!router.restore(Snapshot(
-            rootDestination: .root,
-            selectedScope: .home,
-            rootDestinations: [.home: route]
-        )))
-        #expect(router.snapshot == before)
     }
 
     @Test func restorationValidatesAllEntrypointsBeforeChangingRootState() {

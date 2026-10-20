@@ -997,6 +997,486 @@
         }
       }
     },
+    "debug.split.allColumns": {
+      "comment": "分栏导航调试栏目可见性中，请求显示所有栏目的选项名称。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "所有栏"
+          }
+        }
+      }
+    },
+    "debug.split.automatic": {
+      "comment": "分栏导航调试栏目可见性中，由系统自动决定可见栏目的选项名称。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "自动"
+          }
+        }
+      }
+    },
+    "debug.split.categories": {
+      "comment": "三栏导航调试中前栏的分类列表标题，分类仅用于演示。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "示例分类"
+          }
+        }
+      }
+    },
+    "debug.split.chooseCategory": {
+      "comment": "三栏导航调试中尚未选择分类时，中间栏空状态的标题。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "请选择分类"
+          }
+        }
+      }
+    },
+    "debug.split.clearSelection": {
+      "comment": "分栏导航调试中清除当前对象选择并返回详情空状态的按钮。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "清除详情"
+          }
+        }
+      }
+    },
+    "debug.split.compactColumn": {
+      "comment": "分栏导航调试中显示窄屏当前优先展示栏目的状态字段标题。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "窄屏当前栏"
+          }
+        }
+      }
+    },
+    "debug.split.content": {
+      "comment": "三栏导航调试布局状态中表示中间栏的选项名称。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "中间栏"
+          }
+        }
+      }
+    },
+    "debug.split.detail": {
+      "comment": "分栏导航调试布局状态中表示对象详情栏的选项名称。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "详情栏"
+          }
+        }
+      }
+    },
+    "debug.split.detailOnly": {
+      "comment": "分栏导航调试栏目可见性中，请求只显示详情栏的选项名称。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "仅详情"
+          }
+        }
+      }
+    },
+    "debug.split.doubleColumn": {
+      "comment": "三栏导航调试栏目可见性中，请求显示中间栏和详情栏的选项名称。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "后两栏"
+          }
+        }
+      }
+    },
+    "debug.split.emptyMessage": {
+      "comment": "分栏导航调试中详情栏空状态的说明，引导从前栏或中间栏选择对象。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "从前面的列表选择一个对象，再继续查看子详情。"
+          }
+        }
+      }
+    },
+    "debug.split.emptyTitle": {
+      "comment": "分栏导航调试中尚未选中对象时，详情栏空状态的标题。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "请选择对象"
+          }
+        }
+      }
+    },
+    "debug.split.firstCategory": {
+      "comment": "三栏导航调试中第一个虚构分类的名称，不表示真实历史分类。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "分类一"
+          }
+        }
+      }
+    },
+    "debug.split.firstItem": {
+      "comment": "分栏导航调试中第一个虚构对象的名称，不表示真实历史数据。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "对象一"
+          }
+        }
+      }
+    },
+    "debug.split.fourthItem": {
+      "comment": "分栏导航调试中第四个虚构对象的名称，不表示真实历史数据。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "对象四"
+          }
+        }
+      }
+    },
+    "debug.split.items": {
+      "comment": "分栏导航调试中待选择的对象列表标题，对象仅用于演示。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "示例对象"
+          }
+        }
+      }
+    },
+    "debug.split.layout": {
+      "comment": "分栏导航调试中展示当前窄屏栏目与栏目可见性的状态分组标题。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "布局状态"
+          }
+        }
+      }
+    },
+    "debug.split.level": {
+      "comment": "分栏导航调试中子详情页面的标题；参数为从一开始且不加千位分隔的详情层数。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "子详情第 %@ 层"
+          }
+        }
+      }
+    },
+    "debug.split.message": {
+      "comment": "分栏导航调试页说明对象选择与详情路径的管理职责及切换行为。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "前栏选择由 App 管理，详情路径由 NavigationCore 管理。切换对象清空路径，重复选择保留路径。"
+          }
+        }
+      }
+    },
+    "debug.split.mixedTabs": {
+      "comment": "分栏导航调试中打开普通栈、两栏和三栏混合标签页示例的入口。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "混合 Tab"
+          }
+        }
+      }
+    },
+    "debug.split.nextItem": {
+      "comment": "分栏导航调试中切换到下一个示例对象，用于检查详情路径是否清空的按钮。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "选择下一个对象"
+          }
+        }
+      }
+    },
+    "debug.split.openFullScreen": {
+      "comment": "分栏导航调试中以全屏模态展示分栏示例的按钮。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "以全屏打开"
+          }
+        }
+      }
+    },
+    "debug.split.openSheet": {
+      "comment": "分栏导航调试中以弹窗展示分栏示例的按钮。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "以弹窗打开"
+          }
+        }
+      }
+    },
+    "debug.split.ordinary": {
+      "comment": "分栏导航调试的混合标签页中，使用普通导航栈的标签名称。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "普通栈"
+          }
+        }
+      }
+    },
+    "debug.split.push": {
+      "comment": "分栏导航调试中向当前对象的详情路径继续压入一个子页面的按钮。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "查看下一层详情"
+          }
+        }
+      }
+    },
+    "debug.split.repeatSelection": {
+      "comment": "分栏导航调试中重复选择同一对象，用于检查详情路径是否保留的按钮。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "再次选择当前对象"
+          }
+        }
+      }
+    },
+    "debug.split.retainDetail": {
+      "comment": "三栏导航调试中控制切换分类后是否保留当前对象详情的开关。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "切换分类时保留详情"
+          }
+        }
+      }
+    },
+    "debug.split.root": {
+      "comment": "分栏导航调试中表示当前对象详情路径尚未压入子页面的页面标题。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "详情根页"
+          }
+        }
+      }
+    },
+    "debug.split.secondCategory": {
+      "comment": "三栏导航调试中第二个虚构分类的名称，不表示真实历史分类。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "分类二"
+          }
+        }
+      }
+    },
+    "debug.split.secondItem": {
+      "comment": "分栏导航调试中第二个虚构对象的名称，不表示真实历史数据。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "对象二"
+          }
+        }
+      }
+    },
+    "debug.split.selection": {
+      "comment": "分栏导航调试中显示当前选中对象名称的状态字段标题。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "当前详情"
+          }
+        }
+      }
+    },
+    "debug.split.showAllColumns": {
+      "comment": "分栏导航调试中请求展示全部栏目，用于检查系统适配行为的按钮。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "显示所有栏"
+          }
+        }
+      }
+    },
+    "debug.split.showDetail": {
+      "comment": "分栏导航调试中请求窄屏展示详情栏的按钮。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "显示详情栏"
+          }
+        }
+      }
+    },
+    "debug.split.showSidebar": {
+      "comment": "分栏导航调试中请求窄屏展示前栏的按钮。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "显示前栏"
+          }
+        }
+      }
+    },
+    "debug.split.sidebar": {
+      "comment": "分栏导航调试布局状态中表示前栏的选项名称。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "前栏"
+          }
+        }
+      }
+    },
+    "debug.split.thirdItem": {
+      "comment": "分栏导航调试中第三个虚构对象的名称，不表示真实历史数据。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "对象三"
+          }
+        }
+      }
+    },
+    "debug.split.threeColumn": {
+      "comment": "分栏导航调试中打开三栏示例的入口和标签名称。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "三栏"
+          }
+        }
+      }
+    },
+    "debug.split.title": {
+      "comment": "调试操作中打开原生分栏导航示例的入口和示例页标题。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "分栏导航测试"
+          }
+        }
+      }
+    },
+    "debug.split.twoColumn": {
+      "comment": "分栏导航调试中打开两栏示例的入口和标签名称。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "两栏"
+          }
+        }
+      }
+    },
+    "debug.split.visibility": {
+      "comment": "分栏导航调试中显示或选择栏目可见性模式的字段标题。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "栏目可见性"
+          }
+        }
+      }
+    },
     "history.boundary.claimed": {
       "comment": "历史边界对照中的来源类别标签，表示朝代自称的起止时间。",
       "extractionState": "manual",

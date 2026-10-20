@@ -35,6 +35,7 @@
                 }
 
                 CalendarDebugNavigationActions()
+                CalendarDebugSplitEntries()
             }
             .navigationTitle(CalendarStringKey.Debug.Navigation.title)
             .navigationBarTitleDisplayMode(.inline)
