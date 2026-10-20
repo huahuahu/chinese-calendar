@@ -2,7 +2,7 @@ import Foundation
 import NavigationCore
 
 enum CalendarDestination: Codable, NavigationDestination, Identifiable {
-    case root
+    case mainTabs
     case calendarHome
     case historyHome
     case settings
@@ -25,7 +25,7 @@ enum CalendarDestination: Codable, NavigationDestination, Identifiable {
 
     var id: String {
         switch self {
-        case .root: "root"
+        case .mainTabs: "main-tabs"
         case .calendarHome: "calendar-home"
         case .historyHome: "history-home"
         case .settings: "settings"
@@ -72,23 +72,11 @@ enum CalendarDestination: Codable, NavigationDestination, Identifiable {
     }
 
     var providesNavigationContainer: Bool {
-        if case .root = self { return true }
+        if case .mainTabs = self { return true }
         #if DEBUG
             if case .downloadPreview = self { return true }
         #endif
         return false
-    }
-
-    var allowedNavigationEntries: Set<NavigationDestinationEntry> {
-        switch self {
-        case .root: [.root]
-        case .calendarHome, .historyHome, .settings: [.stackRoot]
-        #if DEBUG
-            case .downloadPreview: [.presentation]
-            case .downloadPreviewScenarios, .downloadPreviewSwitch: [.stackRoot]
-        #endif
-        default: [.stackRoot, .presentation, .push]
-        }
     }
 
     /// 临时会话依赖当前进程中的回调或下载状态，不能仅凭 ID 跨启动重建。

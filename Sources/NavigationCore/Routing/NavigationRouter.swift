@@ -34,27 +34,31 @@ public final class NavigationRouter<
     @ObservationIgnored var presentationContexts:
         [NavigationLayerID: NavigationPresentationContext<Scope, Destination, AlertRoute>] = [:]
 
-    /// 创建 App 根层，并设置初始 Tab、根页面路由和 push 路径，此时没有模态。
-    /// - Parameters:
-    ///   - rootDestination: 整个根层的入口页面，不随 Tab 或路径变化。
-    ///   - selectedScope: App 根界面初始选中的 Tab 或命名栈。
-    ///   - rootDestinations: 各栈根页面的路由数据；由界面直接构建的静态根页可以省略。
-    ///   - paths: 各栈初始已经 push 的页面列表；未提供的栈按空路径读取。
+    /// 创建根层。普通入口使用 primary 栈，外部容器自行指定各栈和初始选择。
+    /// 根层与 present 创建的模态层采用相同的初始化规则。
     public init(
+        rootDestination: Destination,
+        initialStack: NavigationStackID<Scope> = .primary,
+        rootDestinations: [NavigationStackID<Scope>: Destination] = [:],
+        paths: [NavigationStackID<Scope>: [Destination]] = [:]
+    ) {
+        guard let snapshot = NavigationLayerSnapshot<Scope, Destination, AlertRoute>(
+            destination: rootDestination, initialStack: initialStack,
+            rootDestinations: rootDestinations, paths: paths
+        ) else { preconditionFailure("A Core navigation layer requires its primary stack") }
+        rootLayer = NavigationLayer(route: .root(destination: rootDestination), snapshot: snapshot)
+    }
+
+    /// 自带命名栈容器的便利入口；普通单栈使用 initialStack 的默认 primary。
+    public convenience init(
         rootDestination: Destination,
         selectedScope: Scope,
         rootDestinations: [Scope: Destination] = [:],
         paths: [Scope: [Destination]] = [:]
     ) {
-        precondition(rootDestination.supportsNavigationEntry(.root))
-        precondition(rootDestinations.values.allSatisfy { $0.supportsNavigationEntry(.stackRoot) })
-        precondition(paths.values.joined().allSatisfy { $0.supportsNavigationEntry(.push) })
-        rootLayer = NavigationLayer(
-            route: .root(destination: rootDestination),
-            selectedStack: .scope(selectedScope),
-            roots: rootDestination.providesNavigationContainer
-                ? Dictionary(uniqueKeysWithValues: rootDestinations.map { (.scope($0.key), $0.value) })
-                : [.scope(selectedScope): rootDestination],
+        self.init(
+            rootDestination: rootDestination, initialStack: .scope(selectedScope),
+            rootDestinations: Dictionary(uniqueKeysWithValues: rootDestinations.map { (.scope($0.key), $0.value) }),
             paths: Dictionary(uniqueKeysWithValues: paths.map { (.scope($0.key), $0.value) })
         )
     }
@@ -68,7 +72,10 @@ public final class NavigationRouter<
             }
             return scope
         }
-        set { rootLayer.selectedStack = .scope(newValue) }
+        set {
+            guard rootLayer.route.destination.providesNavigationContainer else { return }
+            rootLayer.selectedStack = .scope(newValue)
+        }
     }
 
     /// 汇总 App 根层各栈保存的根页面路由数据，不包含模态内部的数据。
@@ -89,7 +96,7 @@ public final class NavigationRouter<
             })
         }
         set {
-            guard newValue.values.joined().allSatisfy({ $0.supportsNavigationEntry(.push) }) else { return }
+            guard rootLayer.route.destination.providesNavigationContainer else { return }
             rootLayer.paths = Dictionary(uniqueKeysWithValues: newValue.map { (.scope($0.key), $0.value) })
         }
     }
@@ -123,7 +130,8 @@ public final class NavigationRouter<
     /// App 根层选中栈的最后一个 push 页面；没有 push 页面时返回它的根页面路由数据。
     /// 即使有模态覆盖，查询的仍然是根层选中的栈。
     public var selectedDestination: Destination? {
-        currentDestination(on: selectedScope)
+        let state = rootLayer.stacks[rootLayer.selectedStack]
+        return state?.path?.last ?? state?.rootDestination
     }
 
     /// 读取指定根栈的根页面路由数据。静态根页可能没有保存这项数据，此时返回 nil。
@@ -134,7 +142,7 @@ public final class NavigationRouter<
     /// 更新或清除指定根栈的根页面路由数据，并清空该栈的 push 路径，保留当前 Tab 选择。
     /// App 的根页面构建闭包需要读取这项数据，才能据此更新界面。
     public func setRootDestination(_ destination: Destination?, for scope: Scope) {
-        guard destination?.supportsNavigationEntry(.stackRoot) != false else { return }
+        guard rootLayer.route.destination.providesNavigationContainer else { return }
         let state = rootLayer.stack(for: .scope(scope))
         state.rootDestination = destination
         state.path = []
@@ -147,7 +155,7 @@ public final class NavigationRouter<
 
     /// 替换指定根栈的 push 路径，保留根页面路由数据、当前 Tab 选择和模态。
     public func setPath(_ path: [Destination], for scope: Scope) {
-        guard path.allSatisfy({ $0.supportsNavigationEntry(.push) }) else { return }
+        guard rootLayer.route.destination.providesNavigationContainer else { return }
         rootLayer.stack(for: .scope(scope)).path = path
     }
 
@@ -159,10 +167,10 @@ public final class NavigationRouter<
     /// 切换到指定根 Tab，再 push 一个页面；省略 scope 时在当前根 Tab 中 push。
     /// 此方法会保留已经打开的模态。需要先确认并关闭模态时，向 submit 提交 .push 请求。
     public func push(_ destination: Destination, on scope: Scope? = nil) {
-        guard destination.supportsNavigationEntry(.push) else { return }
-        let targetScope = scope ?? selectedScope
-        selectedScope = targetScope
-        let state = rootLayer.stack(for: .scope(targetScope))
+        let targetStack = scope.map(NavigationStackID.scope) ?? rootLayer.selectedStack
+        guard rootLayer.route.destination.providesNavigationContainer || targetStack == .primary else { return }
+        rootLayer.selectedStack = targetStack
+        let state = rootLayer.stack(for: targetStack)
         state.path = (state.path ?? []) + [destination]
     }
 
@@ -213,7 +221,10 @@ public final class NavigationRouter<
         _ request: NavigationRequest<Scope, Destination>,
         confirmIfPresented: Bool = false
     ) -> NavigationRequestResult {
-        guard request.hasValidDestinations else { return .rejected }
+        if !rootLayer.route.destination.providesNavigationContainer {
+            guard request.stack == .primary else { return .rejected }
+            if case .setRoot(nil, _) = request { return .rejected }
+        }
         if hasBusinessAlert || (hasActiveAlert && !confirmIfPresented) {
             requestWaitingForAlert = request
             waitingRequestNeedsConfirmation = confirmIfPresented
@@ -278,17 +289,19 @@ public final class NavigationRouter<
 
     /// 直接按请求修改根栈数据。调用方负责在此前完成需要的用户确认和模态关闭。
     private func apply(_ request: NavigationRequest<Scope, Destination>) {
+        rootLayer.selectedStack = request.stack
         switch request {
-        case let .selectScope(scope):
-            selectedScope = scope
-        case let .setRoot(destination, scope):
-            selectedScope = scope
-            setRootDestination(destination, for: scope)
-        case let .replacePath(path, scope):
-            selectedScope = scope
-            setPath(path, for: scope)
-        case let .push(destination, scope):
-            push(destination, on: scope)
+        case .selectStack:
+            break
+        case let .setRoot(destination, stack):
+            let state = rootLayer.stack(for: stack)
+            state.rootDestination = destination
+            state.path = []
+        case let .replacePath(path, stack):
+            rootLayer.stack(for: stack).path = path
+        case let .push(destination, stack):
+            let state = rootLayer.stack(for: stack)
+            state.path = (state.path ?? []) + [destination]
         }
     }
 }

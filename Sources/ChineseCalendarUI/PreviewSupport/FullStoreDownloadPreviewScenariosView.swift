@@ -5,20 +5,12 @@
 
     /// 下载演示的第一个 Tab 根页面；会话状态仍归 coordinator 所有。
     struct FullStoreDownloadPreviewScenariosView: View {
-        @Environment(CalendarPresentationContext.self) private var presentation
         @Bindable var state: FullStoreDownloadPreviewState
 
         var body: some View {
             scenarios
                 .navigationTitle(CalendarStringKey.Settings.Debug.DownloadPreview.title)
                 .navigationBarTitleDisplayMode(.inline)
-                .toolbar {
-                    ToolbarItem(placement: .confirmationAction) {
-                        Button(CalendarStringKey.Common.Action.done, systemSymbol: .checkmark) {
-                            presentation.dismiss()
-                        }
-                    }
-                }
         }
 
         private var scenarios: some View {

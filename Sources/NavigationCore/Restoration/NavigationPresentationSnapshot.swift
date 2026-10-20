@@ -30,10 +30,7 @@ extension NavigationPresentationNode {
     var snapshot: NavigationPresentationSnapshot<Scope, Destination, AlertRoute> {
         .node(
             id: id, destination: destination, style: style,
-            layer: NavigationLayerSnapshot(
-                selectedStack: layer.selectedStack, rootDestinations: layer.roots,
-                paths: layer.paths, presentation: layer.presentedContent?.snapshot
-            )
+            layer: layer.snapshot
         )
     }
 }
@@ -52,18 +49,8 @@ extension NavigationPresentationSnapshot {
         switch self {
         case let .alert(node): return identities.insert(node.id).inserted
         case let .node(id, destination, _, layer):
-            let hasValidRoots = if destination.providesNavigationContainer {
-                layer.rootDestinations.values.allSatisfy { $0.supportsNavigationEntry(.stackRoot) }
-            } else {
-                layer.selectedStack == .primary && layer.rootDestinations == [.primary: destination] &&
-                    layer.paths.keys.allSatisfy { $0 == .primary }
-            }
-            guard identities.insert(id).inserted,
-                  destination.supportsNavigationEntry(.presentation),
-                  layer.paths.values.joined().allSatisfy({ $0.supportsNavigationEntry(.push) }),
-                  hasValidRoots
-            else { return false }
-            return layer.presentation?.validate(identities: &identities) ?? true
+            guard identities.insert(id).inserted else { return false }
+            return layer.validate(for: destination, identities: &identities)
         }
     }
 
@@ -79,10 +66,7 @@ extension NavigationPresentationSnapshot {
                 destination: destination,
                 style: style
             )
-            node.layer.selectedStack = layer.selectedStack
-            node.layer.roots = layer.rootDestinations
-            node.layer.paths = layer.paths
-            node.layer.presentedContent = layer.presentation?.makePresentation()
+            node.layer.restore(layer)
             return .page(node)
         }
     }

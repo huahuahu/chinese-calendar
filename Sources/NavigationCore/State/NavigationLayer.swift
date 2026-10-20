@@ -85,6 +85,34 @@ final class NavigationLayer<Scope: Hashable, Destination: NavigationDestination,
         self.paths = paths
     }
 
+    /// 入口初始化与快照恢复都使用同一种层结构。
+    convenience init(
+        route: NavigationLayerRoute<Destination>,
+        snapshot: NavigationLayerSnapshot<Scope, Destination, AlertRoute>
+    ) {
+        self.init(
+            route: route, selectedStack: snapshot.selectedStack,
+            roots: snapshot.rootDestinations, paths: snapshot.paths
+        )
+        presentedContent = snapshot.presentation?.makePresentation()
+    }
+
+    var snapshot: NavigationLayerSnapshot<Scope, Destination, AlertRoute> {
+        NavigationLayerSnapshot(
+            selectedStack: selectedStack, rootDestinations: roots,
+            paths: paths, presentation: presentedContent?.snapshot
+        )
+    }
+
+    /// 同一种承载结构保留栈对象；切换容器归属时重建栈，使旧宿主的 Context 失效。
+    func restore(_ snapshot: NavigationLayerSnapshot<Scope, Destination, AlertRoute>, resetStacks: Bool = false) {
+        if resetStacks { stacks.removeAll() }
+        selectedStack = snapshot.selectedStack
+        roots = snapshot.rootDestinations
+        paths = snapshot.paths
+        presentedContent = snapshot.presentation?.makePresentation()
+    }
+
     /// 获取指定栈；第一次访问时创建，后续访问复用同一个对象。
     /// 仅创建栈对象不会向 roots 或 paths 中添加数据，生成的快照也不会因此改变。
     func stack(for id: NavigationStackID<Scope>) -> NavigationStackState<Destination> {

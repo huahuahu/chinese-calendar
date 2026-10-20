@@ -1,0 +1,235 @@
+{
+  "tool": "Xcode MCP RunAllTests",
+  "generatedAt": "2026-10-20T14:30:41Z",
+  "scheme": "ChineseCalendar-iOS",
+  "simulator": "chinesedate iPhone 18 Pro Max (885f)",
+  "simulatorId": "16A9CAA7-45CE-46D5-8915-F61531FC617C",
+  "os": "iOS 27.0",
+  "counts": {
+    "total": 325,
+    "passed": 325,
+    "failed": 0,
+    "skipped": 0,
+    "notRun": 0,
+    "expectedFailures": 0
+  },
+  "sourceFingerprintSHA256": "bbe02d77d6bd0219f78af8c7d756b578ac3cd7fd51b288c9897081f8b42ec700",
+  "resultsByTarget": {
+    "ChineseCalendarCoreTests": 24,
+    "ChineseCalendarDataTests": 10,
+    "ChineseCalendarLocalizationTests": 14,
+    "ChineseCalendarLoggingTests": 3,
+    "ChineseCalendarPersistenceTests": 48,
+    "ChineseCalendarUITests": 136,
+    "NavigationCoreTests": 90
+  },
+  "relevantTests": [
+    {
+      "target": "NavigationCoreTests",
+      "identifier": "NavigationDestinationTests/coreOwnedRootAndModalUseTheSamePrimaryStackRules(style:)",
+      "displayName": ".sheet",
+      "state": "Passed"
+    },
+    {
+      "target": "NavigationCoreTests",
+      "identifier": "NavigationDestinationTests/coreOwnedRootAndModalUseTheSamePrimaryStackRules(style:)",
+      "displayName": ".fullScreen",
+      "state": "Passed"
+    },
+    {
+      "target": "NavigationCoreTests",
+      "identifier": "NavigationDestinationTests/identicalContainerPagesOwnIndependentSelectionsPathsAndChildPresentation()",
+      "displayName": "identicalContainerPagesOwnIndependentSelectionsPathsAndChildPresentation()",
+      "state": "Passed"
+    },
+    {
+      "target": "NavigationCoreTests",
+      "identifier": "NavigationDestinationTests/everyDestinationCanEnterRootStackRootPushAndModal(route:)",
+      "displayName": ".home",
+      "state": "Passed"
+    },
+    {
+      "target": "NavigationCoreTests",
+      "identifier": "NavigationDestinationTests/everyDestinationCanEnterRootStackRootPushAndModal(route:)",
+      "displayName": ".tabs",
+      "state": "Passed"
+    },
+    {
+      "target": "NavigationCoreTests",
+      "identifier": "NavigationDestinationTests/everyDestinationCanEnterRootStackRootPushAndModal(route:)",
+      "displayName": ".split",
+      "state": "Passed"
+    },
+    {
+      "target": "NavigationCoreTests",
+      "identifier": "NavigationDestinationTests/pathAndRootMutationsDoNotReintroduceContainerEntryRestrictions()",
+      "displayName": "pathAndRootMutationsDoNotReintroduceContainerEntryRestrictions()",
+      "state": "Passed"
+    },
+    {
+      "target": "NavigationCoreTests",
+      "identifier": "NavigationDestinationTests/repeatedDestinationAndRestoredUUIDNeverReviveOldContexts()",
+      "displayName": "repeatedDestinationAndRestoredUUIDNeverReviveOldContexts()",
+      "state": "Passed"
+    },
+    {
+      "target": "NavigationCoreTests",
+      "identifier": "NavigationLayerRestorationTests/restoringCoreLayerInvalidatesFormerNamedStackContext()",
+      "displayName": "restoringCoreLayerInvalidatesFormerNamedStackContext()",
+      "state": "Passed"
+    },
+    {
+      "target": "NavigationCoreTests",
+      "identifier": "NavigationLayerRestorationTests/restoringExternalContainerInvalidatesFormerPrimaryStackContext()",
+      "displayName": "restoringExternalContainerInvalidatesFormerPrimaryStackContext()",
+      "state": "Passed"
+    },
+    {
+      "target": "NavigationCoreTests",
+      "identifier": "NavigationLayerRestorationTests/restoringSameContainerOwnershipPreservesPrimaryStackContext()",
+      "displayName": "restoringSameContainerOwnershipPreservesPrimaryStackContext()",
+      "state": "Passed"
+    },
+    {
+      "target": "NavigationCoreTests",
+      "identifier": "NavigationPrimaryLayerTests/primaryRequestsUseTheRootStackAndRejectUnrelatedNamedStacks()",
+      "displayName": "primaryRequestsUseTheRootStackAndRejectUnrelatedNamedStacks()",
+      "state": "Passed"
+    },
+    {
+      "target": "NavigationCoreTests",
+      "identifier": "NavigationPrimaryLayerTests/primaryDeepLinkCancellationAndApprovalWaitForTheRootDismissal()",
+      "displayName": "primaryDeepLinkCancellationAndApprovalWaitForTheRootDismissal()",
+      "state": "Passed"
+    },
+    {
+      "target": "NavigationCoreTests",
+      "identifier": "NavigationPrimaryLayerTests/replacingRootThroughEachContextClearsOnlyItsPathAndSurvivesRestoration()",
+      "displayName": "replacingRootThroughEachContextClearsOnlyItsPathAndSurvivesRestoration()",
+      "state": "Passed"
+    },
+    {
+      "target": "NavigationCoreTests",
+      "identifier": "NavigationLayerSnapshotTests/replacedStackRootsAndNestedContainerRoundTripWithoutChangingLayerEntries()",
+      "displayName": "replacedStackRootsAndNestedContainerRoundTripWithoutChangingLayerEntries()",
+      "state": "Passed"
+    },
+    {
+      "target": "NavigationCoreTests",
+      "identifier": "NavigationLayerSnapshotTests/malformedSingleStackLayersAreRejectedAtRootAndAtAnyModalDepth()",
+      "displayName": "malformedSingleStackLayersAreRejectedAtRootAndAtAnyModalDepth()",
+      "state": "Passed"
+    },
+    {
+      "target": "NavigationCoreTests",
+      "identifier": "NavigationLayerSnapshotTests/duplicateModalIdentityIsRejectedBeforeReplacingTheRootLayer()",
+      "displayName": "duplicateModalIdentityIsRejectedBeforeReplacingTheRootLayer()",
+      "state": "Passed"
+    },
+    {
+      "target": "NavigationCoreTests",
+      "identifier": "NavigationLayerSnapshotTests/malformedSingleStackPresentationsLeaveTheCurrentLayerUntouched()",
+      "displayName": "malformedSingleStackPresentationsLeaveTheCurrentLayerUntouched()",
+      "state": "Passed"
+    },
+    {
+      "target": "ChineseCalendarUITests",
+      "identifier": "CalendarNavigationContextTests/rootAndLocalOperationsUseTheSamePathForEveryTab(tab:)",
+      "displayName": ".years",
+      "state": "Passed"
+    },
+    {
+      "target": "ChineseCalendarUITests",
+      "identifier": "CalendarNavigationContextTests/rootAndLocalOperationsUseTheSamePathForEveryTab(tab:)",
+      "displayName": ".history",
+      "state": "Passed"
+    },
+    {
+      "target": "ChineseCalendarUITests",
+      "identifier": "CalendarNavigationContextTests/rootAndLocalOperationsUseTheSamePathForEveryTab(tab:)",
+      "displayName": ".settings",
+      "state": "Passed"
+    },
+    {
+      "target": "ChineseCalendarUITests",
+      "identifier": "CalendarNavigationContextTests/historyModalPushAndNestedPresentationPreserveTabNavigation()",
+      "displayName": "historyModalPushAndNestedPresentationPreserveTabNavigation()",
+      "state": "Passed"
+    },
+    {
+      "target": "ChineseCalendarUITests",
+      "identifier": "CalendarNavigationContextTests/appDeepLinkCancelAndApprovalUseTheCoreTransaction()",
+      "displayName": "appDeepLinkCancelAndApprovalUseTheCoreTransaction()",
+      "state": "Passed"
+    },
+    {
+      "target": "ChineseCalendarUITests",
+      "identifier": "CalendarNavigationContextTests/persistentAddressesRoundTripButTemporarySessionsAreRejected()",
+      "displayName": "persistentAddressesRoundTripButTemporarySessionsAreRejected()",
+      "state": "Passed"
+    },
+    {
+      "target": "ChineseCalendarUITests",
+      "identifier": "CalendarNavigationContextTests/appRootAndTabRootsAreExplicitAndRestoreRequiresEveryTab()",
+      "displayName": "appRootAndTabRootsAreExplicitAndRestoreRequiresEveryTab()",
+      "state": "Passed"
+    },
+    {
+      "target": "ChineseCalendarUITests",
+      "identifier": "CalendarNavigationContextTests/navigationStateAcceptsAppDestinationsWithoutEntryAllowlist(destination:)",
+      "displayName": ".mainTabs",
+      "state": "Passed"
+    },
+    {
+      "target": "ChineseCalendarUITests",
+      "identifier": "CalendarNavigationContextTests/navigationStateAcceptsAppDestinationsWithoutEntryAllowlist(destination:)",
+      "displayName": ".calendarHome",
+      "state": "Passed"
+    },
+    {
+      "target": "ChineseCalendarUITests",
+      "identifier": "CalendarNavigationContextTests/navigationStateAcceptsAppDestinationsWithoutEntryAllowlist(destination:)",
+      "displayName": ".historyHome",
+      "state": "Passed"
+    },
+    {
+      "target": "ChineseCalendarUITests",
+      "identifier": "CalendarNavigationContextTests/navigationStateAcceptsAppDestinationsWithoutEntryAllowlist(destination:)",
+      "displayName": ".settings",
+      "state": "Passed"
+    },
+    {
+      "target": "ChineseCalendarUITests",
+      "identifier": "CalendarNavigationContextTests/mainTabsModalAndItsChildKeepRootSelectionsAndEveryTabPathIndependent()",
+      "displayName": "mainTabsModalAndItsChildKeepRootSelectionsAndEveryTabPathIndependent()",
+      "state": "Passed"
+    },
+    {
+      "target": "ChineseCalendarUITests",
+      "identifier": "CalendarNavigationContextTests/invalidNestedMainTabsCannotBeSavedOrRestored()",
+      "displayName": "invalidNestedMainTabsCannotBeSavedOrRestored()",
+      "state": "Passed"
+    },
+    {
+      "target": "ChineseCalendarUITests",
+      "identifier": "CalendarNavigationContextTests/backgroundPresentationDoesNotLeaveADebugSessionBehind()",
+      "displayName": "backgroundPresentationDoesNotLeaveADebugSessionBehind()",
+      "state": "Passed"
+    },
+    {
+      "target": "ChineseCalendarUITests",
+      "identifier": "CalendarNavigationContextTests/debugRoutesCannotBecomePersistentNavigationState()",
+      "displayName": "debugRoutesCannotBecomePersistentNavigationState()",
+      "state": "Passed"
+    },
+    {
+      "target": "ChineseCalendarUITests",
+      "identifier": "CalendarNavigationContextTests/replacedRootAndModalTabRootsRemainRestorable()",
+      "displayName": "replacedRootAndModalTabRootsRemainRestorable()",
+      "state": "Passed"
+    }
+  ],
+  "fullSummaryLocalPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/RunAllTests/519B5B85-B7F3-45A0-AA9A-C50B28E45572.txt",
+  "fullSummarySHA256": "0d11ec0e828360f817cb2ad9c16b7dc762b977842291dac10fdb7d713c30931a",
+  "xcresultLocalPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/RunAllTests/Test-ChineseCalendar-iOS-2026.10.20_22-30-23-+0800.xcresult"
+}

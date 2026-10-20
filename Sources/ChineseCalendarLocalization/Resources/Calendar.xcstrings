@@ -853,6 +853,30 @@
         }
       }
     },
+    "debug.navigation.mainTabsFullScreen": {
+      "comment": "导航调试菜单中以全屏模态展示独立主标签页的按钮，可在主标签页模态内再次打开。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "全屏打开主标签页"
+          }
+        }
+      }
+    },
+    "debug.navigation.mainTabsSheet": {
+      "comment": "导航调试菜单中以弹窗展示独立主标签页的按钮，用于验证各呈现层的标签和导航路径互不影响。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sheet 打开主标签页"
+          }
+        }
+      }
+    },
     "debug.navigation.message": {
       "comment": "导航测试页说明如何使用页面标识和操作检查作用域、嵌套模态及外部导航。",
       "extractionState": "manual",

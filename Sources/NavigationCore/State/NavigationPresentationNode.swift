@@ -33,12 +33,16 @@ public final class NavigationPresentationNode<
     init(
         id: UUID = UUID(), destination: Destination, style: NavigationPresentationStyle = .sheet,
         initialStack: NavigationStackID<Scope> = .primary,
-        rootDestinations: [NavigationStackID<Scope>: Destination] = [:]
+        rootDestinations: [NavigationStackID<Scope>: Destination] = [:],
+        paths: [NavigationStackID<Scope>: [Destination]] = [:]
     ) {
+        guard let snapshot = NavigationLayerSnapshot<Scope, Destination, AlertRoute>(
+            destination: destination, initialStack: initialStack,
+            rootDestinations: rootDestinations, paths: paths
+        ) else { preconditionFailure("A Core navigation layer requires its primary stack") }
         self.style = style
         layer = NavigationLayer(
-            route: .presentation(id: id, destination: destination), selectedStack: initialStack,
-            roots: destination.providesNavigationContainer ? rootDestinations : [.primary: destination]
+            route: .presentation(id: id, destination: destination), snapshot: snapshot
         )
     }
 

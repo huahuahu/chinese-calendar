@@ -1,0 +1,24 @@
+Device orientation: Portrait
+Application bundle identifier: com.tiger.suzhou.ChineseCalendar
+Application, pid: 32476, label: 'Chinese Calendar'
+              NavigationBar, {{0.0, 82.0}, {440.0, 106.3}}, identifier: '设置', hitPoint: {220.0, 135.2}
+                 Button, {{24.0, 86.0}, {64.3, 36.0}}, label: '关闭', hitPoint: {56.2, 104.0}
+               StaticText, {{20.0, 136.0}, {72.0, 45.7}}, label: '设置', hitPoint: {56.0, 158.8}
+                       StaticText, {{20.0, 188.3}, {400.0, 45.3}}, label: '外观', hitPoint: {220.0, 211.0}
+                       Button, {{40.0, 242.3}, {360.0, 39.3}}, label: '颜色模式、跟随系统', hitPoint: {220.0, 262.0}
+                        StaticText, {{300.7, 249.3}, {80.3, 25.3}}, label: '跟随系统', hitPoint: {340.8, 262.0}
+                       StaticText, {{40.0, 249.2}, {80.3, 25.3}}, label: '颜色模式', hitPoint: {80.2, 261.8}
+                       StaticText, {{20.0, 307.7}, {400.0, 45.3}}, label: '数据', hitPoint: {220.0, 330.3}
+                       StaticText, {{38.7, 372.0}, {226.3, 25.3}}, label: '已安装完整日期数据', hitPoint: {151.8, 384.7}
+                       StaticText, {{40.0, 403.3}, {326.3, 49.0}}, label: '清空后会回到基础数据，日级记录需要重新下载完整数据后才能浏览。', hitPoint: {203.2, 427.8}
+                       Button, {{20.0, 471.3}, {400.0, 56.3}}, label: '清空已下载数据', hitPoint: {220.0, 499.5}
+                        StaticText, {{41.3, 485.0}, {183.7, 29.3}}, label: '清空已下载数据', hitPoint: {133.2, 499.7}
+                       StaticText, {{20.0, 545.0}, {400.0, 45.3}}, label: '调试', hitPoint: {220.0, 567.7}
+                       Button, {{20.0, 590.3}, {400.0, 56.3}}, label: '调试操作', hitPoint: {220.0, 618.5}
+                        Button, {{40.0, 606.0}, {124.7, 25.0}}, hitPoint: {102.3, 618.5}
+                         StaticText, {{39.3, 603.0}, {125.3, 31.0}}, label: '调试操作', hitPoint: {102.0, 618.5}
+                       StaticText, {{20.0, 646.7}, {400.0, 72.3}}, label: '下载调试只模拟进度，不访问网络、写入文件或替换日历数据库。', hitPoint: {220.0, 682.8}
+           TabBar, {{0.0, 873.0}, {440.0, 83.0}}, label: '标签页栏', hitPoint: {220.0, 914.5}
+              Button, {{87.0, 877.0}, {94.0, 54.0}}, identifier: 'calendar', label: '日历', hitPoint: {134.0, 904.0}
+              Button, {{173.0, 877.0}, {94.0, 54.0}}, identifier: 'timeline.selection', label: '朝代', hitPoint: {220.0, 904.0}
+              Button, {{259.0, 877.0}, {94.0, 54.0}}, identifier: 'gearshape', label: '设置', Selected, hitPoint: {306.0, 904.0}
