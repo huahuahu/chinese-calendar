@@ -11,24 +11,27 @@ extension NavigationPresentationContext {
     }
 
     func alertWillDismiss(id: UUID) {
-        guard isActive, let layer, layer.alertSession?.id == id else { return }
-        layer.alertSession?.isClosing = true
+        guard isActive, let layer, let session = layer.alertSession,
+              session.id == id, session.state == .presented else { return }
+        layer.alertSession?.state = .dismissing
         if layer.alert?.id == id { layer.presentedContent = nil }
     }
 
-    /// 关闭回调和业务动作都结束后，释放本次提示。过期回调不能推进新提示。
+    /// 仅从 handlingCompletion 释放会话；宿主须等待业务动作结束后调用。
+    /// 提前、重复或过期回调不能推进后续提示与导航。
     func alertDidDismiss(id: UUID) {
-        guard isActive, let layer, layer.alertSession?.id == id else { return }
+        guard isActive, let layer, let session = layer.alertSession,
+              session.id == id, session.state == .handlingCompletion else { return }
         if layer.alert?.id == id { layer.presentedContent = nil }
         layer.alertSession = nil
         router?.resumePresentations()
     }
 
-    /// 关闭回调只能处理一次，避免异步按钮动作尚未完成时被重复执行。
+    /// UIKit 关闭完成后，仅从 dismissing 取得一次处理权，避免重复执行业务动作。
     func beginAlertCompletion(id: UUID) -> Bool {
         guard isActive, let layer, let session = layer.alertSession,
-              session.id == id, session.isClosing, !session.isHandlingCompletion else { return false }
-        layer.alertSession?.isHandlingCompletion = true
+              session.id == id, session.state == .dismissing else { return false }
+        layer.alertSession?.state = .handlingCompletion
         return true
     }
 }

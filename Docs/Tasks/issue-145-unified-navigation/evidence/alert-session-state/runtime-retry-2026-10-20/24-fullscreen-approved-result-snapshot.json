@@ -1,0 +1,61 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "\n📷 Snapshot UI\n\nTargets (11) — ref|action|role|label|value|id\n  e16|tap|button|导航测试||BackButton\n  e58|tap|button|Push 新测试页||\n  e62|tap|button|Sheet 打开测试页||\n  e67|tap|button|全屏打开测试页||\n  e72|tap|button|显示业务 Alert||\n  e77|tap|button|连续显示两个 Alert||\n  e82|tap|button|从 Alert 按钮跳转||\n  e92|tap|button|Pop 返回上一页||\n  e111|tap|tab|日历|0|calendar\n  e113|tap|tab|朝代|1|timeline.selection\n  e115|tap|tab|设置|0|gearshape\n\nScroll (1) — ref|action|role|label|value|id\n  e1|swipe|application|Chinese Calendar||\n\nTips\n  - Use target refs with tap, type_text, long_press, and touch.\n  - Use scroll refs with swipe.\n  - Refs are snapshot-specific; after snapshot_ui or wait_for_ui, use refs from the latest output.\n  - Use wait_for_ui for text/assertions or changing UI.\n\n✅ Runtime UI snapshot captured with 138 elements, 11 likely targets, and 1 scroll area.\n\nNext steps:\n1. Refresh after layout changes: snapshot_ui({ simulatorId: \"16A9CAA7-45CE-46D5-8915-F61531FC617C\" })\n2. Wait for UI to settle: wait_for_ui({ simulatorId: \"16A9CAA7-45CE-46D5-8915-F61531FC617C\", predicate: \"settled\" })\n3. Batch same-screen taps: batch({ simulatorId: \"16A9CAA7-45CE-46D5-8915-F61531FC617C\", steps: [{\"action\":\"tap\",\"elementRef\":\"e16\"},{\"action\":\"tap\",\"elementRef\":\"e58\"}] })\n4. Tap an elementRef: tap({ simulatorId: \"16A9CAA7-45CE-46D5-8915-F61531FC617C\", elementRef: \"e16\" })\n"
+    }
+  ],
+  "structuredContent": {
+    "schema": "xcodebuildmcp.output.capture-result",
+    "schemaVersion": "2",
+    "didError": false,
+    "error": null,
+    "data": {
+      "summary": {
+        "status": "SUCCEEDED"
+      },
+      "artifacts": {
+        "simulatorId": "16A9CAA7-45CE-46D5-8915-F61531FC617C"
+      },
+      "capture": {
+        "type": "runtime-snapshot",
+        "rs": "1",
+        "screenHash": "0bvfdim",
+        "seq": 24,
+        "count": 138,
+        "targets": [
+          "e16|tap|button|导航测试||BackButton",
+          "e58|tap|button|Push 新测试页||",
+          "e62|tap|button|Sheet 打开测试页||",
+          "e67|tap|button|全屏打开测试页||",
+          "e72|tap|button|显示业务 Alert||",
+          "e77|tap|button|连续显示两个 Alert||",
+          "e82|tap|button|从 Alert 按钮跳转||",
+          "e92|tap|button|Pop 返回上一页||",
+          "e111|tap|tab|日历|0|calendar",
+          "e113|tap|tab|朝代|1|timeline.selection",
+          "e115|tap|tab|设置|0|gearshape"
+        ],
+        "scroll": [
+          "e1|swipe|application|Chinese Calendar||"
+        ],
+        "text": [
+          "e32|text|text|当前作用域||",
+          "e33|text|text|朝代||",
+          "e37|text|text|当前层 Push 页数||",
+          "e38|text|text|3||",
+          "e43|text|text|页面 ID||",
+          "e44|text|text|599A8D29-2961-46DF-9027-0069051A9A83||",
+          "e49|text|text|每次打开生成新的页面 ID。Push 和返回只改变当前层，关闭模态回到父层。可连续打开弹窗或全屏页，再模拟 Deep Link 检查取消与整层关闭。||"
+        ],
+        "udid": "16A9CAA7-45CE-46D5-8915-F61531FC617C"
+      }
+    },
+    "nextSteps": [
+      "Refresh after layout changes: snapshot_ui({ simulatorId: \"16A9CAA7-45CE-46D5-8915-F61531FC617C\" })",
+      "Wait for UI to settle: wait_for_ui({ simulatorId: \"16A9CAA7-45CE-46D5-8915-F61531FC617C\", predicate: \"settled\" })",
+      "Batch same-screen taps: batch({ simulatorId: \"16A9CAA7-45CE-46D5-8915-F61531FC617C\", steps: [{\"action\":\"tap\",\"elementRef\":\"e16\"},{\"action\":\"tap\",\"elementRef\":\"e58\"}] })",
+      "Tap an elementRef: tap({ simulatorId: \"16A9CAA7-45CE-46D5-8915-F61531FC617C\", elementRef: \"e16\" })"
+    ]
+  }
+}

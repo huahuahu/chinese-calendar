@@ -254,6 +254,8 @@ router.submit(.push(.detail("链接目标"), on: .history), confirmIfPresented: 
 
 页面的关闭请求也会等活动 alert／业务动作完成，避免移除仍负责展示提示的页面。关闭后丢弃该层排队的提示，旧 Context 和旧回调不能控制新层。`router.alertRoutes` 可查询当前与排队中的业务路由，供 App 清理临时消息数据；它不包含导航确认。
 
+内部 `NavigationAlertSession` 以单个枚举记录生命周期：`presented → dismissing → handlingCompletion → nil`。`presented` 仅表示会话已占用；`isConfirmation` 独立表示提示种类。宿主通过 `alertWillDismiss` 从 `presented` 开始关闭，在真实 UIKit completion 中调用 `beginAlertCompletion` 从 `dismissing` 取得一次业务动作处理权，等待动作结束后才调用 `alertDidDismiss` 从 `handlingCompletion` 释放会话。各入口同时核对会话 ID 和 Context 有效性；提前、重复或过期回调被忽略，不能跳过阶段、使状态倒退或提前恢复队列。无按钮选择时也遵循同一顺序。
+
 ## 快照与恢复
 
 当 Scope、Destination 和 AlertRoute 都是 Codable 时：
