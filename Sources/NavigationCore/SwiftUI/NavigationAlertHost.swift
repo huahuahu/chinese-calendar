@@ -1,7 +1,11 @@
 import SwiftUI
 
 /// 业务提示和导航确认共用一个系统宿主，每次只展示一个 alert。
-struct NavigationAlertHost<Scope: Hashable, Destination: Hashable, AlertRoute: NavigationAlertRoute>: ViewModifier {
+struct NavigationAlertHost<
+    Scope: Hashable,
+    Destination: NavigationDestination,
+    AlertRoute: NavigationAlertRoute
+>: ViewModifier {
     let context: NavigationPresentationContext<Scope, Destination, AlertRoute>
     let alertContent: (AlertRoute) -> NavigationAlertContent<AlertRoute.Action>?
     let confirmationContent: (NavigationRequest<Scope, Destination>) -> NavigationConfirmationContent?

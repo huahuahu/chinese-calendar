@@ -1,5 +1,9 @@
 /// 页面和 alert 共用的数据入口；只有页面模态需要选择初始导航栈。
-public enum NavigationPresentationRequest<Scope: Hashable, Destination: Hashable, AlertRoute: NavigationAlertRoute> {
+public enum NavigationPresentationRequest<
+    Scope: Hashable,
+    Destination: NavigationDestination,
+    AlertRoute: NavigationAlertRoute
+> {
     case sheet(Destination, initialStack: NavigationStackID<Scope> = .primary)
     case fullScreen(Destination, initialStack: NavigationStackID<Scope> = .primary)
     case alert(AlertRoute)

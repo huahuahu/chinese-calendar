@@ -1,0 +1,135 @@
+2026-10-19 22:45:52.223988+0800 [6013:59616675] [app] Launching iOS app
+
+2026-10-19 22:45:54.564452+0800 [6013:59616675] [persistence] Opening shared SwiftData container
+
+2026-10-19 22:45:54.569571+0800 [6013:59616675] [persistence] Keeping installed full seed store instead of reinstalling bundled base store
+
+2026-10-19 22:45:54.569616+0800 [6013:59616675] [persistence] Bundled seed store is already installed
+
+2026-10-19 22:45:54.569684+0800 [6013:59616675] [persistence] Creating model container at /Users/tigerguo/Library/Developer/CoreSimulator/Devices/16A9CAA7-45CE-46D5-8915-F61531FC617C/data/Containers/Shared/AppGroup/E73729E7-DAAD-45FA-BB30-218203C4D6B9/ChineseCalendarStore/ChineseCalendar.sqlite, allowsSave: false
+
+2026-10-19 22:45:55.138041+0800 [6013:59616675] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:45:55.138225+0800 [6013:59616675] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:45:55.139617+0800 [6013:59616785] [General] Failed to send CA Event for app launch measurements for ca_event_type: 0 event_name: com.apple.app_launch_measurement.FirstFramePresentationMetric
+
+2026-10-19 22:45:55.186901+0800 [6013:59616675] [XPCErrors] non-launching port is incompatible with service identifier "com.apple.PointerUI.pointeruid.default-service"
+
+2026-10-19 22:45:55.239824+0800 [6013:59616675] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:45:55.253926+0800 [6013:59616675] [API] cannot add handler to 0 from 0 - dropping
+
+objc[6013]: Class UIAccessibilityLoaderWebShared is implemented in both /Library/Developer/CoreSimulator/Volumes/iOS_24A434/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 27.0.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebKit.axbundle/WebKit (0x11baa8398) and /Library/Developer/CoreSimulator/Volumes/iOS_24A434/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 27.0.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebCore.axbundle/WebCore (0x11bb9c310). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
+
+2026-10-19 22:45:55.699538+0800 [6013:59616675] [AXValidations] AX Safe category class 'SFBarButtonGroupContainerAccessibility' was not found!
+
+2026-10-19 22:45:56.226536+0800 [6013:59616675] [AXValidations] AX Safe category class 'SLHighlightDisambiguationPillViewAccessibility' was not found!
+
+2026-10-19 22:45:56.274693+0800 [6013:59616789] [General] Failed to send CA Event for app launch measurements for ca_event_type: 1 event_name: com.apple.app_launch_measurement.ExtendedLaunchMetrics
+
+2026-10-19 22:46:33.922724+0800 [6013:59616675] [Invalid Configuration] Update NavigationRequestObserver tried to update multiple times per frame.
+
+2026-10-19 22:46:34.129003+0800 [6013:59616675] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:46:34.131150+0800 [6013:59616675] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:46:34.131208+0800 [6013:59616675] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:46:34.131233+0800 [6013:59616675] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:46:50.779793+0800 [6013:59616675] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:46:50.779939+0800 [6013:59616675] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:46:50.779973+0800 [6013:59616675] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:46:50.820427+0800 [6013:59616675] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:46:50.820514+0800 [6013:59616675] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:46:50.820545+0800 [6013:59616675] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:46:51.303987+0800 [6013:59616675] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:46:51.304097+0800 [6013:59616675] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:46:51.304150+0800 [6013:59616675] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:46:51.304194+0800 [6013:59616675] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:47:40.278672+0800 [6013:59616675] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:47:40.280711+0800 [6013:59616675] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:47:40.280774+0800 [6013:59616675] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:47:40.280802+0800 [6013:59616675] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:48:05.179400+0800 [6013:59616675] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:48:05.180773+0800 [6013:59616675] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:48:05.180847+0800 [6013:59616675] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:48:05.180876+0800 [6013:59616675] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:48:28.990360+0800 [6013:59616675] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:48:28.991580+0800 [6013:59616675] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:48:28.991636+0800 [6013:59616675] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:48:28.991666+0800 [6013:59616675] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:49:01.609190+0800 [6013:59616675] [UILog] Called -[UIContextMenuInteraction updateVisibleMenuWithBlock:] while no context menu is visible. This won't do anything.
+
+2026-10-19 22:51:49.821922+0800 [6013:59616675] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:51:49.822011+0800 [6013:59616675] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:51:49.822190+0800 [6013:59616675] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:51:49.822268+0800 [6013:59616675] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:51:50.350855+0800 [6013:59616675] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:51:50.350966+0800 [6013:59616675] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:51:50.351000+0800 [6013:59616675] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:52:19.510322+0800 [6013:59616675] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:52:19.510421+0800 [6013:59616675] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:52:19.512013+0800 [6013:59616675] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:52:19.512054+0800 [6013:59616675] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:52:19.512080+0800 [6013:59616675] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:52:19.512101+0800 [6013:59616675] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:53:07.247071+0800 [6013:59616675] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:53:07.247180+0800 [6013:59616675] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:53:07.247246+0800 [6013:59616675] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:53:07.247275+0800 [6013:59616675] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:53:07.247298+0800 [6013:59616675] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:53:07.250946+0800 [6013:59616675] [Invalid Configuration] Update NavigationRequestObserver tried to update multiple times per frame.
+
+2026-10-19 22:53:07.851424+0800 [6013:59616675] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:53:07.851567+0800 [6013:59616675] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:53:07.851600+0800 [6013:59616675] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:53:48.978741+0800 [6013:59616675] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:53:48.978840+0800 [6013:59616675] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:53:49.001632+0800 [6013:59616675] [API] cannot add handler to 0 from 0 - dropping

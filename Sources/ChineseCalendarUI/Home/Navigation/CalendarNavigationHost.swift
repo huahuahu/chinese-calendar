@@ -3,10 +3,12 @@ import SwiftData
 import SwiftUI
 
 /// 根呈现宿主独立于数据页面的 identity，使下载完成和外部导航能跨越容器切换。
-private struct CalendarNavigationHost: ViewModifier {
+private struct CalendarNavigationHost<BottomStatusBar: View>: ViewModifier {
     let coordinator: CalendarHomeCoordinator
     let storeCoordinator: ChineseCalendarStoreCoordinator?
     let handlesExternalNavigation: Bool
+    let bottomStatusBarIsPresented: Bool
+    let bottomStatusBar: () -> BottomStatusBar
 
     func body(content: Content) -> some View {
         content
@@ -14,7 +16,8 @@ private struct CalendarNavigationHost: ViewModifier {
                 context: coordinator.router.navigation.rootPresentation,
                 configuration: CalendarNavigationConfiguration(
                     coordinator: coordinator,
-                    storeCoordinator: storeCoordinator
+                    storeCoordinator: storeCoordinator,
+                    bottomStatusBarIsPresented: bottomStatusBarIsPresented, bottomStatusBar: bottomStatusBar
                 )
             )
             .environment(coordinator)
@@ -50,10 +53,24 @@ extension View {
         storeCoordinator: ChineseCalendarStoreCoordinator? = nil,
         handlesExternalNavigation: Bool = false
     ) -> some View {
+        calendarNavigationHost(
+            coordinator: coordinator, storeCoordinator: storeCoordinator,
+            handlesExternalNavigation: handlesExternalNavigation, bottomStatusBarIsPresented: false
+        ) { EmptyView() }
+    }
+
+    func calendarNavigationHost(
+        coordinator: CalendarHomeCoordinator,
+        storeCoordinator: ChineseCalendarStoreCoordinator? = nil,
+        handlesExternalNavigation: Bool = false,
+        bottomStatusBarIsPresented: Bool,
+        @ViewBuilder bottomStatusBar: @escaping () -> some View
+    ) -> some View {
         modifier(CalendarNavigationHost(
             coordinator: coordinator,
             storeCoordinator: storeCoordinator,
-            handlesExternalNavigation: handlesExternalNavigation
+            handlesExternalNavigation: handlesExternalNavigation,
+            bottomStatusBarIsPresented: bottomStatusBarIsPresented, bottomStatusBar: bottomStatusBar
         ))
     }
 }

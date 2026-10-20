@@ -18,7 +18,7 @@ struct CalendarNavigationContextTests {
         #expect(router.currentDestination(on: tab) == .lunarYear(2026))
         router.setPath([], for: tab)
         #expect(context.path.isEmpty)
-        #expect(router.currentDestination(on: tab) == nil)
+        #expect(router.currentDestination(on: tab) == router.navigation.rootDestination(for: tab))
     }
 
     @Test func historyModalPushAndNestedPresentationPreserveTabNavigation() throws {
@@ -73,6 +73,19 @@ struct CalendarNavigationContextTests {
         temporary.presentSheet(.downloadDetails)
         #expect(temporary.restorableSnapshot == nil)
         #expect(!CalendarRouter().restore(temporary.navigation.snapshot))
+    }
+
+    @Test func appRootAndTabRootsAreExplicitAndRestoreRequiresEveryTab() {
+        let router = CalendarRouter()
+        #expect(router.navigation.rootPresentation.destination == .root)
+        #expect(router.navigation.rootDestinations == [
+            .years: .calendarHome, .history: .historyHome, .settings: .settings
+        ])
+        #expect(!router.navigation.context(for: .years).push(.root))
+        #expect(!router.navigation.rootPresentation.present(.root))
+        let before = router.navigation.snapshot
+        #expect(!router.restore(.init(rootDestination: .root, selectedScope: .years)))
+        #expect(router.navigation.snapshot == before)
     }
 
     #if DEBUG

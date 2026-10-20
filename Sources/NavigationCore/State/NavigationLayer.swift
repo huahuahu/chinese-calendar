@@ -7,8 +7,12 @@ import Observation
 /// Router 和模态节点持有这些状态，页面通过对应的 Context 操作它们。
 @MainActor
 @Observable
-final class NavigationLayer<Scope: Hashable, Destination: Hashable, AlertRoute: NavigationAlertRoute> {
-    let id: NavigationLayerID
+final class NavigationLayer<Scope: Hashable, Destination: NavigationDestination, AlertRoute: NavigationAlertRoute> {
+    var route: NavigationLayerRoute<Destination>
+    var id: NavigationLayerID {
+        route.id
+    }
+
     /// 当前选中的导航栈。切换 Tab 时，其他栈已经 push 的页面会保留。
     var selectedStack: NavigationStackID<Scope>
     /// 当前呈现层拥有的导航栈；每个栈分别保存根页面的路由数据和 push 路径。
@@ -70,12 +74,12 @@ final class NavigationLayer<Scope: Hashable, Destination: Hashable, AlertRoute: 
     var isAwaitingDismissal = false
 
     init(
-        id: NavigationLayerID,
+        route: NavigationLayerRoute<Destination>,
         selectedStack: NavigationStackID<Scope> = .primary,
         roots: [NavigationStackID<Scope>: Destination] = [:],
         paths: [NavigationStackID<Scope>: [Destination]] = [:]
     ) {
-        self.id = id
+        self.route = route
         self.selectedStack = selectedStack
         self.roots = roots
         self.paths = paths

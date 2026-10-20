@@ -11,12 +11,14 @@ struct CalendarStoreEnvironmentTests {
     @Test func rootAndModalShareStoreEnvironmentWhileKeepingTheirOwnPresentation() throws {
         let container = try PreviewSampleData.makeModelContainer()
         let expectedYears = try container.mainContext.fetch(FetchDescriptor<ChineseLunarYear>()).count
-        let coordinator = CalendarHomeCoordinator()
+        let router = NavigationRouter<CalendarTab, StoreEnvironmentDestination, CalendarAlert>(
+            rootDestination: .root, selectedScope: .years
+        )
         let store = ChineseCalendarStoreCoordinator(fullStoreConfiguration: nil)
-        let root = coordinator.router.navigation.rootPresentation
-        #expect(root.present(.downloadDetails))
-        let node = try #require(coordinator.router.sheet)
-        let modal = coordinator.router.navigation.presentationContext(for: node)
+        let root = router.rootPresentation
+        #expect(root.present(.probe))
+        let node = try #require(router.sheet)
+        let modal = router.presentationContext(for: node)
         let recorder = StoreEnvironmentRecorder()
         let content = VStack {
             StoreEnvironmentProbe(recorder: recorder)
@@ -40,11 +42,13 @@ struct CalendarStoreEnvironmentTests {
         let first = try PreviewSampleData.makeModelContainer(includesSampleData: false)
         let second = try PreviewSampleData.makeModelContainer()
         let expectedYears = try second.mainContext.fetch(FetchDescriptor<ChineseLunarYear>()).count
-        let coordinator = CalendarHomeCoordinator()
-        let root = coordinator.router.navigation.rootPresentation
-        #expect(root.present(.downloadDetails))
-        let node = try #require(coordinator.router.sheet)
-        let modal = coordinator.router.navigation.presentationContext(for: node)
+        let router = NavigationRouter<CalendarTab, StoreEnvironmentDestination, CalendarAlert>(
+            rootDestination: .root, selectedScope: .years
+        )
+        let root = router.rootPresentation
+        #expect(root.present(.probe))
+        let node = try #require(router.sheet)
+        let modal = router.presentationContext(for: node)
         let recorder = StoreEnvironmentRecorder()
         let content = NavigationPresentationNodeView(node: node, context: modal)
             .navigationHost(context: root, configuration: StoreEnvironmentConfiguration(recorder: recorder))
@@ -65,16 +69,18 @@ struct CalendarStoreEnvironmentTests {
         #expect(expectedYears > 0)
         #expect(recorder.yearCounts.last == expectedYears)
         #expect(Set(recorder.presentations) == [modal.id])
-        #expect(coordinator.router.sheet === node)
+        #expect(router.sheet === node)
         #expect(modal.isActive)
     }
 
     @Test func unavailableStorePreservesAnInheritedPreviewEnvironment() throws {
         let container = try PreviewSampleData.makeModelContainer(includesSampleData: false)
-        let coordinator = CalendarHomeCoordinator()
+        let router = NavigationRouter<CalendarTab, StoreEnvironmentDestination, CalendarAlert>(
+            rootDestination: .root, selectedScope: .years
+        )
         let recorder = StoreEnvironmentRecorder()
         let content = StoreEnvironmentProbe(recorder: recorder)
-            .environment(coordinator.router.navigation.rootPresentation)
+            .environment(router.rootPresentation)
             .calendarStoreEnvironment(state: .starting)
             .modelContainer(container)
             .environment(\.calendarStoreContentLevel, .full)
@@ -95,16 +101,12 @@ private final class StoreEnvironmentRecorder {
 
 private struct StoreEnvironmentConfiguration: @MainActor NavigationHostConfiguration {
     typealias Scope = CalendarTab
-    typealias Destination = CalendarDestination
+    typealias Destination = StoreEnvironmentDestination
     typealias AlertRoute = CalendarAlert
     let recorder: StoreEnvironmentRecorder
 
-    func destination(for destination: CalendarDestination) -> some View {
+    func destination(for destination: StoreEnvironmentDestination) -> some View {
         StoreEnvironmentProbe(recorder: recorder)
-    }
-
-    func providesNavigationStack(for destination: CalendarDestination) -> Bool {
-        false
     }
 }
 
@@ -113,7 +115,8 @@ private struct StoreEnvironmentProbe: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.calendarStoreContentLevel) private var contentLevel
     @Environment(ChineseCalendarStoreCoordinator.self) private var store: ChineseCalendarStoreCoordinator?
-    @Environment(CalendarPresentationContext.self) private var presentation
+    @Environment(NavigationPresentationContext<CalendarTab, StoreEnvironmentDestination, CalendarAlert>
+        .self) private var presentation
     @Query private var years: [ChineseLunarYear]
 
     var body: some View {
@@ -123,5 +126,13 @@ private struct StoreEnvironmentProbe: View {
         recorder.presentations.append(presentation.id)
         recorder.yearCounts.append(years.count)
         return Color.clear.frame(width: 10, height: 10)
+    }
+}
+
+/// ImageRenderer 不渲染 NavigationStack；使用声明自带容器的探针检验模态边界的环境继承。
+private enum StoreEnvironmentDestination: NavigationDestination {
+    case root, probe
+    var providesNavigationContainer: Bool {
+        true
     }
 }

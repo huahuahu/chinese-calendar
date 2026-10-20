@@ -1,5 +1,6 @@
 import ChineseCalendarCore
 import Foundation
+import NavigationCore
 import SwiftUI
 
 /// 显示在应用根视图中，负责组织日历主页、导航与平台布局。
@@ -20,17 +21,13 @@ public struct CalendarHomeView<BottomStatusBar: View>: View {
     }
 
     public var body: some View {
-        CalendarHomeTabView(
-            coordinator: coordinator,
-            settingsCoordinator: settingsCoordinator,
-            bottomStatusBarIsPresented: bottomStatusBarIsPresented,
-            bottomStatusBar: bottomStatusBar
-        )
-        .calendarNavigationHost(
-            coordinator: coordinator,
-            storeCoordinator: settingsCoordinator,
-            handlesExternalNavigation: true
-        )
+        NavigationRootView(context: coordinator.router.navigation.rootPresentation)
+            .calendarNavigationHost(
+                coordinator: coordinator,
+                storeCoordinator: settingsCoordinator,
+                handlesExternalNavigation: true,
+                bottomStatusBarIsPresented: bottomStatusBarIsPresented, bottomStatusBar: bottomStatusBar
+            )
     }
 }
 

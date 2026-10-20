@@ -13,7 +13,11 @@ import Observation
 /// 普通页面内的 push/pop 和 present/dismiss，使用环境中对应的 Context。
 @MainActor
 @Observable
-public final class NavigationRouter<Scope: Hashable, Destination: Hashable, AlertRoute: NavigationAlertRoute> {
+public final class NavigationRouter<
+    Scope: Hashable,
+    Destination: NavigationDestination,
+    AlertRoute: NavigationAlertRoute
+> {
     let rootLayer: NavigationLayer<Scope, Destination, AlertRoute>
     /// 已经接受、正在等待根模态关闭后执行的请求。等待期间，以最新接受的请求为准。
     public private(set) var deferredRequest: NavigationRequest<Scope, Destination>?
@@ -32,18 +36,25 @@ public final class NavigationRouter<Scope: Hashable, Destination: Hashable, Aler
 
     /// 创建 App 根层，并设置初始 Tab、根页面路由和 push 路径，此时没有模态。
     /// - Parameters:
+    ///   - rootDestination: 整个根层的入口页面，不随 Tab 或路径变化。
     ///   - selectedScope: App 根界面初始选中的 Tab 或命名栈。
     ///   - rootDestinations: 各栈根页面的路由数据；由界面直接构建的静态根页可以省略。
     ///   - paths: 各栈初始已经 push 的页面列表；未提供的栈按空路径读取。
     public init(
+        rootDestination: Destination,
         selectedScope: Scope,
         rootDestinations: [Scope: Destination] = [:],
         paths: [Scope: [Destination]] = [:]
     ) {
+        precondition(rootDestination.supportsNavigationEntry(.root))
+        precondition(rootDestinations.values.allSatisfy { $0.supportsNavigationEntry(.stackRoot) })
+        precondition(paths.values.joined().allSatisfy { $0.supportsNavigationEntry(.push) })
         rootLayer = NavigationLayer(
-            id: .root,
+            route: .root(destination: rootDestination),
             selectedStack: .scope(selectedScope),
-            roots: Dictionary(uniqueKeysWithValues: rootDestinations.map { (.scope($0.key), $0.value) }),
+            roots: rootDestination.providesNavigationContainer
+                ? Dictionary(uniqueKeysWithValues: rootDestinations.map { (.scope($0.key), $0.value) })
+                : [.scope(selectedScope): rootDestination],
             paths: Dictionary(uniqueKeysWithValues: paths.map { (.scope($0.key), $0.value) })
         )
     }
@@ -77,7 +88,10 @@ public final class NavigationRouter<Scope: Hashable, Destination: Hashable, Aler
                 return (scope, value)
             })
         }
-        set { rootLayer.paths = Dictionary(uniqueKeysWithValues: newValue.map { (.scope($0.key), $0.value) }) }
+        set {
+            guard newValue.values.joined().allSatisfy({ $0.supportsNavigationEntry(.push) }) else { return }
+            rootLayer.paths = Dictionary(uniqueKeysWithValues: newValue.map { (.scope($0.key), $0.value) })
+        }
     }
 
     /// App 根层直接打开的模态。它还可以继续持有自己的子模态。
@@ -120,6 +134,7 @@ public final class NavigationRouter<Scope: Hashable, Destination: Hashable, Aler
     /// 更新或清除指定根栈的根页面路由数据，并清空该栈的 push 路径，保留当前 Tab 选择。
     /// App 的根页面构建闭包需要读取这项数据，才能据此更新界面。
     public func setRootDestination(_ destination: Destination?, for scope: Scope) {
+        guard destination?.supportsNavigationEntry(.stackRoot) != false else { return }
         let state = rootLayer.stack(for: .scope(scope))
         state.rootDestination = destination
         state.path = []
@@ -132,6 +147,7 @@ public final class NavigationRouter<Scope: Hashable, Destination: Hashable, Aler
 
     /// 替换指定根栈的 push 路径，保留根页面路由数据、当前 Tab 选择和模态。
     public func setPath(_ path: [Destination], for scope: Scope) {
+        guard path.allSatisfy({ $0.supportsNavigationEntry(.push) }) else { return }
         rootLayer.stack(for: .scope(scope)).path = path
     }
 
@@ -143,6 +159,7 @@ public final class NavigationRouter<Scope: Hashable, Destination: Hashable, Aler
     /// 切换到指定根 Tab，再 push 一个页面；省略 scope 时在当前根 Tab 中 push。
     /// 此方法会保留已经打开的模态。需要先确认并关闭模态时，向 submit 提交 .push 请求。
     public func push(_ destination: Destination, on scope: Scope? = nil) {
+        guard destination.supportsNavigationEntry(.push) else { return }
         let targetScope = scope ?? selectedScope
         selectedScope = targetScope
         let state = rootLayer.stack(for: .scope(targetScope))
@@ -196,6 +213,7 @@ public final class NavigationRouter<Scope: Hashable, Destination: Hashable, Aler
         _ request: NavigationRequest<Scope, Destination>,
         confirmIfPresented: Bool = false
     ) -> NavigationRequestResult {
+        guard request.hasValidDestinations else { return .rejected }
         if hasBusinessAlert || (hasActiveAlert && !confirmIfPresented) {
             requestWaitingForAlert = request
             waitingRequestNeedsConfirmation = confirmIfPresented

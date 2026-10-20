@@ -6,7 +6,13 @@ import Foundation
 /// 何时保存、存到哪里、如何升级旧格式，由 App 决定。
 /// 快照包含当前业务提示路由，不包含 View、业务会话、排队请求、按钮动作或关闭动画状态。
 /// App 还需检查路由数据能否重新构建页面，例如临时回调就无法仅凭 ID 恢复。
-public struct NavigationSnapshot<Scope: Hashable, Destination: Hashable, AlertRoute: NavigationAlertRoute> {
+public struct NavigationSnapshot<
+    Scope: Hashable,
+    Destination: NavigationDestination,
+    AlertRoute: NavigationAlertRoute
+> {
+    /// 整个根层的入口，不等于选中 Tab 的根页面。
+    public let rootDestination: Destination
     /// App 根界面选中的 Tab，与模态内部选中了哪个 Tab 无关。
     public let selectedScope: Scope
     /// 根层各栈保存的根页面路由数据；由界面直接构建的静态根页可以不提供。
@@ -17,11 +23,13 @@ public struct NavigationSnapshot<Scope: Hashable, Destination: Hashable, AlertRo
     public let presentation: NavigationPresentationSnapshot<Scope, Destination, AlertRoute>?
 
     public init(
+        rootDestination: Destination,
         selectedScope: Scope,
         rootDestinations: [Scope: Destination] = [:],
         paths: [Scope: [Destination]] = [:],
         presentation: NavigationPresentationSnapshot<Scope, Destination, AlertRoute>? = nil
     ) {
+        self.rootDestination = rootDestination
         self.selectedScope = selectedScope
         self.rootDestinations = rootDestinations
         self.paths = paths
@@ -31,11 +39,21 @@ public struct NavigationSnapshot<Scope: Hashable, Destination: Hashable, AlertRo
     /// 收集快照中所有页面的路由数据，供 App 检查这些页面是否还能恢复。
     /// 结果可能重复，也不保证遍历顺序，不能把它当作用户访问页面的历史记录。
     public var destinations: [Destination] {
-        Array(rootDestinations.values) + paths.values.flatMap(\.self) + (presentation?.destinations ?? [])
+        [rootDestination] + Array(rootDestinations.values) + paths.values
+            .flatMap(\.self) + (presentation?.destinations ?? [])
     }
 
-    /// 检查模态 ID 是否重复；不检查页面数据是否存在，也不检查 App 是否支持这些栈。
+    /// 检查入口、路径与模态 ID；不检查页面数据是否存在，也不检查 App 是否支持这些栈。
     var hasValidPresentationTree: Bool {
+        guard rootDestination.supportsNavigationEntry(.root),
+              rootDestinations.allSatisfy({ scope, destination in
+                  // 普通入口自动成为选中栈的根，不额外要求显式 Tab 根入口权限。
+                  (!rootDestination.providesNavigationContainer && scope == selectedScope &&
+                      destination == rootDestination) || destination.supportsNavigationEntry(.stackRoot)
+              }),
+              paths.values.joined().allSatisfy({ $0.supportsNavigationEntry(.push) }),
+              rootDestination.providesNavigationContainer || rootDestinations[selectedScope] != nil
+        else { return false }
         var identities = Set<UUID>()
         return presentation?.validate(identities: &identities) ?? true
     }
@@ -49,6 +67,7 @@ public extension NavigationRouter {
     /// App 应选择合适的保存时机，并检查快照中的页面是否可以恢复。
     var snapshot: NavigationSnapshot<Scope, Destination, AlertRoute> {
         NavigationSnapshot(
+            rootDestination: rootLayer.route.destination,
             selectedScope: selectedScope,
             rootDestinations: rootDestinations,
             paths: paths,
@@ -68,6 +87,7 @@ public extension NavigationRouter {
         guard !hasActivePresentation, !isAwaitingPresentationDismissal, pendingConfirmation == nil, !hasActiveAlert,
               requestWaitingForAlert == nil,
               snapshot.hasValidPresentationTree else { return false }
+        rootLayer.route = .root(destination: snapshot.rootDestination)
         selectedScope = snapshot.selectedScope
         rootLayer.roots = Dictionary(uniqueKeysWithValues: snapshot.rootDestinations.map { (.scope($0.key), $0.value) })
         paths = snapshot.paths

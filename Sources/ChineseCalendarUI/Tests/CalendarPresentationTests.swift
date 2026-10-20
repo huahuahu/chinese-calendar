@@ -158,7 +158,7 @@ struct CalendarPresentationTests {
             coordinator.presentDownloadPreviewDetails(sessionID: session.id)
             #expect(parent.sheet?.destination == .downloadPreviewDetails(sessionID: session.id))
             #expect(session.stage.progress.downloadFraction == 0.5)
-            #expect(!parent.destination.usesPresentationNavigationStack)
+            #expect(parent.destination.providesNavigationContainer)
 
             try coordinator.router.dismissPresentation(id: #require(parent.sheet).id)
             coordinator.releaseDismissedContexts()

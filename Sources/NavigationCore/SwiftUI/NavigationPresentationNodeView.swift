@@ -4,39 +4,22 @@ import SwiftUI
 /// 页面和策略自动继承根 navigationHost 配置；多 Tab 页面自行创建各栈。
 public struct NavigationPresentationNodeView<
     Scope: Hashable,
-    Destination: Hashable,
+    Destination: NavigationDestination,
     AlertRoute: NavigationAlertRoute
 >: View {
-    private let node: NavigationPresentationNode<Scope, Destination, AlertRoute>
     private let context: NavigationPresentationContext<Scope, Destination, AlertRoute>
-    @Environment(\.[navigation: NavigationConfigurationKey<Scope, Destination, AlertRoute>()]) private var configuration
 
     /// 独立组合时也须位于 navigationHost 的配置环境内。
     public init(
         node: NavigationPresentationNode<Scope, Destination, AlertRoute>,
         context: NavigationPresentationContext<Scope, Destination, AlertRoute>
     ) {
-        self.node = node
+        precondition(context.layer === node.layer)
         self.context = context
     }
 
     public var body: some View {
-        presentationContent
+        NavigationLayerContent(context: context)
             .navigationPresentations(context: context)
-    }
-
-    @ViewBuilder
-    private var presentationContent: some View {
-        if let configuration {
-            if configuration.providesNavigationStack(for: node.destination) {
-                NavigationScopeView(stack: .primary, presentation: context) {
-                    configuration.page(for: node.destination)
-                }
-            } else {
-                configuration.page(for: node.destination)
-            }
-        } else {
-            missingNavigationConfiguration()
-        }
     }
 }

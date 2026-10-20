@@ -1,16 +1,39 @@
+import ChineseCalendarCore
 import ChineseCalendarLocalization
 import SFSafeSymbols
 import SwiftUI
 
 /// 供导航容器使用，将 CalendarDestination 分发到对应页面。
-struct CalendarDestinationView: View {
+struct CalendarDestinationView<BottomStatusBar: View>: View {
     let destination: CalendarDestination
+    let bottomStatusBarIsPresented: Bool
+    let bottomStatusBar: () -> BottomStatusBar
+    @Environment(CalendarHomeCoordinator.self) private var coordinator
     @Environment(CalendarPresentationContext.self) private var presentation
     @Environment(ChineseCalendarStoreCoordinator.self) private var storeCoordinator: ChineseCalendarStoreCoordinator?
 
     var body: some View {
         Group {
             switch destination {
+            case .root:
+                CalendarHomeTabView(
+                    coordinator: coordinator, bottomStatusBarIsPresented: bottomStatusBarIsPresented,
+                    bottomStatusBar: bottomStatusBar
+                )
+            case .calendarHome:
+                LunarYearDestinationView(landing: .year(number: ChineseLunarCalendar.yearNumber()))
+            case .historyHome:
+                CalendarHistoryHomeView()
+            case .settings:
+                if let storeCoordinator {
+                    CalendarSettingsView(coordinator: storeCoordinator, showsDoneButton: false)
+                } else {
+                    ContentUnavailableView {
+                        Label(CalendarStringKey.Settings.Unavailable.title, systemSymbol: .gearshape)
+                    } description: {
+                        Text(CalendarStringKey.Settings.Unavailable.message)
+                    }
+                }
             case let .lunarYear(yearNumber, monthIndex, dayIndex):
                 // 在导航边界选取地址中最具体的定位信息，页面只接收一种落点。
                 let landing: LunarCalendarLanding = if let dayIndex {
@@ -46,6 +69,14 @@ struct CalendarDestinationView: View {
                     CalendarDebugNavigationView(id: id)
                 case let .downloadPreview(sessionID):
                     FullStoreDownloadPreviewDestinationView(sessionID: sessionID)
+                case let .downloadPreviewScenarios(sessionID):
+                    if let state = coordinator.downloadPreviewSessions[sessionID] {
+                        FullStoreDownloadPreviewScenariosView(state: state)
+                    }
+                case .downloadPreviewSwitch:
+                    Text(CalendarStringKey.Settings.Debug.DownloadPreview.switchMessage)
+                        .padding()
+                        .navigationTitle(CalendarStringKey.Settings.Debug.DownloadPreview.switchTab)
                 case let .downloadPreviewDetails(sessionID):
                     FullStoreDownloadPreviewDetailView(sessionID: sessionID)
             #endif
@@ -56,7 +87,7 @@ struct CalendarDestinationView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(.calendarSystemBackground)
         .toolbar {
-            if presentation.isPresented, destination.usesPresentationNavigationStack {
+            if showsDismissButton {
                 if destination.isDownloadDetail {
                     ToolbarItem(placement: .confirmationAction) {
                         Button(
@@ -71,5 +102,10 @@ struct CalendarDestinationView: View {
                 }
             }
         }
+    }
+
+    private var showsDismissButton: Bool {
+        presentation.isPresented && !destination.providesNavigationContainer &&
+            destination.allowedNavigationEntries.contains(.presentation)
     }
 }

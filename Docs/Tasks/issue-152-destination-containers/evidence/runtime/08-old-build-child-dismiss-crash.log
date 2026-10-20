@@ -1,0 +1,181 @@
+2026-10-19 22:15:28.209717+0800 [96003:59540217] [app] Launching iOS app
+
+2026-10-19 22:15:30.580420+0800 [96003:59540217] [persistence] Opening shared SwiftData container
+
+2026-10-19 22:15:30.585366+0800 [96003:59540217] [persistence] Keeping installed full seed store instead of reinstalling bundled base store
+
+2026-10-19 22:15:30.585397+0800 [96003:59540217] [persistence] Bundled seed store is already installed
+
+2026-10-19 22:15:30.585458+0800 [96003:59540217] [persistence] Creating model container at /Users/tigerguo/Library/Developer/CoreSimulator/Devices/16A9CAA7-45CE-46D5-8915-F61531FC617C/data/Containers/Shared/AppGroup/E73729E7-DAAD-45FA-BB30-218203C4D6B9/ChineseCalendarStore/ChineseCalendar.sqlite, allowsSave: false
+
+2026-10-19 22:15:31.158910+0800 [96003:59540217] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:15:31.159112+0800 [96003:59540217] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:15:31.173038+0800 [96003:59540217] [XPCErrors] non-launching port is incompatible with service identifier "com.apple.PointerUI.pointeruid.default-service"
+
+2026-10-19 22:15:31.231930+0800 [96003:59540217] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:15:31.232014+0800 [96003:59540217] [API] cannot add handler to 0 from 0 - dropping
+
+objc[96003]: Class UIAccessibilityLoaderWebShared is implemented in both /Library/Developer/CoreSimulator/Volumes/iOS_24A434/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 27.0.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebKit.axbundle/WebKit (0x10cb6c398) and /Library/Developer/CoreSimulator/Volumes/iOS_24A434/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 27.0.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebCore.axbundle/WebCore (0x11ce5c310). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
+
+2026-10-19 22:15:31.466912+0800 [96003:59540217] [AXValidations] AX Safe category class 'SFBarButtonGroupContainerAccessibility' was not found!
+
+2026-10-19 22:15:32.105637+0800 [96003:59540217] [AXValidations] AX Safe category class 'SLHighlightDisambiguationPillViewAccessibility' was not found!
+
+2026-10-19 22:16:54.800067+0800 [96003:59540217] [Invalid Configuration] Update NavigationRequestObserver tried to update multiple times per frame.
+
+2026-10-19 22:16:54.963485+0800 [96003:59540217] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:16:54.965687+0800 [96003:59540217] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:16:54.965753+0800 [96003:59540217] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:16:54.965780+0800 [96003:59540217] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:17:20.468005+0800 [96003:59540217] [UILog] Called -[UIContextMenuInteraction updateVisibleMenuWithBlock:] while no context menu is visible. This won't do anything.
+
+2026-10-19 22:17:46.258532+0800 [96003:59540217] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:17:46.258627+0800 [96003:59540217] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:17:46.399534+0800 [96003:59540217] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:17:46.399605+0800 [96003:59540217] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:17:46.399632+0800 [96003:59540217] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:17:46.896317+0800 [96003:59540217] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:17:46.896444+0800 [96003:59540217] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:17:46.896476+0800 [96003:59540217] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:17:46.896506+0800 [96003:59540217] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:18:23.779179+0800 [96003:59540217] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:18:23.779309+0800 [96003:59540217] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:18:23.779341+0800 [96003:59540217] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:18:24.263103+0800 [96003:59540217] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:18:24.263185+0800 [96003:59540217] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:18:24.263214+0800 [96003:59540217] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:18:24.263238+0800 [96003:59540217] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:18:42.121007+0800 [96003:59540217] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:18:42.123246+0800 [96003:59540217] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:18:42.123323+0800 [96003:59540217] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:18:42.123352+0800 [96003:59540217] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:18:57.266182+0800 [96003:59540217] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:18:57.266333+0800 [96003:59540217] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:18:57.266364+0800 [96003:59540217] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:18:57.295013+0800 [96003:59540217] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:18:57.295089+0800 [96003:59540217] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:18:57.295118+0800 [96003:59540217] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:18:57.775055+0800 [96003:59540217] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:18:57.775146+0800 [96003:59540217] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:18:57.775186+0800 [96003:59540217] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:18:57.775217+0800 [96003:59540217] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:20:27.978046+0800 [96003:59540217] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:20:27.979187+0800 [96003:59540217] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:20:27.979243+0800 [96003:59540217] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:20:27.979270+0800 [96003:59540217] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:20:54.481561+0800 [96003:59540217] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:20:54.481633+0800 [96003:59540217] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:20:54.481659+0800 [96003:59540217] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:20:54.991410+0800 [96003:59540217] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:20:54.991574+0800 [96003:59540217] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:20:54.991621+0800 [96003:59540217] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:20:54.991657+0800 [96003:59540217] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:21:02.120254+0800 [96003:59540217] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:21:02.120367+0800 [96003:59540217] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:21:02.120404+0800 [96003:59540217] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:21:02.617573+0800 [96003:59540217] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:21:02.617690+0800 [96003:59540217] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:21:02.617734+0800 [96003:59540217] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:21:02.617774+0800 [96003:59540217] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:23:51.163453+0800 [96003:59540217] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:23:51.163546+0800 [96003:59540217] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:23:51.163659+0800 [96003:59540217] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:23:51.163687+0800 [96003:59540217] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:23:51.677782+0800 [96003:59540217] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:23:51.677902+0800 [96003:59540217] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:23:51.677933+0800 [96003:59540217] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:24:27.854727+0800 [96003:59540217] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:24:27.854851+0800 [96003:59540217] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:24:27.856642+0800 [96003:59540217] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:24:27.856698+0800 [96003:59540217] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:24:27.856723+0800 [96003:59540217] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:24:27.856748+0800 [96003:59540217] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:26:14.348768+0800 [96003:59540217] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:26:14.348860+0800 [96003:59540217] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:26:14.348923+0800 [96003:59540217] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:26:14.348952+0800 [96003:59540217] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:26:14.348980+0800 [96003:59540217] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:26:14.352328+0800 [96003:59540217] [Invalid Configuration] Update NavigationRequestObserver tried to update multiple times per frame.
+
+2026-10-19 22:26:14.961699+0800 [96003:59540217] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:26:14.961992+0800 [96003:59540217] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 22:26:14.962064+0800 [96003:59540217] [API] cannot add handler to 0 from 0 - dropping
+
+NavigationCore/NavigationLayerContent.swift:35: Fatal error: A routed navigation stack requires a root Destination.
+
+The connection to the application standard output has been closed.
