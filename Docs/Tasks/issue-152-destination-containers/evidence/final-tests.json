@@ -1,0 +1,30 @@
+{
+  "recordedAt": "2026-10-19T23:11:02+08:00",
+  "tool": "mcp__xcode__RunAllTests",
+  "workspaceIdentifier": "workspace-HonVqR7yYU",
+  "projectPath": "/Users/tigerguo/.codex/worktrees/a195/Chinese-date/ChineseCalendar.xcodeproj",
+  "scheme": "ChineseCalendar-iOS",
+  "simulator": {
+    "name": "chinesedate iPhone 18 Pro Max (885f)",
+    "id": "16A9CAA7-45CE-46D5-8915-F61531FC617C",
+    "runtime": "iOS 27.0",
+    "sdk": "iOS 27.1"
+  },
+  "sourceManifest": "source-manifest.json",
+  "sourceFingerprintSHA256": "120cfdd26069afa7593ac0a3b60eaaacadc095dc3409e5818a755b7b0a15f93c",
+  "counts": {
+    "expectedFailures": 0,
+    "failed": 0,
+    "notRun": 0,
+    "passed": 300,
+    "skipped": 0,
+    "total": 300
+  },
+  "summary": "300 tests: 300 passed, 0 failed, 0 skipped, 0 expected failures, 0 not run",
+  "savedFullSummary": "final-tests-summary.txt",
+  "originalArtifacts": {
+    "fullSummaryPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/RunAllTests/9BA7D100-154E-4A58-85FA-36F754F9991D.txt",
+    "fullConsoleLogsPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/RunAllTests/test-console-log-2026-10-19T23-10-42+08-00.txt",
+    "xcresultBundlePath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/RunAllTests/Test-ChineseCalendar-iOS-2026.10.19_23-10-42-+0800.xcresult"
+  }
+}

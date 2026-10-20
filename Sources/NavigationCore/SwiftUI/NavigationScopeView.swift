@@ -9,13 +9,13 @@ import SwiftUI
 /// 模态展示由所属层的 navigationPresentations 统一处理，各 Tab 无需分别挂载。
 public struct NavigationScopeView<
     Scope: Hashable,
-    Destination: Hashable,
+    Destination: NavigationDestination,
     AlertRoute: NavigationAlertRoute,
     Root: View
 >: View {
     @Bindable private var context: NavigationContext<Scope, Destination>
     private let presentation: NavigationPresentationContext<Scope, Destination, AlertRoute>
-    private let root: () -> Root
+    private let root: (() -> Root)?
     @Environment(\.[navigation: NavigationConfigurationKey<Scope, Destination, AlertRoute>()]) private var configuration
 
     /// - Parameters:
@@ -44,7 +44,7 @@ public struct NavigationScopeView<
     public var body: some View {
         if let configuration {
             NavigationStack(path: $context.path) {
-                root()
+                rootContent
                     .navigationDestination(for: Destination.self) { destination in
                         configuration.page(for: destination)
                     }
@@ -54,5 +54,26 @@ public struct NavigationScopeView<
         } else {
             missingNavigationConfiguration()
         }
+    }
+
+    @ViewBuilder
+    private var rootContent: some View {
+        if let root {
+            root()
+        } else if let destination = context.rootDestination, let configuration {
+            configuration.page(for: destination)
+        } else if context.isActive {
+            missingNavigationRoot()
+        }
+    }
+
+    /// 生产页面从栈状态读取根 Destination，统一交给宿主配置构建。
+    public init(
+        stack: NavigationStackID<Scope>,
+        presentation: NavigationPresentationContext<Scope, Destination, AlertRoute>
+    ) where Root == EmptyView {
+        context = presentation.context(for: stack)
+        self.presentation = presentation
+        root = nil
     }
 }

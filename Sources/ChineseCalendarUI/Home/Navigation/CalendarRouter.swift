@@ -58,7 +58,9 @@ final class CalendarRouter {
 
     @discardableResult
     func restore(_ snapshot: NavigationSnapshot<CalendarTab, CalendarDestination, CalendarAlert>) -> Bool {
-        guard snapshot.destinations.allSatisfy(\.supportsStateRestoration),
+        guard snapshot.rootDestination == .root,
+              Set(snapshot.rootDestinations.keys) == Set(CalendarTab.allCases),
+              snapshot.destinations.allSatisfy(\.supportsStateRestoration),
               snapshot.presentation?.alerts.isEmpty ?? true else { return false }
         return navigation.restore(snapshot)
     }
@@ -69,7 +71,8 @@ final class CalendarRouter {
         historyPath: [CalendarDestination] = []
     ) {
         navigation = NavigationRouter(
-            selectedScope: selectedTab,
+            rootDestination: .root, selectedScope: selectedTab,
+            rootDestinations: [.years: .calendarHome, .history: .historyHome, .settings: .settings],
             paths: [.years: yearsPath, .history: historyPath]
         )
     }

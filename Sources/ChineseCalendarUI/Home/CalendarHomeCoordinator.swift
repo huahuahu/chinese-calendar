@@ -108,14 +108,17 @@ final class CalendarHomeCoordinator {
             guard !router.isAwaitingPresentationDismissal, downloadPreviewSessions.isEmpty else { return }
             let session = FullStoreDownloadPreviewState()
             downloadPreviewSessions[session.id] = session
-            if let presentation {
-                if !presentation.present(
-                    .downloadPreview(sessionID: session.id), style: .fullScreen, initialStack: .scope(.years)
-                ) {
-                    downloadPreviewSessions[session.id] = nil
-                }
-            } else {
-                router.presentFullScreen(.downloadPreview(sessionID: session.id), initialStack: .scope(.years))
+            let entry = presentation ?? router.navigation.frontmostPresentationNode.map {
+                router.navigation.presentationContext(for: $0)
+            } ?? router.navigation.rootPresentation
+            if !entry.present(
+                .downloadPreview(sessionID: session.id), style: .fullScreen, initialStack: .scope(.years),
+                rootDestinations: [
+                    .scope(.years): .downloadPreviewScenarios(sessionID: session.id),
+                    .scope(.history): .downloadPreviewSwitch
+                ]
+            ) {
+                downloadPreviewSessions[session.id] = nil
             }
         }
 

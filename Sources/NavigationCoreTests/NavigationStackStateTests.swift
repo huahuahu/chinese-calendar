@@ -8,7 +8,13 @@ import Testing
 @Suite("独立栈状态与访问约束")
 struct NavigationStackStateTests {
     private enum Tab: String, Codable { case home, history }
-    private enum Route: String, Codable { case first, second, third }
+    private enum Route: String, Codable, NavigationDestination {
+        case root, first, second, third
+        var providesNavigationContainer: Bool {
+            self == .root
+        }
+    }
+
     private typealias Router = NavigationRouter<Tab, Route, NoNavigationAlert>
 
     @Test func contextWorksWithoutRouterOrPresentationLayer() {
@@ -43,7 +49,12 @@ struct NavigationStackStateTests {
     }
 
     @Test func replacingAllPathsKeepsExistingContextsConnected() {
-        let router = Router(selectedScope: .home, rootDestinations: [.home: .first], paths: [.home: [.second]])
+        let router = Router(
+            rootDestination: .root,
+            selectedScope: .home,
+            rootDestinations: [.home: .first],
+            paths: [.home: [.second]]
+        )
         let home = router.context(for: .home)
         let history = router.context(for: .history)
         router.paths = [.history: [.third]]
@@ -65,7 +76,7 @@ struct NavigationStackStateTests {
     }
 
     @Test func acquiringContextsDoesNotWriteEmptyPathsIntoSnapshots() throws {
-        let router = Router(selectedScope: .home, paths: [.history: []])
+        let router = Router(rootDestination: .root, selectedScope: .home, paths: [.history: []])
         router.presentSheet(.first)
         let before = router.snapshot
         _ = router.context(for: .home)
@@ -79,13 +90,13 @@ struct NavigationStackStateTests {
 
         let bytes = try JSONEncoder().encode(before)
         let saved = try JSONDecoder().decode(NavigationSnapshot<Tab, Route, NoNavigationAlert>.self, from: bytes)
-        let restored = Router(selectedScope: .history)
+        let restored = Router(rootDestination: .root, selectedScope: .history)
         #expect(restored.restore(saved))
         #expect(restored.snapshot == before)
     }
 
     @Test func observingAPathTracksThatStackInsteadOfEveryTabsPath() {
-        let router = Router(selectedScope: .home)
+        let router = Router(rootDestination: .root, selectedScope: .home)
         let home = router.context(for: .home)
         let history = router.context(for: .history)
         let changes = Mutex(0)
@@ -102,10 +113,10 @@ struct NavigationStackStateTests {
     }
 
     @Test func rootContextRemainsConnectedAfterSnapshotRestoration() {
-        let router = Router(selectedScope: .home, paths: [.home: [.first]])
+        let router = Router(rootDestination: .root, selectedScope: .home, paths: [.home: [.first]])
         let home = router.context(for: .home)
         let history = router.context(for: .history)
-        #expect(router.restore(.init(selectedScope: .history, paths: [.history: [.second]])))
+        #expect(router.restore(.init(rootDestination: .root, selectedScope: .history, paths: [.history: [.second]])))
         #expect(home === router.context(for: .home))
         #expect(history === router.context(for: .history))
         #expect(home.path.isEmpty)
@@ -115,7 +126,7 @@ struct NavigationStackStateTests {
     }
 
     @Test func rootStackWritesRespectConfirmationAndDismissalTransactions() throws {
-        let router = Router(selectedScope: .home, paths: [.home: [.first]])
+        let router = Router(rootDestination: .root, selectedScope: .home, paths: [.home: [.first]])
         let home = router.context(for: .home)
         router.presentSheet(.second)
         router.submit(.replacePath([.third], on: .home), confirmIfPresented: true)

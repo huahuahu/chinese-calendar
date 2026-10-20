@@ -1,5 +1,6 @@
 import ChineseCalendarLocalization
 import ChineseCalendarPersistence
+import NavigationCore
 import SFSafeSymbols
 import SwiftUI
 
@@ -43,8 +44,13 @@ public struct ChineseCalendarRootView: View {
         .calendarNavigationHost(
             coordinator: homeCoordinator,
             storeCoordinator: coordinator,
-            handlesExternalNavigation: true
-        )
+            handlesExternalNavigation: true,
+            bottomStatusBarIsPresented: rootBottomStatusBarIsPresented
+        ) {
+            if case let .ready(_, contentLevel, _) = coordinator.state {
+                bottomStatusBar(contentLevel: contentLevel)
+            }
+        }
         .calendarStoreEnvironment(state: coordinator.state)
     }
 
@@ -52,14 +58,13 @@ public struct ChineseCalendarRootView: View {
         contentLevel: ChineseCalendarSeedStoreContentLevel,
         identityToken: String?
     ) -> some View {
-        CalendarHomeTabView(
-            coordinator: homeCoordinator,
-            settingsCoordinator: coordinator,
-            bottomStatusBarIsPresented: bottomStatusBarIsPresented(contentLevel: contentLevel)
-        ) {
-            bottomStatusBar(contentLevel: contentLevel)
-        }
-        .id(coordinator.storeIdentity(contentLevel: contentLevel, identityToken: identityToken))
+        NavigationRootView(context: homeCoordinator.router.navigation.rootPresentation)
+            .id(coordinator.storeIdentity(contentLevel: contentLevel, identityToken: identityToken))
+    }
+
+    private var rootBottomStatusBarIsPresented: Bool {
+        guard case let .ready(_, contentLevel, _) = coordinator.state else { return false }
+        return bottomStatusBarIsPresented(contentLevel: contentLevel)
     }
 
     private func bottomStatusBarIsPresented(contentLevel: ChineseCalendarSeedStoreContentLevel) -> Bool {

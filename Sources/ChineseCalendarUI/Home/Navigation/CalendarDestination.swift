@@ -1,6 +1,11 @@
 import Foundation
+import NavigationCore
 
-enum CalendarDestination: Codable, Hashable, Identifiable {
+enum CalendarDestination: Codable, NavigationDestination, Identifiable {
+    case root
+    case calendarHome
+    case historyHome
+    case settings
     case lunarYear(Int, monthIndex: Int? = nil, dayIndex: Int? = nil)
     case dynasty(orthodoxPeriodID: String)
     case emperorList(dynastyID: String)
@@ -13,11 +18,17 @@ enum CalendarDestination: Codable, Hashable, Identifiable {
     #if DEBUG
         case debugNavigation(id: UUID)
         case downloadPreview(sessionID: UUID)
+        case downloadPreviewScenarios(sessionID: UUID)
+        case downloadPreviewSwitch
         case downloadPreviewDetails(sessionID: UUID)
     #endif
 
     var id: String {
         switch self {
+        case .root: "root"
+        case .calendarHome: "calendar-home"
+        case .historyHome: "history-home"
+        case .settings: "settings"
         case let .lunarYear(yearNumber, monthIndex, dayIndex):
             "lunar-year-\(yearNumber)-\(monthIndex.map(String.init) ?? "none")-\(dayIndex.map(String.init) ?? "none")"
         case let .dynasty(orthodoxPeriodID):
@@ -41,6 +52,10 @@ enum CalendarDestination: Codable, Hashable, Identifiable {
                 "debug-navigation-\(id)"
             case let .downloadPreview(sessionID):
                 "download-preview-\(sessionID)"
+            case let .downloadPreviewScenarios(sessionID):
+                "download-preview-scenarios-\(sessionID)"
+            case .downloadPreviewSwitch:
+                "download-preview-switch"
             case let .downloadPreviewDetails(sessionID):
                 "download-preview-details-\(sessionID)"
         #endif
@@ -56,11 +71,24 @@ enum CalendarDestination: Codable, Hashable, Identifiable {
         }
     }
 
-    var usesPresentationNavigationStack: Bool {
+    var providesNavigationContainer: Bool {
+        if case .root = self { return true }
         #if DEBUG
-            if case .downloadPreview = self { return false }
+            if case .downloadPreview = self { return true }
         #endif
-        return true
+        return false
+    }
+
+    var allowedNavigationEntries: Set<NavigationDestinationEntry> {
+        switch self {
+        case .root: [.root]
+        case .calendarHome, .historyHome, .settings: [.stackRoot]
+        #if DEBUG
+            case .downloadPreview: [.presentation]
+            case .downloadPreviewScenarios, .downloadPreviewSwitch: [.stackRoot]
+        #endif
+        default: [.stackRoot, .presentation, .push]
+        }
     }
 
     /// 临时会话依赖当前进程中的回调或下载状态，不能仅凭 ID 跨启动重建。
@@ -69,7 +97,8 @@ enum CalendarDestination: Codable, Hashable, Identifiable {
         case .yearPicker, .downloadDetails:
             false
         #if DEBUG
-            case .debugNavigation, .downloadPreview, .downloadPreviewDetails:
+            case .debugNavigation, .downloadPreview, .downloadPreviewScenarios, .downloadPreviewSwitch,
+                 .downloadPreviewDetails:
                 false
         #endif
         default:

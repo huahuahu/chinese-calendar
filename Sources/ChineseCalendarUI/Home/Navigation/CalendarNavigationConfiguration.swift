@@ -2,20 +2,21 @@ import NavigationCore
 import SwiftUI
 
 /// 日历导航树的 View 配置；具体页面的 selection、ModelContext 和回调仍由发起作用域提供。
-struct CalendarNavigationConfiguration: @MainActor NavigationHostConfiguration {
+struct CalendarNavigationConfiguration<BottomStatusBar: View>: @MainActor NavigationHostConfiguration {
     typealias Scope = CalendarTab
     typealias Destination = CalendarDestination
     typealias AlertRoute = CalendarAlert
 
     let coordinator: CalendarHomeCoordinator
     let storeCoordinator: ChineseCalendarStoreCoordinator?
+    let bottomStatusBarIsPresented: Bool
+    let bottomStatusBar: () -> BottomStatusBar
 
     func destination(for destination: CalendarDestination) -> some View {
-        CalendarDestinationView(destination: destination)
-    }
-
-    func providesNavigationStack(for destination: CalendarDestination) -> Bool {
-        destination.usesPresentationNavigationStack
+        CalendarDestinationView(
+            destination: destination, bottomStatusBarIsPresented: bottomStatusBarIsPresented,
+            bottomStatusBar: bottomStatusBar
+        )
     }
 
     func confirmationContent(

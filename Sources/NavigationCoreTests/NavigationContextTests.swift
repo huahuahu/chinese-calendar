@@ -6,11 +6,17 @@ import Testing
 @Suite("局部 Router 与导航事务")
 struct NavigationContextTests {
     private enum Tab: String, Codable { case home, history }
-    private enum Route: String, Codable { case first, second, third }
+    private enum Route: String, Codable, NavigationDestination {
+        case root, tabs, first, second, third
+        var providesNavigationContainer: Bool {
+            self == .root || self == .tabs
+        }
+    }
+
     private typealias Router = NavigationRouter<Tab, Route, NoNavigationAlert>
 
     @Test func localOperationsKeepTabAndModalPathsIndependent() throws {
-        let router = Router(selectedScope: .history, paths: [.home: [.third]])
+        let router = Router(rootDestination: .root, selectedScope: .history, paths: [.home: [.third]])
         let history = router.context(for: .history)
         let presentation = router.rootPresentation.scoped(to: .scope(.history))
         #expect(history === router.context(for: .history))
@@ -29,7 +35,7 @@ struct NavigationContextTests {
     }
 
     @Test func childDismissalPreservesParentAndBlocksReopenUntilCompletion() throws {
-        let router = Router(selectedScope: .home)
+        let router = Router(rootDestination: .root, selectedScope: .home)
         #expect(router.rootPresentation.present(.first))
         let parent = try #require(router.sheet)
         let context = router.context(for: parent)
@@ -57,7 +63,7 @@ struct NavigationContextTests {
     }
 
     @Test func inactiveTabCannotPresentOverCurrentTab() {
-        let router = Router(selectedScope: .home)
+        let router = Router(rootDestination: .root, selectedScope: .home)
         let history = router.rootPresentation.scoped(to: .scope(.history))
         #expect(!history.present(.first))
         #expect(router.sheet == nil)
@@ -67,7 +73,7 @@ struct NavigationContextTests {
     }
 
     @Test func separateContextsDoNotKeepTheRouterAlive() throws {
-        var router: Router? = Router(selectedScope: .home)
+        var router: Router? = Router(rootDestination: .root, selectedScope: .home)
         weak var weakRouter = router
         let navigation = try #require(router?.context(for: .home))
         let presentation = try #require(router?.rootPresentation.scoped(to: .scope(.home)))
@@ -83,7 +89,7 @@ struct NavigationContextTests {
 
     @Test(arguments: [NavigationPresentationStyle.sheet, .fullScreen])
     func rootDismissalWithoutRequestAllowsReopening(style: NavigationPresentationStyle) throws {
-        let router = Router(selectedScope: .home)
+        let router = Router(rootDestination: .root, selectedScope: .home)
         let home = router.rootPresentation.scoped(to: .scope(.home))
         home.present(.first, style: style)
         let modal = try router.presentationContext(for: #require(router.frontmostPresentationNode))
@@ -96,7 +102,7 @@ struct NavigationContextTests {
     }
 
     @Test func confirmationIsVisibleOnlyOnTopModalAndCancelKeepsTheTree() throws {
-        let router = Router(selectedScope: .home, paths: [.home: [.first]])
+        let router = Router(rootDestination: .root, selectedScope: .home, paths: [.home: [.first]])
         router.presentSheet(.second)
         let parent = try #require(router.sheet)
         let context = router.presentationContext(for: parent)
@@ -119,7 +125,7 @@ struct NavigationContextTests {
     }
 
     @Test func approvalWaitsForRootDismissalAndRejectsChildCompletion() throws {
-        let router = Router(selectedScope: .home, paths: [.home: [.first]])
+        let router = Router(rootDestination: .root, selectedScope: .home, paths: [.home: [.first]])
         router.presentSheet(.second)
         let parentContext = try router.presentationContext(for: #require(router.sheet))
         parentContext.present(.third)
@@ -140,7 +146,7 @@ struct NavigationContextTests {
     }
 
     @Test func repeatedAndReplacedRequestsCannotReuseOldApproval() throws {
-        let router = Router(selectedScope: .home)
+        let router = Router(rootDestination: .root, selectedScope: .home)
         router.presentSheet(.first)
         router.submit(.push(.second, on: .home), confirmIfPresented: true)
         let original = try #require(router.pendingConfirmation)
@@ -160,7 +166,7 @@ struct NavigationContextTests {
     }
 
     @Test func requestDuringApprovedDismissalRequiresItsOwnApproval() throws {
-        let router = Router(selectedScope: .home)
+        let router = Router(rootDestination: .root, selectedScope: .home)
         router.presentSheet(.first)
         router.submit(.push(.second, on: .home), confirmIfPresented: true)
         try router.confirmNavigation(id: #require(router.pendingConfirmation).id)
@@ -175,7 +181,7 @@ struct NavigationContextTests {
     }
 
     @Test func disappearingModalDoesNotImplicitlyApprovePendingRequest() throws {
-        let router = Router(selectedScope: .home)
+        let router = Router(rootDestination: .root, selectedScope: .home)
         router.presentSheet(.first)
         let modal = try router.presentationContext(for: #require(router.sheet))
         router.submit(.push(.second, on: .history), confirmIfPresented: true)
@@ -193,14 +199,19 @@ struct NavigationContextTests {
     }
 
     @Test func coldRequestDoesNotRequireConfirmation() {
-        let router = Router(selectedScope: .home)
+        let router = Router(rootDestination: .root, selectedScope: .home)
         #expect(router.submit(.push(.first, on: .history), confirmIfPresented: true) == .applied)
         #expect(router.pendingConfirmation == nil)
         #expect(router.path(for: .history) == [.first])
     }
 
     @Test func snapshotRoundTripRestoresIdentityAndIndependentNavigation() throws {
-        let source = Router(selectedScope: .history, rootDestinations: [.home: .first], paths: [.history: [.second]])
+        let source = Router(
+            rootDestination: .root,
+            selectedScope: .history,
+            rootDestinations: [.home: .first],
+            paths: [.history: [.second]]
+        )
         source.presentSheet(.third)
         let parent = try #require(source.sheet)
         let parentContext = source.context(for: parent)
@@ -208,7 +219,7 @@ struct NavigationContextTests {
         source.presentationContext(for: parent).present(.second, style: .fullScreen)
         let bytes = try JSONEncoder().encode(source.snapshot)
         let decoded = try JSONDecoder().decode(NavigationSnapshot<Tab, Route, NoNavigationAlert>.self, from: bytes)
-        let restored = Router(selectedScope: .home)
+        let restored = Router(rootDestination: .root, selectedScope: .home)
         #expect(restored.restore(decoded))
         #expect(restored.snapshot == source.snapshot)
         let restoredParent = try #require(restored.sheet)
@@ -222,7 +233,7 @@ struct NavigationContextTests {
     }
 
     @Test func restoreRejectsBusyStateAndStaleContextWithReusedID() throws {
-        let router = Router(selectedScope: .home)
+        let router = Router(rootDestination: .root, selectedScope: .home)
         router.presentSheet(.first)
         let original = try #require(router.sheet)
         let oldContext = router.context(for: original)
@@ -243,23 +254,26 @@ struct NavigationContextTests {
     }
 
     @Test func malformedSnapshotsAreRejectedWithoutPartialMutation() {
-        let router = Router(selectedScope: .home, paths: [.home: [.first]])
+        let router = Router(rootDestination: .root, selectedScope: .home, paths: [.home: [.first]])
         let before = router.snapshot
         let id = UUID()
         let child = NavigationPresentationSnapshot<Tab, Route, NoNavigationAlert>.node(
-            id: id, destination: .second, style: .sheet, layer: .init()
+            id: id, destination: .second, style: .sheet, layer: .init(rootDestinations: [.primary: .second])
         )
         let duplicate = NavigationPresentationSnapshot<Tab, Route, NoNavigationAlert>.node(
-            id: id, destination: .third, style: .fullScreen, layer: .init(presentation: child)
+            id: id, destination: .third, style: .fullScreen, layer: .init(
+                rootDestinations: [.primary: .third],
+                presentation: child
+            )
         )
-        #expect(!router.restore(.init(selectedScope: .history, presentation: duplicate)))
+        #expect(!router.restore(.init(rootDestination: .root, selectedScope: .history, presentation: duplicate)))
         #expect(router.snapshot == before)
     }
 }
 
 extension NavigationContextTests {
     @Test func tabsSharePresentationStateButHaveIndependentStacks() throws {
-        let router = Router(selectedScope: .home)
+        let router = Router(rootDestination: .root, selectedScope: .home)
         let home = router.context(for: .home)
         let history = router.context(for: .history)
         let homePresentation = router.rootPresentation.scoped(to: .scope(.home))
@@ -279,8 +293,8 @@ extension NavigationContextTests {
     }
 
     @Test func modalTabsShareTheirLayerWithoutSharingRootPaths() throws {
-        let router = Router(selectedScope: .home, paths: [.home: [.third]])
-        router.rootPresentation.present(.first, initialStack: .scope(.home))
+        let router = Router(rootDestination: .root, selectedScope: .home, paths: [.home: [.third]])
+        router.rootPresentation.present(.tabs, initialStack: .scope(.home))
         let node = try #require(router.presentedNode)
         let layer = router.presentationContext(for: node)
         let home = layer.context(for: .scope(.home))
@@ -306,7 +320,7 @@ extension NavigationContextTests {
 
     @Test(arguments: [NavigationPresentationStyle.sheet, .fullScreen])
     func eachLayerAcceptsOnlyOneChildUntilDismissalCompletes(style: NavigationPresentationStyle) throws {
-        let router = Router(selectedScope: .home)
+        let router = Router(rootDestination: .root, selectedScope: .home)
         let root = router.rootPresentation
         #expect(root.present(.first, style: style))
         let original = try #require(root.presentedNode)
@@ -322,8 +336,8 @@ extension NavigationContextTests {
     }
 
     @Test func snapshotRestoresAllModalStacksAndTheirSelectedStack() throws {
-        let source = Router(selectedScope: .history, paths: [.home: [.third]])
-        source.rootPresentation.present(.first, style: .fullScreen, initialStack: .scope(.home))
+        let source = Router(rootDestination: .root, selectedScope: .history, paths: [.home: [.third]])
+        source.rootPresentation.present(.tabs, style: .fullScreen, initialStack: .scope(.home))
         let parent = try #require(source.presentedNode)
         let layer = source.presentationContext(for: parent)
         layer.context(for: .scope(.home)).push(.second)
@@ -332,7 +346,7 @@ extension NavigationContextTests {
         layer.present(.second)
         let bytes = try JSONEncoder().encode(source.snapshot)
         let snapshot = try JSONDecoder().decode(NavigationSnapshot<Tab, Route, NoNavigationAlert>.self, from: bytes)
-        let restored = Router(selectedScope: .home)
+        let restored = Router(rootDestination: .root, selectedScope: .home)
         #expect(restored.restore(snapshot))
         let restoredParent = try #require(restored.presentedNode)
         let restoredLayer = restored.presentationContext(for: restoredParent)
@@ -346,8 +360,8 @@ extension NavigationContextTests {
     }
 
     @Test func staleLayerCannotReacquireStacksAfterRestoreWithTheSameID() throws {
-        let router = Router(selectedScope: .home)
-        router.rootPresentation.present(.first, initialStack: .scope(.home))
+        let router = Router(rootDestination: .root, selectedScope: .home)
+        router.rootPresentation.present(.tabs, initialStack: .scope(.home))
         let node = try #require(router.presentedNode)
         let oldLayer = router.presentationContext(for: node)
         let oldStack = oldLayer.context(for: .scope(.home))
@@ -369,8 +383,8 @@ extension NavigationContextTests {
     }
 
     @Test func modalTabConfirmationUsesTheLayerAndCancellationPreservesEveryStack() throws {
-        let router = Router(selectedScope: .home)
-        router.rootPresentation.present(.first, initialStack: .scope(.home))
+        let router = Router(rootDestination: .root, selectedScope: .home)
+        router.rootPresentation.present(.tabs, initialStack: .scope(.home))
         let parent = try #require(router.presentedNode)
         let layer = router.presentationContext(for: parent)
         layer.context(for: .scope(.home)).push(.second)

@@ -2,7 +2,11 @@
 ///
 /// 这里记录所有栈，包括未选中的 Tab，因此恢复后可以保留每个 Tab 的导航历史。
 /// 模态本身的页面路由、ID 和展示方式保存在外层 NavigationPresentationSnapshot 中。
-public struct NavigationLayerSnapshot<Scope: Hashable, Destination: Hashable, AlertRoute: NavigationAlertRoute> {
+public struct NavigationLayerSnapshot<
+    Scope: Hashable,
+    Destination: NavigationDestination,
+    AlertRoute: NavigationAlertRoute
+> {
     /// 这一层当前选中的栈。即使 paths 中没有它的记录，也可以选中它。
     public let selectedStack: NavigationStackID<Scope>
     /// 这一层各栈的根页面路由数据；模态本身的页面路由另存于外层节点。

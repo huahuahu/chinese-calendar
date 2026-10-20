@@ -10,7 +10,7 @@ import Observation
 /// 跨 Tab 跳转或需要先关闭模态的 Deep Link 请求，交给根 Router 处理。
 @MainActor
 @Observable
-public final class NavigationContext<Scope: Hashable, Destination: Hashable> {
+public final class NavigationContext<Scope: Hashable, Destination: NavigationDestination> {
     /// 这个栈在所属呈现层中的 ID。其他层可以使用相同 ID，它们的路径互不影响。
     public let id: NavigationStackID<Scope>
     @ObservationIgnored private(set) weak var state: NavigationStackState<Destination>?
@@ -36,6 +36,11 @@ public final class NavigationContext<Scope: Hashable, Destination: Hashable> {
         isActive && access.canMutate()
     }
 
+    /// 本栈根页面，与呈现层入口独立；失效后返回 nil。
+    public var rootDestination: Destination? {
+        isActive ? state?.rootDestination : nil
+    }
+
     /// 这个栈中已经 push 的页面列表，不包含栈的根页面。
     ///
     /// NavigationStack 绑定此属性后，返回手势、NavigationLink(value:) 和代码中的 push/pop
@@ -43,7 +48,7 @@ public final class NavigationContext<Scope: Hashable, Destination: Hashable> {
     public var path: [Destination] {
         get { isActive ? state?.path ?? [] : [] }
         set {
-            guard canMutate else { return }
+            guard canMutate, newValue.allSatisfy({ $0.supportsNavigationEntry(.push) }) else { return }
             state?.path = newValue
         }
     }
@@ -52,7 +57,7 @@ public final class NavigationContext<Scope: Hashable, Destination: Hashable> {
     /// - Returns: 成功把页面加入路径时返回 true；Context 失效或不允许修改时返回 false。
     @discardableResult
     public func push(_ destination: Destination) -> Bool {
-        guard canMutate else { return false }
+        guard canMutate, destination.supportsNavigationEntry(.push) else { return false }
         path.append(destination)
         return true
     }

@@ -1,0 +1,56 @@
+{
+  "tool": "mcp__xcode__RenderPreview",
+  "sourceManifest": "../source-manifest.json",
+  "sourceFingerprintSHA256": "120cfdd26069afa7593ac0a3b60eaaacadc095dc3409e5818a755b7b0a15f93c",
+  "sourceFilePath": "ChineseCalendarSources/ChineseCalendarUI/PreviewSupport/FullStoreDownloadPreview.swift",
+  "displayName": "底部下载进度",
+  "errors": [],
+  "previewSnapshotPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/RenderPreview/底部下载进度 - 2026-10-19 at 23.11.49.png",
+  "renderedDestination": {
+    "deviceModelName": "iPhone Duo",
+    "identifier": "20FBB94C-16B2-459A-A4FA-7EC0BED06B4E",
+    "platformName": "iOS",
+    "systemVersion": "27.1"
+  },
+  "sourceLineNumber": 41,
+  "supportedLocalizations": [],
+  "supportedPreviewVariantOverrides": {
+    "Color Scheme": [
+      "Light Appearance",
+      "Dark Appearance"
+    ],
+    "Contrast": [
+      "Standard Contrast",
+      "Increased Contrast"
+    ],
+    "Control Borders": [
+      "Hidden",
+      "Shown"
+    ],
+    "Display": [
+      "Outer",
+      "Inner"
+    ],
+    "Dynamic Type": [
+      "X Small",
+      "Small",
+      "Medium",
+      "Large",
+      "X Large",
+      "XX Large",
+      "XXX Large",
+      "AX 1",
+      "AX 2",
+      "AX 3",
+      "AX 4",
+      "AX 5"
+    ],
+    "Orientation": [
+      "Portrait",
+      "Landscape Left",
+      "Landscape Right"
+    ]
+  },
+  "savedSnapshot": "28-native-download-preview-retry.png",
+  "visualResult": "快照近乎空白，完整 Preview 视觉未验证。"
+}

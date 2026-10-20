@@ -4,7 +4,7 @@ import SwiftUI
 /// App 根界面挂载一次；框架会给每个模态继续添加这个容器，支持逐层打开模态。
 private struct NavigationPresentationHost<
     Scope: Hashable,
-    Destination: Hashable, AlertRoute: NavigationAlertRoute
+    Destination: NavigationDestination, AlertRoute: NavigationAlertRoute
 >: ViewModifier {
     let context: NavigationPresentationContext<Scope, Destination, AlertRoute>
     @Environment(\.[navigation: NavigationConfigurationKey<Scope, Destination, AlertRoute>()]) private var configuration
@@ -65,7 +65,7 @@ private struct NavigationPresentationHost<
 extension View {
     /// 仅由根宿主和递归模态调用，业务内容不重复挂载本层呈现宿主。
     func navigationPresentations(
-        context: NavigationPresentationContext<some Hashable, some Hashable, some NavigationAlertRoute>
+        context: NavigationPresentationContext<some Hashable, some NavigationDestination, some NavigationAlertRoute>
     ) -> some View {
         modifier(NavigationPresentationHost(context: context))
     }

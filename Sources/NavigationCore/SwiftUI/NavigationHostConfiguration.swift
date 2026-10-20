@@ -5,15 +5,13 @@ import SwiftUI
 @MainActor
 public protocol NavigationHostConfiguration<Scope, Destination, AlertRoute> {
     associatedtype Scope: Hashable
-    associatedtype Destination: Hashable
+    associatedtype Destination: NavigationDestination
     associatedtype AlertRoute: NavigationAlertRoute
     associatedtype DestinationContent: View
 
     /// 所有栈的 push 页面与模态初始页面，统一继承所在作用域的环境。
     @ViewBuilder func destination(for destination: Destination) -> DestinationContent
 
-    /// 普通模态提供 primary 栈；自带多个栈的容器返回 false。
-    func providesNavigationStack(for destination: Destination) -> Bool
     func confirmationContent(for request: NavigationRequest<Scope, Destination>) -> NavigationConfirmationContent?
     func alertContent(for route: AlertRoute) -> NavigationAlertContent<AlertRoute.Action>?
 
@@ -29,10 +27,6 @@ public protocol NavigationHostConfiguration<Scope, Destination, AlertRoute> {
 }
 
 public extension NavigationHostConfiguration {
-    func providesNavigationStack(for destination: Destination) -> Bool {
-        true
-    }
-
     func confirmationContent(
         for request: NavigationRequest<Scope, Destination>
     ) -> NavigationConfirmationContent? {

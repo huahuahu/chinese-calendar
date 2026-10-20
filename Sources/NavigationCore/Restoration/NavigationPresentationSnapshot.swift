@@ -6,7 +6,7 @@ import Foundation
 /// 子模态仍使用这个快照类型，所以用 indirect 支持逐层嵌套的结构。
 public indirect enum NavigationPresentationSnapshot<
     Scope: Hashable,
-    Destination: Hashable,
+    Destination: NavigationDestination,
     AlertRoute: NavigationAlertRoute
 > {
     /// 保存业务提示 ID 和路由；alert 没有导航栈，也没有子模态。
@@ -51,8 +51,18 @@ extension NavigationPresentationSnapshot {
     func validate(identities: inout Set<UUID>) -> Bool {
         switch self {
         case let .alert(node): return identities.insert(node.id).inserted
-        case let .node(id, _, _, layer):
-            guard identities.insert(id).inserted else { return false }
+        case let .node(id, destination, _, layer):
+            let hasValidRoots = if destination.providesNavigationContainer {
+                layer.rootDestinations.values.allSatisfy { $0.supportsNavigationEntry(.stackRoot) }
+            } else {
+                layer.selectedStack == .primary && layer.rootDestinations == [.primary: destination] &&
+                    layer.paths.keys.allSatisfy { $0 == .primary }
+            }
+            guard identities.insert(id).inserted,
+                  destination.supportsNavigationEntry(.presentation),
+                  layer.paths.values.joined().allSatisfy({ $0.supportsNavigationEntry(.push) }),
+                  hasValidRoots
+            else { return false }
             return layer.presentation?.validate(identities: &identities) ?? true
         }
     }

@@ -10,25 +10,36 @@ import Observation
 @Observable
 public final class NavigationPresentationNode<
     Scope: Hashable,
-    Destination: Hashable,
+    Destination: NavigationDestination,
     AlertRoute: NavigationAlertRoute
 >: Identifiable {
     /// 这一次打开模态的 ID，用于 SwiftUI 展示、指定关闭目标和保存快照。
-    public let id: UUID
+    public var id: UUID {
+        guard case let .presentation(id) = layer.id else {
+            preconditionFailure("A presentation node requires a presentation layer")
+        }
+        return id
+    }
+
     /// 构建模态初始页面所需的路由数据；后续 push 的页面保存在栈的 path 中。
-    public let destination: Destination
+    public var destination: Destination {
+        layer.route.destination
+    }
+
     /// 这个模态使用 sheet 还是全屏方式展示。
     public let style: NavigationPresentationStyle
     let layer: NavigationLayer<Scope, Destination, AlertRoute>
 
     init(
         id: UUID = UUID(), destination: Destination, style: NavigationPresentationStyle = .sheet,
-        initialStack: NavigationStackID<Scope> = .primary
+        initialStack: NavigationStackID<Scope> = .primary,
+        rootDestinations: [NavigationStackID<Scope>: Destination] = [:]
     ) {
-        self.id = id
-        self.destination = destination
         self.style = style
-        layer = NavigationLayer(id: .presentation(id), selectedStack: initialStack)
+        layer = NavigationLayer(
+            route: .presentation(id: id, destination: destination), selectedStack: initialStack,
+            roots: destination.providesNavigationContainer ? rootDestinations : [.primary: destination]
+        )
     }
 
     /// 从这个模态直接打开的子模态。关闭当前模态时，子模态及其继续打开的模态也会关闭。
