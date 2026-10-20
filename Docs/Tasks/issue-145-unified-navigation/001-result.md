@@ -1,5 +1,7 @@
 # Issue #145：统一页面导航与模态呈现结果
 
+> Issue #151 的提示会话生命周期收敛见 [014](014-alert-session-state.md)，包括严格转换契约、298 项自动测试、六项 Simulator 交互与合并前独立审查记录；审查未发现本次改动引入的缺陷或规范违规。
+
 > 2026-10-18 单栏交付与合并前检查见 [013](013-single-column-merge.md)：重新执行测试、三项独立审查，并修正请求顺序和 Preview 环境问题。下文保留各阶段记录，历史“未提交／未审查”等描述仅指当时状态。
 
 > 当前业务 alert 与导航协调见 [011](011-unified-alerts.md)，承接 [010：独立栈状态与上下文依赖](010-independent-stack-state.md) 和 [009：栈导航与呈现环境分离](009-separate-context-apis.md)。

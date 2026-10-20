@@ -1,0 +1,39 @@
+2026-10-19 21:53:08.741301+0800 [86213:59472888] [app] Launching iOS app
+
+2026-10-19 21:53:11.710045+0800 [86213:59472888] [persistence] Opening shared SwiftData container
+
+2026-10-19 21:53:11.716293+0800 [86213:59472888] [persistence] Keeping installed full seed store instead of reinstalling bundled base store
+
+2026-10-19 21:53:11.716347+0800 [86213:59472888] [persistence] Bundled seed store is already installed
+
+2026-10-19 21:53:11.716434+0800 [86213:59472888] [persistence] Creating model container at /Users/tigerguo/Library/Developer/CoreSimulator/Devices/16A9CAA7-45CE-46D5-8915-F61531FC617C/data/Containers/Shared/AppGroup/E73729E7-DAAD-45FA-BB30-218203C4D6B9/ChineseCalendarStore/ChineseCalendar.sqlite, allowsSave: false
+
+2026-10-19 21:53:12.337388+0800 [86213:59472888] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 21:53:12.337589+0800 [86213:59472888] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 21:53:12.340787+0800 [86213:59473106] [General] Failed to send CA Event for app launch measurements for ca_event_type: 0 event_name: com.apple.app_launch_measurement.FirstFramePresentationMetric
+
+2026-10-19 21:53:12.350950+0800 [86213:59472888] [XPCErrors] non-launching port is incompatible with service identifier "com.apple.PointerUI.pointeruid.default-service"
+
+2026-10-19 21:53:12.359066+0800 [86213:59472888] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 21:53:12.359141+0800 [86213:59472888] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 21:53:12.484883+0800 [86213:59473099] [General] Failed to send CA Event for app launch measurements for ca_event_type: 1 event_name: com.apple.app_launch_measurement.ExtendedLaunchMetrics
+
+2026-10-19 21:53:12.728235+0800 [86213:59472888] [AXValidations] AX Safe category class 'SFBarButtonGroupContainerAccessibility' was not found!
+
+objc[86213]: Class UIAccessibilityLoaderWebShared is implemented in both /Library/Developer/CoreSimulator/Volumes/iOS_24A434/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 27.0.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebKit.axbundle/WebKit (0x12057c398) and /Library/Developer/CoreSimulator/Volumes/iOS_24A434/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 27.0.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebCore.axbundle/WebCore (0x120670310). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
+
+2026-10-19 21:53:13.513609+0800 [86213:59472888] [AXValidations] AX Safe category class 'SLHighlightDisambiguationPillViewAccessibility' was not found!
+
+2026-10-19 21:54:25.874378+0800 [86213:59472888] [Invalid Configuration] Update NavigationRequestObserver tried to update multiple times per frame.
+
+2026-10-19 21:54:26.030118+0800 [86213:59472888] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 21:54:26.032568+0800 [86213:59472888] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 21:54:26.032701+0800 [86213:59472888] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-19 21:54:26.032732+0800 [86213:59472888] [API] cannot add handler to 0 from 0 - dropping

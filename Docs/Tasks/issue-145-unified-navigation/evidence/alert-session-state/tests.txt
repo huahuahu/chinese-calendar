@@ -1,0 +1,37 @@
+2026-10-19：原生 Xcode MCP RunAllTests
+项目：ChineseCalendar.xcodeproj；scheme：ChineseCalendar-iOS
+Simulator：chinesedate iPhone 18 Pro Max (885f)，iOS 27.0
+Simulator ID：16A9CAA7-45CE-46D5-8915-F61531FC617C
+全量：298 passed，0 failed，0 skipped，0 expected failures，0 not run。
+alert 专项：28 个执行场景，全部 Passed；其中新增9个场景。
+本测试已构建 App 和测试 target；不代表真实 UIKit 交互通过。
+源码状态见 source-sha256.txt；以下摘录工具返回的测试结果。
+
+Passed | NavigationAlertTests/rootAlertQueuesNavigationUntilActualDismissal() | rootAlertQueuesNavigationUntilActualDismissal()
+Passed | NavigationAlertTests/modalAlertFinishesBeforeLeaveConfirmation(style:) | .sheet
+Passed | NavigationAlertTests/modalAlertFinishesBeforeLeaveConfirmation(style:) | .fullScreen
+Passed | NavigationAlertTests/cancelLeaveConfirmationKeepsOriginalModalAndPaths() | cancelLeaveConfirmationKeepsOriginalModalAndPaths()
+Passed | NavigationAlertTests/queuedAlertsKeepOrderAndNavigationWaitsForAllOfThem() | queuedAlertsKeepOrderAndNavigationWaitsForAllOfThem()
+Passed | NavigationAlertTests/latestExternalRequestKeepsItsOwnConfirmationRequirement() | latestExternalRequestKeepsItsOwnConfirmationRequirement()
+Passed | NavigationAlertTests/businessActionCanQueueResultBeforeExternalNavigationContinues() | businessActionCanQueueResultBeforeExternalNavigationContinues()
+Passed | NavigationAlertTests/latestRequestAfterAlertWinsDuringModalDismissal(requiresConfirmation:) | true
+Passed | NavigationAlertTests/latestRequestAfterAlertWinsDuringModalDismissal(requiresConfirmation:) | false
+Passed | NavigationAlertTests/alertActionNavigationWaitsForAlertAndThenModalDismissal() | alertActionNavigationWaitsForAlertAndThenModalDismissal()
+Passed | NavigationAlertTests/newConfirmationKeepsRequestApprovedDuringAlertCompletion() | newConfirmationKeepsRequestApprovedDuringAlertCompletion()
+Passed | NavigationAlertTests/newConfirmationKeepsAcceptedRequestAfterBusinessAlertEnds() | newConfirmationKeepsAcceptedRequestAfterBusinessAlertEnds()
+Passed | NavigationAlertTests/dismissingModalWaitsForAlertAndInvalidatesItsContext() | dismissingModalWaitsForAlertAndInvalidatesItsContext()
+Passed | NavigationAlertTests/backgroundTabCannotPresentAlert() | backgroundTabCannotPresentAlert()
+Passed | NavigationAlertTests/closingModalDiscardsItsQueuedAlerts() | closingModalDiscardsItsQueuedAlerts()
+Passed | NavigationAlertTests/customConfirmationCancellationResumesQueuedAlert() | customConfirmationCancellationResumesQueuedAlert()
+Passed | NavigationAlertTests/childDismissalFinishesBeforeParentShowsConfirmation() | childDismissalFinishesBeforeParentShowsConfirmation()
+Passed | NavigationAlertTests/snapshotPreservesAlertDataWithoutCreatingAStackForIt() | snapshotPreservesAlertDataWithoutCreatingAStackForIt()
+Passed | NavigationAlertTests/cannotRestoreWhileAlertIsClosingOrItsActionIsRunning() | cannotRestoreWhileAlertIsClosingOrItsActionIsRunning()
+Passed | NavigationAlertSessionTests/completionRequiresDismissalAndCannotReleaseEarly(isConfirmation:) | false
+Passed | NavigationAlertSessionTests/completionRequiresDismissalAndCannotReleaseEarly(isConfirmation:) | true
+Passed | NavigationAlertSessionTests/wrongIDCannotChangeCurrentSession(state:) | .presented
+Passed | NavigationAlertSessionTests/wrongIDCannotChangeCurrentSession(state:) | .dismissing
+Passed | NavigationAlertSessionTests/wrongIDCannotChangeCurrentSession(state:) | .handlingCompletion
+Passed | NavigationAlertSessionTests/expiredCallbacksCannotAffectNextAlert(state:) | .presented
+Passed | NavigationAlertSessionTests/expiredCallbacksCannotAffectNextAlert(state:) | .dismissing
+Passed | NavigationAlertSessionTests/expiredCallbacksCannotAffectNextAlert(state:) | .handlingCompletion
+Passed | NavigationAlertSessionTests/inactiveContextCannotChangeRestoredLayerWithSameID() | inactiveContextCannotChangeRestoredLayerWithSameID()

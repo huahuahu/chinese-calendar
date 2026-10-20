@@ -1,0 +1,67 @@
+{
+  "schema": "xcodebuildmcp.output.capture-result",
+  "schemaVersion": "2",
+  "didError": false,
+  "error": null,
+  "data": {
+    "summary": {
+      "status": "SUCCEEDED"
+    },
+    "artifacts": {
+      "simulatorId": "16A9CAA7-45CE-46D5-8915-F61531FC617C"
+    },
+    "capture": {
+      "type": "runtime-snapshot",
+      "rs": "1",
+      "screenHash": "1q3vmfd",
+      "seq": 12,
+      "count": 232,
+      "targets": [
+        "e16|tap|button|导航测试||BackButton",
+        "e58|tap|button|Push 新测试页||",
+        "e62|tap|button|Sheet 打开测试页||",
+        "e67|tap|button|全屏打开测试页||",
+        "e72|tap|button|显示业务 Alert||",
+        "e77|tap|button|连续显示两个 Alert||",
+        "e82|tap|button|从 Alert 按钮跳转||",
+        "e92|tap|button|Pop 返回上一页||",
+        "e111|tap|tab|日历|0|calendar",
+        "e113|tap|tab|朝代|1|timeline.selection",
+        "e115|tap|tab|设置|0|gearshape",
+        "e143|tap|button|关闭||",
+        "e183|tap|button|Push 新测试页||",
+        "e187|tap|button|Sheet 打开测试页||",
+        "e192|tap|button|全屏打开测试页||",
+        "e197|tap|button|显示业务 Alert||",
+        "e202|tap|button|连续显示两个 Alert||",
+        "e207|tap|button|从 Alert 按钮跳转||"
+      ],
+      "scroll": [
+        "e1|swipe|application|Chinese Calendar||"
+      ],
+      "text": [
+        "e32|text|text|当前作用域||",
+        "e157|text|text|当前作用域||",
+        "e158|text|text|模态作用域||",
+        "e33|text|text|朝代||",
+        "e37|text|text|当前层 Push 页数||",
+        "e162|text|text|当前层 Push 页数||",
+        "e163|text|text|0||",
+        "e38|text|text|2||",
+        "e43|text|text|页面 ID||",
+        "e168|text|text|页面 ID||",
+        "e44|text|text|57F9460E-0A41-4BBE-B9DD-CF4D3EC6F370||",
+        "e169|text|text|1031610C-1CB0-44AF-9762-74748FFBFB90||",
+        "e49|text|text|每次打开生成新的页面 ID。Push 和返回只改变当前层，关闭模态回到父层。可连续打开弹窗或全屏页，再模拟 Deep Link 检查取消与整层关闭。||",
+        "e174|text|text|每次打开生成新的页面 ID。Push 和返回只改变当前层，关闭模态回到父层。可连续打开弹窗或全屏页，再模拟 Deep Link 检查取消与整层关闭。||"
+      ],
+      "udid": "16A9CAA7-45CE-46D5-8915-F61531FC617C"
+    }
+  },
+  "nextSteps": [
+    "Refresh after layout changes: snapshot_ui({ simulatorId: \"16A9CAA7-45CE-46D5-8915-F61531FC617C\" })",
+    "Wait for UI to settle: wait_for_ui({ simulatorId: \"16A9CAA7-45CE-46D5-8915-F61531FC617C\", predicate: \"settled\" })",
+    "Batch same-screen taps: batch({ simulatorId: \"16A9CAA7-45CE-46D5-8915-F61531FC617C\", steps: [{\"action\":\"tap\",\"elementRef\":\"e16\"},{\"action\":\"tap\",\"elementRef\":\"e58\"}] })",
+    "Tap an elementRef: tap({ simulatorId: \"16A9CAA7-45CE-46D5-8915-F61531FC617C\", elementRef: \"e16\" })"
+  ]
+}

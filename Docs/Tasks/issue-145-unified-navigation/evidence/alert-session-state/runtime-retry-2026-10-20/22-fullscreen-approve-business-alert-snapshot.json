@@ -1,0 +1,80 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "\n📷 Snapshot UI\n\nTargets (23) — ref|action|role|label|value|id\n  e16|tap|button|导航测试||BackButton\n  e58|tap|button|Push 新测试页||\n  e62|tap|button|Sheet 打开测试页||\n  e67|tap|button|全屏打开测试页||\n  e72|tap|button|显示业务 Alert||\n  e77|tap|button|连续显示两个 Alert||\n  e82|tap|button|从 Alert 按钮跳转||\n  e92|tap|button|Pop 返回上一页||\n  e111|tap|tab|日历|0|calendar\n  e113|tap|tab|朝代|1|timeline.selection\n  e115|tap|tab|设置|0|gearshape\n  e143|tap|button|关闭||\n  e172|tap|button|Push 新测试页||\n  e176|tap|button|Sheet 打开测试页||\n  e181|tap|button|全屏打开测试页||\n  e186|tap|button|显示业务 Alert||\n  e191|tap|button|连续显示两个 Alert||\n  e196|tap|button|从 Alert 按钮跳转||\n  e210|tap|button|关闭当前模态||\n  e220|tap|button|Alert 期间请求跳转历史||\n  e224|tap|button|在历史 Tab Push 测试页||\n  e229|tap|button|模拟打开今年的 Deep Link||\n  e261|tap|button|好||\n\nScroll (3) — ref|action|role|label|value|id\n  e241|swipe|other|业务提示 1||\n  e246|swipe|scroll-view|||\n  e258|swipe|scroll-view|||\n\nTips\n  - Use target refs with tap, type_text, long_press, and touch.\n  - Use scroll refs with swipe.\n  - Refs are snapshot-specific; after snapshot_ui or wait_for_ui, use refs from the latest output.\n  - Use wait_for_ui for text/assertions or changing UI.\n\n✅ Runtime UI snapshot captured with 280 elements, 23 likely targets, and 3 scroll areas.\n\nNext steps:\n1. Refresh after layout changes: snapshot_ui({ simulatorId: \"16A9CAA7-45CE-46D5-8915-F61531FC617C\" })\n2. Wait for UI to settle: wait_for_ui({ simulatorId: \"16A9CAA7-45CE-46D5-8915-F61531FC617C\", predicate: \"settled\" })\n3. Batch same-screen taps: batch({ simulatorId: \"16A9CAA7-45CE-46D5-8915-F61531FC617C\", steps: [{\"action\":\"tap\",\"elementRef\":\"e16\"},{\"action\":\"tap\",\"elementRef\":\"e58\"}] })\n4. Tap an elementRef: tap({ simulatorId: \"16A9CAA7-45CE-46D5-8915-F61531FC617C\", elementRef: \"e16\" })\n5. Scroll visible content: swipe({ simulatorId: \"16A9CAA7-45CE-46D5-8915-F61531FC617C\", withinElementRef: \"e246\", direction: \"up\", distance: 0.5 })\n"
+    }
+  ],
+  "structuredContent": {
+    "schema": "xcodebuildmcp.output.capture-result",
+    "schemaVersion": "2",
+    "didError": false,
+    "error": null,
+    "data": {
+      "summary": {
+        "status": "SUCCEEDED"
+      },
+      "artifacts": {
+        "simulatorId": "16A9CAA7-45CE-46D5-8915-F61531FC617C"
+      },
+      "capture": {
+        "type": "runtime-snapshot",
+        "rs": "1",
+        "screenHash": "1h8y34e",
+        "seq": 20,
+        "count": 280,
+        "targets": [
+          "e16|tap|button|导航测试||BackButton",
+          "e58|tap|button|Push 新测试页||",
+          "e62|tap|button|Sheet 打开测试页||",
+          "e67|tap|button|全屏打开测试页||",
+          "e72|tap|button|显示业务 Alert||",
+          "e77|tap|button|连续显示两个 Alert||",
+          "e82|tap|button|从 Alert 按钮跳转||",
+          "e92|tap|button|Pop 返回上一页||",
+          "e111|tap|tab|日历|0|calendar",
+          "e113|tap|tab|朝代|1|timeline.selection",
+          "e115|tap|tab|设置|0|gearshape",
+          "e143|tap|button|关闭||",
+          "e172|tap|button|Push 新测试页||",
+          "e176|tap|button|Sheet 打开测试页||",
+          "e181|tap|button|全屏打开测试页||",
+          "e186|tap|button|显示业务 Alert||",
+          "e191|tap|button|连续显示两个 Alert||",
+          "e196|tap|button|从 Alert 按钮跳转||",
+          "e210|tap|button|关闭当前模态||",
+          "e220|tap|button|Alert 期间请求跳转历史||",
+          "e224|tap|button|在历史 Tab Push 测试页||",
+          "e229|tap|button|模拟打开今年的 Deep Link||",
+          "e261|tap|button|好||"
+        ],
+        "scroll": [
+          "e241|swipe|other|业务提示 1||",
+          "e246|swipe|scroll-view|||",
+          "e258|swipe|scroll-view|||"
+        ],
+        "text": [
+          "e155|text|text|1031610C-1CB0-44AF-9762-74748FFBFB90||",
+          "e163|text|text|每次打开生成新的页面 ID。Push 和返回只改变当前层，关闭模态回到父层。可连续打开弹窗或全屏页，再模拟 Deep Link 检查取消与整层关闭。||",
+          "e32|text|text|当前作用域||",
+          "e33|text|text|朝代||",
+          "e37|text|text|当前层 Push 页数||",
+          "e38|text|text|2||",
+          "e43|text|text|页面 ID||",
+          "e44|text|text|57F9460E-0A41-4BBE-B9DD-CF4D3EC6F370||",
+          "e49|text|text|每次打开生成新的页面 ID。Push 和返回只改变当前层，关闭模态回到父层。可连续打开弹窗或全屏页，再模拟 Deep Link 检查取消与整层关闭。||",
+          "e248|text|text|业务提示 1||",
+          "e249|text|text|这是业务提示。关闭它后，才会处理等待中的提示或导航请求。||"
+        ],
+        "udid": "16A9CAA7-45CE-46D5-8915-F61531FC617C"
+      }
+    },
+    "nextSteps": [
+      "Refresh after layout changes: snapshot_ui({ simulatorId: \"16A9CAA7-45CE-46D5-8915-F61531FC617C\" })",
+      "Wait for UI to settle: wait_for_ui({ simulatorId: \"16A9CAA7-45CE-46D5-8915-F61531FC617C\", predicate: \"settled\" })",
+      "Batch same-screen taps: batch({ simulatorId: \"16A9CAA7-45CE-46D5-8915-F61531FC617C\", steps: [{\"action\":\"tap\",\"elementRef\":\"e16\"},{\"action\":\"tap\",\"elementRef\":\"e58\"}] })",
+      "Tap an elementRef: tap({ simulatorId: \"16A9CAA7-45CE-46D5-8915-F61531FC617C\", elementRef: \"e16\" })",
+      "Scroll visible content: swipe({ simulatorId: \"16A9CAA7-45CE-46D5-8915-F61531FC617C\", withinElementRef: \"e246\", direction: \"up\", distance: 0.5 })"
+    ]
+  }
+}
