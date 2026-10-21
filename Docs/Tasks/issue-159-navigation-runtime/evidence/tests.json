@@ -1,0 +1,356 @@
+{
+  "implementationCommit": "76284df6973fb55c9de241398bbf6548ebf4803c",
+  "sourceManifest": "source-manifest.json",
+  "tool": "Native Xcode MCP RunAllTests; xcresulttool get test-results summary/tests for read-back",
+  "summary": {
+    "devicesAndConfigurations": [
+      {
+        "device": {
+          "architecture": "arm64",
+          "deviceId": "16A9CAA7-45CE-46D5-8915-F61531FC617C",
+          "deviceName": "chinesedate iPhone 18 Pro Max (885f)",
+          "modelName": "iPhone 18 Pro Max",
+          "osBuildNumber": "24A434",
+          "osVersion": "27.0",
+          "platform": "iOS Simulator"
+        },
+        "expectedFailures": 0,
+        "failedTests": 0,
+        "passedTests": 391,
+        "skippedTests": 0,
+        "testPlanConfiguration": {
+          "configurationId": "1",
+          "configurationName": "Test Scheme Action"
+        }
+      }
+    ],
+    "environmentDescription": "ChineseCalendar-iOS · Built with macOS 27.0.1",
+    "expectedFailures": 0,
+    "failedTests": 0,
+    "finishTime": 1792623184.726,
+    "passedTests": 294,
+    "result": "Passed",
+    "runtimeWarnings": [],
+    "skippedTests": 0,
+    "startTime": 1792623173.522,
+    "statistics": [
+      {
+        "subtitle": "146 test runs",
+        "title": "49 tests ran with dynamic parameters"
+      }
+    ],
+    "testFailures": [],
+    "title": "Test - ChineseCalendar-iOS",
+    "topInsights": [],
+    "totalTestCount": 294
+  },
+  "nativeMCPCounts": {
+    "passed": 391,
+    "failed": 0,
+    "notRun": 4,
+    "skipped": 0,
+    "total": 395
+  },
+  "reconciliation": "MCP 将发现阶段的 4 个随机 UUID 参数身份保留为 No result。原始 xcresult 的 294 个测试方法（展开为 391 次执行）均通过，失败和跳过均为 0；相关 3 个参数化方法的 13 个参数实例全部 Passed，UUID 与发现阶段不同。以下保留这些原始参数结果和新增初始化/缓存测试。",
+  "selectedTests": [
+    {
+      "children": [
+        {
+          "duration": "0.12s",
+          "durationInSeconds": 0.12262511253356934,
+          "name": "false",
+          "nodeIdentifierURL": "test://com.apple.xcode/ChineseCalendarSources/NavigationCoreTests/NavigationLayerInitializationTests/containerLayersRequireRootsForSelectionAndEveryPath(isModal:)?args=fcbcf165908dd18a9e49f7ff27810176db8e9f63b4352213741664245224f8aa",
+          "nodeType": "Arguments",
+          "result": "Passed"
+        },
+        {
+          "duration": "0.12s",
+          "durationInSeconds": 0.12250185012817383,
+          "name": "true",
+          "nodeIdentifierURL": "test://com.apple.xcode/ChineseCalendarSources/NavigationCoreTests/NavigationLayerInitializationTests/containerLayersRequireRootsForSelectionAndEveryPath(isModal:)?args=b5bea41b6c623f7c09f1bf24dcae58ebab3c0cdd90ad966bc43a45b44867e12b",
+          "nodeType": "Arguments",
+          "result": "Passed"
+        }
+      ],
+      "duration": "0.12s",
+      "durationInSeconds": 0.12256348133087158,
+      "name": "containerLayersRequireRootsForSelectionAndEveryPath(isModal:)",
+      "nodeIdentifier": "NavigationLayerInitializationTests/containerLayersRequireRootsForSelectionAndEveryPath(isModal:)",
+      "nodeIdentifierURL": "test://com.apple.xcode/ChineseCalendarSources/NavigationCoreTests/NavigationLayerInitializationTests/containerLayersRequireRootsForSelectionAndEveryPath(isModal:)",
+      "nodeType": "Test Case",
+      "result": "Passed"
+    },
+    {
+      "duration": "0.12s",
+      "durationInSeconds": 0.12260174751281738,
+      "name": "replacingStackRootsKeepsNestedLayerEntriesAndOtherPaths()",
+      "nodeIdentifier": "NavigationLayerInitializationTests/replacingStackRootsKeepsNestedLayerEntriesAndOtherPaths()",
+      "nodeIdentifierURL": "test://com.apple.xcode/ChineseCalendarSources/NavigationCoreTests/NavigationLayerInitializationTests/replacingStackRootsKeepsNestedLayerEntriesAndOtherPaths()",
+      "nodeType": "Test Case",
+      "result": "Passed"
+    },
+    {
+      "duration": "0.12s",
+      "durationInSeconds": 0.12263894081115723,
+      "name": "malformedPresentationsLeaveEveryExistingLayerUntouched()",
+      "nodeIdentifier": "NavigationLayerInitializationTests/malformedPresentationsLeaveEveryExistingLayerUntouched()",
+      "nodeIdentifierURL": "test://com.apple.xcode/ChineseCalendarSources/NavigationCoreTests/NavigationLayerInitializationTests/malformedPresentationsLeaveEveryExistingLayerUntouched()",
+      "nodeType": "Test Case",
+      "result": "Passed"
+    },
+    {
+      "children": [
+        {
+          "duration": "0.12s",
+          "durationInSeconds": 0.12255120277404785,
+          "name": "false",
+          "nodeIdentifierURL": "test://com.apple.xcode/ChineseCalendarSources/NavigationCoreTests/NavigationLayerInitializationTests/containerLayersPreservePrimaryAndNamedStacks(isModal:)?args=fcbcf165908dd18a9e49f7ff27810176db8e9f63b4352213741664245224f8aa",
+          "nodeType": "Arguments",
+          "result": "Passed"
+        },
+        {
+          "duration": "0.12s",
+          "durationInSeconds": 0.12251591682434082,
+          "name": "true",
+          "nodeIdentifierURL": "test://com.apple.xcode/ChineseCalendarSources/NavigationCoreTests/NavigationLayerInitializationTests/containerLayersPreservePrimaryAndNamedStacks(isModal:)?args=b5bea41b6c623f7c09f1bf24dcae58ebab3c0cdd90ad966bc43a45b44867e12b",
+          "nodeType": "Arguments",
+          "result": "Passed"
+        }
+      ],
+      "duration": "0.12s",
+      "durationInSeconds": 0.12253355979919434,
+      "name": "containerLayersPreservePrimaryAndNamedStacks(isModal:)",
+      "nodeIdentifier": "NavigationLayerInitializationTests/containerLayersPreservePrimaryAndNamedStacks(isModal:)",
+      "nodeIdentifierURL": "test://com.apple.xcode/ChineseCalendarSources/NavigationCoreTests/NavigationLayerInitializationTests/containerLayersPreservePrimaryAndNamedStacks(isModal:)",
+      "nodeType": "Test Case",
+      "result": "Passed"
+    },
+    {
+      "children": [
+        {
+          "duration": "0.12s",
+          "durationInSeconds": 0.12281298637390137,
+          "name": "false",
+          "nodeIdentifierURL": "test://com.apple.xcode/ChineseCalendarSources/NavigationCoreTests/NavigationLayerInitializationTests/coreLayersRejectNamedStacksAndExplicitRoots(isModal:)?args=fcbcf165908dd18a9e49f7ff27810176db8e9f63b4352213741664245224f8aa",
+          "nodeType": "Arguments",
+          "result": "Passed"
+        },
+        {
+          "duration": "0.13s",
+          "durationInSeconds": 0.12602710723876953,
+          "name": "true",
+          "nodeIdentifierURL": "test://com.apple.xcode/ChineseCalendarSources/NavigationCoreTests/NavigationLayerInitializationTests/coreLayersRejectNamedStacksAndExplicitRoots(isModal:)?args=b5bea41b6c623f7c09f1bf24dcae58ebab3c0cdd90ad966bc43a45b44867e12b",
+          "nodeType": "Arguments",
+          "result": "Passed"
+        }
+      ],
+      "duration": "0.12s",
+      "durationInSeconds": 0.12442004680633545,
+      "name": "coreLayersRejectNamedStacksAndExplicitRoots(isModal:)",
+      "nodeIdentifier": "NavigationLayerInitializationTests/coreLayersRejectNamedStacksAndExplicitRoots(isModal:)",
+      "nodeIdentifierURL": "test://com.apple.xcode/ChineseCalendarSources/NavigationCoreTests/NavigationLayerInitializationTests/coreLayersRejectNamedStacksAndExplicitRoots(isModal:)",
+      "nodeType": "Test Case",
+      "result": "Passed"
+    },
+    {
+      "duration": "0.12s",
+      "durationInSeconds": 0.12255215644836426,
+      "name": "validContextsSurvivePathAndTabChangesAndRemainRouterLocal()",
+      "nodeIdentifier": "NavigationContextStoreTests/validContextsSurvivePathAndTabChangesAndRemainRouterLocal()",
+      "nodeIdentifierURL": "test://com.apple.xcode/ChineseCalendarSources/NavigationCoreTests/NavigationContextStoreTests/validContextsSurvivePathAndTabChangesAndRemainRouterLocal()",
+      "nodeType": "Test Case",
+      "result": "Passed"
+    },
+    {
+      "duration": "0.12s",
+      "durationInSeconds": 0.12254190444946289,
+      "name": "parentDismissalReleasesNestedCachesEvenWhenOldLayerContextIsRetained()",
+      "nodeIdentifier": "NavigationContextStoreTests/parentDismissalReleasesNestedCachesEvenWhenOldLayerContextIsRetained()",
+      "nodeIdentifierURL": "test://com.apple.xcode/ChineseCalendarSources/NavigationCoreTests/NavigationContextStoreTests/parentDismissalReleasesNestedCachesEvenWhenOldLayerContextIsRetained()",
+      "nodeType": "Test Case",
+      "result": "Passed"
+    },
+    {
+      "duration": "0.12s",
+      "durationInSeconds": 0.12247300148010254,
+      "name": "childCompletionKeepsParentAndRootCacheIdentity()",
+      "nodeIdentifier": "NavigationContextStoreTests/childCompletionKeepsParentAndRootCacheIdentity()",
+      "nodeIdentifierURL": "test://com.apple.xcode/ChineseCalendarSources/NavigationCoreTests/NavigationContextStoreTests/childCompletionKeepsParentAndRootCacheIdentity()",
+      "nodeType": "Test Case",
+      "result": "Passed"
+    },
+    {
+      "duration": "0.12s",
+      "durationInSeconds": 0.12244987487792969,
+      "name": "externalContextsDoNotRetainRouterStoreLayersOrStacks()",
+      "nodeIdentifier": "NavigationContextStoreTests/externalContextsDoNotRetainRouterStoreLayersOrStacks()",
+      "nodeIdentifierURL": "test://com.apple.xcode/ChineseCalendarSources/NavigationCoreTests/NavigationContextStoreTests/externalContextsDoNotRetainRouterStoreLayersOrStacks()",
+      "nodeType": "Test Case",
+      "result": "Passed"
+    },
+    {
+      "duration": "0.12s",
+      "durationInSeconds": 0.12264871597290039,
+      "name": "routerDeallocationReleasesUnretainedCaches()",
+      "nodeIdentifier": "NavigationContextStoreTests/routerDeallocationReleasesUnretainedCaches()",
+      "nodeIdentifierURL": "test://com.apple.xcode/ChineseCalendarSources/NavigationCoreTests/NavigationContextStoreTests/routerDeallocationReleasesUnretainedCaches()",
+      "nodeType": "Test Case",
+      "result": "Passed"
+    },
+    {
+      "duration": "0.13s",
+      "durationInSeconds": 0.12549901008605957,
+      "name": "dismissalInvalidatesImmediatelyAndCompletionReleasesAllThreeCaches()",
+      "nodeIdentifier": "NavigationContextStoreTests/dismissalInvalidatesImmediatelyAndCompletionReleasesAllThreeCaches()",
+      "nodeIdentifierURL": "test://com.apple.xcode/ChineseCalendarSources/NavigationCoreTests/NavigationContextStoreTests/dismissalInvalidatesImmediatelyAndCompletionReleasesAllThreeCaches()",
+      "nodeType": "Test Case",
+      "result": "Passed"
+    },
+    {
+      "duration": "0.13s",
+      "durationInSeconds": 0.12557196617126465,
+      "name": "staleEntriesCannotReplaceCachesForNewObjectsWithTheSameID()",
+      "nodeIdentifier": "NavigationContextStoreTests/staleEntriesCannotReplaceCachesForNewObjectsWithTheSameID()",
+      "nodeIdentifierURL": "test://com.apple.xcode/ChineseCalendarSources/NavigationCoreTests/NavigationContextStoreTests/staleEntriesCannotReplaceCachesForNewObjectsWithTheSameID()",
+      "nodeType": "Test Case",
+      "result": "Passed"
+    },
+    {
+      "children": [
+        {
+          "duration": "2s",
+          "durationInSeconds": 2.0430819988250732,
+          "name": ".clearDataFailed(messageID: DBBE1C5D-C5E1-4347-941B-055A39D63D32)",
+          "nodeIdentifierURL": "test://com.apple.xcode/ChineseCalendarSources/ChineseCalendarUITests/CalendarAlertContentTests/noticesKeepASingleAcknowledgement(route:)?args=2e636c656172446174614661696c6564286d65737361676549443a2044424245314335442d433545312d343334372d393431422d30353541333944363344333229",
+          "nodeType": "Arguments",
+          "result": "Passed"
+        },
+        {
+          "duration": "2s",
+          "durationInSeconds": 2.043081045150757,
+          "name": ".clearDataSucceeded",
+          "nodeIdentifierURL": "test://com.apple.xcode/ChineseCalendarSources/ChineseCalendarUITests/CalendarAlertContentTests/noticesKeepASingleAcknowledgement(route:)?args=2e636c65617244617461537563636565646564",
+          "nodeType": "Arguments",
+          "result": "Passed"
+        },
+        {
+          "duration": "2s",
+          "durationInSeconds": 2.043034791946411,
+          "name": ".downloadFailed(messageID: 6ADCD2C0-6F94-4B35-B801-B9800BA64DEC)",
+          "nodeIdentifierURL": "test://com.apple.xcode/ChineseCalendarSources/ChineseCalendarUITests/CalendarAlertContentTests/noticesKeepASingleAcknowledgement(route:)?args=2e646f776e6c6f61644661696c6564286d65737361676549443a2036414443443243302d364639342d344233352d423830312d42393830304241363444454329",
+          "nodeType": "Arguments",
+          "result": "Passed"
+        }
+      ],
+      "duration": "2s",
+      "durationInSeconds": 2.0430659453074136,
+      "name": "noticesKeepASingleAcknowledgement(route:)",
+      "nodeIdentifier": "CalendarAlertContentTests/noticesKeepASingleAcknowledgement(route:)",
+      "nodeIdentifierURL": "test://com.apple.xcode/ChineseCalendarSources/ChineseCalendarUITests/CalendarAlertContentTests/noticesKeepASingleAcknowledgement(route:)",
+      "nodeType": "Test Case",
+      "result": "Passed"
+    },
+    {
+      "children": [
+        {
+          "duration": "2s",
+          "durationInSeconds": 2.0424022674560547,
+          "name": ".debugNavigationTabs(id: 1EDC70F0-825B-40AB-A992-F8603A4E02BD)",
+          "nodeIdentifierURL": "test://com.apple.xcode/ChineseCalendarSources/ChineseCalendarUITests/CalendarDebugSplitStateTests/debugRoutesAreAcceptedAtEveryEntry(destination:)?args=2e64656275674e617669676174696f6e546162732869643a2031454443373046302d383235422d343041422d413939322d46383630334134453032424429",
+          "nodeType": "Arguments",
+          "result": "Passed"
+        },
+        {
+          "duration": "2s",
+          "durationInSeconds": 2.0423989295959473,
+          "name": ".debugSplit(layout: ChineseCalendarUI.CalendarDebugSplitLayout.threeColumn)",
+          "nodeIdentifierURL": "test://com.apple.xcode/ChineseCalendarSources/ChineseCalendarUITests/CalendarDebugSplitStateTests/debugRoutesAreAcceptedAtEveryEntry(destination:)?args=2e646562756753706c6974286c61796f75743a204368696e65736543616c656e64617255492e43616c656e646172446562756753706c69744c61796f75742e7468726565436f6c756d6e29",
+          "nodeType": "Arguments",
+          "result": "Passed"
+        },
+        {
+          "duration": "2s",
+          "durationInSeconds": 2.042459011077881,
+          "name": ".debugSplit(layout: ChineseCalendarUI.CalendarDebugSplitLayout.twoColumn)",
+          "nodeIdentifierURL": "test://com.apple.xcode/ChineseCalendarSources/ChineseCalendarUITests/CalendarDebugSplitStateTests/debugRoutesAreAcceptedAtEveryEntry(destination:)?args=2e646562756753706c6974286c61796f75743a204368696e65736543616c656e64617255492e43616c656e646172446562756753706c69744c61796f75742e74776f436f6c756d6e29",
+          "nodeType": "Arguments",
+          "result": "Passed"
+        },
+        {
+          "duration": "2s",
+          "durationInSeconds": 2.0423848628997803,
+          "name": ".debugSplitDetail(item: ChineseCalendarUI.CalendarDebugSplitItem.first, level: 1)",
+          "nodeIdentifierURL": "test://com.apple.xcode/ChineseCalendarSources/ChineseCalendarUITests/CalendarDebugSplitStateTests/debugRoutesAreAcceptedAtEveryEntry(destination:)?args=2e646562756753706c697444657461696c286974656d3a204368696e65736543616c656e64617255492e43616c656e646172446562756753706c69744974656d2e66697273742c206c6576656c3a203129",
+          "nodeType": "Arguments",
+          "result": "Passed"
+        },
+        {
+          "duration": "2s",
+          "durationInSeconds": 2.042372941970825,
+          "name": ".debugSplitEmpty",
+          "nodeIdentifierURL": "test://com.apple.xcode/ChineseCalendarSources/ChineseCalendarUITests/CalendarDebugSplitStateTests/debugRoutesAreAcceptedAtEveryEntry(destination:)?args=2e646562756753706c6974456d707479",
+          "nodeType": "Arguments",
+          "result": "Passed"
+        }
+      ],
+      "duration": "2s",
+      "durationInSeconds": 2.0424036026000976,
+      "name": "debugRoutesAreAcceptedAtEveryEntry(destination:)",
+      "nodeIdentifier": "CalendarDebugSplitStateTests/debugRoutesAreAcceptedAtEveryEntry(destination:)",
+      "nodeIdentifierURL": "test://com.apple.xcode/ChineseCalendarSources/ChineseCalendarUITests/CalendarDebugSplitStateTests/debugRoutesAreAcceptedAtEveryEntry(destination:)",
+      "nodeType": "Test Case",
+      "result": "Passed"
+    },
+    {
+      "children": [
+        {
+          "duration": "2s",
+          "durationInSeconds": 2.0432310104370117,
+          "name": ".debugNavigationTabs(id: D7829B3D-7B3B-4D3D-B89D-E1D7F218ADFC)",
+          "nodeIdentifierURL": "test://com.apple.xcode/ChineseCalendarSources/ChineseCalendarUITests/CalendarDebugSplitStateTests/debugRoutesCanStartCoreLayers(destination:)?args=2e64656275674e617669676174696f6e546162732869643a2044373832394233442d374233422d344433442d423839442d45314437463231384144464329",
+          "nodeType": "Arguments",
+          "result": "Passed"
+        },
+        {
+          "duration": "2s",
+          "durationInSeconds": 2.042310953140259,
+          "name": ".debugSplit(layout: ChineseCalendarUI.CalendarDebugSplitLayout.threeColumn)",
+          "nodeIdentifierURL": "test://com.apple.xcode/ChineseCalendarSources/ChineseCalendarUITests/CalendarDebugSplitStateTests/debugRoutesCanStartCoreLayers(destination:)?args=2e646562756753706c6974286c61796f75743a204368696e65736543616c656e64617255492e43616c656e646172446562756753706c69744c61796f75742e7468726565436f6c756d6e29",
+          "nodeType": "Arguments",
+          "result": "Passed"
+        },
+        {
+          "duration": "2s",
+          "durationInSeconds": 2.042412042617798,
+          "name": ".debugSplit(layout: ChineseCalendarUI.CalendarDebugSplitLayout.twoColumn)",
+          "nodeIdentifierURL": "test://com.apple.xcode/ChineseCalendarSources/ChineseCalendarUITests/CalendarDebugSplitStateTests/debugRoutesCanStartCoreLayers(destination:)?args=2e646562756753706c6974286c61796f75743a204368696e65736543616c656e64617255492e43616c656e646172446562756753706c69744c61796f75742e74776f436f6c756d6e29",
+          "nodeType": "Arguments",
+          "result": "Passed"
+        },
+        {
+          "duration": "2s",
+          "durationInSeconds": 2.0423271656036377,
+          "name": ".debugSplitDetail(item: ChineseCalendarUI.CalendarDebugSplitItem.first, level: 1)",
+          "nodeIdentifierURL": "test://com.apple.xcode/ChineseCalendarSources/ChineseCalendarUITests/CalendarDebugSplitStateTests/debugRoutesCanStartCoreLayers(destination:)?args=2e646562756753706c697444657461696c286974656d3a204368696e65736543616c656e64617255492e43616c656e646172446562756753706c69744974656d2e66697273742c206c6576656c3a203129",
+          "nodeType": "Arguments",
+          "result": "Passed"
+        },
+        {
+          "duration": "2s",
+          "durationInSeconds": 2.042383909225464,
+          "name": ".debugSplitEmpty",
+          "nodeIdentifierURL": "test://com.apple.xcode/ChineseCalendarSources/ChineseCalendarUITests/CalendarDebugSplitStateTests/debugRoutesCanStartCoreLayers(destination:)?args=2e646562756753706c6974456d707479",
+          "nodeType": "Arguments",
+          "result": "Passed"
+        }
+      ],
+      "duration": "2s",
+      "durationInSeconds": 2.042533016204834,
+      "name": "debugRoutesCanStartCoreLayers(destination:)",
+      "nodeIdentifier": "CalendarDebugSplitStateTests/debugRoutesCanStartCoreLayers(destination:)",
+      "nodeIdentifierURL": "test://com.apple.xcode/ChineseCalendarSources/ChineseCalendarUITests/CalendarDebugSplitStateTests/debugRoutesCanStartCoreLayers(destination:)",
+      "nodeType": "Test Case",
+      "result": "Passed"
+    }
+  ]
+}
