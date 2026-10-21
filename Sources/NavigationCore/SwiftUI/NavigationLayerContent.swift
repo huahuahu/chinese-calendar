@@ -13,10 +13,7 @@ struct NavigationLayerContent<
                 if destination.providesNavigationContainer {
                     configuration.page(for: destination)
                 } else {
-                    switch destination.navigationContainer {
-                    case .stack:
-                        NavigationScopeView(stack: context.selectedStack, presentation: context)
-                    }
+                    NavigationScopeView(stack: context.selectedStack, presentation: context)
                 }
             } else {
                 missingNavigationConfiguration()

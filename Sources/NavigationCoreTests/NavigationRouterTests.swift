@@ -130,7 +130,7 @@ private enum TestDestination: NavigationDestination {
     #expect(router.rootDestination(for: .secondary) == .third)
     #expect(router.path(for: .secondary).isEmpty)
 
-    #expect(router.submit(.replacePath([.first, .second], on: .primary)) == .applied)
+    #expect(router.submit(.replacePath([.first, .second], on: .scope(.primary))) == .applied)
     #expect(router.selectedScope == .primary)
     #expect(router.path(for: .primary) == [.first, .second])
 
@@ -177,7 +177,7 @@ private enum TestDestination: NavigationDestination {
     )
     router.presentFullScreen(.first)
 
-    #expect(router.submit(.push(.second, on: .primary)) == .deferredUntilPresentationDismisses)
+    #expect(router.submit(.push(.second, on: .scope(.primary))) == .deferredUntilPresentationDismisses)
     #expect(router.submit(.replacePath([.third], on: .secondary)) == .deferredUntilPresentationDismisses)
     #expect(router.path(for: .primary).isEmpty)
     #expect(router.path(for: .secondary).isEmpty)
@@ -195,9 +195,9 @@ private enum TestDestination: NavigationDestination {
         selectedScope: .primary
     )
     router.presentSheet(.first)
-    router.submit(.push(.second, on: .primary))
+    router.submit(.push(.second, on: .scope(.primary)))
 
-    #expect(router.applyDeferredRequestIfReady() == .push(.second, on: .primary))
+    #expect(router.applyDeferredRequestIfReady() == .push(.second, on: .scope(.primary)))
     #expect(router.applyDeferredRequestIfReady() == nil)
     #expect(router.path(for: .primary) == [.second])
 }

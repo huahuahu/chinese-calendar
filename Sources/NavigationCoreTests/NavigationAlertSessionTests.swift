@@ -12,14 +12,20 @@ nonisolated private enum SessionTestNotice: String, Codable, NavigationAlertRout
 @Suite("提示会话的生命周期约束")
 struct NavigationAlertSessionTests {
     private enum Tab: String, Codable { case home, history }
-    private enum Route: String, Codable, NavigationDestination { case first, second }
+    private enum Route: String, Codable, NavigationDestination {
+        case root, first, second
+        var providesNavigationContainer: Bool {
+            self == .root
+        }
+    }
+
     private typealias Router = NavigationRouter<Tab, Route, SessionTestNotice>
     private typealias Presentation = NavigationPresentationContext<Tab, Route, SessionTestNotice>
     typealias State = NavigationAlertSession.State
 
     @Test(arguments: [false, true])
     func completionRequiresDismissalAndCannotReleaseEarly(isConfirmation: Bool) throws {
-        let router = Router(rootDestination: .first, selectedScope: .home)
+        let router = Router(rootDestination: .root, selectedScope: .home)
         router.presentSheet(.first)
         let context = try router.presentationContext(for: #require(router.sheet))
         let id: UUID
@@ -61,7 +67,7 @@ struct NavigationAlertSessionTests {
 
     @Test(arguments: [State.presented, .dismissing, .handlingCompletion])
     func wrongIDCannotChangeCurrentSession(state: State) throws {
-        let router = Router(rootDestination: .first, selectedScope: .home)
+        let router = Router(rootDestination: .root, selectedScope: .home)
         let context = router.rootPresentation
         let id = try beginAlert(context)
         context.presentAlert(.second)
@@ -86,7 +92,7 @@ struct NavigationAlertSessionTests {
 
     @Test(arguments: [State.presented, .dismissing, .handlingCompletion])
     func expiredCallbacksCannotAffectNextAlert(state: State) throws {
-        let router = Router(rootDestination: .first, selectedScope: .home)
+        let router = Router(rootDestination: .root, selectedScope: .home)
         let context = router.rootPresentation
         let first = try beginAlert(context)
         context.presentAlert(.second)
@@ -111,7 +117,7 @@ struct NavigationAlertSessionTests {
     }
 
     @Test func inactiveContextCannotChangeRestoredLayerWithSameID() throws {
-        let router = Router(rootDestination: .first, selectedScope: .home)
+        let router = Router(rootDestination: .root, selectedScope: .home)
         router.presentSheet(.first)
         let oldPage = try #require(router.sheet)
         let oldContext = router.presentationContext(for: oldPage)

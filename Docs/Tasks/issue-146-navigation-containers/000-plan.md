@@ -1,8 +1,8 @@
 # Issue #146：App 原生分栏与详情栈组合方案
 
-- 关联：[Issue #146](https://github.com/huahuahu/chinese-calendar/issues/146)、[Destination 容器与层入口 #152](../issue-152-destination-containers/000-plan.md)、[统一页面构建方法 #148](../issue-148-navigation-host/002-unified-destination-builder.md)
+- 关联：[Issue #146](https://github.com/huahuahu/chinese-calendar/issues/146)、[同构导航层 #156](../task-2026-10-20-homogeneous-navigation-layers/000-plan.md)、[Destination 容器与层入口 #152](../issue-152-destination-containers/000-plan.md)、[统一页面构建方法 #148](../issue-148-navigation-host/002-unified-destination-builder.md)
 - 状态：可执行；本文件记录方案，实际实现与验证由结果记录逐项说明
-- 更新日期：2026-10-20
+- 更新日期：2026-10-21
 - 决策依据：2026-10-20 明确的 App 原生分栏组合边界，取代此前由 SDK 建立普通／两栏／三栏通用容器状态、容器 Context 和多栏快照的草案
 
 ## 背景、目标与范围
@@ -20,7 +20,7 @@
 - [NavigationScopeView](../../../Sources/NavigationCore/SwiftUI/NavigationScopeView.swift) 已提供显式 Context／presentation 与 root 闭包的组合入口，内部创建 NavigationStack、绑定该 Context 的 path，并从配置注册 push Destination。
 - [NavigationLayerContent](../../../Sources/NavigationCore/SwiftUI/NavigationLayerContent.swift) 已根据 `providesNavigationContainer` 决定是否为入口包栈；自带容器入口直接由配置构建。
 - [NavigationContext](../../../Sources/NavigationCore/Routing/NavigationContext.swift) 已通过独立栈状态和窄访问约束处理 path／push／pop。基线的 path setter 不返回是否接受，因此 App 不能据其返回值决定是否同步修改 selection。
-- [NavigationContainerKind](../../../Sources/NavigationCore/State/NavigationContainerKind.swift) 的基线含 `.stack` 与被拒绝的 `.twoColumn`／`.threeColumn` 预留值；预留值不是已实现的 SplitView 能力。
+- 基线的 `NavigationContainerKind` 含 `.stack` 与被拒绝的 `.twoColumn`／`.threeColumn` 预留值；预留值不是已实现的 SplitView 能力。该类型及 Destination 入口白名单已由后续 [#156 同构导航层](../task-2026-10-20-homogeneous-navigation-layers/001-result.md) 删除，不属于合并后的 API。
 - [NavigationPresentationContext](../../../Sources/NavigationCore/Routing/NavigationPresentationContext.swift) 和 [NavigationRouter](../../../Sources/NavigationCore/Routing/NavigationRouter.swift) 已负责独立呈现层、业务 alert、请求确认与关闭协调。本轮继续复用这些入口。
 
 旧任务的测试、构建和交互记录只能说明旧代码状态；本轮组合后的宽窄切换、系统返回及布局写回仍须验证。
@@ -49,9 +49,9 @@ App 在同一个同步业务动作中计算并应用这些选择，不用多个 
 
 ### 3. SDK 只补最小路径操作能力
 
-拟为 `NavigationContext` 增加 `setPath(_:) -> Bool`，沿用已有 Context 有效性、事务访问限制与 Destination push 入口校验。它只报告路径变更是否被接受，让 App 决定是否同步修改 selection；它不持有业务选择、不解释分类，也不新增跨栏事务或容器状态。系统 NavigationStack 仍通过 path Binding 使用同一份路径。
+为 `NavigationContext` 保留 `setPath(_:) -> Bool`，沿用 Context 有效性与事务访问限制。合并 #156 后不恢复 Destination push 入口校验；Core 不根据页面位置拒绝 Destination。该方法只报告路径变更是否被接受，让 App 决定是否同步修改 selection；它不持有业务选择、不解释分类，也不新增跨栏事务或容器状态。系统 NavigationStack 仍通过 path Binding 使用同一份路径。
 
-移除 `NavigationContainerKind.twoColumn`／`.threeColumn` 的未实现预留，保留 `.stack`。App 的 NavigationSplitView 是 `providesNavigationContainer == true` 的组合内容，不新增 SDK 分栏 host 或列权限体系。
+2026-10-20 的原方案只移除 `NavigationContainerKind.twoColumn`／`.threeColumn` 并保留 `.stack`；2026-10-21 合并 #156 时改为保留主干对整个 `NavigationContainerKind`、`NavigationDestinationEntry` 与入口白名单的删除。Destination 只声明 `providesNavigationContainer`：true 由 App 提供原生 NavigationSplitView 等容器，false 由 Core 提供当前层的 `.primary` NavigationStack，不新增 SDK 分栏 host 或列权限体系。
 
 ### 4. 容器模态与外部请求沿用既有协调
 
@@ -67,7 +67,7 @@ SDK 快照继续覆盖其已有路由、path 和呈现结构，不保存 App sel
 
 ## 实施顺序
 
-1. 补充 `setPath` 的接受／拒绝反馈，移除 SDK 未实现的分栏预留；为路径有效性和事务拒绝补充针对性测试。
+1. 补充 `setPath` 的接受／拒绝反馈，沿用 #156 已移除入口白名单与容器枚举的边界；针对 Context 生命周期和事务拒绝补充测试，不以页面位置拒绝 Destination。
 2. 在 App 层加入固定数据的 DEBUG 普通／两栏／三栏组合与集中选择动作，复用配置、详情栈及唯一呈现宿主。
 3. 验证选择、Context 隔离和外部请求的状态规则，再执行窄／宽布局、系统返回、sheet／full-screen 和嵌套交互。
 4. 执行对应测试、构建、格式／lint／文案检查，将实际代码状态、每项结果和缺口写入结果记录。
@@ -91,3 +91,4 @@ SDK 快照继续覆盖其已有路由、path 和呈现结构，不保存 App sel
 - 原生 SplitView 在深 path、系统返回及程序修改布局 Binding 时的具体行为，须以本轮指定 Simulator 和系统版本交互为准。若平台行为阻止验收，记录复现与限制，不将新 SDK 容器抽象作为默认补救。
 - 外部请求实际应用与 App selection 同步必须验证取消、批准、alert 队列和真实关闭时序；不得仅凭静态调用顺序标为通过。
 - 2026-10-20：采用 App 原生分栏组合与最小 `setPath` 反馈，替代旧草案的 SDK 多栏状态、通用容器 Context、跨栏结构事务及多栏恢复模型。正式历史 Tab 保持首轮范围之外。
+- 2026-10-21：合并 main 的 #156 同构导航层。根层与模态层复用 `NavigationLayer`、`NavigationLayerContent` 与 `NavigationLayerSnapshot`；普通根／模态使用 `.primary`，请求以 StackID 寻址，快照使用 `rootDestination + layer`。容器归属不变时恢复复用根栈，归属改变时重建栈并失效旧 Context。分栏仍由 App 组织，混合 Tab 从当前呈现层取得各栈；移除白名单不允许业务为同层同栈重复建立宿主。旧 255 项测试属于合并前快照，不能作为这次适配的通过证据；合并后构建、测试及文档检查由结果记录另行补充。

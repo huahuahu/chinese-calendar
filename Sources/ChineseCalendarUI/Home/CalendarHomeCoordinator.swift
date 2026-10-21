@@ -14,6 +14,9 @@ final class CalendarHomeCoordinator {
     private var storeIdentity: String?
     #if DEBUG
         private(set) var downloadPreviewSessions: [UUID: FullStoreDownloadPreviewState] = [:]
+        @ObservationIgnored private var debugSplitStates: [
+            ObjectIdentifier: (navigation: CalendarNavigationContext, state: CalendarDebugSplitState)
+        ] = [:]
     #endif
 
     init(router: CalendarRouter = CalendarRouter()) {
@@ -100,10 +103,21 @@ final class CalendarHomeCoordinator {
             downloadPreviewSessions = downloadPreviewSessions.filter {
                 destinations.contains(.downloadPreview(sessionID: $0.key))
             }
+            debugSplitStates = debugSplitStates.filter(\.value.navigation.isActive)
         #endif
     }
 
     #if DEBUG
+        /// 选择与布局跟随实际详情栈，数据页面重建时仍与原路径保持一致。
+        func debugSplitState(for navigation: CalendarNavigationContext) -> CalendarDebugSplitState {
+            let identity = ObjectIdentifier(navigation)
+            // 关闭动画中的旧页面仍读取原状态，待宿主完成关闭后再统一释放。
+            if let session = debugSplitStates[identity] { return session.state }
+            let state = CalendarDebugSplitState()
+            if navigation.isActive { debugSplitStates[identity] = (navigation, state) }
+            return state
+        }
+
         func presentDownloadPreview(presentation: CalendarPresentationContext? = nil) {
             guard !router.isAwaitingPresentationDismissal, downloadPreviewSessions.isEmpty else { return }
             let session = FullStoreDownloadPreviewState()

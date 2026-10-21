@@ -1,0 +1,73 @@
+2026-10-21 17:56:23.573903+0800 [21266:65420736] [app] Launching iOS app
+
+2026-10-21 17:56:26.496702+0800 [21266:65420736] [persistence] Opening shared SwiftData container
+
+2026-10-21 17:56:26.503459+0800 [21266:65420736] [persistence] Keeping installed full seed store instead of reinstalling bundled base store
+
+2026-10-21 17:56:26.503504+0800 [21266:65420736] [persistence] Bundled seed store is already installed
+
+2026-10-21 17:56:26.503565+0800 [21266:65420736] [persistence] Creating model container at /Users/tigerguo/Library/Developer/CoreSimulator/Devices/16A9CAA7-45CE-46D5-8915-F61531FC617C/data/Containers/Shared/AppGroup/E73729E7-DAAD-45FA-BB30-218203C4D6B9/ChineseCalendarStore/ChineseCalendar.sqlite, allowsSave: false
+
+2026-10-21 17:56:27.112751+0800 [21266:65420736] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-21 17:56:27.112938+0800 [21266:65420736] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-21 17:56:27.126545+0800 [21266:65420736] [XPCErrors] non-launching port is incompatible with service identifier "com.apple.PointerUI.pointeruid.default-service"
+
+2026-10-21 17:56:27.143419+0800 [21266:65420736] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-21 17:56:27.143498+0800 [21266:65420736] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-21 17:56:27.496771+0800 [21266:65420736] [AXValidations] AX Safe category class 'SFBarButtonGroupContainerAccessibility' was not found!
+
+objc[21266]: Class UIAccessibilityLoaderWebShared is implemented in both /Library/Developer/CoreSimulator/Volumes/iOS_24A434/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 27.0.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebKit.axbundle/WebKit (0x11ae54398) and /Library/Developer/CoreSimulator/Volumes/iOS_24A434/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 27.0.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebCore.axbundle/WebCore (0x11af48310). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
+
+2026-10-21 17:56:28.238461+0800 [21266:65420736] [AXValidations] AX Safe category class 'SLHighlightDisambiguationPillViewAccessibility' was not found!
+
+2026-10-21 17:57:46.477174+0800 [21266:65420736] [Invalid Configuration] Update NavigationRequestObserver tried to update multiple times per frame.
+
+2026-10-21 17:57:46.632513+0800 [21266:65420736] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-21 17:57:46.635230+0800 [21266:65420736] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-21 17:57:46.635297+0800 [21266:65420736] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-21 17:57:46.635323+0800 [21266:65420736] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-21 17:58:05.294014+0800 [21266:65420736] [UILog] Called -[UIContextMenuInteraction updateVisibleMenuWithBlock:] while no context menu is visible. This won't do anything.
+
+2026-10-21 17:58:41.495901+0800 [21266:65420736] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-21 17:58:41.496160+0800 [21266:65420736] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-21 17:58:41.496264+0800 [21266:65420736] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-21 17:58:42.083394+0800 [21266:65420736] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-21 17:58:42.083473+0800 [21266:65420736] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-21 17:58:42.083513+0800 [21266:65420736] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-21 17:58:48.995862+0800 [21266:65420736] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-21 17:58:48.995940+0800 [21266:65420736] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-21 17:58:48.995974+0800 [21266:65420736] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-21 17:58:49.141762+0800 [21266:65420736] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-21 17:58:49.141850+0800 [21266:65420736] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-21 17:58:49.141880+0800 [21266:65420736] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-21 17:58:49.655008+0800 [21266:65420736] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-21 17:58:49.655086+0800 [21266:65420736] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-21 17:58:49.655116+0800 [21266:65420736] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-21 17:58:49.655142+0800 [21266:65420736] [API] cannot add handler to 0 from 0 - dropping
+
+SwiftUICore/Environment+Objects.swift:34: Fatal error: No Observable object of type NavigationContext<CalendarTab, CalendarDestination> found. A View.environmentObject(_:) for NavigationContext<CalendarTab, CalendarDestination> may be missing as an ancestor of this view.
+
+The connection to the application standard output has been closed.

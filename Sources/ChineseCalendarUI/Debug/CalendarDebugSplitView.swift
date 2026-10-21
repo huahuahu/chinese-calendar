@@ -8,14 +8,20 @@
     struct CalendarDebugSplitView: View {
         let layout: CalendarDebugSplitLayout
         var stack: NavigationStackID<CalendarTab> = .primary
+        @Environment(CalendarHomeCoordinator.self) private var coordinator
         @Environment(CalendarPresentationContext.self) private var presentation
-        @State private var state = CalendarDebugSplitState()
 
         private var navigation: CalendarNavigationContext {
             presentation.context(for: stack)
         }
 
+        private var state: CalendarDebugSplitState {
+            coordinator.debugSplitState(for: navigation)
+        }
+
         var body: some View {
+            @Bindable var state = state
+
             Group {
                 switch layout {
                 case .twoColumn:
@@ -59,7 +65,9 @@
         }
 
         private var categoryList: some View {
-            List(selection: categorySelection) {
+            @Bindable var state = state
+
+            return List(selection: categorySelection) {
                 Section(CalendarStringKey.Debug.Split.categories) {
                     ForEach(CalendarDebugSplitCategory.allCases) { category in
                         Text(category.title).tag(category)

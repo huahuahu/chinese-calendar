@@ -12,7 +12,11 @@ enum CalendarNavigationConfirmation {
         case let .replacePath(path, _): description(for: path.last)
         case let .push(destination, _): description(for: destination)
         case let .setRoot(destination, _): description(for: destination)
-        case let .selectScope(scope): String(localized: scope.title)
+        case let .selectStack(stack):
+            switch stack {
+            case let .scope(tab): String(localized: tab.title)
+            case .primary: String(localized: CalendarStringKey.Navigation.linkTarget)
+            }
         }
         return NavigationConfirmationContent(
             title: CalendarStringKey.Navigation.confirmTitle,

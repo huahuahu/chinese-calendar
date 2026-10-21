@@ -41,6 +41,15 @@ public final class NavigationContext<Scope: Hashable, Destination: NavigationDes
         isActive ? state?.rootDestination : nil
     }
 
+    /// 替换本栈的根页面并清空路径，不改变所在层的入口或其他栈。
+    @discardableResult
+    public func setRootDestination(_ destination: Destination) -> Bool {
+        guard canMutate else { return false }
+        state?.rootDestination = destination
+        state?.path = []
+        return true
+    }
+
     /// 这个栈中已经 push 的页面列表，不包含栈的根页面。
     ///
     /// NavigationStack 绑定此属性后，返回手势、NavigationLink(value:) 和代码中的 push/pop
@@ -51,10 +60,10 @@ public final class NavigationContext<Scope: Hashable, Destination: NavigationDes
     }
 
     /// 替换本栈的 push 路径。需要同步更新业务选择时，调用方应先确认路径修改成功。
-    /// - Returns: 接受完整路径时返回 true；Context 失效、不允许修改或包含非法 push 页面时返回 false。
+    /// - Returns: 接受完整路径时返回 true；Context 失效或当前不允许修改时返回 false。
     @discardableResult
     public func setPath(_ newPath: [Destination]) -> Bool {
-        guard canMutate, let state, newPath.allSatisfy({ $0.supportsNavigationEntry(.push) }) else { return false }
+        guard canMutate, let state else { return false }
         state.path = newPath
         return true
     }
@@ -63,7 +72,7 @@ public final class NavigationContext<Scope: Hashable, Destination: NavigationDes
     /// - Returns: 成功把页面加入路径时返回 true；Context 失效或不允许修改时返回 false。
     @discardableResult
     public func push(_ destination: Destination) -> Bool {
-        guard canMutate, destination.supportsNavigationEntry(.push) else { return false }
+        guard canMutate else { return false }
         path.append(destination)
         return true
     }

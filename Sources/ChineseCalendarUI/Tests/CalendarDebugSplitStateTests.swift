@@ -2,6 +2,7 @@
     @testable import ChineseCalendarUI
     import Foundation
     import NavigationCore
+    import SwiftUI
     import Testing
 
     @MainActor
@@ -207,32 +208,174 @@
             #expect(split.navigation.path == [destination])
         }
 
-        @Test func debugRoutesCannotRestoreAndContainersCannotEnterPushPaths() {
-            let destinations: [CalendarDestination] = [
-                .debugSplit(layout: .twoColumn), .debugSplit(layout: .threeColumn),
-                .debugSplitDetail(item: .first, level: 1), .debugNavigationTabs(id: UUID())
-            ]
-            for destination in destinations {
-                let source = CalendarRouter()
-                let navigation = source.navigation.context(for: .years)
-                #expect(!destination.supportsStateRestoration)
-                if destination.providesNavigationContainer {
-                    #expect(!navigation.push(destination))
-                    #expect(navigation.path.isEmpty)
-                    #expect(source.navigation.rootPresentation.present(destination))
-                } else {
-                    #expect(navigation.push(destination))
-                }
+        @Test(arguments: debugDestinations)
+        func debugRoutesAreAcceptedAtEveryEntryButCannotBecomeRestorableAppState(
+            destination: CalendarDestination
+        ) throws {
+            #expect(!destination.supportsStateRestoration)
+            let pathSource = CalendarRouter()
+            let navigation = pathSource.navigation.context(for: .years)
+            #expect(navigation.push(destination))
+            #expect(navigation.path == [destination])
+
+            let stackRootSource = CalendarRouter(yearsPath: [.lunarYear(2024)])
+            let stackRoot = stackRootSource.navigation.context(for: .years)
+            #expect(stackRoot.setRootDestination(destination))
+            #expect(stackRoot.rootDestination == destination)
+            #expect(stackRoot.path.isEmpty)
+
+            let modalSource = CalendarRouter()
+            #expect(modalSource.navigation.rootPresentation.present(destination))
+            #expect(modalSource.sheet?.destination == destination)
+
+            for source in [pathSource, stackRootSource, modalSource] {
+                #expect(source.navigation.snapshot.rootDestination == .mainTabs)
                 #expect(source.restorableSnapshot == nil)
-                let target = CalendarRouter()
+                let data = try JSONEncoder().encode(source.navigation.snapshot)
+                let snapshot = try JSONDecoder().decode(
+                    NavigationSnapshot<CalendarTab, CalendarDestination, CalendarAlert>.self, from: data
+                )
+                let target = CalendarRouter(selectedTab: .history, historyPath: [.emperor("ming-taizu")])
                 let before = target.navigation.snapshot
-                #expect(!target.restore(source.navigation.snapshot))
+                #expect(!target.restore(snapshot))
                 #expect(target.navigation.snapshot == before)
             }
+        }
+
+        @Test(arguments: debugDestinations)
+        func debugRoutesCanStartCoreLayersButAppRejectsTheirRestoration(destination: CalendarDestination) throws {
+            let source = NavigationRouter<CalendarTab, CalendarDestination, CalendarAlert>(
+                rootDestination: destination
+            )
+            let snapshot = source.snapshot
+            #expect(snapshot.rootDestination == destination)
+            #expect(snapshot.layer.selectedStack == .primary)
+            #expect(snapshot.layer.rootDestinations[.primary] == (
+                destination.providesNavigationContainer ? nil : destination
+            ))
+            let data = try JSONEncoder().encode(snapshot)
+            let decoded = try JSONDecoder().decode(
+                NavigationSnapshot<CalendarTab, CalendarDestination, CalendarAlert>.self, from: data
+            )
+            let target = CalendarRouter(yearsPath: [.lunarYear(2024)])
+            let before = target.navigation.snapshot
+            #expect(!target.restore(decoded))
+            #expect(target.navigation.snapshot == before)
+        }
+    }
+
+    extension CalendarDebugSplitStateTests {
+        @Test(arguments: CalendarDebugSplitLayout.allCases)
+        func storeReplacementKeepsSplitSelectionLayoutAndPath(layout: CalendarDebugSplitLayout) throws {
+            let coordinator = CalendarHomeCoordinator()
+            coordinator.storeIdentityDidChange("base")
+            #expect(coordinator.router.navigation.rootPresentation.present(.debugSplit(layout: layout)))
+            let node = try #require(coordinator.router.sheet)
+            let presentation = coordinator.router.navigation.presentationContext(for: node)
+            let navigation = presentation.context(for: .primary)
+            let state = coordinator.debugSplitState(for: navigation)
+            #expect(state.selectItem(.first, navigation: navigation))
+            let destination = CalendarDestination.debugSplitDetail(item: .first, level: 1)
+            #expect(navigation.push(destination))
+            state.retainsDetail = true
+            state.columnVisibility = .detailOnly
+            state.preferredCompactColumn = .detail
+
+            coordinator.storeIdentityDidChange("full")
+            let rebuiltNavigation = presentation.context(for: .primary)
+            let rebuiltState = coordinator.debugSplitState(for: rebuiltNavigation)
+            #expect(rebuiltNavigation === navigation)
+            #expect(rebuiltState === state)
+            #expect(rebuiltState.item == .first)
+            #expect(rebuiltState.category == .first)
+            #expect(rebuiltState.retainsDetail)
+            #expect(rebuiltState.columnVisibility == .detailOnly)
+            #expect(rebuiltState.preferredCompactColumn == .detail)
+            #expect(rebuiltNavigation.path == [destination])
+        }
+
+        @Test func storeReplacementKeepsMixedTabSplitStatesIndependent() throws {
+            let coordinator = CalendarHomeCoordinator()
+            coordinator.storeIdentityDidChange("base")
+            let id = UUID()
+            #expect(coordinator.router.navigation.rootPresentation.present(
+                .debugNavigationTabs(id: id), style: .fullScreen, initialStack: .scope(.history),
+                rootDestinations: [.scope(.years): .debugNavigation(id: id)]
+            ))
+            let node = try #require(coordinator.router.fullScreen)
+            let presentation = coordinator.router.navigation.presentationContext(for: node)
+            let twoColumn = presentation.context(for: .scope(.history))
+            let threeColumn = presentation.context(for: .scope(.settings))
+            let firstState = coordinator.debugSplitState(for: twoColumn)
+            let secondState = coordinator.debugSplitState(for: threeColumn)
+            #expect(firstState !== secondState)
+            #expect(firstState.selectItem(.first, navigation: twoColumn))
+            #expect(secondState.selectItem(.third, navigation: threeColumn))
+            #expect(twoColumn.push(.debugSplitDetail(item: .first, level: 1)))
+            #expect(threeColumn.push(.debugSplitDetail(item: .third, level: 1)))
+            secondState.retainsDetail = true
+            firstState.columnVisibility = .detailOnly
+            secondState.columnVisibility = .all
+            presentation.selectedStack = .scope(.settings)
+
+            coordinator.storeIdentityDidChange("full")
+            #expect(coordinator.debugSplitState(for: twoColumn) === firstState)
+            #expect(coordinator.debugSplitState(for: threeColumn) === secondState)
+            #expect(firstState.item == .first)
+            #expect(secondState.item == .third)
+            #expect(!firstState.retainsDetail)
+            #expect(secondState.retainsDetail)
+            #expect(firstState.columnVisibility == .detailOnly)
+            #expect(secondState.columnVisibility == .all)
+            #expect(twoColumn.path == [.debugSplitDetail(item: .first, level: 1)])
+            #expect(threeColumn.path == [.debugSplitDetail(item: .third, level: 1)])
+            #expect(presentation.selectedStack == .scope(.settings))
+        }
+
+        @Test func dismissalReleasesSplitStateAndSameIDRestorationDoesNotReviveIt() throws {
+            let coordinator = CalendarHomeCoordinator()
+            #expect(coordinator.router.navigation.rootPresentation.present(.debugSplit(layout: .twoColumn)))
+            let original = try #require(coordinator.router.sheet)
+            let presentation = coordinator.router.navigation.presentationContext(for: original)
+            let navigation = presentation.context(for: .primary)
+            let snapshot = coordinator.router.navigation.snapshot
+            weak var state = coordinator.debugSplitState(for: navigation)
+            #expect(state?.selectItem(.first, navigation: navigation) == true)
+            #expect(navigation.push(.debugSplitDetail(item: .first, level: 1)))
+            #expect(presentation.dismiss())
+            #expect(!navigation.isActive)
+            #expect(state != nil)
+            #expect(coordinator.debugSplitState(for: navigation) === state)
+            #expect(state?.item == .first)
+
+            coordinator.rootPresentationDidDismiss()
+            #expect(state == nil)
+            weak var inactiveState = coordinator.debugSplitState(for: navigation)
+            #expect(inactiveState == nil)
+
+            // 直接恢复 Core 快照重建相同层 ID，验证缓存不按路由 ID 复活旧选择。
+            #expect(coordinator.router.navigation.restore(snapshot))
+            let reopened = try #require(coordinator.router.sheet)
+            let reopenedNavigation = coordinator.router.navigation.context(for: reopened)
+            let reopenedState = coordinator.debugSplitState(for: reopenedNavigation)
+            #expect(reopened.id == original.id)
+            #expect(reopenedNavigation.id == navigation.id)
+            #expect(reopenedNavigation !== navigation)
+            #expect(!navigation.isActive)
+            #expect(reopenedState.item == nil)
+            #expect(reopenedState.category == nil)
+            #expect(reopenedNavigation.path.isEmpty)
         }
     }
 
     private extension CalendarDebugSplitStateTests {
+        nonisolated static var debugDestinations: [CalendarDestination] {
+            [
+                .debugSplit(layout: .twoColumn), .debugSplit(layout: .threeColumn),
+                .debugSplitDetail(item: .first, level: 1), .debugNavigationTabs(id: UUID())
+            ]
+        }
+
         struct SplitSession {
             let router: CalendarRouter
             let presentation: CalendarPresentationContext

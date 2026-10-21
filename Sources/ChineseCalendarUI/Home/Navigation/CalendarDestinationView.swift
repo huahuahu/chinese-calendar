@@ -10,14 +10,15 @@ struct CalendarDestinationView<BottomStatusBar: View>: View {
     let bottomStatusBar: () -> BottomStatusBar
     @Environment(CalendarHomeCoordinator.self) private var coordinator
     @Environment(CalendarPresentationContext.self) private var presentation
+    @Environment(CalendarNavigationContext.self) private var navigation: CalendarNavigationContext?
     @Environment(ChineseCalendarStoreCoordinator.self) private var storeCoordinator: ChineseCalendarStoreCoordinator?
 
     var body: some View {
         Group {
             switch destination {
-            case .root:
+            case .mainTabs:
                 CalendarHomeTabView(
-                    coordinator: coordinator, bottomStatusBarIsPresented: bottomStatusBarIsPresented,
+                    bottomStatusBarIsPresented: bottomStatusBarIsPresented,
                     bottomStatusBar: bottomStatusBar
                 )
             case .calendarHome:
@@ -112,6 +113,6 @@ struct CalendarDestinationView<BottomStatusBar: View>: View {
 
     private var showsDismissButton: Bool {
         presentation.isPresented && !destination.providesNavigationContainer &&
-            destination.allowedNavigationEntries.contains(.presentation)
+            navigation?.path.isEmpty == true && navigation?.rootDestination == destination
     }
 }

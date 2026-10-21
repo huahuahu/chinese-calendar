@@ -7,6 +7,11 @@ import Observation
 final class CalendarRouter {
     let navigation: NavigationRouter<CalendarTab, CalendarDestination, CalendarAlert>
 
+    /// 主标签页在任意层中使用同一组初始栈根，替换后的栈根、选中项与路径由该层单独保存。
+    static var mainTabRoots: [NavigationStackID<CalendarTab>: CalendarDestination] {
+        [.scope(.years): .calendarHome, .scope(.history): .historyHome, .scope(.settings): .settings]
+    }
+
     var selectedTab: CalendarTab {
         get { navigation.selectedScope }
         set { navigation.selectedScope = newValue }
@@ -51,6 +56,7 @@ final class CalendarRouter {
         let snapshot = navigation.snapshot
         guard !isAwaitingPresentationDismissal, navigation.pendingConfirmation == nil,
               !navigation.hasActiveAlert, navigation.requestWaitingForAlert == nil,
+              Self.hasValidContainerStructure(destination: snapshot.rootDestination, layer: snapshot.layer),
               snapshot.destinations.allSatisfy(\.supportsStateRestoration),
               snapshot.presentation?.alerts.isEmpty ?? true else { return nil }
         return snapshot
@@ -58,11 +64,27 @@ final class CalendarRouter {
 
     @discardableResult
     func restore(_ snapshot: NavigationSnapshot<CalendarTab, CalendarDestination, CalendarAlert>) -> Bool {
-        guard snapshot.rootDestination == .root,
-              Set(snapshot.rootDestinations.keys) == Set(CalendarTab.allCases),
+        guard snapshot.rootDestination == .mainTabs,
+              Self.hasValidContainerStructure(destination: snapshot.rootDestination, layer: snapshot.layer),
               snapshot.destinations.allSatisfy(\.supportsStateRestoration),
               snapshot.presentation?.alerts.isEmpty ?? true else { return false }
         return navigation.restore(snapshot)
+    }
+
+    /// 自带容器需要业务定义的各 Tab 栈，栈根可以替换；每个模态使用相同规则检查。
+    private static func hasValidContainerStructure(
+        destination: CalendarDestination,
+        layer: NavigationLayerSnapshot<CalendarTab, CalendarDestination, CalendarAlert>
+    ) -> Bool {
+        if destination == .mainTabs {
+            guard Set(layer.rootDestinations.keys) == Set(mainTabRoots.keys),
+                  mainTabRoots[layer.selectedStack] != nil,
+                  layer.paths.keys.allSatisfy({ mainTabRoots[$0] != nil }) else { return false }
+        }
+        if case let .node(_, childDestination, _, childLayer) = layer.presentation {
+            return hasValidContainerStructure(destination: childDestination, layer: childLayer)
+        }
+        return true
     }
 
     init(
@@ -71,9 +93,9 @@ final class CalendarRouter {
         historyPath: [CalendarDestination] = []
     ) {
         navigation = NavigationRouter(
-            rootDestination: .root, selectedScope: selectedTab,
-            rootDestinations: [.years: .calendarHome, .history: .historyHome, .settings: .settings],
-            paths: [.years: yearsPath, .history: historyPath]
+            rootDestination: .mainTabs, initialStack: .scope(selectedTab),
+            rootDestinations: Self.mainTabRoots,
+            paths: [.scope(.years): yearsPath, .scope(.history): historyPath]
         )
     }
 

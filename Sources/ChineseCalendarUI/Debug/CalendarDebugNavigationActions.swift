@@ -22,6 +22,12 @@
                 Button(CalendarStringKey.Debug.Navigation.fullScreen) {
                     presentation.present(.debugNavigation(id: UUID()), style: .fullScreen)
                 }
+                Button(CalendarStringKey.Debug.Navigation.mainTabsSheet) {
+                    presentation.presentMainTabs(selectedTab: .settings)
+                }
+                Button(CalendarStringKey.Debug.Navigation.mainTabsFullScreen) {
+                    presentation.presentMainTabs(style: .fullScreen, selectedTab: .settings)
+                }
                 Button(CalendarStringKey.Debug.Alert.show) {
                     presentation.present(.alert(.debugNotice(1)))
                 }

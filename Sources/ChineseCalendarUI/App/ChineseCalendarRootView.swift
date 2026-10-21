@@ -74,9 +74,7 @@ public struct ChineseCalendarRootView: View {
     @ViewBuilder
     private func bottomStatusBar(contentLevel: ChineseCalendarSeedStoreContentLevel) -> some View {
         if let progress = coordinator.fullStoreDownloadProgress {
-            FullStoreDownloadBottomProgressView(progress: progress) {
-                homeCoordinator.presentDownloadDetails()
-            }
+            CalendarDownloadProgressAccessory(progress: progress)
         } else if coordinator.canDownloadFullStore(contentLevel: contentLevel) {
             FullStoreDownloadBanner(action: startFullStoreDownload)
         }

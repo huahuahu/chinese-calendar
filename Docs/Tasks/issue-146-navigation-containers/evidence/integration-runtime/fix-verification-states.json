@@ -1,0 +1,50 @@
+[
+  {
+    "stage": "04-fix-two-push-one",
+    "applicationState": "Running"
+  },
+  {
+    "stage": "05-fix-two-push-two",
+    "applicationState": "Running"
+  },
+  {
+    "stage": "06-fix-two-pop-one",
+    "applicationState": "Running"
+  },
+  {
+    "stage": "07-fix-two-reselect-preserves-one",
+    "applicationState": "Running"
+  },
+  {
+    "stage": "08-fix-two-switch-clears-path",
+    "applicationState": "Running"
+  },
+  {
+    "stage": "09-fix-two-closed",
+    "applicationState": "Running"
+  },
+  {
+    "stage": "10-fix-three-category",
+    "applicationState": "Running"
+  },
+  {
+    "stage": "11-fix-three-object",
+    "applicationState": "Running"
+  },
+  {
+    "stage": "12-fix-three-push-one",
+    "applicationState": "Running"
+  },
+  {
+    "stage": "13-fix-nested-sheet",
+    "applicationState": "Running"
+  },
+  {
+    "stage": "14-fix-nested-sheet-closed",
+    "applicationState": "Running"
+  },
+  {
+    "stage": "15-fix-three-closed",
+    "applicationState": "Running"
+  }
+]

@@ -13,15 +13,18 @@ public struct NavigationSnapshot<
 > {
     /// 整个根层的入口，不等于选中 Tab 的根页面。
     public let rootDestination: Destination
-    /// App 根界面选中的 Tab，与模态内部选中了哪个 Tab 无关。
-    public let selectedScope: Scope
-    /// 根层各栈保存的根页面路由数据；由界面直接构建的静态根页可以不提供。
-    public let rootDestinations: [Scope: Destination]
-    /// 根层各栈已经 push 的页面列表。模态内部的路径保存在模态自己的快照中。
-    public let paths: [Scope: [Destination]]
-    /// App 根层打开的模态及其所有子模态；没有模态时为 nil。
-    public let presentation: NavigationPresentationSnapshot<Scope, Destination, AlertRoute>?
+    /// 根层与每个模态层共用相同的栈、路径和子呈现结构。
+    public let layer: NavigationLayerSnapshot<Scope, Destination, AlertRoute>
 
+    public init(
+        rootDestination: Destination,
+        layer: NavigationLayerSnapshot<Scope, Destination, AlertRoute>
+    ) {
+        self.rootDestination = rootDestination
+        self.layer = layer
+    }
+
+    /// 命名栈容器的便利入口；普通单栈快照使用 layer 的 primary 栈。
     public init(
         rootDestination: Destination,
         selectedScope: Scope,
@@ -29,33 +32,55 @@ public struct NavigationSnapshot<
         paths: [Scope: [Destination]] = [:],
         presentation: NavigationPresentationSnapshot<Scope, Destination, AlertRoute>? = nil
     ) {
-        self.rootDestination = rootDestination
-        self.selectedScope = selectedScope
-        self.rootDestinations = rootDestinations
-        self.paths = paths
-        self.presentation = presentation
+        self.init(
+            rootDestination: rootDestination,
+            layer: NavigationLayerSnapshot(
+                selectedStack: .scope(selectedScope),
+                rootDestinations: Dictionary(uniqueKeysWithValues: rootDestinations.map { (.scope($0.key), $0.value) }),
+                paths: Dictionary(uniqueKeysWithValues: paths.map { (.scope($0.key), $0.value) }),
+                presentation: presentation
+            )
+        )
+    }
+
+    /// 命名栈容器选中的 scope；primary 层应读取 layer.selectedStack。
+    public var selectedScope: Scope {
+        guard case let .scope(scope) = layer.selectedStack else {
+            preconditionFailure("A primary navigation layer has no selected scope")
+        }
+        return scope
+    }
+
+    /// 命名栈根的便利投影；完整结构位于 layer.rootDestinations。
+    public var rootDestinations: [Scope: Destination] {
+        Dictionary(uniqueKeysWithValues: layer.rootDestinations.compactMap { key, value in
+            guard case let .scope(scope) = key else { return nil }
+            return (scope, value)
+        })
+    }
+
+    /// 命名栈路径的便利投影；完整结构位于 layer.paths。
+    public var paths: [Scope: [Destination]] {
+        Dictionary(uniqueKeysWithValues: layer.paths.compactMap { key, value in
+            guard case let .scope(scope) = key else { return nil }
+            return (scope, value)
+        })
+    }
+
+    public var presentation: NavigationPresentationSnapshot<Scope, Destination, AlertRoute>? {
+        layer.presentation
     }
 
     /// 收集快照中所有页面的路由数据，供 App 检查这些页面是否还能恢复。
     /// 结果可能重复，也不保证遍历顺序，不能把它当作用户访问页面的历史记录。
     public var destinations: [Destination] {
-        [rootDestination] + Array(rootDestinations.values) + paths.values
-            .flatMap(\.self) + (presentation?.destinations ?? [])
+        [rootDestination] + layer.destinations
     }
 
-    /// 检查入口、路径与模态 ID；不检查页面数据是否存在，也不检查 App 是否支持这些栈。
+    /// 根层和模态层共用结构校验；页面数据和外部容器配置由 App 检查。
     var hasValidPresentationTree: Bool {
-        guard rootDestination.supportsNavigationEntry(.root),
-              rootDestinations.allSatisfy({ scope, destination in
-                  // 普通入口自动成为选中栈的根，不额外要求显式 Tab 根入口权限。
-                  (!rootDestination.providesNavigationContainer && scope == selectedScope &&
-                      destination == rootDestination) || destination.supportsNavigationEntry(.stackRoot)
-              }),
-              paths.values.joined().allSatisfy({ $0.supportsNavigationEntry(.push) }),
-              rootDestination.providesNavigationContainer || rootDestinations[selectedScope] != nil
-        else { return false }
         var identities = Set<UUID>()
-        return presentation?.validate(identities: &identities) ?? true
+        return layer.validate(for: rootDestination, identities: &identities)
     }
 }
 
@@ -68,10 +93,7 @@ public extension NavigationRouter {
     var snapshot: NavigationSnapshot<Scope, Destination, AlertRoute> {
         NavigationSnapshot(
             rootDestination: rootLayer.route.destination,
-            selectedScope: selectedScope,
-            rootDestinations: rootDestinations,
-            paths: paths,
-            presentation: rootLayer.presentedContent?.snapshot
+            layer: rootLayer.snapshot
         )
     }
 
@@ -80,18 +102,17 @@ public extension NavigationRouter {
     /// 有模态尚未关闭、正在等待关闭完成、正在等待用户确认，或快照中有重复模态 ID 时，
     /// 返回 false，并保留当前全部导航数据。App 需提前检查页面数据是否仍可使用。
     /// 模态会沿用快照中的 ID，但使用新对象，所以旧模态 Context 仍然失效。
-    /// 根层保留原来的栈对象，已有根 Tab Context 可以继续读写恢复后的路径。
+    /// 根层容器归属不变时保留栈对象；在 Core 单栈和外部容器间切换时，旧栈 Context 失效。
     /// - Returns: 全部导航数据恢复成功时返回 true；界面的展示动画可能尚未完成。
     @discardableResult
     func restore(_ snapshot: NavigationSnapshot<Scope, Destination, AlertRoute>) -> Bool {
         guard !hasActivePresentation, !isAwaitingPresentationDismissal, pendingConfirmation == nil, !hasActiveAlert,
               requestWaitingForAlert == nil,
               snapshot.hasValidPresentationTree else { return false }
+        let resetsStacks = rootLayer.route.destination.providesNavigationContainer !=
+            snapshot.rootDestination.providesNavigationContainer
         rootLayer.route = .root(destination: snapshot.rootDestination)
-        selectedScope = snapshot.selectedScope
-        rootLayer.roots = Dictionary(uniqueKeysWithValues: snapshot.rootDestinations.map { (.scope($0.key), $0.value) })
-        paths = snapshot.paths
-        rootLayer.presentedContent = snapshot.presentation?.makePresentation()
+        rootLayer.restore(snapshot.layer, resetStacks: resetsStacks)
         contexts = contexts.filter(\.value.isActive)
         presentationContexts = presentationContexts.filter(\.value.isActive)
         return true

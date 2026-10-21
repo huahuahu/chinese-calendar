@@ -1,0 +1,30 @@
+{
+  "date": "2026-10-21",
+  "session": "Issue 146 Final Smoke",
+  "pid": 37470,
+  "head": "e6d13c22b5cb2e9967995ce4cb7896a2f0d1b7dc",
+  "source_sha256": {
+    "Sources/NavigationCore/SwiftUI/NavigationScopeView.swift": "6ee277889e1eaf42cf1e4876590b48f365ce78a2be5881d2457df7b34eef6ea1",
+    "Sources/ChineseCalendarUI/Debug/CalendarDebugSplitView.swift": "e33c61cdc30cb6110b328646104e0179839947585ffa4f311f1c38dca1e72c2a",
+    "Sources/ChineseCalendarUI/Home/CalendarHomeCoordinator.swift": "deb08113116065807b213b934e90d0e1530f3efeab8f51fd5658a5eed0425889",
+    "Sources/ChineseCalendarUI/Tests/CalendarDebugSplitStateTests.swift": "5269950cc742f85f82f2c44d180dda64ce03419381afb449c2c0ce8e035362a5"
+  },
+  "captures": [
+    {
+      "stage": "final-smoke-01-two-push-one",
+      "applicationState": "Running"
+    },
+    {
+      "stage": "final-smoke-02-three-push-one",
+      "applicationState": "Running"
+    },
+    {
+      "stage": "final-smoke-03-two-restored",
+      "applicationState": "Running"
+    },
+    {
+      "stage": "final-smoke-04-three-restored",
+      "applicationState": "Running"
+    }
+  ]
+}
