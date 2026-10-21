@@ -7,7 +7,7 @@ nonisolated public protocol NavigationAlertRoute: Hashable {
 }
 
 /// 不使用业务提示的调用方可以将它作为 Router 的 AlertRoute 类型。
-nonisolated public struct NoNavigationAlert: NavigationAlertRoute, Codable {
+nonisolated public struct NoNavigationAlert: NavigationAlertRoute {
     public typealias Action = Never
     private init() {}
 }

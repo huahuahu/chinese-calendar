@@ -14,7 +14,7 @@ public enum NavigationLayerRoute<Destination: NavigationDestination>: Hashable {
     }
 
     /// 用于查找层和缓存 Context 的 ID，不包含 Destination。
-    /// 恢复出的新模态可以沿用同一 ID；判断旧 Context 是否有效时还需检查层对象是否相同。
+    /// 判断 Context 是否有效时还需检查原层对象，不能仅比较 ID。
     public var id: NavigationLayerID {
         switch self {
         case .root: .root
@@ -22,5 +22,3 @@ public enum NavigationLayerRoute<Destination: NavigationDestination>: Hashable {
         }
     }
 }
-
-extension NavigationLayerRoute: Codable where Destination: Codable {}

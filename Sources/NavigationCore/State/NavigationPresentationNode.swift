@@ -13,7 +13,7 @@ public final class NavigationPresentationNode<
     Destination: NavigationDestination,
     AlertRoute: NavigationAlertRoute
 >: Identifiable {
-    /// 这一次打开模态的 ID，用于 SwiftUI 展示、指定关闭目标和保存快照。
+    /// 这一次打开模态的 ID，用于 SwiftUI 展示和指定关闭目标。
     public var id: UUID {
         guard case let .presentation(id) = layer.id else {
             preconditionFailure("A presentation node requires a presentation layer")
@@ -31,20 +31,26 @@ public final class NavigationPresentationNode<
     public let style: NavigationPresentationStyle
     let layer: NavigationLayer<Scope, Destination, AlertRoute>
 
-    init(
+    convenience init(
         id: UUID = UUID(), destination: Destination, style: NavigationPresentationStyle = .sheet,
         initialStack: NavigationStackID<Scope> = .primary,
         rootDestinations: [NavigationStackID<Scope>: Destination] = [:],
         paths: [NavigationStackID<Scope>: [Destination]] = [:]
     ) {
-        guard let snapshot = NavigationLayerSnapshot<Scope, Destination, AlertRoute>(
-            destination: destination, initialStack: initialStack,
+        guard let layer = NavigationLayer<Scope, Destination, AlertRoute>(
+            route: .presentation(id: id, destination: destination), initialStack: initialStack,
             rootDestinations: rootDestinations, paths: paths
         ) else { preconditionFailure("A Core navigation layer requires its primary stack") }
+        self.init(style: style, layer: layer)
+    }
+
+    /// 接收已通过初始化校验的模态层，不重复构造栈状态。
+    init(style: NavigationPresentationStyle, layer: NavigationLayer<Scope, Destination, AlertRoute>) {
+        guard case .presentation = layer.id else {
+            preconditionFailure("A presentation node requires a presentation layer")
+        }
         self.style = style
-        layer = NavigationLayer(
-            route: .presentation(id: id, destination: destination), snapshot: snapshot
-        )
+        self.layer = layer
     }
 
     /// 从这个模态直接打开的子模态。关闭当前模态时，子模态及其继续打开的模态也会关闭。

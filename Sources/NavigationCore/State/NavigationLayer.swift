@@ -15,8 +15,7 @@ final class NavigationLayer<
     let routeState: NavigationLayerRouteState<Destination>
 
     var route: NavigationLayerRoute<Destination> {
-        get { routeState.route }
-        set { routeState.route = newValue }
+        routeState.route
     }
 
     var id: NavigationLayerID {
@@ -73,55 +72,29 @@ final class NavigationLayer<
     /// 如果是根层，等待中的跨 Tab 或 Deep Link 跳转也必须等到这时才能执行。
     var isAwaitingDismissal = false
 
-    init(
+    /// 根层与新模态共用初始化规则，完整校验后才创建栈状态。
+    /// 页面自带容器时必须声明选中栈和所有路径对应的根；Core 单栈只接受 primary。
+    init?(
         route: NavigationLayerRoute<Destination>,
-        selectedStack: NavigationStackID<Scope> = .primary,
-        roots: [NavigationStackID<Scope>: Destination] = [:],
+        initialStack: NavigationStackID<Scope> = .primary,
+        rootDestinations: [NavigationStackID<Scope>: Destination] = [:],
         paths: [NavigationStackID<Scope>: [Destination]] = [:]
     ) {
-        routeState = NavigationLayerRouteState(route: route)
-        self.selectedStack = selectedStack
-        stacks = roots.mapValues { NavigationStackState(rootDestination: $0) }
-        self.paths = paths
-    }
-
-    /// 入口初始化与快照恢复都使用同一种层结构。
-    convenience init(
-        route: NavigationLayerRoute<Destination>,
-        snapshot: NavigationLayerSnapshot<Scope, Destination, AlertRoute>
-    ) {
-        self.init(
-            route: route,
-            selectedStack: snapshot.selectedStack,
-            roots: snapshot.rootDestinations,
-            paths: snapshot.paths
-        )
-        presentedContent = snapshot.presentation?.makePresentation()
-    }
-
-    var snapshot: NavigationLayerSnapshot<Scope, Destination, AlertRoute> {
-        NavigationLayerSnapshot(
-            selectedStack: selectedStack, rootDestinations: roots,
-            paths: paths, presentation: presentedContent?.snapshot
-        )
-    }
-
-    /// 默认更新已有栈对象，让页面持有的 Context 继续连接它们。
-    /// 从 Core 单栈切换为页面自带容器，或反向切换时，调用方传入 resetStacks = true，
-    /// 重建全部栈对象，使旧宿主的栈 Context 失效。
-    func restore(_ snapshot: NavigationLayerSnapshot<Scope, Destination, AlertRoute>, resetStacks: Bool = false) {
-        if resetStacks { stacks.removeAll() }
-        selectedStack = snapshot.selectedStack
-        stacks = stacks.filter { snapshot.rootDestinations[$0.key] != nil }
-        for (id, root) in snapshot.rootDestinations {
-            if let state = stacks[id] {
-                state.rootDestination = root
-            } else {
-                stacks[id] = NavigationStackState(rootDestination: root)
-            }
+        let roots: [NavigationStackID<Scope>: Destination]
+        if route.destination.providesNavigationContainer {
+            guard rootDestinations[initialStack] != nil,
+                  paths.keys.allSatisfy({ rootDestinations[$0] != nil }) else { return nil }
+            roots = rootDestinations
+        } else {
+            guard initialStack == .primary, rootDestinations.isEmpty,
+                  paths.keys.allSatisfy({ $0 == .primary }) else { return nil }
+            roots = [.primary: route.destination]
         }
-        paths = snapshot.paths
-        presentedContent = snapshot.presentation?.makePresentation()
+        routeState = NavigationLayerRouteState(route: route)
+        selectedStack = initialStack
+        stacks = Dictionary(uniqueKeysWithValues: roots.map { id, root in
+            (id, NavigationStackState(rootDestination: root, path: paths[id] ?? []))
+        })
     }
 
     /// 显式声明或替换栈根，并清空旧路径；仅获取 Context 不会创建栈。

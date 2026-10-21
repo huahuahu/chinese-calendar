@@ -1,5 +1,7 @@
 # 栈根统一使用 Destination
 
+> 2026-10-22 后续决策：[Issue #159／#158](../issue-159-navigation-runtime/000-plan.md) 删除完整导航树快照与恢复，正常初始化独立校验，并将 Context 缓存集中到每个 Router 的内部 Store。本文中的恢复设计与验证保留为当时记录；运行时 path、Tab 和模态状态保留的契约继续适用。
+
 - 日期：2026-10-21
 - 状态：源码与自动测试已完成；实际交互待验证
 - 关联：[原方案](000-plan.md)、[导航规范](../../Conventions/Navigation.md)

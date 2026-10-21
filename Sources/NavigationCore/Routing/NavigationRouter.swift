@@ -35,11 +35,8 @@ public final class NavigationRouter<
         coordinationState.requestWaitingForAlert
     }
 
-    // 缓存 Context，让页面多次获取时使用同一个对象。
-    // 路径保存在各栈对象中，模态保存在所属层中。
-    @ObservationIgnored var contexts: [NavigationContextID<Scope>: NavigationContext<Scope, Destination>] = [:]
-    @ObservationIgnored var presentationContexts:
-        [NavigationLayerID: NavigationPresentationContext<Scope, Destination, AlertRoute>] = [:]
+    /// Context 缓存属于这棵导航树，不参与界面状态观察。
+    @ObservationIgnored let contextStore = NavigationContextStore<Scope, Destination, AlertRoute>()
 
     /// 创建 App 根层。Core 自动提供 NavigationStack 时使用 primary 栈；
     /// 页面自带 TabView／SplitView 等容器时，由 App 指定各栈及初始选择。
@@ -50,11 +47,11 @@ public final class NavigationRouter<
         rootDestinations: [NavigationStackID<Scope>: Destination] = [:],
         paths: [NavigationStackID<Scope>: [Destination]] = [:]
     ) {
-        guard let snapshot = NavigationLayerSnapshot<Scope, Destination, AlertRoute>(
-            destination: rootDestination, initialStack: initialStack,
+        guard let layer = NavigationLayer<Scope, Destination, AlertRoute>(
+            route: .root(destination: rootDestination), initialStack: initialStack,
             rootDestinations: rootDestinations, paths: paths
         ) else { preconditionFailure("Every selected or routed navigation stack requires a root Destination") }
-        rootLayer = NavigationLayer(route: .root(destination: rootDestination), snapshot: snapshot)
+        rootLayer = layer
     }
 
     /// 自带命名栈容器的便利入口；普通单栈使用 initialStack 的默认 primary。

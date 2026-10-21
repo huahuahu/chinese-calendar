@@ -10,5 +10,3 @@ nonisolated public enum NavigationStackID<Scope: NavigationScope>: Hashable {
     /// 由业务命名的导航栈，不限定容器类型或所在层。
     case scope(Scope)
 }
-
-extension NavigationStackID: Codable where Scope: Codable {}

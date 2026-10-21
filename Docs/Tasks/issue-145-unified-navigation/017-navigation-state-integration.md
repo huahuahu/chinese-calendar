@@ -1,5 +1,7 @@
 # 导航状态后续改动：整合结果
 
+> 2026-10-22 后续决策：[Issue #159／#158](../issue-159-navigation-runtime/000-plan.md) 删除完整导航树快照与恢复，正常初始化独立校验，并将 Context 缓存集中到每个 Router 的内部 Store。本文中的恢复设计与验证保留为当时记录；运行时 path、Tab 和模态状态保留的契约继续适用。
+
 - 日期：2026-10-21
 - 基线：`4ad58223032e59112b53589baa82534abd832227`（PR #157 合并后的 main）
 - 关联：[请求协调状态](015-coordination-state.md)、[NavigationPresentationContext 路由](016-readable-context-route.md)、[栈根 Destination](../issue-146-navigation-containers/002-routed-stack-roots.md)

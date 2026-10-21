@@ -1,5 +1,7 @@
 # `NavigationPresentationContext` 的路由读取与有效性
 
+> 2026-10-22 后续决策：[Issue #159／#158](../issue-159-navigation-runtime/000-plan.md) 删除完整导航树快照与恢复，正常初始化独立校验，并将 Context 缓存集中到每个 Router 的内部 Store。本文中的恢复设计与验证保留为当时记录；运行时 path、Tab 和模态状态保留的契约继续适用。
+
 > 本文保留该子任务的 43 项阶段验证及当时格式检查结果。当前统一 PR 已补跑全套回归并修复剩余格式问题，最终源码标识和验证结果见[整合记录](017-navigation-state-integration.md)。
 
 - 日期：2026-10-21

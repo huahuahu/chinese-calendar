@@ -14,7 +14,7 @@ public extension NavigationRouter {
 
     /// 获取指定模态默认 primary 栈的 NavigationContext。
     /// 多 Tab 模态需先获取 presentationContext，再调用它的 context(for:) 取得各 Tab 的栈。
-    /// 传入已关闭的旧节点时，返回的 Context 失效，不能操作恢复后的同 ID 新节点。
+    /// 传入已关闭的旧节点时，返回的 Context 失效，不能操作同 ID 新节点。
     func context(
         for node: NavigationPresentationNode<Scope, Destination, AlertRoute>
     ) -> NavigationContext<Scope, Destination> {
@@ -68,8 +68,7 @@ public extension NavigationRouter {
     /// 子模态的关闭通知不能代替根模态关闭完成。内置容器负责传入正确的值；
     /// 自定义容器还需结束对应层的关闭等待状态，根层的等待状态由本方法处理。
     func presentationDidDismiss(isRoot: Bool) {
-        contexts = contexts.filter(\.value.isActive)
-        presentationContexts = presentationContexts.filter(\.value.isActive)
+        contextStore.removeInactiveContexts()
         if isRoot { _ = applyDeferredRequestIfReady() }
     }
 }
@@ -97,43 +96,17 @@ extension NavigationRouter {
         }
     }
 
-    /// 按层 ID 和栈 ID 查找 Context；只有它仍关联同一个有效栈对象时才复用。
-    /// 恢复出来的新栈即使 ID 相同，也会得到新的 Context。
+    /// 通过本树的 Store 获取栈 Context，保持原状态对象的身份约束。
     func context(
         in layer: NavigationLayer<Scope, Destination, AlertRoute>, stack: NavigationStackID<Scope>
     ) -> NavigationContext<Scope, Destination> {
-        guard layer.route.destination.providesNavigationContainer || stack == .primary,
-              let state = layer.stacks[stack]
-        else {
-            return NavigationContext(id: stack, state: nil, access: .inactive)
-        }
-        let id = NavigationContextID(layer: layer.id, stack: stack)
-        if let existing = contexts[id], existing.state === state, existing.isActive { return existing }
-        let access = NavigationStackAccess(
-            isActive: { [weak self, weak layer, weak state] in
-                guard let self, let layer, let state else { return false }
-                return self.layer(id: layer.id) === layer && layer.stacks[stack] === state
-            },
-            canMutate: { [weak self, weak layer] in
-                guard let self, let layer else { return false }
-                return (layer.route.destination.providesNavigationContainer || stack == .primary) &&
-                    !isAwaitingPresentationDismissal && pendingConfirmation == nil && !hasActiveAlert
-            }
-        )
-        let context = NavigationContext(id: stack, state: state, access: access)
-        // 只缓存有效 Context，避免旧页面覆盖恢复后的新栈缓存。
-        if context.isActive { contexts[id] = context }
-        return context
+        contextStore.context(in: layer, stack: stack, router: self)
     }
 
-    /// 每个有效层复用一个 NavigationPresentationContext。检查原层对象，避免把旧模态的 Context 交给新模态。
+    /// 通过本树的 Store 获取不限制发起栈的层级 Context。
     func presentationContext(
         in layer: NavigationLayer<Scope, Destination, AlertRoute>
     ) -> NavigationPresentationContext<Scope, Destination, AlertRoute> {
-        if let existing = presentationContexts[layer.id], existing.layer === layer,
-           existing.isActive { return existing }
-        let context = NavigationPresentationContext(router: self, layer: layer)
-        if context.isActive { presentationContexts[layer.id] = context }
-        return context
+        contextStore.presentationContext(in: layer, router: self)
     }
 }

@@ -29,7 +29,7 @@ NavigationRouter：管理整棵导航树
 | 导航层 `NavigationLayer` | App 根界面，或一次 sheet／full-screen 打开的整个界面 | Core 管理；一层可以有一个栈或多个 Tab 栈 |
 | `NavigationContext` | 对一个栈的操作入口 | 页面从环境读取，调用换根、push、pop |
 | `NavigationPresentationContext` | 对所在层的操作入口 | 页面从环境读取，调用 present、dismiss；容器用它选择本层的栈 |
-| `NavigationRouter` | 导航树的持有者和外部请求协调者 | App 根 View 或 coordinator 持有，处理 Deep Link、快照等整树操作 |
+| `NavigationRouter` | 运行时导航树的持有者和外部请求协调者 | App 根 View 或 coordinator 持有，处理 Deep Link 和整树关闭协调 |
 
 栈 ID 使用 `NavigationStackID<Scope>`：`.primary` 是默认栈，`.scope(.history)` 这样的值是 App 命名的栈。`Scope` 遵循 `NavigationScope`，只负责命名，不描述页面或栏数。同名栈在不同导航层中互相隔离。
 
@@ -247,7 +247,7 @@ App 的 NavigationSplitView
 
 完整接法见 [CalendarDebugSplitView](../ChineseCalendarUI/Debug/CalendarDebugSplitView.swift) 和 [CalendarDebugSplitState](../ChineseCalendarUI/Debug/CalendarDebugSplitState.swift)：前者声明两栏／三栏及列表 Binding，后者集中处理选择和布局。空态使用 `.debugSplitEmpty`，对象详情使用 `.debugSplitDetail(item:level: 0)`；它们由 App 的统一页面配置构建。
 
-分栏作为 sheet／full-screen 时，继承当前导航树配置，取得新模态层的 Context，内部不再挂第二份 `navigationHost`。快照可以保存详情根与 path；分类、保留策略和布局由 App 决定如何恢复。原生折叠、深 path 下返回、宽窄切换及系统 Binding 写回需分别进行实际交互验证，API 接法本身不代表运行验证已通过。具体约定见 [NAV-07](../../Docs/Conventions/Navigation.md#nav-07--app-原生分栏与详情栈组合)。
+分栏作为 sheet／full-screen 时，继承当前导航树配置，取得新模态层的 Context，内部不再挂第二份 `navigationHost`。详情根与 path 在当前导航层存续期间保留；分类、保留策略和布局由 App 管理。原生折叠、深 path 下返回、宽窄切换及系统 Binding 写回需分别进行实际交互验证，API 接法本身不代表运行验证已通过。具体约定见 [NAV-07](../../Docs/Conventions/Navigation.md#nav-07--app-原生分栏与详情栈组合)。
 
 ### 业务 alert
 
@@ -339,7 +339,9 @@ func confirmationContent(
 - **先声明根，再取得 Context。** 获取 Context 不创建栈；未声明栈的 Context 无效，后来出现同 ID 栈也不会使它复活。外部容器应为所有要显示的栈提供根；初始化还会检查选中栈和所有带 path 的栈都有根。非法 Router 初始化触发前置条件失败，非法 `present` 返回 `false`。
 - **有效不等于此刻允许修改。** `isActive` 表示仍关联原来的层或栈。离开确认、活动 alert 或关闭事务期间，局部导航可能被拒绝。`setRootDestination`、`setPath`、`push`、`pop` 返回是否接受；需要同步 App 状态时检查结果。
 - **页面模态从当前层继续打开。** 同层已有页面模态时，新的 `present` 被拒绝；用该模态内部的 `NavigationPresentationContext` 继续嵌套。业务 alert 期间可排队，接受不等于立即显示。
-- **关闭后旧入口失效。** Context 弱引用导航状态，持有旧 Context 不会保活 Router 或模态。关闭、删除栈或恢复出的同 ID 新模态都不会让旧 Context 连接到新对象。
+- **关闭后旧入口失效。** Context 弱引用导航状态，持有旧 Context 不会保活 Router 或模态。模态从树中移除时 Context 立即失效；对象身份检查确保同 ID 的新层或新栈不能让旧 Context 重新有效。
+
+每个 Router 独立持有一个 MainActor 隔离的内部 `NavigationContextStore`，统一缓存栈入口、层级呈现入口和带发起栈身份的呈现入口。重复获取有效入口复用同一对象；缓存命中同时核对原状态对象，旧入口不能覆盖新对象的有效缓存。真实 dismiss 完成后，Router 统一调用 `removeInactiveContexts()` 释放失效缓存；Context 的失效不等待这次清理。
 
 栈宿主默认注入 `presentation.scoped(to: stackID)`：它与本层其他 `NavigationPresentationContext` 共享状态，但额外限制只有选中栈可以发起 present，防止后台 Tab 的回调弹窗。因此“一层”不等于“只有一个 Context 对象”。Tab 公共附件使用层级入口；同时可交互的栏目可用 `unscoped()`，或给栈宿主传 `restrictsPresentationToSelectedStack: false`，显式取消发起栈限制。
 
@@ -357,35 +359,15 @@ Router 的 `selectedScope`、`paths`、`rootDestinations` 属性是**根层命�
 
 `presentationDidDismiss()` 是配置提供的业务清理回调，在任意层的子模态真实关闭、Core 处理状态后调用。用它释放会话，不重复执行已由 Router 协调的全局跳转。
 
-正式页面使用 `NavigationScopeView(stack:presentation:)`，让配置从根路由构建内容。带 `root` 闭包的初始化器供独立 Preview／测试覆盖显示内容，仍须声明栈根，覆盖内容不改变快照。独立 Preview 也要提供根 `navigationHost`；通常无需手动创建递归的 `NavigationPresentationNodeView`。
+正式页面使用 `NavigationScopeView(stack:presentation:)`，让配置从根路由构建内容。带 `root` 闭包的初始化器供独立 Preview／测试覆盖显示内容，仍须声明栈根，覆盖内容不改变路由状态。独立 Preview 也要提供根 `navigationHost`；通常无需手动创建递归的 `NavigationPresentationNodeView`。
 
-## 快照与恢复
+## 运行时状态与启动边界
 
-Core 提供导航结构快照，保存和落盘时机由 App 决定。编码要求 Scope、Destination、AlertRoute 都遵循 `Codable`。例如沿用未启用业务 alert 的 Tab 示例，为 `AppScope`、`AppRoute` 增加 `Codable` 后：
+Core 保留当前导航树中的栈根、path、Tab 选择和递归模态。切换 Tab 或关闭子模态后，仍存续的父层状态继续可用；这些行为由运行时状态对象提供。
 
-```swift
-let data = try JSONEncoder().encode(router.snapshot)
-let snapshot = try JSONDecoder().decode(
-    NavigationSnapshot<AppScope, AppRoute, NoNavigationAlert>.self,
-    from: data
-)
-let accepted = router.restore(snapshot)
-```
+Core 不提供完整导航树的快照、编码或恢复 API，日历 App 也没有完整界面跨启动恢复入口。新建 Router 使用正常初始化参数建立根层，模态通过 `present` 建立新层；二者共用内部初始化校验，普通单栈只接受 `.primary`，外部容器必须为选中栈和所有带路径栈声明根。完整校验通过后才建立状态，非法呈现不会部分修改当前树。
 
-| 快照包含 | 由 App 另行处理 |
-| --- | --- |
-| 根层入口、各层选中栈、每栈根与 path、递归模态、当前业务 alert 路由 | 业务数据、View、ModelContext、回调、临时会话、排队请求、执行中动作及转场 |
-| SplitView 详情根所表达的对象及其 path | 分类、筛选与保留策略、栏可见性、紧凑布局偏好 |
-
-根快照的 `rootDestination` 保存整层入口，`layer: NavigationLayerSnapshot` 保存该层的栈与呈现内容；每个页面模态递归采用同一结构。path 始终为数组，快照省略空 path，缺失条目与空数组同义。
-
-恢复前需检查页面地址和提示是否仍可重新构建，可用 `snapshot.destinations` 与 `snapshot.presentation?.alerts` 收集路由。框架不写入 UserDefaults，也不替 App 迁移旧业务数据。
-
-`restore` 会先校验结构；无效根声明、重复节点 ID 等使它返回 `false`，不会部分修改原状态。有活动模态／alert，或正在等待确认、请求、关闭、按钮动作时也会拒绝恢复。
-
-恢复创建新的模态层及栈，旧模态 Context 保持失效。根层在容器归属不变时复用仍存在的栈对象；删除的栈失效，在 App 自带容器与 Core 默认单栈之间切换时重建根栈。根层已有的 `NavigationPresentationContext` 会同步新的层入口。
-
-日历 App 的 `CalendarRouter.restorableSnapshot`／`restore` 仅接受可重新查询的日历与历史地址，拒绝临时会话、业务提示和 DEBUG 路由。目前未接入自动跨启动持久化；Core 的快照能力不表示 App 已启用完整界面恢复。
+Deep Link 继续由 App 解析稳定业务地址，再交给 Router 的请求协调。若未来产品需要跨启动恢复，应另行定义需要保存的业务状态、数据校验及迁移策略。决策与本轮验收见 [Issue #159／#158](../../Docs/Tasks/issue-159-navigation-runtime/000-plan.md)。
 
 ## 源码目录
 
@@ -398,9 +380,8 @@ let accepted = router.restore(snapshot)
 | 目录 | 职责与阅读入口 |
 | --- | --- |
 | [State](State/) | 导航结构：栈状态、组合栈的 `NavigationLayer`、层入口记录、页面与 alert 节点、协调状态 |
-| [Routing](Routing/) | Router、两种 Context、请求与结果；栈访问约束见 `NavigationStackAccess` |
+| [Routing](Routing/) | Router、两种 Context、内部 `NavigationContextStore`、请求与结果；栈访问约束见 `NavigationStackAccess` |
 | [SwiftUI](SwiftUI/) | 根与栈宿主、递归模态、页面配置、系统 alert 和确认提示适配 |
-| [Restoration](Restoration/) | 快照、编码、结构校验和恢复 |
 
 这些目录属于同一个 `NavigationCore` target。模块日志入口是 [NavigationCoreLog.swift](NavigationCoreLog.swift)，测试在相邻的 [NavigationCoreTests](../NavigationCoreTests/) target。
 

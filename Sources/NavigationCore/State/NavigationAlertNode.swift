@@ -12,4 +12,3 @@ public struct NavigationAlertNode<Route: NavigationAlertRoute>: Identifiable {
 }
 
 extension NavigationAlertNode: Equatable {}
-extension NavigationAlertNode: Codable where Route: Codable {}

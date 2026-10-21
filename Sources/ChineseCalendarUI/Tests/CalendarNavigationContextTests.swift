@@ -6,27 +6,29 @@ import Testing
 @MainActor
 @Suite("App 使用局部导航框架")
 struct CalendarNavigationContextTests {
-    @Test func rootSelectionProjectionSupportsPrimaryWithoutInventingATab() {
+    @Test func rootSelectionProjectsTheCurrentTabDestination() {
         let router = CalendarRouter(selectedTab: .history, historyPath: [.dynasty(orthodoxPeriodID: "ming")])
-        let named = router.navigation.snapshot
         #expect(router.selectedTab == .history)
         #expect(router.selectedDestination == .dynasty(orthodoxPeriodID: "ming"))
-        let primary = NavigationRouter<CalendarTab, CalendarDestination, CalendarAlert>(
-            rootDestination: .calendarHome, paths: [.primary: [.lunarYear(2026)]]
-        ).snapshot
-        #expect(router.navigation.restore(primary))
-        #expect(router.selectedTab == nil)
-        #expect(router.selectedDestination == .lunarYear(2026))
         router.selectedTab = nil
-        #expect(router.navigation.snapshot == primary)
-        #expect(router.navigation.rootPresentation.context(for: .primary).pop())
-        #expect(router.selectedDestination == .calendarHome)
-        #expect(router.navigation.restore(named))
         #expect(router.selectedTab == .history)
         #expect(router.selectedDestination == .dynasty(orthodoxPeriodID: "ming"))
         router.selectedTab = .settings
         #expect(router.selectedTab == .settings)
         #expect(router.selectedDestination == .settings)
+    }
+
+    @Test func primaryRootSelectionDoesNotInventATab() {
+        let router = NavigationRouter<CalendarTab, CalendarDestination, CalendarAlert>(
+            rootDestination: .calendarHome, paths: [.primary: [.lunarYear(2026)]]
+        )
+        #expect(router.selectedScope == nil)
+        #expect(router.selectedDestination == .lunarYear(2026))
+        router.selectedScope = nil
+        #expect(router.selectedScope == nil)
+        #expect(router.rootPresentation.context(for: .primary).path == [.lunarYear(2026)])
+        #expect(router.rootPresentation.context(for: .primary).pop())
+        #expect(router.selectedDestination == .calendarHome)
     }
 
     @Test(arguments: CalendarTab.allCases)
@@ -63,11 +65,15 @@ struct CalendarNavigationContextTests {
     @Test func appDeepLinkCancelAndApprovalUseTheCoreTransaction() throws {
         let coordinator = CalendarHomeCoordinator()
         coordinator.router.navigation.rootPresentation.scoped(to: .scope(.years)).present(.lunarYear(2025))
-        let before = coordinator.router.navigation.snapshot
+        let original = try #require(coordinator.router.sheet)
         coordinator.openDeepLink(.emperor("ming-taizu"))
         let first = try #require(coordinator.router.navigation.pendingConfirmation)
         coordinator.router.navigation.cancelConfirmation(id: first.id)
-        #expect(coordinator.router.navigation.snapshot == before)
+        #expect(coordinator.router.sheet === original)
+        #expect(original.destination == .lunarYear(2025))
+        #expect(original.path.isEmpty)
+        #expect(coordinator.router.selectedTab == .years)
+        #expect(coordinator.router.navigation.paths.isEmpty)
         coordinator.openDeepLink(.emperor("ming-taizu"))
         try coordinator.router.navigation
             .confirmNavigation(id: #require(coordinator.router.navigation.pendingConfirmation).id)
@@ -77,36 +83,15 @@ struct CalendarNavigationContextTests {
         #expect(coordinator.router.selectedTab == .history)
     }
 
-    @Test func persistentAddressesRoundTripButTemporarySessionsAreRejected() throws {
-        let router = CalendarRouter(selectedTab: .history, historyPath: [.dynasty(orthodoxPeriodID: "ming")])
-        router.navigation.rootPresentation.scoped(to: .scope(.history)).present(.emperorList(dynastyID: "ming"))
-        let data = try JSONEncoder().encode(#require(router.restorableSnapshot))
-        let decoded = try JSONDecoder().decode(
-            NavigationSnapshot<CalendarTab, CalendarDestination, CalendarAlert>.self,
-            from: data
-        )
-        let restored = CalendarRouter()
-        #expect(restored.restore(decoded))
-        #expect(restored.navigation.snapshot == decoded)
-
-        let temporary = CalendarRouter(yearsPath: [.yearPicker(sessionID: UUID())])
-        #expect(temporary.restorableSnapshot == nil)
-        #expect(!CalendarRouter().restore(temporary.navigation.snapshot))
-        temporary.yearsPath = []
-        temporary.presentSheet(.downloadDetails)
-        #expect(temporary.restorableSnapshot == nil)
-        #expect(!CalendarRouter().restore(temporary.navigation.snapshot))
-    }
-
-    @Test func appRootAndTabRootsAreExplicitAndRestoreRequiresEveryTab() {
+    @Test func appRootAndTabRootsAreExplicit() {
         let router = CalendarRouter()
         #expect(router.navigation.rootPresentation.destination == .mainTabs)
         #expect(router.navigation.rootDestinations == [
             .years: .calendarHome, .history: .historyHome, .settings: .settings
         ])
-        let before = router.navigation.snapshot
-        #expect(!router.restore(.init(rootDestination: .mainTabs, layer: .init(selectedStack: .scope(.years)))))
-        #expect(router.navigation.snapshot == before)
+        for tab in CalendarTab.allCases {
+            #expect(router.navigation.context(for: tab).isActive)
+        }
     }
 
     @Test(arguments: [CalendarDestination.mainTabs, .calendarHome, .historyHome, .settings])
@@ -131,7 +116,7 @@ struct CalendarNavigationContextTests {
             historyPath: [.dynasty(orthodoxPeriodID: "ming")]
         )
         router.setPath([.calendarHome], for: .settings)
-        let rootPaths = router.navigation.snapshot.layer.paths
+        let rootPaths = router.navigation.paths
         #expect(router.navigation.rootPresentation.presentMainTabs(
             selectedTab: .settings, paths: [.scope(.years): [.lunarYear(2026)]]
         ))
@@ -150,73 +135,18 @@ struct CalendarNavigationContextTests {
         #expect(child.selectedStack == .scope(.history))
         #expect(modal.selectedStack == .scope(.years))
         #expect(router.selectedTab == .history)
-        #expect(router.navigation.snapshot.layer.paths == rootPaths)
+        #expect(router.navigation.paths == rootPaths)
         #expect(modal.context(for: .scope(.years)).path == [.lunarYear(2026)])
         #expect(modal.context(for: .scope(.history)).path == [.emperor("qing-shizu")])
         #expect(modal.context(for: .scope(.settings)).path == [.historyHome])
         #expect(child.context(for: .scope(.years)).path.isEmpty)
         #expect(child.context(for: .scope(.settings)).path.isEmpty)
 
-        let encoded = try JSONEncoder().encode(#require(router.restorableSnapshot))
-        let saved = try JSONDecoder().decode(
-            NavigationSnapshot<CalendarTab, CalendarDestination, CalendarAlert>.self, from: encoded
-        )
-        let restored = CalendarRouter()
-        #expect(restored.restore(saved))
-        #expect(restored.navigation.snapshot == saved)
-        let restoredModal = try restored.navigation.presentationContext(for: #require(restored.sheet))
-        #expect(restoredModal.selectedStack == .scope(.years))
-        #expect(restoredModal.context(for: .scope(.settings)).path == [.historyHome])
-        #expect(restored.selectedTab == .history)
-        #expect(restored.navigation.snapshot.layer.paths == rootPaths)
         #expect(child.dismiss())
         #expect(!child.isActive)
         #expect(modal.isActive)
         #expect(modal.context(for: .scope(.history)).path == [.emperor("qing-shizu")])
-        #expect(router.navigation.snapshot.layer.paths == rootPaths)
-    }
-
-    @Test func invalidNestedMainTabsCannotBeSavedOrRestored() {
-        typealias Layer = NavigationLayerSnapshot<CalendarTab, CalendarDestination, CalendarAlert>
-        typealias Snapshot = NavigationSnapshot<CalendarTab, CalendarDestination, CalendarAlert>
-        let invalidLayers: [Layer] = [
-            .init(selectedStack: .scope(.years)),
-            .init(
-                selectedStack: .scope(.years),
-                rootDestinations: [
-                    .scope(.years): .calendarHome,
-                    .scope(.history): .historyHome
-                ]
-            ),
-            .init(rootDestinations: CalendarRouter.mainTabRoots),
-            .init(
-                selectedStack: .scope(.years), rootDestinations: CalendarRouter.mainTabRoots,
-                paths: [.primary: [.lunarYear(2025)]]
-            )
-        ]
-        let router = CalendarRouter(selectedTab: .history, historyPath: [.emperor("ming-taizu")])
-        let before = router.navigation.snapshot
-        for layer in invalidLayers {
-            let snapshot = Snapshot(rootDestination: .mainTabs, layer: Layer(
-                selectedStack: .scope(.years), rootDestinations: CalendarRouter.mainTabRoots,
-                presentation: .node(id: UUID(), destination: .lunarYear(2026), style: .sheet, layer: Layer(
-                    rootDestinations: [.primary: .lunarYear(2026)],
-                    presentation: .node(id: UUID(), destination: .mainTabs, style: .fullScreen, layer: layer)
-                ))
-            ))
-            for invalidSnapshot in [Snapshot(rootDestination: .mainTabs, layer: layer), snapshot] {
-                #expect(!router.restore(invalidSnapshot))
-                #expect(router.navigation.snapshot == before)
-                let source = CalendarRouter()
-                let original = source.navigation.snapshot
-                if source.navigation.restore(invalidSnapshot) {
-                    // Core 只检查每个已声明栈的根，App 还要求三个业务 Tab 齐全。
-                    #expect(source.restorableSnapshot == nil)
-                } else {
-                    #expect(source.navigation.snapshot == original)
-                }
-            }
-        }
+        #expect(router.navigation.paths == rootPaths)
     }
 
     #if DEBUG
@@ -233,26 +163,20 @@ struct CalendarNavigationContextTests {
             #expect(coordinator.router.presentations.count == 1)
         }
 
-        @Test func debugRoutesCannotBecomePersistentNavigationState() throws {
-            let source = CalendarRouter(selectedTab: .settings)
-            let route = CalendarDestination.debugNavigation(id: UUID())
-            #expect(source.navigation.context(for: .settings).push(route))
-            #expect(source.restorableSnapshot == nil)
-
-            let data = try JSONEncoder().encode(source.navigation.snapshot)
-            let decoded = try JSONDecoder().decode(
-                NavigationSnapshot<CalendarTab, CalendarDestination, CalendarAlert>.self, from: data
-            )
-            let target = CalendarRouter()
-            let original = target.navigation.snapshot
-            #expect(!target.restore(decoded))
-            #expect(target.navigation.snapshot == original)
+        @Test func debugNavigationPushUsesTheSettingsStack() {
+            let router = CalendarRouter(selectedTab: .settings)
+            let destination = CalendarDestination.debugNavigation(id: UUID())
+            #expect(router.navigation.context(for: .settings).push(destination))
+            #expect(router.path(for: .settings) == [destination])
+            #expect(router.selectedDestination == destination)
+            #expect(router.yearsPath.isEmpty)
+            #expect(router.historyPath.isEmpty)
         }
     #endif
 }
 
 extension CalendarNavigationContextTests {
-    @Test func replacedRootAndModalTabRootsRemainRestorable() throws {
+    @Test func replacedRootAndModalTabRootsKeepIndependentPathsAndSelections() throws {
         let router = CalendarRouter(yearsPath: [.lunarYear(2025)], historyPath: [.emperor("ming-taizu")])
         let rootHistory = router.navigation.context(for: .history)
         #expect(rootHistory.setRootDestination(.dynasty(orthodoxPeriodID: "ming")))
@@ -268,23 +192,13 @@ extension CalendarNavigationContextTests {
         #expect(modalHistory.push(.emperorList(dynastyID: "qing")))
         #expect(rootHistory.rootDestination == .dynasty(orthodoxPeriodID: "ming"))
         #expect(rootHistory.path == [.emperorList(dynastyID: "ming")])
-        let snapshot = try #require(router.restorableSnapshot)
-        let encoded = try JSONEncoder().encode(snapshot)
-        let decoded = try JSONDecoder().decode(
-            NavigationSnapshot<CalendarTab, CalendarDestination, CalendarAlert>.self, from: encoded
-        )
-        let restored = CalendarRouter()
-        #expect(restored.restore(decoded))
-        #expect(restored.restorableSnapshot == snapshot)
-        #expect(restored.navigation.context(for: .history).rootDestination == .dynasty(orthodoxPeriodID: "ming"))
-        #expect(restored.historyPath == [.emperorList(dynastyID: "ming")])
-        #expect(restored.yearsPath == [.lunarYear(2025)])
-        #expect(restored.selectedTab == .years)
-        let restoredModal = try restored.navigation.presentationContext(for: #require(restored.sheet))
-        #expect(restoredModal.context(for: .scope(.history)).rootDestination == .dynasty(orthodoxPeriodID: "qing"))
-        #expect(restoredModal.context(for: .scope(.history)).path == [.emperorList(dynastyID: "qing")])
-        #expect(restoredModal.selectedStack == .scope(.history))
-        #expect(restored.navigation.rootPresentation.destination == .mainTabs)
-        #expect(restoredModal.destination == .mainTabs)
+        #expect(router.historyPath == [.emperorList(dynastyID: "ming")])
+        #expect(router.yearsPath == [.lunarYear(2025)])
+        #expect(router.selectedTab == .years)
+        #expect(modalHistory.rootDestination == .dynasty(orthodoxPeriodID: "qing"))
+        #expect(modalHistory.path == [.emperorList(dynastyID: "qing")])
+        #expect(modal.selectedStack == .scope(.history))
+        #expect(router.navigation.rootPresentation.destination == .mainTabs)
+        #expect(modal.destination == .mainTabs)
     }
 }
