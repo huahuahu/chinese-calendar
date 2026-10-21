@@ -49,6 +49,7 @@ App 的主 Tab 入口由 `.root` 改名为 `.mainTabs`。页面读取当前层�
 - Scope 从 `Hashable` 约束改为显式遵循 `NavigationScope`。给已有类型增加协议遵循即可；协议继承 `Hashable`，不要求 `CaseIterable` 或 `Codable`。需要编码快照时另加 `Codable`。
 - 新接入使用 `NavigationStackID<Scope>`：默认栈为 `.primary`，命名栈为 `.scope(scope)`。旧代码若以 `Never` 作为 Scope，应改用显式遵循 `NavigationScope` 的业务类型；只有默认栈时可定义无成员的 `enum AppScope: NavigationScope {}`，需要命名栈时再增加成员。
 - Router 初始化增加整个根层的 `rootDestination`。统一初始化器与 `present` 均使用 `initialStack`、以 StackID 为 key 的 `rootDestinations` 和 `paths`；基于 Scope 的根 Tab 便利入口仍存在。
+- `NavigationPresentationRequest.sheet`／`.fullScreen` 与 Router 的 `presentSheet`／`presentFullScreen` 同样接受 `initialStack`、`rootDestinations` 和 `paths`。容器入口必须通过这些参数声明根；普通页面可继续省略。匹配请求枚举时，两个页面 case 现在各有四个关联值。Router 两个便利方法返回可忽略的 `Bool`，便于判断请求是否接受；若曾把方法保存为返回 `Void` 的函数值，改为闭包并显式忽略结果。
 - 外部容器为要显示的各栈声明根，至少覆盖初始选中栈及所有带 path 的栈。push、写 path、切栈和获取 Context 都不隐式创建无根栈；需要动态增加根层命名栈时，先通过 Router 的 `setRootDestination` 或 `.setRoot` 请求声明根，再获取 Context。
 - 栈根必须是非可选 Destination。`setRootDestination`／`.setRoot` 不接受 nil；SplitView 的空详情使用明确的空态路由。换根同时清空 path，同一对象重复选择时由 App 保留原根和 path。
 - `NavigationContext.rootDestination` 仍是可选查询，nil 表示未声明或已失效的 Context。Preview 的 root closure 只覆盖显示内容，不能绕过根声明。

@@ -185,20 +185,34 @@ public final class NavigationRouter<
     }
 
     /// 从当前最上层模态继续打开 sheet；没有模态时从 App 根层打开。
-    /// 本方法不返回操作结果。需要指定发起层或判断是否成功时，使用该层 NavigationPresentationContext 的 present。
-    public func presentSheet(_ destination: Destination) {
+    /// 容器页面显式传入各栈根；返回值表示是否接受操作，不代表页面已经显示。
+    @discardableResult
+    public func presentSheet(
+        _ destination: Destination,
+        initialStack: NavigationStackID<Scope> = .primary,
+        rootDestinations: [NavigationStackID<Scope>: Destination] = [:],
+        paths: [NavigationStackID<Scope>: [Destination]] = [:]
+    ) -> Bool {
         let context = frontmostPresentationNode.map { presentationContext(for: $0) } ?? rootPresentation
-        context.present(destination, style: .sheet)
+        return context.present(
+            destination, style: .sheet, initialStack: initialStack, rootDestinations: rootDestinations, paths: paths
+        )
     }
 
     /// 从当前最上层模态继续打开全屏页；没有模态时从 App 根层打开。
-    /// 多 Tab 页面可以指定初始选中的栈。正在等待确认或关闭时仍可能被拒绝，
-    /// 需要判断是否成功时，使用该层 NavigationPresentationContext 的 present。
+    /// 容器页面显式传入各栈根；返回值表示是否接受操作，不代表页面已经显示。
+    @discardableResult
     public func presentFullScreen(
-        _ destination: Destination, initialStack: NavigationStackID<Scope> = .primary
-    ) {
+        _ destination: Destination,
+        initialStack: NavigationStackID<Scope> = .primary,
+        rootDestinations: [NavigationStackID<Scope>: Destination] = [:],
+        paths: [NavigationStackID<Scope>: [Destination]] = [:]
+    ) -> Bool {
         let context = frontmostPresentationNode.map { presentationContext(for: $0) } ?? rootPresentation
-        context.present(destination, style: .fullScreen, initialStack: initialStack)
+        return context.present(
+            destination, style: .fullScreen, initialStack: initialStack, rootDestinations: rootDestinations,
+            paths: paths
+        )
     }
 
     /// 根层直接打开的是 sheet 时，关闭它及所有子模态；其他情况不操作。

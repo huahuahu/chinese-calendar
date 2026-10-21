@@ -2,7 +2,7 @@
   "recorded_at": "2026-10-21T20:36:44+08:00",
   "base_commit": "4ad58223032e59112b53589baa82534abd832227",
   "branch": "codex/navigation-state-refinements",
-  "code_state": "Uncommitted combined worktree; source hashes identify tested and final content.",
+  "code_state": "Initial integration tested with 384 tests; final hashes include later documented changes and the presentation forwarding repair validated separately in presentation-forwarding.json.",
   "environment": {
     "project": "ChineseCalendar.xcodeproj",
     "scheme": "ChineseCalendar-iOS",
@@ -328,7 +328,7 @@
     {
       "path": "Sources/NavigationCore/Routing/NavigationPresentationRequest.swift",
       "tested": "bebcc83588f49a8a82eff13241d74d1d3f7875bc61c77716c2810bfd18e72bd2",
-      "final": "bebcc83588f49a8a82eff13241d74d1d3f7875bc61c77716c2810bfd18e72bd2"
+      "final": "29bbc3a5f09b8ca38df8b55f1559e0aa300530898f4e47d48409a655b4d1536e"
     },
     {
       "path": "Sources/NavigationCore/Routing/NavigationRequest.swift",
@@ -353,7 +353,7 @@
     {
       "path": "Sources/NavigationCore/Routing/NavigationRouter.swift",
       "tested": "95d4569f187680306090f07390d72f2f5b1b23bc5f49237375596870868603f4",
-      "final": "7eba0012b65bf9267824f70483a94340bc965493db05155d84d2ba5cb8ed6a70"
+      "final": "38deb19a003635dd53b80cd9ccfc61df8059f5c97795a68f3034e7ac5041a934"
     },
     {
       "path": "Sources/NavigationCore/State/NavigationCoordinationState.swift",
@@ -403,7 +403,7 @@
     {
       "path": "Sources/NavigationCore/State/NavigationStackID.swift",
       "tested": "8a191f67709d642d6807679507494770feb9dd72b39fc0d91e3acfd800be136d",
-      "final": "8a191f67709d642d6807679507494770feb9dd72b39fc0d91e3acfd800be136d"
+      "final": "98a75670fc6549d91326f8298be6c00ff80ffb4d070d0df150242541705d73bc"
     },
     {
       "path": "Sources/NavigationCore/State/NavigationStackState.swift",
@@ -523,7 +523,7 @@
     {
       "path": "Sources/NavigationCoreTests/NavigationPrimaryLayerTests.swift",
       "tested": "5e703efed0b56ab896433cfb014a184dfba6a2ee0b4ff743fee2be0f4f76f530",
-      "final": "5e703efed0b56ab896433cfb014a184dfba6a2ee0b4ff743fee2be0f4f76f530"
+      "final": "164478dadea55dfbe0f0bff15a9043ced64572ac40074bacf03e5b279a8d3863"
     },
     {
       "path": "Sources/NavigationCoreTests/NavigationRouterTests.swift",
@@ -562,6 +562,15 @@
         "Sources/NavigationCoreTests/NavigationPresentationRouteTests.swift"
       ],
       "description": "Documentation terminology and two Suite display titles only. Compared with commit 754a3222 after removing line comments and normalizing Suite display titles; executable statements and assertions are unchanged."
+    },
+    {
+      "paths": [
+        "Sources/NavigationCore/Routing/NavigationPresentationRequest.swift",
+        "Sources/NavigationCore/Routing/NavigationRouter.swift",
+        "Sources/NavigationCore/State/NavigationStackID.swift",
+        "Sources/NavigationCoreTests/NavigationPrimaryLayerTests.swift"
+      ],
+      "description": "Functional presentation-convenience repair after the original 384-test run. Validated with 159 targeted tests, including 8 new cases. See presentation-forwarding.json; the original tested hashes remain unchanged."
     }
   ],
   "documentation_append": {
@@ -575,5 +584,6 @@
     "anchors": 9,
     "broken_links": 0,
     "tests": "Reused the recorded 384 passing tests; no rerun for comment and Suite title changes."
-  }
+  },
+  "presentation_forwarding_fix": "presentation-forwarding.json"
 }

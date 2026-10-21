@@ -191,6 +191,8 @@ presentation.present(
 
 将 `style` 改为 `.fullScreen` 即使用全屏。新层拥有自己的选择和两个栈，`DemoTabs` 从环境取得新层的 `NavigationPresentationContext`，不捕获根层 Context。根界面和模态因此可以自由选择普通单栈或 Tab 容器。
 
+需要先构造呈现请求数据时，也能通过 `.sheet(.tabs, initialStack:rootDestinations:paths:)` 或 `.fullScreen` 传入同样的栈配置，再交给 `presentation.present(request)`。Router 的 `presentSheet`／`presentFullScreen` 便利方法接受相同配置，从最上层模态继续呈现；这些入口均返回是否接受操作。页面需要固定发起层时，仍使用环境中的 `NavigationPresentationContext`。
+
 ### 分清层入口、栈根和当前页面
 
 以上例为例：根界面打开 `.tabs`，选择“历史”Tab，再 push `.detail(id: 42)`。

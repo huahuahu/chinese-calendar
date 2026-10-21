@@ -54,3 +54,13 @@ Core 快照保存其管理的根和路径，App 的分类及栏布局仍不由 C
 本轮涉及 13 个 Swift 文件，其中 11 个仅改行注释，另 2 个只改 `@Suite` 显示标题。对比前一提交，移除行注释并归一化套件标题后内容完全一致，执行语句和断言未变；因此复用此前 384 项通过结果，没有重复运行 iOS 测试。最终源码哈希已同步到整合证据，原受测哈希保留。
 
 追加检查：format 297 文件通过，严格 lint 286 文件、0 violations，`git diff --check` 通过；134 个本地文档链接及 9 个锚点全部有效。该批没有新增用户文案资源或运行逻辑，仍不补充 Simulator 交互、真机或 Release 验证结论。
+
+## PR #160 合并前的呈现入口修复
+
+对 `560ad23f` 的限定核对确认 `presentation-contract-001`（P2）：新增必填根校验后，`NavigationPresentationRequest.sheet`／`.fullScreen` 和 Router 的 `presentSheet`／`presentFullScreen` 不能传入根配置，自带容器的目标必定被拒绝。App 既有容器 helper 使用完整 Context 入口，不受这条便利入口缺陷影响。
+
+保留根校验，为四个入口补齐 `initialStack`、`rootDestinations` 和 `paths` 转发；Router 便利方法返回可忽略的接受结果。请求和栈身份是纯值类型，显式声明 `nonisolated`，导航状态继续由 MainActor 管理。迁移指南说明枚举关联值及函数返回类型变化。
+
+原生 Xcode MCP 在相同 scheme／Simulator 上完成构建，并执行全部 NavigationCore 测试及相关 App 呈现、分栏和恢复测试：**159 passed，0 failed／skipped／not run**，其中新增 8 个参数化场景覆盖两种呈现方式、primary／命名栈、根与路径保留、嵌套发起层和无根请求拒绝。format、严格 lint、`git diff --check` 通过。源码哈希与逐项结果见[呈现入口修复证据](evidence/navigation-state-integration/presentation-forwarding.json)。
+
+此前 384 项结果保留为整合阶段证据，不作为这次功能修复后的全量测试结果；远端 CI 必须以修复提交重新检查。此次只对该缺陷及修复调用链做限定 review，没有新增手动 Simulator 交互、真机或独立 Release 验证；已有 sysroot、测试诊断及 SF Symbol 弃用警告仍保留。

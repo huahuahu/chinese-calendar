@@ -16,6 +16,60 @@ struct NavigationPrimaryLayerTests {
     private typealias Router = NavigationRouter<Tab, Route, NoNavigationAlert>
     private typealias Snapshot = NavigationSnapshot<Tab, Route, NoNavigationAlert>
 
+    @Test(arguments: [false, true], [false, true])
+    func presentationRequestsPreserveContainerStacks(fullScreen: Bool, namedStack: Bool) throws {
+        let router = Router(rootDestination: .home, paths: [.primary: [.detail]])
+        let initialStack: NavigationStackID<Tab> = namedStack ? .scope(.history) : .primary
+        let roots: [NavigationStackID<Tab>: Route] = [initialStack: .detail, .scope(.home): .home]
+        let paths: [NavigationStackID<Tab>: [Route]] = [initialStack: [.home], .scope(.home): [.detail]]
+        let before = router.snapshot
+        let invalid: NavigationPresentationRequest<Tab, Route, NoNavigationAlert> = fullScreen
+            ? .fullScreen(.tabs, initialStack: initialStack) : .sheet(.tabs, initialStack: initialStack)
+        #expect(!router.rootPresentation.present(invalid))
+        #expect(router.snapshot == before)
+        let request: NavigationPresentationRequest<Tab, Route, NoNavigationAlert> = fullScreen
+            ? .fullScreen(.tabs, initialStack: initialStack, rootDestinations: roots, paths: paths)
+            : .sheet(.tabs, initialStack: initialStack, rootDestinations: roots, paths: paths)
+
+        #expect(router.rootPresentation.present(request))
+        let node = try #require(router.presentedNode)
+        #expect(node.style == (fullScreen ? .fullScreen : .sheet))
+        #expect(node.destination == .tabs)
+        #expect(node.layer.selectedStack == initialStack)
+        #expect(node.layer.roots == roots)
+        #expect(node.layer.paths == paths)
+        #expect(router.rootPresentation.context(for: .primary).path == [.detail])
+    }
+
+    @Test(arguments: [false, true], [false, true])
+    func routerConveniencesPreserveContainerStacksInTheFrontmostLayer(fullScreen: Bool, namedStack: Bool) throws {
+        let router = Router(rootDestination: .home, paths: [.primary: [.detail]])
+        #expect(router.rootPresentation.present(.detail))
+        let parent = try #require(router.sheet)
+        let initialStack: NavigationStackID<Tab> = namedStack ? .scope(.history) : .primary
+        let roots: [NavigationStackID<Tab>: Route] = [initialStack: .detail, .scope(.home): .home]
+        let paths: [NavigationStackID<Tab>: [Route]] = [initialStack: [.home], .scope(.home): [.detail]]
+        let before = router.snapshot
+        let invalid = fullScreen
+            ? router.presentFullScreen(.tabs, initialStack: initialStack)
+            : router.presentSheet(.tabs, initialStack: initialStack)
+        #expect(!invalid)
+        #expect(router.snapshot == before)
+        let accepted = fullScreen
+            ? router.presentFullScreen(.tabs, initialStack: initialStack, rootDestinations: roots, paths: paths)
+            : router.presentSheet(.tabs, initialStack: initialStack, rootDestinations: roots, paths: paths)
+
+        #expect(accepted)
+        let node = try #require(parent.presentation)
+        #expect(router.sheet === parent)
+        #expect(node.style == (fullScreen ? .fullScreen : .sheet))
+        #expect(node.destination == .tabs)
+        #expect(node.layer.selectedStack == initialStack)
+        #expect(node.layer.roots == roots)
+        #expect(node.layer.paths == paths)
+        #expect(router.rootPresentation.context(for: .primary).path == [.detail])
+    }
+
     @Test func primarySelectionHasNoScopeForCoreAndExternalContainers() throws {
         for destination in [Route.home, .tabs] {
             let router = Router(
