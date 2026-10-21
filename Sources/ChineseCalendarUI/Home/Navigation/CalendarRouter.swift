@@ -52,42 +52,6 @@ final class CalendarRouter {
         navigation.presentations
     }
 
-    /// 示例恢复边界：只暴露可以从业务地址重新查询内容的导航树。
-    var restorableSnapshot: NavigationSnapshot<CalendarTab, CalendarDestination, CalendarAlert>? {
-        let snapshot = navigation.snapshot
-        guard !isAwaitingPresentationDismissal, navigation.pendingConfirmation == nil,
-              !navigation.hasActiveAlert, navigation.requestWaitingForAlert == nil,
-              Self.hasValidContainerStructure(destination: snapshot.rootDestination, layer: snapshot.layer),
-              snapshot.destinations.allSatisfy(\.supportsStateRestoration),
-              snapshot.presentation?.alerts.isEmpty ?? true else { return nil }
-        return snapshot
-    }
-
-    @discardableResult
-    func restore(_ snapshot: NavigationSnapshot<CalendarTab, CalendarDestination, CalendarAlert>) -> Bool {
-        guard snapshot.rootDestination == .mainTabs,
-              Self.hasValidContainerStructure(destination: snapshot.rootDestination, layer: snapshot.layer),
-              snapshot.destinations.allSatisfy(\.supportsStateRestoration),
-              snapshot.presentation?.alerts.isEmpty ?? true else { return false }
-        return navigation.restore(snapshot)
-    }
-
-    /// 自带容器需要业务定义的各 Tab 栈，栈根可以替换；每个模态使用相同规则检查。
-    private static func hasValidContainerStructure(
-        destination: CalendarDestination,
-        layer: NavigationLayerSnapshot<CalendarTab, CalendarDestination, CalendarAlert>
-    ) -> Bool {
-        if destination == .mainTabs {
-            guard Set(layer.rootDestinations.keys) == Set(mainTabRoots.keys),
-                  mainTabRoots[layer.selectedStack] != nil,
-                  layer.paths.keys.allSatisfy({ mainTabRoots[$0] != nil }) else { return false }
-        }
-        if case let .node(_, childDestination, _, childLayer) = layer.presentation {
-            return hasValidContainerStructure(destination: childDestination, layer: childLayer)
-        }
-        return true
-    }
-
     init(
         selectedTab: CalendarTab = .years,
         yearsPath: [CalendarDestination] = [],

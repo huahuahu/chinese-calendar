@@ -1,7 +1,7 @@
 import Foundation
 import NavigationCore
 
-enum CalendarDestination: Codable, NavigationDestination, Identifiable {
+enum CalendarDestination: NavigationDestination, Identifiable {
     case mainTabs
     case calendarHome
     case historyHome
@@ -91,22 +91,6 @@ enum CalendarDestination: Codable, NavigationDestination, Identifiable {
             if case .debugNavigationTabs = self { return true }
         #endif
         return false
-    }
-
-    /// 临时会话依赖当前进程中的回调或下载状态，不能仅凭 ID 跨启动重建。
-    var supportsStateRestoration: Bool {
-        switch self {
-        case .yearPicker, .downloadDetails:
-            false
-        #if DEBUG
-            case .debugNavigation, .debugSplit, .debugSplitEmpty, .debugSplitDetail, .debugNavigationTabs,
-                 .downloadPreview, .downloadPreviewScenarios, .downloadPreviewSwitch,
-                 .downloadPreviewDetails:
-                false
-        #endif
-        default:
-            true
-        }
     }
 
     var isDownloadDetail: Bool {

@@ -7,8 +7,8 @@ import Testing
 @MainActor
 @Suite("独立栈状态与访问约束")
 struct NavigationStackStateTests {
-    private enum Tab: String, Codable, NavigationScope { case home, history }
-    private enum Route: String, Codable, NavigationDestination {
+    private enum Tab: String, NavigationScope { case home, history }
+    private enum Route: String, NavigationDestination {
         case root, first, second, third
         var providesNavigationContainer: Bool {
             self == .root
@@ -85,7 +85,7 @@ struct NavigationStackStateTests {
         #expect(history.path == [.third])
     }
 
-    @Test func acquiringContextsDoesNotWriteEmptyPathsIntoSnapshots() throws {
+    @Test func acquiringContextsDoesNotChangeStacksOrPaths() throws {
         let router = Router(
             rootDestination: .root,
             selectedScope: .home,
@@ -93,25 +93,22 @@ struct NavigationStackStateTests {
             paths: [.history: []]
         )
         router.presentSheet(.first)
-        let before = router.snapshot
+        let homeState = router.rootLayer.stacks[.scope(.home)]
+        let historyState = router.rootLayer.stacks[.scope(.history)]
         _ = router.context(for: .home)
         _ = router.context(for: .history)
         let node = try #require(router.sheet)
+        let modalState = node.layer.stacks[.primary]
         _ = router.context(for: node)
         _ = router.presentationContext(for: node).context(for: .scope(.history))
-        #expect(router.snapshot == before)
-        #expect(router.paths[.home] == nil)
-        #expect(router.paths[.history] == nil)
-
-        let bytes = try JSONEncoder().encode(before)
-        let saved = try JSONDecoder().decode(NavigationSnapshot<Tab, Route, NoNavigationAlert>.self, from: bytes)
-        let restored = Router(
-            rootDestination: .root,
-            selectedScope: .history,
-            rootDestinations: [.home: .first, .history: .second]
-        )
-        #expect(restored.restore(saved))
-        #expect(restored.snapshot == before)
+        #expect(router.rootLayer.stacks[.scope(.home)] === homeState)
+        #expect(router.rootLayer.stacks[.scope(.history)] === historyState)
+        #expect(router.rootLayer.stacks.count == 2)
+        #expect(node.layer.stacks[.primary] === modalState)
+        #expect(node.layer.stacks.count == 1)
+        #expect(router.paths.isEmpty)
+        #expect(node.path.isEmpty)
+        #expect(router.sheet === node)
     }
 
     @Test func observingAPathTracksThatStackInsteadOfEveryTabsPath() {
@@ -133,29 +130,6 @@ struct NavigationStackStateTests {
         router.setPath([.second], for: .home)
         #expect(changes.withLock { $0 } == 1)
         #expect(home.path == [.second])
-    }
-
-    @Test func rootContextRemainsConnectedAfterSnapshotRestoration() {
-        let router = Router(
-            rootDestination: .root,
-            selectedScope: .home,
-            rootDestinations: [.home: .first, .history: .second],
-            paths: [.home: [.first]]
-        )
-        let home = router.context(for: .home)
-        let history = router.context(for: .history)
-        #expect(router.restore(.init(
-            rootDestination: .root,
-            selectedScope: .history,
-            rootDestinations: [.home: .first, .history: .second],
-            paths: [.history: [.second]]
-        )))
-        #expect(home === router.context(for: .home))
-        #expect(history === router.context(for: .history))
-        #expect(home.path.isEmpty)
-        #expect(history.path == [.second])
-        #expect(history.push(.third))
-        #expect(router.path(for: .history) == [.second, .third])
     }
 
     @Test func rootStackWritesRespectConfirmationAndDismissalTransactions() throws {
@@ -199,11 +173,8 @@ private extension NavigationStackStateTests {
 }
 
 extension NavigationStackStateTests {
-    private typealias Layer = NavigationLayerSnapshot<Tab, Route, NoNavigationAlert>
-
     @Test func lookupCannotCreateAnUnrootedStackAndLaterRegistrationDoesNotReviveIt() {
         let router = Router(rootDestination: .root, selectedScope: .home, rootDestinations: [.home: .first])
-        let before = router.snapshot
         let missing = router.context(for: .history)
         #expect(!missing.isActive)
         #expect(!missing.push(.second))
@@ -214,7 +185,10 @@ extension NavigationStackStateTests {
         router.paths = [.history: [.second]]
         router.push(.second, on: .history)
         #expect(router.submit(.push(.second, on: .history)) == .rejected)
-        #expect(router.snapshot == before)
+        #expect(router.selectedScope == .home)
+        #expect(router.rootDestinations == [.home: .first])
+        #expect(router.paths.isEmpty)
+        #expect(router.presentedNode == nil)
         #expect(router.submit(.setRoot(.second, on: .history)) == .applied)
         let registered = router.context(for: .history)
         #expect(registered.isActive)
@@ -223,46 +197,21 @@ extension NavigationStackStateTests {
         #expect(!missing.setPath([.first]))
     }
 
-    @Test func restoringRemovedStacksInvalidatesOnlyTheirOldContexts() {
-        let router = Router(
-            rootDestination: .root, selectedScope: .home,
-            rootDestinations: [.home: .first, .history: .second], paths: [.history: [.first]]
-        )
-        let original = router.snapshot
-        let home = router.context(for: .home)
-        let history = router.context(for: .history)
-        let reduced = Router(rootDestination: .root, selectedScope: .home, rootDestinations: [.home: .second]).snapshot
-        #expect(router.restore(reduced))
-        #expect(home === router.context(for: .home))
-        #expect(home.rootDestination == .second)
-        #expect(!history.isActive)
-        #expect(router.restore(original))
-        #expect(!history.isActive)
-        #expect(!history.push(.second))
-        #expect(router.context(for: .history).path == [.first])
-    }
-
-    @Test func emptyAndMissingPathsHaveTheSameSnapshotRepresentation() throws {
-        let empty = Layer(rootDestinations: [.primary: .first], paths: [.primary: []])
-        let absent = Layer(rootDestinations: [.primary: .first])
-        #expect(empty == absent)
-        let encoder = JSONEncoder()
-        var json = try #require(JSONSerialization.jsonObject(with: encoder.encode(absent)) as? [String: Any])
-        let legacy: [NavigationStackID<Tab>: [Route]] = [.primary: []]
-        json["paths"] = try JSONSerialization.jsonObject(with: encoder.encode(legacy))
-        let decoded = try JSONDecoder().decode(Layer.self, from: JSONSerialization.data(withJSONObject: json))
-        #expect(decoded == absent)
-        let router = Router(rootDestination: .first)
-        #expect(router.restore(.init(rootDestination: .first, layer: decoded)))
-        let before = router.snapshot
-        let stack = router.rootPresentation.context(for: .primary)
+    @Test func emptyAndMissingPathsHaveTheSameRuntimeMeaning() {
+        let empty = Router(rootDestination: .first, paths: [.primary: []])
+        let absent = Router(rootDestination: .first)
+        #expect(empty.rootLayer.paths.isEmpty)
+        #expect(absent.rootLayer.paths.isEmpty)
+        #expect(empty.rootLayer.roots == absent.rootLayer.roots)
+        let stack = empty.rootPresentation.context(for: .primary)
         #expect(stack.setPath([]))
-        #expect(router.snapshot == before)
+        #expect(stack.isActive)
+        #expect(stack.rootDestination == .first)
+        #expect(empty.rootLayer.paths.isEmpty)
     }
 
-    @Test func containersRejectMissingRootsBeforeChangingPresentationOrRestoration() {
+    @Test func containersRejectMissingRootsBeforeChangingPresentation() {
         let router = Router(rootDestination: .first, paths: [.primary: [.second]])
-        let before = router.snapshot
         #expect(!router.rootPresentation.present(.root))
         #expect(!router.rootPresentation.present(
             .root, initialStack: .scope(.history), rootDestinations: [.scope(.home): .first]
@@ -270,10 +219,11 @@ extension NavigationStackStateTests {
         #expect(!router.rootPresentation.present(
             .root, rootDestinations: [.primary: .first], paths: [.scope(.history): []]
         ))
-        #expect(!router.restore(.init(rootDestination: .root, layer: .init())))
-        #expect(!router.restore(.init(rootDestination: .root, layer: .init(
-            rootDestinations: [.primary: .first], paths: [.scope(.history): [.second]]
-        ))))
-        #expect(router.snapshot == before)
+        #expect(router.rootPresentation.destination == .first)
+        #expect(router.rootLayer.roots == [.primary: .first])
+        #expect(router.rootLayer.paths == [.primary: [.second]])
+        #expect(router.presentedNode == nil)
+        #expect(router.pendingConfirmation == nil)
+        #expect(!router.isAwaitingPresentationDismissal)
     }
 }

@@ -13,7 +13,9 @@
 
 栈宿主默认注入记录发起栈的 `NavigationPresentationContext`。同层多个实例共享状态，不能依靠对象是否相同判断是否属于同一层。Tab 公共控件使用层级入口；同时可交互的分栏可显式使用 `unscoped()` 或 `restrictsPresentationToSelectedStack: false`。
 
-`presentation.route`／`destination` 现在是非可选值，失效后仍能读取最后入口。移除以路由 nil 判断 Context 有效性的代码，改用 `isActive` 和操作返回值。恢复出的同 ID 模态是新层，旧 Context 不会重新有效；层 ID 与入口 Destination 也不是同一个概念。
+`presentation.route`／`destination` 现在是非可选值，失效后仍能读取最后入口。移除以路由 nil 判断 Context 有效性的代码，改用 `isActive` 和操作返回值。同 ID 的新层也不能让旧 Context 重新有效；层 ID 与入口 Destination 也不是同一个概念。
+
+三类 Context 缓存统一由每个 Router 独立持有的内部 `NavigationContextStore` 管理；公开的 `context(for:)`、`rootPresentation`、`scoped(to:)` 和 `unscoped()` 接法不变。模态从树中移除时入口立即失效，真实 dismiss 完成后统一清理缓存。Context 与访问闭包继续弱引用原运行时状态。
 
 ## 将页面配置集中到根宿主
 
@@ -46,7 +48,7 @@ App 的主 Tab 入口由 `.root` 改名为 `.mainTabs`。页面读取当前层�
 
 ## 使用明确的栈身份与必填根
 
-- Scope 从 `Hashable` 约束改为显式遵循 `NavigationScope`。给已有类型增加协议遵循即可；协议继承 `Hashable`，不要求 `CaseIterable` 或 `Codable`。需要编码快照时另加 `Codable`。
+- Scope 从 `Hashable` 约束改为显式遵循 `NavigationScope`。给已有类型增加协议遵循即可；协议继承 `Hashable`，不要求 `CaseIterable` 或 `Codable`。
 - 新接入使用 `NavigationStackID<Scope>`：默认栈为 `.primary`，命名栈为 `.scope(scope)`。旧代码若以 `Never` 作为 Scope，应改用显式遵循 `NavigationScope` 的业务类型；只有默认栈时可定义无成员的 `enum AppScope: NavigationScope {}`，需要命名栈时再增加成员。
 - Router 初始化增加整个根层的 `rootDestination`。统一初始化器与 `present` 均使用 `initialStack`、以 StackID 为 key 的 `rootDestinations` 和 `paths`；基于 Scope 的根 Tab 便利入口仍存在。
 - `NavigationPresentationRequest.sheet`／`.fullScreen` 与 Router 的 `presentSheet`／`presentFullScreen` 同样接受 `initialStack`、`rootDestinations` 和 `paths`。容器入口必须通过这些参数声明根；普通页面可继续省略。匹配请求枚举时，两个页面 case 现在各有四个关联值。Router 两个便利方法返回可忽略的 `Bool`，便于判断请求是否接受；若曾把方法保存为返回 `Void` 的函数值，改为闭包并显式忽略结果。
@@ -54,17 +56,15 @@ App 的主 Tab 入口由 `.root` 改名为 `.mainTabs`。页面读取当前层�
 - 栈根必须是非可选 Destination。`setRootDestination`／`.setRoot` 不接受 nil；SplitView 的空详情使用明确的空态路由。换根同时清空 path，同一对象重复选择时由 App 保留原根和 path。
 - `NavigationContext.rootDestination` 仍是可选查询，nil 表示未声明或已失效的 Context。Preview 的 root closure 只覆盖显示内容，不能绕过根声明。
 
-Router 与快照的 `selectedScope` 现在是 `Scope?`：`.primary` 对应 nil，写 nil 不改变选择。TabView 绑定完整的 `presentation.selectedStack`，不要用某个默认 Tab 填补 nil。Router 的 `paths`／`rootDestinations` 属性只投影根层命名栈；操作 primary 或模态内部栈使用该层 Context。
+Router 的 `selectedScope` 现在是 `Scope?`：`.primary` 对应 nil，写 nil 不改变选择。TabView 绑定完整的 `presentation.selectedStack`，不要用某个默认 Tab 填补 nil。Router 的 `paths`／`rootDestinations` 属性只投影根层命名栈；操作 primary 或模态内部栈使用该层 Context。
 
-## 更新快照与恢复调用
+## 移除完整导航树快照与恢复调用
 
-根快照采用 `rootDestination + layer`，根与模态复用 `NavigationLayerSnapshot` 结构。通用读取使用 `snapshot.layer`；根 Tab 的便利投影不能代表整棵树。旧编码如需保留，由 App 显式迁移，不能假定无根快照仍可恢复。
+删除 `NavigationSnapshot`、`NavigationLayerSnapshot`、`NavigationPresentationSnapshot`、`NavigationRouter.snapshot`／`restore` 及日历 App 的 `CalendarRouter.restorableSnapshot`／`restore`。移除相应编码、解码、业务可恢复性过滤和仅服务这些接口的 `Codable` 遵循；业务地址若另有编码用途，仍由该用途决定是否保留。
 
-path 是非可选数组。快照省略空 path，缺失条目与显式空数组等价，不再记录路径是否曾被写入。
+没有替代整树快照的公开接口。运行时查询使用所在层 Context 的 `rootDestination`、`path`、`selectedStack` 等现有 API；测试直接断言需要验证的状态。新建根层或模态继续使用 `rootDestination`／destination、`initialStack`、`rootDestinations`、`paths` 的正常初始化参数，内部完整校验后才建立状态，不经过恢复模型。
 
-恢复校验根声明、栈结构和重复身份，不校验已移除的页面位置白名单。根层容器归属不变时，仍存在的栈对象及其 Context 保持连接；删除栈或切换容器归属会使旧栈 Context 失效。模态恢复创建新层、新栈，即使 ID 相同，旧 Context 也不能操作它。
-
-SDK 快照可保存 SplitView 的详情根与 path，因而可以恢复根路由表达的对象；分类、保留策略和原生布局状态仍由 App 决定如何保存。业务会话、回调和正在执行的动作不在快照中。日历 App 继续拒绝临时会话、业务 alert 和 DEBUG 路由的恢复。
+运行期间各 Tab 的路径、仍存续的父模态状态和 App 分栏选择行为保持。跨启动保存与恢复完整界面不在当前能力范围；Deep Link 仍通过业务地址解析和 Router 请求协调处理。原 #158 中“恢复成功后清理 Context”及恢复兼容测试随 #159 的能力删除而不再适用，关闭后的生命周期验证继续保留。
 
 ## 业务提示统一进入呈现队列
 
@@ -94,5 +94,6 @@ Router 的 `deferredRequest`、`pendingConfirmation`、`requestWaitingForAlert` 
 | 根宿主配置与统一页面构建 | [#148 计划](../../Docs/Tasks/issue-148-navigation-host/000-plan.md)、[统一 builder](../../Docs/Tasks/issue-148-navigation-host/002-unified-destination-builder.md) |
 | Destination 容器声明的早期方案 | [#152 计划](../../Docs/Tasks/issue-152-destination-containers/000-plan.md)，其中入口白名单与 Core 多栏预留声明已被后续方案替代 |
 | 根层与模态采用相同结构 | [同构导航层](../../Docs/Tasks/task-2026-10-20-homogeneous-navigation-layers/000-plan.md) |
+| 运行时导航边界与 Context 缓存生命周期 | [#159／#158 方案](../../Docs/Tasks/issue-159-navigation-runtime/000-plan.md)，替代历史快照恢复能力 |
 | App 原生两栏／三栏组合 | [#146 计划](../../Docs/Tasks/issue-146-navigation-containers/000-plan.md)、[栈根路由化](../../Docs/Tasks/issue-146-navigation-containers/002-routed-stack-roots.md) |
 | DEBUG 操作入口 | [Debug 操作记录](../../Docs/Tasks/issue-145-unified-navigation/007-debug-actions.md) |

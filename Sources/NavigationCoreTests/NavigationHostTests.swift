@@ -61,8 +61,8 @@ struct NavigationHostTests {
 
         #expect(ImageRenderer(content: content).cgImage != nil)
         #expect(Set(recorder.pages) == ["outer:zh_CN", "outer:en_US", "inner:ja_JP"])
-        #expect(outer.snapshot.paths.isEmpty)
-        #expect(inner.snapshot.paths.isEmpty)
+        #expect(outer.paths.isEmpty)
+        #expect(inner.paths.isEmpty)
     }
 
     @Test func rootEntryUsesTheSharedBuilderAndRootPresentationEnvironment() {

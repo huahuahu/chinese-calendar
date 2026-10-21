@@ -5,8 +5,8 @@ import Testing
 @MainActor
 @Suite("Destination 容器与同构导航层")
 struct NavigationDestinationTests {
-    private enum Tab: String, Codable, NavigationScope { case home, history }
-    enum Route: String, Codable, NavigationDestination {
+    private enum Tab: String, NavigationScope { case home, history }
+    enum Route: String, NavigationDestination {
         case tabs, split, home, detail
 
         var providesNavigationContainer: Bool {
@@ -15,7 +15,6 @@ struct NavigationDestinationTests {
     }
 
     private typealias Router = NavigationRouter<Tab, Route, NoNavigationAlert>
-    private typealias Snapshot = NavigationSnapshot<Tab, Route, NoNavigationAlert>
     private typealias StackID = NavigationStackID<Tab>
 
     private let tabRoots: [StackID: Route] = [.scope(.home): .home, .scope(.history): .detail]
@@ -29,7 +28,6 @@ struct NavigationDestinationTests {
         let router = Router(rootDestination: .home, paths: [.primary: [.detail]])
         let root = router.rootPresentation
         let rootStack = root.context(for: .primary)
-        let rootLayer = router.snapshot.layer
         #expect(root.selectedStack == .primary)
         #expect(rootStack.rootDestination == .home)
         #expect(rootStack.path == [.detail])
@@ -37,11 +35,9 @@ struct NavigationDestinationTests {
         let node = try #require(router.presentedNode)
         let modal = router.presentationContext(for: node)
         let modalStack = modal.context(for: .primary)
-        if case let .node(_, _, _, modalLayer) = node.snapshot {
-            #expect(modalLayer == rootLayer)
-        } else {
-            Issue.record("页面模态必须保存自己的导航层")
-        }
+        #expect(node.layer.selectedStack == router.rootLayer.selectedStack)
+        #expect(node.layer.roots == router.rootLayer.roots)
+        #expect(node.layer.paths == router.rootLayer.paths)
         #expect(modal.selectedStack == .primary)
         #expect(!root.context(for: .scope(.history)).isActive)
         #expect(!modal.context(for: .scope(.history)).isActive)
@@ -115,11 +111,11 @@ struct NavigationDestinationTests {
     }
 
     @Test(arguments: [Route.home, .tabs, .split])
-    func everyDestinationCanEnterRootStackRootPushAndModal(route: Route) throws {
+    func everyDestinationCanEnterRootStackRootPushAndModal(route: Route) {
         let roots: [NavigationStackID<Tab>: Route] = route.providesNavigationContainer ? [.primary: .home] : [:]
         let directRoot = Router(rootDestination: route, rootDestinations: roots)
         #expect(directRoot.rootPresentation.destination == route)
-        #expect(directRoot.restore(directRoot.snapshot))
+        #expect(directRoot.rootPresentation.context(for: .primary).isActive)
 
         let router = Router(
             rootDestination: .tabs, initialStack: .scope(.home), rootDestinations: [.scope(.home): route]
@@ -130,13 +126,6 @@ struct NavigationDestinationTests {
         #expect(stack.path == [route])
         #expect(router.rootPresentation.present(route, rootDestinations: roots))
         #expect(router.presentedNode?.destination == route)
-        let snapshot = try JSONDecoder().decode(Snapshot.self, from: JSONEncoder().encode(router.snapshot))
-        let restored = makeRouter()
-        #expect(restored.restore(snapshot))
-        #expect(restored.snapshot == snapshot)
-        #expect(restored.context(for: .home).rootDestination == route)
-        #expect(restored.context(for: .home).path == [route])
-        #expect(restored.presentedNode?.destination == route)
     }
 
     @Test func pathAndRootMutationsDoNotReintroduceContainerEntryRestrictions() {
@@ -166,7 +155,7 @@ struct NavigationDestinationTests {
         #expect(router.rootPresentation.destination == .tabs)
     }
 
-    @Test func repeatedDestinationAndRestoredUUIDNeverReviveOldContexts() throws {
+    @Test func repeatedDestinationAndReusedUUIDNeverReviveOldContexts() throws {
         let router = makeRouter()
         #expect(router.rootPresentation.present(.tabs, initialStack: .scope(.home), rootDestinations: tabRoots))
         let first = try #require(router.presentedNode)
@@ -174,7 +163,6 @@ struct NavigationDestinationTests {
         let stack = old.context(for: .scope(.home))
         let oldScoped = old.scoped(to: .scope(.home))
         #expect(stack.push(.detail))
-        let snapshot = router.snapshot
         #expect(old.dismiss())
         #expect(old.route == .presentation(id: first.id, destination: .tabs))
         #expect(stack.rootDestination == nil)
@@ -186,11 +174,13 @@ struct NavigationDestinationTests {
         #expect(second.id != first.id)
         #expect(router.presentationContext(for: second).dismiss())
         router.rootPresentation.presentationDidDismiss()
-        let decoded = try JSONDecoder().decode(Snapshot.self, from: JSONEncoder().encode(snapshot))
-        #expect(router.restore(decoded))
-        let restored = try #require(router.presentedNode)
-        let current = router.presentationContext(for: restored)
-        #expect(restored.id == first.id)
+        let replacement = NavigationPresentationNode<Tab, Route, NoNavigationAlert>(
+            id: first.id, destination: .tabs, initialStack: .scope(.home),
+            rootDestinations: tabRoots, paths: [.scope(.home): [.detail]]
+        )
+        router.rootLayer.presentation = replacement
+        let current = router.presentationContext(for: replacement)
+        #expect(replacement.id == first.id)
         #expect(!old.isActive)
         #expect(old.destination == .tabs)
         #expect(!oldScoped.present(.detail))

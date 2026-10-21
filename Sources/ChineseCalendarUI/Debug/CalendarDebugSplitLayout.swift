@@ -3,7 +3,7 @@
     import Foundation
 
     /// 选择 App 演示使用两栏还是三栏；NavigationCore 只管理详情栈，不读取这个布局选项。
-    enum CalendarDebugSplitLayout: String, Codable, CaseIterable, Identifiable {
+    enum CalendarDebugSplitLayout: String, CaseIterable, Identifiable {
         case twoColumn
         case threeColumn
 

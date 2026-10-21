@@ -1,7 +1,5 @@
 import Foundation
 @testable import NavigationCore
-import Observation
-import Synchronization
 import Testing
 
 @MainActor
@@ -10,27 +8,19 @@ struct NavigationPresentationRouteTests {
     private enum Scope: NavigationScope { case home }
     private enum Route: NavigationDestination { case home, detail }
     private typealias Router = NavigationRouter<Scope, Route, NoNavigationAlert>
-    private typealias Snapshot = NavigationSnapshot<Scope, Route, NoNavigationAlert>
     private typealias Node = NavigationPresentationNode<Scope, Route, NoNavigationAlert>
 
-    @Test func rootRoutesFollowRestorationAndRemainReadableAfterRelease() throws {
+    @Test func rootRoutesRemainReadableAfterRelease() throws {
         var router: Router? = Router(rootDestination: .home)
         weak var originalRouter = router
         weak var originalLayer = router?.rootLayer
         let root = try #require(router?.rootPresentation)
         let scoped = root.scoped(to: .primary)
-        #expect(router?.restore(Snapshot(
-            rootDestination: .detail, layer: .init(rootDestinations: [.primary: .detail])
-        )) == true)
         #expect(root.isActive)
         #expect(scoped.isActive)
-        #expect(root.route == .root(destination: .detail))
-        #expect(scoped.destination == .detail)
+        #expect(root.route == .root(destination: .home))
+        #expect(scoped.destination == .home)
 
-        // 恢复后不先读取 Context，释放时也必须保留最新入口，不能退回初始化值或读取缓存。
-        #expect(router?.restore(Snapshot(
-            rootDestination: .home, layer: .init(rootDestinations: [.primary: .home])
-        )) == true)
         router = nil
         #expect(originalRouter == nil)
         #expect(originalLayer == nil)
@@ -43,7 +33,7 @@ struct NavigationPresentationRouteTests {
         #expect(!root.context(for: .primary).isActive)
     }
 
-    @Test func dismissedRouteOutlivesItsLayerWithoutFollowingRestoredIdentity() throws {
+    @Test func dismissedRouteOutlivesItsLayerWithoutFollowingReusedIdentity() throws {
         let router = Router(rootDestination: .home)
         #expect(router.rootPresentation.present(.home))
         var node: Node? = try #require(router.presentedNode)
@@ -59,13 +49,7 @@ struct NavigationPresentationRouteTests {
         #expect(scoped.destination == .home)
         router.rootPresentation.presentationDidDismiss()
 
-        let snapshot = Snapshot(rootDestination: .home, layer: .init(
-            rootDestinations: [.primary: .home],
-            presentation: .node(id: id, destination: .detail, style: .sheet, layer: .init(
-                rootDestinations: [.primary: .detail]
-            ))
-        ))
-        #expect(router.restore(snapshot))
+        router.rootLayer.presentation = Node(id: id, destination: .detail)
         let current = try router.presentationContext(for: #require(router.presentedNode))
         #expect(current.id == modal.id)
         #expect(current.isActive)
@@ -77,28 +61,5 @@ struct NavigationPresentationRouteTests {
         #expect(!scoped.present(.detail))
         #expect(!modal.context(for: .primary).push(.detail))
         #expect(current.isActive)
-    }
-
-    @Test func rootRestorationNotifiesRootAndScopedRouteObservers() {
-        let router = Router(rootDestination: .home)
-        let root = router.rootPresentation
-        let scoped = root.scoped(to: .primary)
-        let changes = Mutex(0)
-        withObservationTracking {
-            _ = root.destination
-        } onChange: {
-            changes.withLock { $0 += 1 }
-        }
-        withObservationTracking {
-            _ = scoped.route
-        } onChange: {
-            changes.withLock { $0 += 1 }
-        }
-        #expect(router.restore(Snapshot(
-            rootDestination: .detail, layer: .init(rootDestinations: [.primary: .detail])
-        )))
-        #expect(changes.withLock { $0 } == 2)
-        #expect(root.destination == .detail)
-        #expect(scoped.route == root.route)
     }
 }

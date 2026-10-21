@@ -1,5 +1,7 @@
 # Issue #145：通用作用域 Router 与 App 示例
 
+> 2026-10-22 后续决策：[Issue #159／#158](../issue-159-navigation-runtime/000-plan.md) 删除完整导航树快照与恢复，正常初始化独立校验，并将 Context 缓存集中到每个 Router 的内部 Store。本文中的恢复设计与验证保留为当时记录；运行时 path、Tab 和模态状态保留的契约继续适用。
+
 - 日期：2026-10-07；状态：已实施，正在补充真实交互证据；结果见 [001-result.md](001-result.md)。
 - 来源：[用户博客](https://huahuahu.github.io/ios-demo-projects/swiftui-navigation-handling/)及本轮明确要求完善 NavigationCore。该授权替代 004 的不改 Core 边界，承接 005 的通用宿主。
 - 依据：[导航规范](../../Conventions/Navigation.md)、[SwiftUI 规范](../../Conventions/SwiftUI.md)。保留当前工作区已有修改，实施前差异已备份到 `.output/issue-145/scoped-router/`。

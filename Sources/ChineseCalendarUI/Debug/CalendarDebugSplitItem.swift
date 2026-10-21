@@ -2,7 +2,7 @@
     import ChineseCalendarLocalization
     import Foundation
 
-    enum CalendarDebugSplitItem: String, Codable, CaseIterable, Identifiable {
+    enum CalendarDebugSplitItem: String, CaseIterable, Identifiable {
         case first
         case second
         case third

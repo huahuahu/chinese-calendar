@@ -28,13 +28,6 @@ public final class NavigationPresentationContext<
     @ObservationIgnored weak var layer: NavigationLayer<Scope, Destination, AlertRoute>?
     private let routeState: NavigationLayerRouteState<Destination>
     private let sourceStack: NavigationStackID<Scope>?
-    /// 仅由本层不指定sourceStack的层级 Context 保存和使用的缓存；各 scoped Context 的字典始终为空。
-    /// 层级 Context 初始化时缓存也为空，首次 scoped(to:) 后才写入对应条目。
-    /// 普通单栈的默认宿主会缓存 .primary 对应的 scoped Context；Tab 层按需缓存各 Tab 的入口。
-    /// 即使从 scoped Context 再调用 scoped(to:)，也会回到本层层级 Context 查找或写入。
-    /// 显式关闭宿主的发起栈限制时使用 unscoped()，该调用不会填充此缓存。
-    @ObservationIgnored private var stackContexts:
-        [NavigationStackID<Scope>: NavigationPresentationContext<Scope, Destination, AlertRoute>] = [:]
 
     init(
         router: NavigationRouter<Scope, Destination, AlertRoute>,
@@ -49,7 +42,7 @@ public final class NavigationPresentationContext<
     }
 
     /// Router 是否仍在使用这个 Context 最初关联的层对象。
-    /// 恢复快照会为模态创建新的层对象，即使 UUID 相同，旧模态 Context 也不能操作它。
+    /// 即使新层使用相同 UUID，旧模态 Context 也不能操作它。
     public var isActive: Bool {
         guard let layer else { return false }
         return router?.layer(id: id) === layer
@@ -57,7 +50,7 @@ public final class NavigationPresentationContext<
 
     /// 构建整个根界面或打开当前模态时使用的路由，与所属层共享同一份记录。
     /// Context 失效或层释放后仍可读取；是否允许操作和渲染由 isActive 单独判断。
-    /// 根快照恢复更新这份记录；模态中的 push 不改变其入口。
+    /// 模态中的 push 不改变其入口。
     public var route: NavigationLayerRoute<Destination> {
         routeState.route
     }
@@ -122,11 +115,7 @@ public final class NavigationPresentationContext<
     /// NavigationScopeView 会自动把它放入页面环境。原 Context 失效后，调用此方法也不会重新连接新层。
     public func scoped(to stack: NavigationStackID<Scope>) -> NavigationPresentationContext {
         guard let router, let layer, isActive else { return self }
-        let owner = router.presentationContext(in: layer)
-        if let existing = owner.stackContexts[stack] { return existing }
-        let context = NavigationPresentationContext(router: router, layer: layer, sourceStack: stack)
-        owner.stackContexts[stack] = context
-        return context
+        return router.contextStore.presentationContext(in: layer, sourceStack: stack, router: router)
     }
 
     /// 取得不限制发起栈的本层 NavigationPresentationContext，调用 present 时不要求某个栈被选中。
@@ -138,9 +127,9 @@ public final class NavigationPresentationContext<
     }
 
     /// 获取本层指定栈的 NavigationContext，复用该栈的状态，不改变当前选中的栈。
-    /// 未声明根的栈或已失效的层返回失效 Context，不会创建栈或连接后来恢复的同 ID 新层。
+    /// 未声明根的栈或已失效的层返回失效 Context，不会创建栈或连接同 ID 新层。
     public func context(for stack: NavigationStackID<Scope>) -> NavigationContext<Scope, Destination> {
-        // 保留失效状态，避免旧页面通过相同 ID 找到恢复后的新栈。
+        // 保留失效状态，避免旧页面通过相同 ID 找到新栈。
         guard let router, let layer, isActive else {
             return NavigationContext(id: stack, state: nil, access: .inactive)
         }
@@ -162,18 +151,14 @@ public final class NavigationPresentationContext<
         rootDestinations: [NavigationStackID<Scope>: Destination] = [:],
         paths: [NavigationStackID<Scope>: [Destination]] = [:]
     ) -> Bool {
-        guard NavigationLayerSnapshot<Scope, Destination, AlertRoute>(
-            destination: destination, initialStack: initialStack,
-            rootDestinations: rootDestinations, paths: paths
-        ) != nil else { return false }
         guard let router, isActive, let layer, layer.presentation == nil,
               !layer.isAwaitingDismissal else { return false }
         guard sourceStack == nil || sourceStack == layer.selectedStack else { return false }
-        let node = NavigationPresentationNode<Scope, Destination, AlertRoute>(
-            destination: destination,
-            style: style,
+        guard let presentedLayer = NavigationLayer<Scope, Destination, AlertRoute>(
+            route: .presentation(id: UUID(), destination: destination),
             initialStack: initialStack, rootDestinations: rootDestinations, paths: paths
-        )
+        ) else { return false }
+        let node = NavigationPresentationNode(style: style, layer: presentedLayer)
         return router.enqueue(.page(node), in: layer)
     }
 

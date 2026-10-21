@@ -1,5 +1,7 @@
 # 独立栈状态与上下文依赖
 
+> 2026-10-22 后续决策：[Issue #159／#158](../issue-159-navigation-runtime/000-plan.md) 删除完整导航树快照与恢复，正常初始化独立校验，并将 Context 缓存集中到每个 Router 的内部 Store。本文中的恢复设计与验证保留为当时记录；运行时 path、Tab 和模态状态保留的契约继续适用。
+
 - 日期：2026-10-13；状态：实现完成，自动检查与本次栈绑定的 Simulator 验证通过。
 - 承接 [009](009-separate-context-apis.md)。用户确认继续拆开内部职责，移除 NavigationContext 对 Router 和 NavigationLayer 的直接依赖。
 

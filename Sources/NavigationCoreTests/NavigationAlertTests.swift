@@ -3,7 +3,7 @@ import Foundation
 import Testing
 
 // swiftformat:disable:next modifierOrder
-nonisolated private enum AlertTestNotice: String, Codable, NavigationAlertRoute {
+nonisolated private enum AlertTestNotice: String, NavigationAlertRoute {
     case first, second
     typealias Action = Bool
 }
@@ -11,8 +11,8 @@ nonisolated private enum AlertTestNotice: String, Codable, NavigationAlertRoute 
 @MainActor
 @Suite("业务 alert 与导航的串行协调")
 struct NavigationAlertTests {
-    private enum Tab: String, Codable, NavigationScope { case home, history }
-    private enum Route: String, Codable, NavigationDestination {
+    private enum Tab: String, NavigationScope { case home, history }
+    private enum Route: String, NavigationDestination {
         case root, first, second, third
         var providesNavigationContainer: Bool {
             self == .root
@@ -85,7 +85,6 @@ struct NavigationAlertTests {
         let page = try #require(router.sheet)
         let context = router.presentationContext(for: page)
         router.context(for: page).push(.second)
-        let before = router.snapshot
         context.presentAlert(.first)
         let id = try beginAlert(context)
         router.submit(.push(.third, on: .history), confirmIfPresented: true)
@@ -93,7 +92,12 @@ struct NavigationAlertTests {
         #expect(context.beginAlertCompletion(id: id))
         context.alertDidDismiss(id: id)
         try context.cancelNavigation(id: #require(context.confirmation).id)
-        #expect(router.snapshot == before)
+        #expect(router.sheet === page)
+        #expect(page.path == [.second])
+        #expect(page.presentation == nil)
+        #expect(context.presentedAlert == nil)
+        #expect(router.selectedScope == .home)
+        #expect(router.paths.isEmpty)
     }
 
     @Test func queuedAlertsKeepOrderAndNavigationWaitsForAllOfThem() throws {
@@ -313,34 +317,17 @@ extension NavigationAlertTests {
         #expect(parent.confirmation?.request == .push(.third, on: .history))
     }
 
-    @Test func snapshotPreservesAlertDataWithoutCreatingAStackForIt() throws {
+    @Test func alertDoesNotCreateAnotherNavigationLayerOrStack() throws {
         let router = makeRouter()
         router.presentSheet(.first)
         let page = try #require(router.sheet)
-        router.presentationContext(for: page).presentAlert(.second)
-        let snapshot = router.snapshot
-        #expect(snapshot.presentation?.alerts == [.second])
+        let context = router.presentationContext(for: page)
+        #expect(context.presentAlert(.second))
         #expect(router.presentations.count == 1)
-        let data = try JSONEncoder().encode(snapshot)
-        let restored = makeRouter(selectedScope: .history)
-        #expect(try restored.restore(JSONDecoder().decode(NavigationSnapshot<Tab, Route, Notice>.self, from: data)))
-        #expect(restored.snapshot == snapshot)
-        let context = try restored.presentationContext(for: #require(restored.sheet))
         #expect(context.presentedAlert?.destination == .second)
-    }
-
-    @Test func cannotRestoreWhileAlertIsClosingOrItsActionIsRunning() throws {
-        let router = makeRouter()
-        let clean = router.snapshot
-        let context = router.rootPresentation
-        context.presentAlert(.first)
-        let id = try beginAlert(context)
-        context.alertWillDismiss(id: id)
-        #expect(!router.restore(clean))
-        #expect(context.beginAlertCompletion(id: id))
-        #expect(!router.restore(clean))
-        context.alertDidDismiss(id: id)
-        #expect(router.restore(clean))
+        #expect(page.presentation == nil)
+        #expect(page.layer.roots == [.primary: .first])
+        #expect(page.layer.paths.isEmpty)
     }
 
     private func beginAlert(_ context: Presentation) throws -> UUID {

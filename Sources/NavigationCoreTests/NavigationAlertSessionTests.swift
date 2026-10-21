@@ -3,7 +3,7 @@ import Foundation
 import Testing
 
 // swiftformat:disable:next modifierOrder
-nonisolated private enum SessionTestNotice: String, Codable, NavigationAlertRoute {
+nonisolated private enum SessionTestNotice: String, NavigationAlertRoute {
     case first, second
     typealias Action = Bool
 }
@@ -11,8 +11,8 @@ nonisolated private enum SessionTestNotice: String, Codable, NavigationAlertRout
 @MainActor
 @Suite("提示会话的生命周期约束")
 struct NavigationAlertSessionTests {
-    private enum Tab: String, Codable, NavigationScope { case home, history }
-    private enum Route: String, Codable, NavigationDestination {
+    private enum Tab: String, NavigationScope { case home, history }
+    private enum Route: String, NavigationDestination {
         case root, first, second
         var providesNavigationContainer: Bool {
             self == .root
@@ -128,7 +128,7 @@ struct NavigationAlertSessionTests {
         #expect(router.requestWaitingForAlert == .push(.second, on: .history))
     }
 
-    @Test func inactiveContextCannotChangeRestoredLayerWithSameID() throws {
+    @Test func inactiveContextCannotChangeNewLayerWithSameID() throws {
         let router = Router(
             rootDestination: .root,
             selectedScope: .home,
@@ -137,10 +137,9 @@ struct NavigationAlertSessionTests {
         router.presentSheet(.first)
         let oldPage = try #require(router.sheet)
         let oldContext = router.presentationContext(for: oldPage)
-        let snapshot = router.snapshot
         oldContext.dismiss()
         router.rootPresentation.presentationDidDismiss()
-        #expect(router.restore(snapshot))
+        router.rootLayer.presentation = NavigationPresentationNode(id: oldPage.id, destination: .first)
         let newPage = try #require(router.sheet)
         let context = router.presentationContext(for: newPage)
         #expect(newPage.id == oldPage.id)

@@ -3,7 +3,7 @@ import Foundation
 import NavigationCore
 import SFSafeSymbols
 
-enum CalendarTab: Codable, NavigationScope, CaseIterable, Identifiable {
+enum CalendarTab: NavigationScope, CaseIterable, Identifiable {
     case years
     case history
     case settings
