@@ -7,6 +7,7 @@ import Observation
 /// 最多有 4 个实例：1 个不指定发起栈的层级 Context，以及每个 Tab 各 1 个 scoped Context。
 /// 这些实例按需创建并缓存，全部属于同一层，共享入口路由、选中栈、模态呈现和离开确认状态。
 /// scoped Context 额外记录 sourceStack，用于限制未选中 Tab 发起模态；它不会创建新的导航层。
+/// 普通单栈使用默认宿主配置时，也有 1 个层级 Context 和 1 个 .primary scoped Context。
 ///
 /// NavigationScopeView 通过 scoped(to:) 取得对应栈的呈现入口；TabView 附件等公共控件
 /// 使用不指定发起栈的层级 Context。各 Tab 的 path 和 push/pop 由各自的 NavigationContext 管理。
@@ -27,6 +28,11 @@ public final class NavigationPresentationContext<
     @ObservationIgnored weak var layer: NavigationLayer<Scope, Destination, AlertRoute>?
     private let routeState: NavigationLayerRouteState<Destination>
     private let sourceStack: NavigationStackID<Scope>?
+    /// 仅由本层不指定发起栈的层级 Context 保存和使用的缓存；各 scoped Context 的字典始终为空。
+    /// 层级 Context 初始化时缓存也为空，首次 scoped(to:) 后才写入对应条目。
+    /// 普通单栈的默认宿主会缓存 .primary 对应的 scoped Context；Tab 层按需缓存各 Tab 的入口。
+    /// 即使从 scoped Context 再调用 scoped(to:)，也会回到本层层级 Context 查找或写入。
+    /// 显式关闭宿主的发起栈限制时使用 unscoped()，该调用不会填充此缓存。
     @ObservationIgnored private var stackContexts:
         [NavigationStackID<Scope>: NavigationPresentationContext<Scope, Destination, AlertRoute>] = [:]
 
