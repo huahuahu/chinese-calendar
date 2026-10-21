@@ -1,0 +1,286 @@
+{
+  "date": "2026-10-21",
+  "tool": "mcp__xcode__RunAllTests",
+  "scheme": "ChineseCalendar-iOS",
+  "simulator": "chinesedate iPhone 18 Pro Max (885f)",
+  "simulatorId": "16A9CAA7-45CE-46D5-8915-F61531FC617C",
+  "runtime": "iOS 27.0",
+  "sourceManifest": "integration-source-manifest.json",
+  "counts": {
+    "total": 347,
+    "passed": 347,
+    "failed": 0,
+    "skipped": 0,
+    "notRun": 0,
+    "expectedFailures": 0
+  },
+  "appSplitCaseCount": 22,
+  "buildAndRun": "最终源码 DeviceInteractionInstallAndRun: Application installed and running",
+  "format": "Scripts/format.sh --check: 0/288 files require formatting",
+  "lint": "Scripts/lint.sh: 0 violations in 277 files",
+  "localizedCopy": "333 resources validated",
+  "focusedTests": [
+    {
+      "target": "NavigationCoreTests",
+      "identifier": "NavigationDestinationTests/coreOwnedRootAndModalUseTheSamePrimaryStackRules(style:)",
+      "case": ".sheet",
+      "state": "Passed"
+    },
+    {
+      "target": "NavigationCoreTests",
+      "identifier": "NavigationDestinationTests/coreOwnedRootAndModalUseTheSamePrimaryStackRules(style:)",
+      "case": ".fullScreen",
+      "state": "Passed"
+    },
+    {
+      "target": "NavigationCoreTests",
+      "identifier": "NavigationDestinationTests/identicalContainerPagesOwnIndependentSelectionsPathsAndChildPresentation()",
+      "case": "identicalContainerPagesOwnIndependentSelectionsPathsAndChildPresentation()",
+      "state": "Passed"
+    },
+    {
+      "target": "NavigationCoreTests",
+      "identifier": "NavigationDestinationTests/everyDestinationCanEnterRootStackRootPushAndModal(route:)",
+      "case": ".home",
+      "state": "Passed"
+    },
+    {
+      "target": "NavigationCoreTests",
+      "identifier": "NavigationDestinationTests/everyDestinationCanEnterRootStackRootPushAndModal(route:)",
+      "case": ".tabs",
+      "state": "Passed"
+    },
+    {
+      "target": "NavigationCoreTests",
+      "identifier": "NavigationDestinationTests/everyDestinationCanEnterRootStackRootPushAndModal(route:)",
+      "case": ".split",
+      "state": "Passed"
+    },
+    {
+      "target": "NavigationCoreTests",
+      "identifier": "NavigationDestinationTests/pathAndRootMutationsDoNotReintroduceContainerEntryRestrictions()",
+      "case": "pathAndRootMutationsDoNotReintroduceContainerEntryRestrictions()",
+      "state": "Passed"
+    },
+    {
+      "target": "NavigationCoreTests",
+      "identifier": "NavigationDestinationTests/repeatedDestinationAndRestoredUUIDNeverReviveOldContexts()",
+      "case": "repeatedDestinationAndRestoredUUIDNeverReviveOldContexts()",
+      "state": "Passed"
+    },
+    {
+      "target": "NavigationCoreTests",
+      "identifier": "NavigationAlertTests/rootAlertQueuesNavigationUntilActualDismissal()",
+      "case": "rootAlertQueuesNavigationUntilActualDismissal()",
+      "state": "Passed"
+    },
+    {
+      "target": "NavigationCoreTests",
+      "identifier": "NavigationLayerRestorationTests/restoringCoreLayerInvalidatesFormerNamedStackContext()",
+      "case": "restoringCoreLayerInvalidatesFormerNamedStackContext()",
+      "state": "Passed"
+    },
+    {
+      "target": "NavigationCoreTests",
+      "identifier": "NavigationLayerRestorationTests/restoringExternalContainerInvalidatesFormerPrimaryStackContext()",
+      "case": "restoringExternalContainerInvalidatesFormerPrimaryStackContext()",
+      "state": "Passed"
+    },
+    {
+      "target": "NavigationCoreTests",
+      "identifier": "NavigationLayerRestorationTests/restoringSameContainerOwnershipPreservesPrimaryStackContext()",
+      "case": "restoringSameContainerOwnershipPreservesPrimaryStackContext()",
+      "state": "Passed"
+    },
+    {
+      "target": "NavigationCoreTests",
+      "identifier": "NavigationPrimaryLayerTests/primaryRequestsUseTheRootStackAndRejectUnrelatedNamedStacks()",
+      "case": "primaryRequestsUseTheRootStackAndRejectUnrelatedNamedStacks()",
+      "state": "Passed"
+    },
+    {
+      "target": "NavigationCoreTests",
+      "identifier": "NavigationPrimaryLayerTests/primaryDeepLinkCancellationAndApprovalWaitForTheRootDismissal()",
+      "case": "primaryDeepLinkCancellationAndApprovalWaitForTheRootDismissal()",
+      "state": "Passed"
+    },
+    {
+      "target": "NavigationCoreTests",
+      "identifier": "NavigationPrimaryLayerTests/replacingRootThroughEachContextClearsOnlyItsPathAndSurvivesRestoration()",
+      "case": "replacingRootThroughEachContextClearsOnlyItsPathAndSurvivesRestoration()",
+      "state": "Passed"
+    },
+    {
+      "target": "NavigationCoreTests",
+      "identifier": "NavigationStackStateTests/contextWorksWithoutRouterOrPresentationLayer()",
+      "case": "contextWorksWithoutRouterOrPresentationLayer()",
+      "state": "Passed"
+    },
+    {
+      "target": "NavigationCoreTests",
+      "identifier": "NavigationStackStateTests/replacingAllPathsKeepsExistingContextsConnected()",
+      "case": "replacingAllPathsKeepsExistingContextsConnected()",
+      "state": "Passed"
+    },
+    {
+      "target": "NavigationCoreTests",
+      "identifier": "NavigationStackStateTests/acquiringContextsDoesNotWriteEmptyPathsIntoSnapshots()",
+      "case": "acquiringContextsDoesNotWriteEmptyPathsIntoSnapshots()",
+      "state": "Passed"
+    },
+    {
+      "target": "NavigationCoreTests",
+      "identifier": "NavigationStackStateTests/observingAPathTracksThatStackInsteadOfEveryTabsPath()",
+      "case": "observingAPathTracksThatStackInsteadOfEveryTabsPath()",
+      "state": "Passed"
+    },
+    {
+      "target": "NavigationCoreTests",
+      "identifier": "NavigationStackStateTests/rootContextRemainsConnectedAfterSnapshotRestoration()",
+      "case": "rootContextRemainsConnectedAfterSnapshotRestoration()",
+      "state": "Passed"
+    },
+    {
+      "target": "NavigationCoreTests",
+      "identifier": "NavigationStackStateTests/rootStackWritesRespectConfirmationAndDismissalTransactions()",
+      "case": "rootStackWritesRespectConfirmationAndDismissalTransactions()",
+      "state": "Passed"
+    },
+    {
+      "target": "ChineseCalendarUITests",
+      "identifier": "CalendarDebugSplitStateTests/detailUsesItsLayerStackAndOnlyNewItemsClearThePath(layout:)",
+      "case": ".twoColumn",
+      "state": "Passed"
+    },
+    {
+      "target": "ChineseCalendarUITests",
+      "identifier": "CalendarDebugSplitStateTests/detailUsesItsLayerStackAndOnlyNewItemsClearThePath(layout:)",
+      "case": ".threeColumn",
+      "state": "Passed"
+    },
+    {
+      "target": "ChineseCalendarUITests",
+      "identifier": "CalendarDebugSplitStateTests/changingCategoryClearsDetailWhileRepeatingItKeepsThePath()",
+      "case": "changingCategoryClearsDetailWhileRepeatingItKeepsThePath()",
+      "state": "Passed"
+    },
+    {
+      "target": "ChineseCalendarUITests",
+      "identifier": "CalendarDebugSplitStateTests/retainedDetailDoesNotMoveTheCategoryBackWhenSelectedAgain()",
+      "case": "retainedDetailDoesNotMoveTheCategoryBackWhenSelectedAgain()",
+      "state": "Passed"
+    },
+    {
+      "target": "ChineseCalendarUITests",
+      "identifier": "CalendarDebugSplitStateTests/clearingItemAlwaysClearsItsPath(retainsDetail:)",
+      "case": "false",
+      "state": "Passed"
+    },
+    {
+      "target": "ChineseCalendarUITests",
+      "identifier": "CalendarDebugSplitStateTests/clearingItemAlwaysClearsItsPath(retainsDetail:)",
+      "case": "true",
+      "state": "Passed"
+    },
+    {
+      "target": "ChineseCalendarUITests",
+      "identifier": "CalendarDebugSplitStateTests/modalTabsAndNestedSplitKeepIndependentSelectionAndPaths()",
+      "case": "modalTabsAndNestedSplitKeepIndependentSelectionAndPaths()",
+      "state": "Passed"
+    },
+    {
+      "target": "ChineseCalendarUITests",
+      "identifier": "CalendarDebugSplitStateTests/closedModalRejectsStaleSelectionAndReopensWithIndependentState()",
+      "case": "closedModalRejectsStaleSelectionAndReopensWithIndependentState()",
+      "state": "Passed"
+    },
+    {
+      "target": "ChineseCalendarUITests",
+      "identifier": "CalendarDebugSplitStateTests/externalNavigationPreservesSelectionUntilConfirmedAndActuallyDismissed()",
+      "case": "externalNavigationPreservesSelectionUntilConfirmedAndActuallyDismissed()",
+      "state": "Passed"
+    },
+    {
+      "target": "ChineseCalendarUITests",
+      "identifier": "CalendarDebugSplitStateTests/activeAlertRejectsItemAndCategoryChangesWithoutChangingDetail()",
+      "case": "activeAlertRejectsItemAndCategoryChangesWithoutChangingDetail()",
+      "state": "Passed"
+    },
+    {
+      "target": "ChineseCalendarUITests",
+      "identifier": "CalendarDebugSplitStateTests/debugRoutesAreAcceptedAtEveryEntryButCannotBecomeRestorableAppState(destination:)",
+      "case": ".debugSplit(layout: ChineseCalendarUI.CalendarDebugSplitLayout.twoColumn)",
+      "state": "Passed"
+    },
+    {
+      "target": "ChineseCalendarUITests",
+      "identifier": "CalendarDebugSplitStateTests/debugRoutesAreAcceptedAtEveryEntryButCannotBecomeRestorableAppState(destination:)",
+      "case": ".debugSplit(layout: ChineseCalendarUI.CalendarDebugSplitLayout.threeColumn)",
+      "state": "Passed"
+    },
+    {
+      "target": "ChineseCalendarUITests",
+      "identifier": "CalendarDebugSplitStateTests/debugRoutesAreAcceptedAtEveryEntryButCannotBecomeRestorableAppState(destination:)",
+      "case": ".debugSplitDetail(item: ChineseCalendarUI.CalendarDebugSplitItem.first, level: 1)",
+      "state": "Passed"
+    },
+    {
+      "target": "ChineseCalendarUITests",
+      "identifier": "CalendarDebugSplitStateTests/debugRoutesAreAcceptedAtEveryEntryButCannotBecomeRestorableAppState(destination:)",
+      "case": "debugRoutesAreAcceptedAtEveryEntryButCannotBecomeRestorableAppState(destination:)",
+      "state": "Passed"
+    },
+    {
+      "target": "ChineseCalendarUITests",
+      "identifier": "CalendarDebugSplitStateTests/debugRoutesCanStartCoreLayersButAppRejectsTheirRestoration(destination:)",
+      "case": ".debugSplit(layout: ChineseCalendarUI.CalendarDebugSplitLayout.twoColumn)",
+      "state": "Passed"
+    },
+    {
+      "target": "ChineseCalendarUITests",
+      "identifier": "CalendarDebugSplitStateTests/debugRoutesCanStartCoreLayersButAppRejectsTheirRestoration(destination:)",
+      "case": ".debugSplit(layout: ChineseCalendarUI.CalendarDebugSplitLayout.threeColumn)",
+      "state": "Passed"
+    },
+    {
+      "target": "ChineseCalendarUITests",
+      "identifier": "CalendarDebugSplitStateTests/debugRoutesCanStartCoreLayersButAppRejectsTheirRestoration(destination:)",
+      "case": ".debugSplitDetail(item: ChineseCalendarUI.CalendarDebugSplitItem.first, level: 1)",
+      "state": "Passed"
+    },
+    {
+      "target": "ChineseCalendarUITests",
+      "identifier": "CalendarDebugSplitStateTests/debugRoutesCanStartCoreLayersButAppRejectsTheirRestoration(destination:)",
+      "case": "debugRoutesCanStartCoreLayersButAppRejectsTheirRestoration(destination:)",
+      "state": "Passed"
+    },
+    {
+      "target": "ChineseCalendarUITests",
+      "identifier": "CalendarDebugSplitStateTests/storeReplacementKeepsSplitSelectionLayoutAndPath(layout:)",
+      "case": ".twoColumn",
+      "state": "Passed"
+    },
+    {
+      "target": "ChineseCalendarUITests",
+      "identifier": "CalendarDebugSplitStateTests/storeReplacementKeepsSplitSelectionLayoutAndPath(layout:)",
+      "case": ".threeColumn",
+      "state": "Passed"
+    },
+    {
+      "target": "ChineseCalendarUITests",
+      "identifier": "CalendarDebugSplitStateTests/storeReplacementKeepsMixedTabSplitStatesIndependent()",
+      "case": "storeReplacementKeepsMixedTabSplitStatesIndependent()",
+      "state": "Passed"
+    },
+    {
+      "target": "ChineseCalendarUITests",
+      "identifier": "CalendarDebugSplitStateTests/dismissalReleasesSplitStateAndSameIDRestorationDoesNotReviveIt()",
+      "case": "dismissalReleasesSplitStateAndSameIDRestorationDoesNotReviveIt()",
+      "state": "Passed"
+    }
+  ],
+  "testSummaryGeneratedAt": "2026-10-21T10:24:48Z",
+  "testSummarySHA256": "5ead4a3ee84d5521b1713ac18c064d1e9df15c5899128758346c59ff53dad5a3",
+  "runtimeEvidence": "integration-runtime/README.md；区分 Context 修复版与最终缓存生命周期修复版的交互记录",
+  "finalUIChange": "各栏内容与详情实际栈根内提供关闭 toolbar；重新运行347项测试与构建安装，实际空态全屏退出见运行记录"
+}

@@ -1,0 +1,3 @@
+最终捕获 applicationState=Running；PID 48741；Fatal error 命中数=0。
+2026-10-21 18:25:08.085361+0800 [48741:65697866] [app] Launching iOS app
+2026-10-21 18:25:44.452920+0800 [48741:65697866] [Invalid Configuration] Update NavigationRequestObserver tried to update multiple times per frame.

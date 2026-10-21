@@ -1,0 +1,44 @@
+Issue #146 Simulator interaction attempt — 2026-10-20
+
+Active context verified with session_show_defaults:
+projectPath=/Users/tigerguo/.codex/worktrees/00eb/Chinese-date/ChineseCalendar.xcodeproj
+scheme=ChineseCalendar-iOS
+simulatorName=chinesedate iPhone 18 Pro Max (885f)
+simulatorId=16A9CAA7-45CE-46D5-8915-F61531FC617C
+bundleId=com.tiger.suzhou.ChineseCalendar
+runtime=iOS 27.0 (24A434, from runtime log path)
+
+Build & Run at 2026-10-20T13:19:50Z:
+status=SUCCEEDED
+durationMs=113299
+processId=17728
+warnings=[]
+errors=[]
+
+Initial snapshot seq=1, screenHash=1a0fglh:
+e190|tap|tab|日历|1|
+e192|tap|tab|朝代|0|
+e194|tap|tab|设置|0|
+
+Tap e194 -> status=SUCCEEDED, x=306, y=885.
+After tap snapshot seq=3, screenHash=0knsim5:
+e189|tap|tab|日历|1|calendar
+e191|tap|tab|朝代|0|timeline.selection
+e193|tap|tab|设置|0|gearshape
+
+Retry using current e193 -> status=SUCCEEDED, x=306, y=885.
+After retry snapshot seq=5, screenHash=0knsim5; tab values unchanged.
+No transition to Settings was observed. Do not classify this alone as an app defect.
+
+Native DeviceInteractionStartSession(deviceIdentifier: 16A9CAA7-45CE-46D5-8915-F61531FC617C):
+Automatic approval review failed: {"error":{"message":"The requested model is not supported.","code":"model_not_supported","param":"model","type":"invalid_request_error"}}
+The action was not executed because automatic approval review could not be completed.
+No native interaction session was created.
+
+Later diagnostic tap on year button e30:
+Code: SNAPSHOT_EXPIRED
+Message: The runtime UI snapshot for this simulator has expired.
+snapshotAgeMs=212989
+This tap did not execute and is not app interaction evidence.
+
+Simulator exclusivity released to main agent. No further Simulator operations performed after release.

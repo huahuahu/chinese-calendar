@@ -1,0 +1,33 @@
+{
+  "baseCommit": "3d57050b9fbcc30619e78d552760f68b6d043650",
+  "featureCommit": "e6d13c22b5cb2e9967995ce4cb7896a2f0d1b7dc",
+  "snapshotDescription": "PR #157 整合 main #156，并修复分栏 push Context 注入、数据替换状态生命周期和空态全屏关闭入口后的最终源码；2026-10-21 原生 Xcode 347 项测试通过",
+  "sourceSHA256": {
+    "Sources/ChineseCalendarLocalization/Resources/Calendar.xcstrings": "03e05027a9e7a3864735849da42053a056ca53fa515aa6a86cb3f1fce3563f7a",
+    "Sources/ChineseCalendarLocalization/Strings/CalendarStringKey+DebugSplit.swift": "c99dd66d5097227297a18120a98022cf51dbad0021a25d0cf6005c4462b96499",
+    "Sources/ChineseCalendarUI/Debug/CalendarDebugActionsMenu.swift": "1f977d97fc83cccbd8b2f041738b16f6afb8ff9d7de88609b0ef67c0d49deb4f",
+    "Sources/ChineseCalendarUI/Debug/CalendarDebugNavigationTabsView.swift": "8cbc04ff518b1505ac62ae0a439c820f36e052ebbe1bee07fe2e7bffc1f55315",
+    "Sources/ChineseCalendarUI/Debug/CalendarDebugNavigationView.swift": "d617dc8e798f65268558b90a7371a5a22647605282e34e961d26b17ec48f12a3",
+    "Sources/ChineseCalendarUI/Debug/CalendarDebugSplitCategory.swift": "3ece8538464d673620cf2f2ac7fbfdba483bdca3a7958dd127687fc7cc913df4",
+    "Sources/ChineseCalendarUI/Debug/CalendarDebugSplitControls.swift": "17257c282e409c7470c45edeb3d3e5f2524d3dc175327f55083f25b77b58ce04",
+    "Sources/ChineseCalendarUI/Debug/CalendarDebugSplitDetailView.swift": "041639cc77c05324beb1eff24d889320fb67e5b20b4413348d31b7af4d1464f9",
+    "Sources/ChineseCalendarUI/Debug/CalendarDebugSplitEntries.swift": "89e0933b52301ccf317ae43c4de4c984e175fd91931021ecf4b1f6cc41b26814",
+    "Sources/ChineseCalendarUI/Debug/CalendarDebugSplitItem.swift": "d0e8445b334d6eecec0d8dc5ba83c5e937688cde422bcebbe28ef7caca1ada61",
+    "Sources/ChineseCalendarUI/Debug/CalendarDebugSplitLayout.swift": "fa0611ca1dd976c8d191caa42d2b566a64f20ef1964af73400d4d0a4391a2e61",
+    "Sources/ChineseCalendarUI/Debug/CalendarDebugSplitLayoutStatus.swift": "5f661ba626aecee9fea7484e3cbda176ed923bfed4661fcc1ec9e244b7295fb4",
+    "Sources/ChineseCalendarUI/Debug/CalendarDebugSplitState.swift": "a691580fea5084c627a539816eeb2ddb6f461b93ca0d89ef9e74a7c00ada7f66",
+    "Sources/ChineseCalendarUI/Debug/CalendarDebugSplitView.swift": "72faa11e8adebce8cb03d695b6183a32f07f15d3c1b01264a3fe61fabd4a31bc",
+    "Sources/ChineseCalendarUI/Home/CalendarHomeCoordinator.swift": "deb08113116065807b213b934e90d0e1530f3efeab8f51fd5658a5eed0425889",
+    "Sources/ChineseCalendarUI/Home/Navigation/CalendarDestination.swift": "5e18bae6936109c2713a2627e76aa04f7364e3701f3c10fa23b23e26193f0891",
+    "Sources/ChineseCalendarUI/Home/Navigation/CalendarDestinationView.swift": "1570226e13075addea0399ca6cd5ba907d2f9e68391cb20c159cbfac3c414504",
+    "Sources/ChineseCalendarUI/Tests/CalendarDebugSplitStateTests.swift": "5269950cc742f85f82f2c44d180dda64ce03419381afb449c2c0ce8e035362a5",
+    "Sources/NavigationCore/README.md": "9195ae4b9c0e9fecc06e296be1e85ebe94a8d3dd0dacdc45983912cde118388f",
+    "Sources/NavigationCore/Routing/NavigationContext.swift": "147e999e2475c7a98eaaae7f3ce80a046af6515104bb5a9d2b30f6266f95aea1",
+    "Sources/NavigationCore/SwiftUI/NavigationScopeView.swift": "6ee277889e1eaf42cf1e4876590b48f365ce78a2be5881d2457df7b34eef6ea1",
+    "Sources/NavigationCoreTests/NavigationAlertTests.swift": "4eadb18498123dea06086a937719f69cdbc7545dccfc23421029566fdc532429",
+    "Sources/NavigationCoreTests/NavigationDestinationTests.swift": "8772a53aa47028d9e68182f42367f0255928d300189e1256b0151912a316cf57",
+    "Sources/NavigationCoreTests/NavigationLayerRestorationTests.swift": "bbdea18cc824b299f1b335ed72e5c3982a7ecf8cefe5c87a98a8d6322ec7d04e",
+    "Sources/NavigationCoreTests/NavigationPrimaryLayerTests.swift": "3cb9a70dd2d22ad2bd076d671b28ba9568ca4785778b9338b594dcab8d8e0f6e",
+    "Sources/NavigationCoreTests/NavigationStackStateTests.swift": "9f1bcd73ca4c5515791841d5801d57b0090762b13b8a0503dd68231695b71f9e"
+  }
+}

@@ -13,6 +13,7 @@
             Menu {
                 Menu {
                     CalendarDebugNavigationActions()
+                    CalendarDebugSplitEntries()
                 } label: {
                     Label(CalendarStringKey.Debug.Navigation.title, systemSymbol: .arrowTriangleBranch)
                 }

@@ -55,15 +55,20 @@ public struct NavigationScopeView<
                 rootContent
                     .navigationDestination(for: Destination.self) { destination in
                         configuration.page(for: destination)
+                            // SplitView 折叠时，目标页面也必须显式绑定声明它的栈上下文。
+                            .environment(context)
+                            .environment(stackPresentation)
                     }
             }
             .environment(context)
-            .environment(
-                restrictsPresentationToSelectedStack ? presentation.scoped(to: context.id) : presentation.unscoped()
-            )
+            .environment(stackPresentation)
         } else {
             missingNavigationConfiguration()
         }
+    }
+
+    private var stackPresentation: NavigationPresentationContext<Scope, Destination, AlertRoute> {
+        restrictsPresentationToSelectedStack ? presentation.scoped(to: context.id) : presentation.unscoped()
     }
 
     @ViewBuilder

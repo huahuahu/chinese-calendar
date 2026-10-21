@@ -49,6 +49,8 @@ struct NavigationPrimaryLayerTests {
         let before = router.snapshot
         #expect(router.submit(.push(.tabs, on: .primary), confirmIfPresented: true) == .awaitingConfirmation)
         let cancelled = try #require(child.confirmation)
+        #expect(!root.setPath([.tabs]))
+        #expect(!modal.context(for: .primary).setPath([.tabs]))
         #expect(!root.setRootDestination(.tabs))
         #expect(!modal.context(for: .primary).setRootDestination(.tabs))
         child.cancelNavigation(id: cancelled.id)
@@ -61,6 +63,7 @@ struct NavigationPrimaryLayerTests {
         #expect(router.presentedNode == nil)
         #expect(router.isAwaitingPresentationDismissal)
         #expect(root.path == [.detail])
+        #expect(!root.setPath([.tabs]))
         #expect(!root.setRootDestination(.tabs))
         child.presentationDidDismiss()
         #expect(root.path == [.detail])
@@ -72,6 +75,8 @@ struct NavigationPrimaryLayerTests {
         #expect(router.rootPresentation.selectedStack == .primary)
         router.rootPresentation.presentationDidDismiss()
         #expect(root.path == [.detail, .tabs])
+        #expect(root.setPath([.home, .tabs]))
+        #expect(root.path == [.home, .tabs])
     }
 
     @Test func replacingRootThroughEachContextClearsOnlyItsPathAndSurvivesRestoration() throws {

@@ -68,6 +68,12 @@ struct CalendarDestinationView<BottomStatusBar: View>: View {
             #if DEBUG
                 case let .debugNavigation(id):
                     CalendarDebugNavigationView(id: id)
+                case let .debugSplit(layout):
+                    CalendarDebugSplitView(layout: layout)
+                case let .debugSplitDetail(item, level):
+                    CalendarDebugSplitDetailView(item: item, level: level)
+                case .debugNavigationTabs:
+                    CalendarDebugNavigationTabsView()
                 case let .downloadPreview(sessionID):
                     FullStoreDownloadPreviewDestinationView(sessionID: sessionID)
                 case let .downloadPreviewScenarios(sessionID):

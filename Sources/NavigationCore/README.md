@@ -32,12 +32,12 @@ NavigationRouter<Scope, Destination, AlertRoute>
 
 每层包含独立栈集合和一个可选的直接呈现内容，页面模态与业务 alert 共用 `NavigationPresentation` 状态。`sheet`／`fullScreen` 是页面节点的只读样式查询。一个层可以只有一个栈，也可以包含多个 Tab 的栈；alert 位于呈现链末端，不能在它上面再叠一个系统 alert。
 
-每个 `NavigationStackState` 是该栈根身份与 path 的唯一运行时来源，不依赖 Router、呈现层或模态生命周期。层的 `roots`／`paths` 是栈对象的值投影，供快照与兼容 API 使用。整批替换路径和同种容器归属的根快照恢复会更新原栈对象，已有根上下文继续连接真实状态。根层在自带容器与 Core 单栈之间切换时重建栈，使旧栈上下文失效。仅获取上下文不会在快照里增加空路径条目；内部保留“未记录路径”和“显式空路径”的区别，页面读取时两者均为空数组。
+每个 `NavigationStackState` 是该栈根身份与 path 的唯一运行时来源，不依赖 Router、呈现层或模态生命周期。层的 `roots`／`paths` 是栈对象的值投影，供快照与兼容 API 使用。整批替换路径和同种容器归属的根快照恢复会更新原栈对象，已有根上下文继续连接真实状态。根层在自带容器与 Core 单栈之间切换时重建栈，使旧栈上下文失效。仅获取上下文不会在快照里增加空路径条目；内部保留“未记录路径”和“显式空路径”的区别，页面读取时两者均为空数组。App 组合原生分栏时可通过根内容闭包使用 App selection 构建详情根页面；该 selection 不进入栈状态，path 仍只有这一份。
 
 环境上下文按职责分为两种：
 
 - `NavigationPresentationContext<Scope, Destination, AlertRoute>`：负责当前层的 `present`、`dismiss`、离开确认及多栈容器的 `selectedStack`，没有 path／push／pop。层级入口由呈现宿主注入；栈宿主再注入带发起栈身份的入口，所有入口共享同一层状态。
-- `NavigationContext<Scope, Destination>`：每栈一个实例，弱引用独立栈状态，通过 `NavigationStackAccess` 的 `isActive`／`canMutate` 判断约束访问；实现不引用 Router 或 `NavigationLayer`。负责本栈的身份、有效性、根页面替换及 path／push／pop，不提供 `present`／`dismiss`／`isPresented`。页面按需分别读取两种环境。
+- `NavigationContext<Scope, Destination>`：每栈一个实例，弱引用独立栈状态，通过 `NavigationStackAccess` 的 `isActive`／`canMutate` 判断约束访问；实现不引用 Router 或 `NavigationLayer`。负责本栈的身份、有效性、根页面替换及 path／setPath／push／pop，不提供 `present`／`dismiss`／`isPresented`。页面按需分别读取两种环境。
 
 `NavigationStackAccess` 只描述栈是否有效、是否允许修改，不解释阻止操作的原因。Router 作为组合方，用弱捕获的闭包实时检查层与栈的对象身份、待确认请求和关闭事务。这样上下文既不会延长 Router 或已关闭层的生命周期，也不必理解 presentation；栈状态与访问约束是内部类型，页面继续通过现有公开 API 取得上下文。
 
@@ -54,7 +54,7 @@ NavigationRouter<Scope, Destination, AlertRoute>
 
 `dismiss()` 只存在于呈现上下文，关闭当前所在的模态及其后代；根层的呈现上下文返回 `false`，不会关闭它展示的模态。栈内返回由 navigation 的 `pop()` 负责。App 的调用规则见[导航规范 NAV-03](../../Docs/Conventions/Navigation.md#nav-03--发起作用域与生命周期)。
 
-`navigation.push`／`pop` 和 `presentation.present`／`dismiss` 返回 Bool 表示是否接受操作。已关闭节点的上下文失效，不能操控随后恢复的同 ID 新节点。`NavigationScopeView(context:presentation:...)` 从显式传入的呈现入口取得 `scoped(to:)` 入口并注入后代，保留发起栈身份，防止后台 Tab 的旧回调弹窗。页面直接使用呈现环境，无需把 navigation 传入 present。外部 SplitView 等同时可见的栏目，可用 `restrictsPresentationToSelectedStack: false` 注入不绑定发起栈的本层呈现入口；此选项不影响该栏目自己的 push path。
+`navigation.setRootDestination`／`setPath(_:)`／`push`／`pop` 和 `presentation.present`／`dismiss` 返回 Bool 表示是否接受操作。`setPath` 检查 Context 有效性和事务访问约束，不检查 Destination 的位置权限；App 需要同步修改 selection 时，只有返回 true 才更新外部状态。系统 NavigationStack 继续通过 path Binding 读写同一份路径。已关闭节点的上下文失效，不能操控随后恢复的同 ID 新节点。`NavigationScopeView(context:presentation:...)` 从显式传入的呈现入口取得 `scoped(to:)` 入口并注入后代，保留发起栈身份，防止后台 Tab 的旧回调弹窗。页面直接使用呈现环境，无需把 navigation 传入 present。外部 SplitView 等同时可见的栏目，可用 `restrictsPresentationToSelectedStack: false` 注入不绑定发起栈的本层呈现入口；此选项不影响该栏目自己的 push path。
 
 同层已有页面模态时，新的 present 被拒绝，应通过该模态自己的环境继续呈现。当前层有 alert 或正在处理其按钮动作时，后续呈现按顺序排队；返回 true 表示已接受，可能还未显示。页面正在关闭时拒绝新的页面请求；业务 alert 可以排队等关闭完成，所属层失效则一起丢弃。层级入口不绑定某个栈，适用于 TabView 附件等控件。离开确认、alert 和根关闭事务期间，局部 push/pop 暂停；栈上下文只通过窄接口获得是否允许修改，不理解呈现状态。
 
@@ -69,9 +69,11 @@ NavigationRouter<Scope, Destination, AlertRoute>
 - `true`：Destination 对应的 View 组织 TabView／NavigationSplitView 等容器，Core 直接构建该 View。页面通过当前层上下文接入各栈，不捕获全局根上下文。
 - `false`（默认）：Core 为本层提供 `.primary` NavigationStack，以 Destination 初始化栈根。该方式同样适用于 App 最底层和任意模态层。
 
+两栏、三栏由 App 组合原生 NavigationSplitView 与最后一栏的 Core 详情栈，不是 SDK 提供的容器种类。接法见下文“App 原生分栏组合”。
+
 Router 的 canonical 初始化器与 `present` 使用同形参数：入口 Destination、`initialStack`、以 `NavigationStackID` 为 key 的 `rootDestinations` 和 `paths`。普通单栈可以省略后三项；页面自带容器时由调用方提供初始栈结构。外部容器也可以用带 root closure 的栈宿主，具体配置完整性由该宿主保证。
 
-页面不声明允许出现的位置，不再提供入口白名单或尚未实现的 Core 多栏声明。push、path 赋值、栈根替换和恢复不会按页面身份拒绝；普通 push 继续在当前栈直接构建页面，不自动再创建一个呈现层。容器入口的导航结构由它自己的 View 和当前层状态协作提供。完整 SplitView 栏目联动与宽窄折叠仍由 [#146](https://github.com/huahuahu/chinese-calendar/issues/146) 跟踪。
+页面不声明允许出现的位置，不再提供入口白名单或尚未实现的 Core 多栏声明。push、path 赋值、栈根替换和恢复不会按页面身份拒绝；普通 push 继续在当前栈直接构建页面，不自动再创建一个呈现层。容器入口的导航结构由它自己的 View 和当前层状态协作提供。App 原生分栏的栏目联动、宽窄布局边界及实际验收见 [#146 任务记录](../../Docs/Tasks/issue-146-navigation-containers/000-plan.md)。
 
 层入口与内部栈页面有不同职责。主 Tab 容器在根层或模态层作为入口时，取得该层独立的栈集合；在某个栈内部再次嵌套同一个 Tab 容器，会重复绑定正在展示它的栈，形成结构循环。移除数据入口白名单不代表这类循环布局可用；业务 View 仍须保证同一层同一栈只有一个宿主。此处不增加 push 容器的独立栈命名空间。
 
@@ -87,6 +89,8 @@ Router 的 canonical 初始化器与 `present` 使用同形参数：入口 Desti
 ## 根宿主配置与完整示例
 
 根 `NavigationRootView` 根据入口路由构建内容，外部调用一次 `navigationHost(context:configuration:)`。`NavigationHostConfiguration` 只集中定义页面、业务 alert 和离开确认；容器声明已经移入 Destination。每个真实 NavigationStack 由自己的 `NavigationScopeView` 注册 destination。
+
+`NavigationScopeView` 在栈和每个 push 目标页面上显式注入同一个导航 Context 与对应的呈现 Context，保证 App SplitView 的紧凑布局也能取得正确作用域。业务页面只读取环境，不重复注册路径或自行创建 Context。
 
 ```swift
 import NavigationCore
@@ -195,7 +199,27 @@ struct DemoPage: View {
 
 根和模态复用 `DemoTabs`，各自从本层栈状态取得根 Destination。多 Tab 模态不再挂 `navigationHost`：框架已为本层提供唯一递归呈现宿主。普通根入口与普通模态均以入口 Destination 初始化 `.primary` 栈根。最底层也可以直接使用 `NavigationRouter<AppTab, AppRoute, AppAlert>(rootDestination: .home)`。
 
-`rootDestinations` 保存各栈的根页面身份，`setRootDestination` 清空相应 path，但不改变层入口，替换后的根状态可以保存并恢复。生产栈使用无 root 闭包的 `NavigationScopeView(stack:presentation:)`，从状态读取根路由，直接调用共享页面构建方法。带 `root` 闭包的旧初始化器仅保留给独立 Preview／测试组合；它们不会替生产页面补建路由状态。有效 Context 缺少已声明的栈根属于接入错误；关闭过程中的失效 Context 不再构建根页面。
+`rootDestinations` 保存各栈的根页面身份，`setRootDestination` 清空相应 path，但不改变层入口，替换后的根状态可以保存并恢复。使用路由根页面的栈采用无 root 闭包的 `NavigationScopeView(stack:presentation:)`，从状态读取根路由，直接调用共享页面构建方法。带 `root` 闭包的初始化器用于 App selection 决定详情根内容的原生分栏，也可用于独立 Preview／测试；它不会把 App selection 转成 Core 的根路由或快照。未提供 root 闭包的有效 Context 缺少已声明栈根属于接入错误；关闭过程中的失效 Context 不再按路由构建根页面。
+
+## App 原生分栏组合
+
+App 自行声明两栏或三栏 `NavigationSplitView`，管理前栏 selection、分类与对象的业务联动、`columnVisibility`、`preferredCompactColumn` 及系统写回。前面的列表栏没有独立 push 栈，最后一栏通过现有 `NavigationScopeView(context:presentation:root:)` 提供唯一的 detail `NavigationStack`，并继承 `navigationHost` 配置来构建 push Destination。
+
+| 状态或动作 | Owner 与接入方式 |
+| --- | --- |
+| 分类、对象选择及空详情 | App；由 selection 构建 `NavigationScopeView` 的根内容，根内容不计入 path |
+| 详情 push、pop、系统返回 | SDK 的一个 `NavigationContext` 与 path；根页及 push 后代共享它 |
+| 前栏发起详情操作 | App 显式传入详情 Context 或业务动作，不依赖前栏环境猜测目标 |
+| 宽窄布局与显示哪一栏 | App 持有原生布局 Binding，并接收系统写回；不映射为 `selectedStack` |
+| 模态、alert、离开确认 | 既有 `NavigationPresentationContext` 与同层唯一 presentation host |
+
+不同对象的选择动作先调用 `detailNavigation.setPath([])`，返回 true 后同步修改 App selection；返回 false 时保留选择。重复选择同一对象保留详情 path，清空选择同时清空 path。切换分类时由业务动作显式选择保留详情及其 path，或一起清空。这里的 `setPath(_:) -> Bool` 只报告本栈路径操作是否被接受；它不拥有 selection，不构成通用容器事务。App 不通过多个 `onChange` 相互同步选择与路径。
+
+容器作为 sheet／full-screen 入口时声明 `providesNavigationContainer == true`，宿主跳过外层包栈，容器只在最后一栏创建详情栈。继承当前树的 `navigationHost` 配置和本层呈现 Context，不再挂第二个根呈现宿主；父层、模态层与其他 Tab 的详情 Context 彼此隔离。前栏没有独立栈，因此不把它们注册为多个互斥 Tab，也不引入通用容器 Context、列类型或多栏快照。
+
+外部请求沿用既有确认、业务 alert 排队和真实 dismiss 完成流程。等待确认、仅收到批准或等待关闭期间不提前修改 App selection；取消保持原选择、path 与呈现状态，批准的请求实际应用时再同步业务选择。SDK 快照不包含 selection、分类或布局 Binding，不承诺单独恢复详情 path 就能重建完整分栏页面。
+
+本轮通过固定小数据的 DEBUG 普通／两栏／三栏入口验证组合，正式历史 Tab 保持既有布局。原生折叠、深 path 下的系统返回和布局写回需要独立的 Simulator 交互证据；上述 API 接法不等于这些行为已通过验收。完整方案见 [Issue #146 任务记录](../../Docs/Tasks/issue-146-navigation-containers/000-plan.md)，项目调用规则见[导航规范 NAV-07](../../Docs/Conventions/Navigation.md#nav-07--app-原生分栏与详情栈组合)。
 
 ## 配置与业务上下文
 
@@ -271,7 +295,7 @@ let accepted = router.restore(snapshot)
 
 恢复会创建新的模态节点、层和栈对象；之前保存的模态 context 无法控制新节点，也不能经它重新取得同 ID 新层的栈。根层在容器归属不变时复用已有栈对象及上下文，清除快照中缺失的根身份和路径；在自带容器与 Core 单栈之间切换时重建栈，旧栈上下文失效。`restore` 在有活动模态／alert、等待关闭、处理 alert 动作、等待导航请求或待确认时返回 false；重复节点 ID、Core 单栈缺少 primary 根或包含非 primary 栈等无效结构也会被拒绝，且不部分修改原状态；栈根允许不同于最初层入口，不检查页面位置权限。根和模态共用同一结构校验。当前 App 未接入跨启动快照持久化；新编码使用 rootDestination + layer，既有旧编码如需保留，宿主须显式迁移。
 
-快照不含 View、ModelContext、闭包、排队的呈现／导航请求、执行中的业务动作和转场。业务应检查 `snapshot.destinations` 和 `snapshot.presentation?.alerts` 是否仍有效，并自行决定何时保存、版本迁移和数据不可用的呈现方式。框架不会自动写入 UserDefaults。
+快照不含 View、ModelContext、闭包、排队的呈现／导航请求、执行中的业务动作和转场，也不含 App 原生分栏的 selection、分类、`columnVisibility` 或 `preferredCompactColumn`。业务应检查 `snapshot.destinations` 和 `snapshot.presentation?.alerts` 是否仍有效，并自行决定何时保存、版本迁移和数据不可用的呈现方式；需要恢复分栏时还须定义 App 状态与详情 path 的一致性。框架不会自动写入 UserDefaults。
 
 App 示例的 `CalendarRouter.restorableSnapshot`／`restore` 只接受可以重新查询的日历与历史地址，拒绝年份选择器、下载详情、演示的临时会话、业务提示及仅 DEBUG 存在的测试路由。实际自动跨启动恢复不在当前 App 行为中。
 
@@ -290,7 +314,7 @@ App 示例的 `CalendarRouter.restorableSnapshot`／`restore` 只接受可以重
 
 新增 App 调试类别时，在 `CalendarDebugActionsMenu` 组合对应动作；新增业务测试页面仍先定义 destination，再由 `CalendarDestinationView` 构建。调试工具不进入 NavigationCore。入口、范围及验证见 [Debug 操作记录](../../Docs/Tasks/issue-145-unified-navigation/007-debug-actions.md)。
 
-此前 #148 的根宿主配置迁移将 `navigationPresentations(context:..., destinationContent:)` 改为 `navigationHost(context:configuration:)`，并集中页面、提示和回调配置。各 `NavigationScopeView` 删除 `destinationContent` 参数；`NavigationPresentationNodeView` 只传 node 和 context。递归 `navigationPresentations` 成为框架内部实现，不由业务重复调用。容器选择的 `providesNavigationStack` 在本轮 #152 中进一步移出宿主，见下方迁移说明。
+此前 #148 的根宿主配置迁移将 `navigationPresentations(context:..., destinationContent:)` 改为 `navigationHost(context:configuration:)`，并集中页面、提示和回调配置。各 `NavigationScopeView` 删除 `destinationContent` 参数；`NavigationPresentationNodeView` 只传 node 和 context。递归 `navigationPresentations` 成为框架内部实现，不由业务重复调用。容器选择的 `providesNavigationStack` 在 #152 中进一步移出宿主，见下方迁移说明。
 
 后续简化统一使用 `destination(for:)`，删除模态专用 builder 和 `NavigationConfiguredDestination`。原模态 builder 中的共享数据注入移至 App 根环境，具体调整与验证见 [统一页面构建方法](../../Docs/Tasks/issue-148-navigation-host/002-unified-destination-builder.md)。
 
@@ -302,7 +326,7 @@ App 示例的 `CalendarRouter.restorableSnapshot`／`restore` 只接受可以重
 - 删除宿主的 `providesNavigationStack(for:)` 和 App 的 `usesPresentationNavigationStack`。旧值 true 表示 **Core 包栈**，新 `providesNavigationContainer` true 表示 **页面组织顶层容器**，不能原值照搬。
 - Router 初始化增加整个根层的 `rootDestination`；根 Tab 通过 `rootDestinations` 配置，根内容使用 `NavigationRootView`。多 Tab 模态通过 `present(..., rootDestinations:)` 提供本层各栈根路由。
 - 查询所在层入口使用 presentation 的 route/destination，运行时位置仍用层 ID 或本栈 path。快照恢复同 UUID 时继续检查原层／栈对象身份。
-- 后续同构层改造移除了入口白名单与 Core 多栏预留声明；外部提供的 SplitView 可接入非排他的层级呈现入口。完整栏目联动和折叠仍由 #146 设计。
+- 后续同构层改造移除了入口白名单与 Core 多栏预留声明；外部提供的 SplitView 可接入非排他的层级呈现入口。#146 的 App 原生分栏组合在此基础上管理 selection 与布局，实际交互验证单独记录。
 
 方案与本轮证据见 [Issue #152 任务记录](../../Docs/Tasks/issue-152-destination-containers/000-plan.md)。
 

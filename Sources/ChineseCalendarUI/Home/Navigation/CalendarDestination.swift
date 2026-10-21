@@ -17,6 +17,9 @@ enum CalendarDestination: Codable, NavigationDestination, Identifiable {
     case downloadDetails
     #if DEBUG
         case debugNavigation(id: UUID)
+        case debugSplit(layout: CalendarDebugSplitLayout)
+        case debugSplitDetail(item: CalendarDebugSplitItem, level: Int)
+        case debugNavigationTabs(id: UUID)
         case downloadPreview(sessionID: UUID)
         case downloadPreviewScenarios(sessionID: UUID)
         case downloadPreviewSwitch
@@ -50,6 +53,12 @@ enum CalendarDestination: Codable, NavigationDestination, Identifiable {
         #if DEBUG
             case let .debugNavigation(id):
                 "debug-navigation-\(id)"
+            case let .debugSplit(layout):
+                "debug-split-\(layout.rawValue)"
+            case let .debugSplitDetail(item, level):
+                "debug-split-detail-\(item.rawValue)-\(level)"
+            case let .debugNavigationTabs(id):
+                "debug-navigation-tabs-\(id)"
             case let .downloadPreview(sessionID):
                 "download-preview-\(sessionID)"
             case let .downloadPreviewScenarios(sessionID):
@@ -75,6 +84,8 @@ enum CalendarDestination: Codable, NavigationDestination, Identifiable {
         if case .mainTabs = self { return true }
         #if DEBUG
             if case .downloadPreview = self { return true }
+            if case .debugSplit = self { return true }
+            if case .debugNavigationTabs = self { return true }
         #endif
         return false
     }
@@ -85,7 +96,8 @@ enum CalendarDestination: Codable, NavigationDestination, Identifiable {
         case .yearPicker, .downloadDetails:
             false
         #if DEBUG
-            case .debugNavigation, .downloadPreview, .downloadPreviewScenarios, .downloadPreviewSwitch,
+            case .debugNavigation, .debugSplit, .debugSplitDetail, .debugNavigationTabs,
+                 .downloadPreview, .downloadPreviewScenarios, .downloadPreviewSwitch,
                  .downloadPreviewDetails:
                 false
         #endif

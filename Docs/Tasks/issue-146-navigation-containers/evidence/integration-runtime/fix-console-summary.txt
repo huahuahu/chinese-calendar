@@ -1,0 +1,4 @@
+最终捕获 applicationState=Running；PID 23698。以下为关键日志筛选结果，未命中 Fatal error。
+2026-10-21 18:01:23.159483+0800 [23698:65442035] [app] Launching iOS app
+2026-10-21 18:02:14.978538+0800 [23698:65442035] [Invalid Configuration] Update NavigationRequestObserver tried to update multiple times per frame.
+2026-10-21 18:06:11.721952+0800 [23698:65442035] [Invalid Configuration] Update NavigationRequestObserver tried to update multiple times per frame.

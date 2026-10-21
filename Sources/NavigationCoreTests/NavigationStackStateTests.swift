@@ -27,6 +27,10 @@ struct NavigationStackStateTests {
         )
         #expect(context.isActive)
         #expect(context.path == [.second])
+        #expect(context.setPath([.first, .second]))
+        #expect(state.path == [.first, .second])
+        #expect(context.rootDestination == .first)
+        context.path = [.second]
         #expect(context.push(.third))
         #expect(state.path == [.second, .third])
         #expect(context.pop())
@@ -34,6 +38,7 @@ struct NavigationStackStateTests {
         #expect(context.path == [.first])
 
         policy.canMutate = false
+        #expect(!context.setPath([.third]))
         context.path = [.third]
         #expect(!context.push(.second))
         #expect(!context.pop())
@@ -44,6 +49,7 @@ struct NavigationStackStateTests {
         policy.canMutate = true
         #expect(!context.isActive)
         #expect(context.path.isEmpty)
+        #expect(!context.setPath([.third]))
         #expect(!context.push(.second))
         #expect(state.path == [.first])
     }
@@ -72,6 +78,10 @@ struct NavigationStackStateTests {
         #expect(router.rootDestination(for: .home) == nil)
         #expect(home.path.isEmpty)
         #expect(router.paths[.home] == [])
+        #expect(home.setPath([.second]))
+        #expect(home.push(.third))
+        #expect(home.rootDestination == nil)
+        #expect(home.path == [.second, .third])
         #expect(history.path == [.third])
     }
 
@@ -131,19 +141,23 @@ struct NavigationStackStateTests {
         router.presentSheet(.second)
         router.submit(.replacePath([.third], on: .home), confirmIfPresented: true)
         let confirmation = try #require(router.pendingConfirmation)
+        #expect(!home.setPath([.second]))
         home.path = [.second]
         #expect(!home.push(.second))
         #expect(!home.pop())
         #expect(home.path == [.first])
         router.cancelConfirmation(id: confirmation.id)
-        #expect(home.push(.second))
+        #expect(home.setPath([.first, .second]))
         router.submit(.replacePath([.third], on: .home))
         #expect(home.isActive)
+        #expect(router.isAwaitingPresentationDismissal)
+        #expect(!home.setPath([]))
         home.path = []
         #expect(!home.pop())
         #expect(home.path == [.first, .second])
         router.rootPresentation.presentationDidDismiss()
         #expect(home.path == [.third])
+        #expect(home.setPath([]))
         #expect(home.push(.first))
     }
 }
