@@ -4,7 +4,7 @@
 - 记录日期：2026-10-20；合并适配说明更新于 2026-10-21
 - 合并前验证快照：以 `765fc18b2fb29b6e3f477d4822d73c55fd8eed7f` 为基线的实现；当时验证过的源文件摘要见 [source-manifest.json](evidence/source-manifest.json)。该摘要与 255 项测试保留为旧快照证据，不覆盖合并 #156 后的改动。
 - 关联：[PR #157](https://github.com/huahuahu/chinese-calendar/pull/157)。
-- 状态：2026-10-21 主干适配、两项修复与最终自动验证完成；已取得部分 Simulator 交互证据，全部分栏交互验收尚未完成。
+- 状态：2026-10-21 主干适配、三项修复与最终自动验证完成；已取得部分 Simulator 交互证据，全部分栏交互验收尚未完成。
 
 ## 实际实现
 
@@ -28,7 +28,7 @@ main 的 [#156 同构导航层](../task-2026-10-20-homogeneous-navigation-layers
 - 保留 Issue #146 的 App selection／布局与 SDK detail path 分工、`setPath(_:) -> Bool`、同层唯一呈现宿主、确认取消保原状态及真实关闭后应用请求的时序。
 - 快照遵循主干的 `rootDestination + layer` 结构和容器归属切换失效规则；仍不加入分栏 selection 或布局恢复。
 
-本轮整合基线为 `3d57050b9fbcc30619e78d552760f68b6d043650`（#156），合入的功能提交为 `e6d13c22b5cb2e9967995ce4cb7896a2f0d1b7dc`。最终 [源文件快照](evidence/integration-source-manifest.json) 与 [验证结果](evidence/integration-validation.json) 已覆盖冲突解决、分栏 push Context 注入及 App 缓存生命周期修复；带工作区修复的版本不能仅由功能提交 HEAD 表示。
+本轮整合基线为 `3d57050b9fbcc30619e78d552760f68b6d043650`（#156），合入的功能提交为 `e6d13c22b5cb2e9967995ce4cb7896a2f0d1b7dc`。最终 [源文件快照](evidence/integration-source-manifest.json) 与 [验证结果](evidence/integration-validation.json) 已覆盖冲突解决、分栏 push Context 注入及 App 缓存生命周期及空态关闭入口修复；带工作区修复的版本不能仅由功能提交 HEAD 表示。
 
 测试结果分三个阶段：2026-10-20 合并前为 255 项；整合 #156 后的中间版本为 343 项，包含 18 个 App 分栏展开用例；最终代码为 347 项，包含 22 个 App 分栏展开用例。原 255 项及 #156 自身的 325 项均是各自历史快照，不能替代最终代码的验证。
 
@@ -39,7 +39,7 @@ main 的 [#156 同构导航层](../task-2026-10-20-homogeneous-navigation-layers
 | 核心回归 | `setPath` 的事务拒绝、primary 根请求、根容器归属切换、旧 Context、分栏／混合 Tab 隔离通过；Core 不再按 Destination 入口位置拒绝路径，DEBUG 路由仍由 App 拒绝持久恢复 |
 | App 缓存生命周期 | 新增 4 个展开用例：两栏／三栏的数据替换保留选择、布局及路径；混合 Tab 各自状态保持独立；关闭完成释放缓存，无效 Context 不注册，同 ID 新层不复活旧状态 |
 | 格式、lint 与文案 | `./Scripts/format.sh --check`：288 文件、0 需格式化；`./Scripts/lint.sh`：277 文件、0 违规；文案校验 333 项通过 |
-| 版本与差异 | 最终快照记录 26 个相对 main 修改文件的 SHA-256，包含两项修复；冲突标记清除，`git diff --check` 通过 |
+| 版本与差异 | 最终快照记录 26 个相对 main 修改文件的 SHA-256，包含三项修复；冲突标记清除，`git diff --check` 通过 |
 
 首次整合测试构建发现参数化测试的静态参数工厂继承了 Suite 的 `@MainActor` 隔离；把只构造枚举和 UUID 的工厂标为 `nonisolated` 后，完整测试通过，测试主体继续在主 actor 执行。构建前准备的设备会话曾失效，重建会话后构建安装成功；这不是产品交互失败的证据。
 
@@ -61,6 +61,10 @@ Copilot 指出的根内容／path 生命周期错位已修复：数据 identity 
 
 最终缓存补丁版本重新构建安装后，通过 `Issue 146 Final Smoke` 会话验证混合 Tab：两栏真实选择对象一并 push 一层；三栏真实选择分类一、对象一并 push 一层；双向切回后两栈均保留各自对象一与 Push 1。全过程 PID `37470` 保持 `Running`，未观察到新失败。最终源码摘要、四组截图与层级及日志摘录见 [最终运行记录](evidence/integration-runtime/README.md)。数据 identity 替换与关闭释放的边界由上述自动测试覆盖，未将此次切 Tab 交互当成实际数据替换验证。
 
+### 空态全屏的关闭入口
+
+后续自动 review 指出：关闭 toolbar 挂在整个 SplitView 外，紧凑布局的前栏和空详情未显示关闭按钮，full-screen 在未选择对象时不能直接退出。修复将同一个 `presentation.dismiss()` 关闭入口放到分类、对象列表、未选分类空态及详情实际栈根内容内，不新增栈或呈现宿主。修复后完整 347 项测试再次通过，原生构建安装成功。`Issue 146 Empty Dismiss` 最终会话分别验证两栏 full-screen 未选对象、三栏 full-screen 未选分类：导航栏均显示“关闭”，点击后直接回到根设置页；全过程 PID `48741` 保持 `Running`，未观察到新失败。四组截图、层级与最终 View 摘要见 [运行记录](evidence/integration-runtime/README.md)。
+
 ## 合并前验证环境与结果（2026-10-20）
 
 共享配置为本工作区 `ChineseCalendar.xcodeproj`、scheme `ChineseCalendar-iOS`、Simulator `chinesedate iPhone 18 Pro Max (885f)`（`16A9CAA7-45CE-46D5-8915-F61531FC617C`，iOS 27.0）。原生 Xcode MCP 无法通过工具审批后，按项目工作流回退到 XcodeBuildMCP，并核对了 session defaults。
@@ -81,7 +85,7 @@ Copilot 指出的根内容／path 生命周期错位已修复：数据 identity 
 
 ## 验收对应与证据阶段
 
-下表结合最终自动验证与分阶段运行证据：Context 注入修复版覆盖两栏／三栏和嵌套模态，最终缓存版本补充混合 Tab 的选择、push 和双向切换保留。未补充直接证据的交互缺口继续有效，不因源码或测试通过而关闭。
+下表结合最终自动验证与分阶段运行证据：Context 注入修复版覆盖两栏／三栏和嵌套模态，缓存修复版本补充混合 Tab 的选择、push 和双向切换保留，最终关闭入口版本补充两栏／三栏 full-screen 无选择时直接退出。未补充直接证据的交互缺口继续有效，不因源码或测试通过而关闭。
 
 | 验收项 | 状态 | 证据与剩余范围 |
 | --- | --- | --- |
@@ -89,10 +93,10 @@ Copilot 指出的根内容／path 生命周期错位已修复：数据 identity 
 | MC-02 选择与根路径 | 已验证（自动测试）；交互部分验证 | 早期复验覆盖真实列表选择、重复选择保 path、切换对象清 path；清空选择及分类保留／清理策略的实际交互仍待验证 |
 | MC-03 Context 隔离 | 已验证（源码、自动测试）；交互部分验证 | 最终测试覆盖数据替换、不同 Tab／模态独立、关闭清理与旧 Context；早期复验覆盖子 sheet 独立 path 和返回父层；最终版本验证混合 Tab 两栈选择／push 和双向切回保留 |
 | MC-04 宽窄与系统返回 | 部分验证 | 早期竖屏复验覆盖两次 push 后系统返回一层；程序换栏、布局 Binding 写回、旋转及宽窄切换仍待验证 |
-| MC-05 模态和嵌套 | 已验证（源码、自动测试）；交互部分验证 | 早期复验覆盖两栏 sheet、三栏 full-screen、push 页打开子 sheet 和父子关闭；全部递归容器组合仍待验证 |
+| MC-05 模态和嵌套 | 已验证（源码、自动测试）；交互部分验证 | 早期复验覆盖两栏 sheet、三栏 full-screen、push 页打开子 sheet 和父子关闭；最终版本验证两栏／三栏 full-screen 无选择时关闭；全部递归容器组合仍待验证 |
 | MC-06 外部请求与 alert | 已验证（自动测试）；交互未验证 | 取消保留、批准后真实关闭通知前不应用根目标、alert 期间不改 selection；未点击实际系统提示 |
 | MC-07 既有业务回归 | 已验证（自动测试）；交互未验证 | 完整测试涵盖现有 Tab、年份选择、下载演示与 Deep Link 状态行为；实际打开／关闭链路待复验 |
-| MC-08 工具验证 | 部分已验证 | 最终 iOS 构建／347 项测试、格式、lint、文案通过；早期 Simulator 复验与最终混合 Tab smoke 已记录，完整交互矩阵未完成 |
+| MC-08 工具验证 | 部分已验证 | 最终 iOS 构建／347 项测试、格式、lint、文案通过；早期 Simulator 复验与混合 Tab smoke 与最终空态关闭 smoke 已记录，完整交互矩阵未完成 |
 | MC-09 文档 | 已验证 | README、NAV-07 与本任务方案明确 App／SDK 分工及恢复边界 |
 
 ## 历史交互阻碍与剩余范围

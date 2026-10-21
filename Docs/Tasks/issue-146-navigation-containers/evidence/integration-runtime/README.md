@@ -58,7 +58,7 @@ The connection to the application standard output has been closed.
 
 18:06 完成交互后已向主 Agent 释放设备。`Issue 146 Context Fix` 当时仍可用、应用停在设置页，由主 Agent 负责关闭会话和后续自动测试。本 Agent 仅继续写本证据目录。
 
-## 最终版本 smoke：混合 Tab 路径保留
+## 缓存生命周期修复版 smoke：混合 Tab 路径保留（早于关闭入口修复）
 
 2026-10-21 18:10–18:13，主 Agent 在最终代码完成 347/347 自动测试后重新构建安装，使用会话 `Issue 146 Final Smoke` 验证。验证 Agent 本身没有重跑这些自动测试。该版本增加 coordinator 按 navigation context 缓存调试选择状态；具体源码 SHA-256、基线 HEAD 和 capture 状态见 `final-smoke-manifest.json`，以工作区文件指纹识别本轮构建对应的代码状态。
 
@@ -73,7 +73,7 @@ The connection to the application standard output has been closed.
 
 本轮重点是最终状态缓存补丁下的真实选择、push 和混合 Tab 往返保留；未重跑上轮两层 push／pop、关闭、嵌套 Sheet 全流程，也未补测关闭重开空态或三栏分类保留策略。18:13 已停止设备调用并将会话 key 交主 Agent 清理，未自行关闭或重启。
 
-最终版本的直接证据链接：
+缓存生命周期修复版的直接证据链接（保留原 final-smoke 文件名）：
 
 | 步骤 | 截图 | 层级 |
 | --- | --- | --- |
@@ -82,4 +82,19 @@ The connection to the application standard output has been closed.
 | 切回两栏保留路径 | [截图](final-smoke-03-two-restored-screenshot.png) | [hierarchy](final-smoke-03-two-restored-hierarchy.txt) |
 | 切回三栏保留路径 | [截图](final-smoke-04-three-restored-screenshot.png) | [hierarchy](final-smoke-04-three-restored-hierarchy.txt) |
 
-[最终源码与运行状态清单](final-smoke-manifest.json) · [最终控制台摘录](final-smoke-console-summary.txt) · [原始崩溃日志](03-two-column-push-crash-logs.txt)
+[缓存生命周期版源码与运行状态清单](final-smoke-manifest.json) · [缓存生命周期版控制台摘录](final-smoke-console-summary.txt) · [原始崩溃日志](03-two-column-push-crash-logs.txt)
+
+## 最终版本：未选择状态下的全屏关闭入口修复
+
+本节对应缓存生命周期修复版之后的新补丁；此前 `final-smoke-*` 证据只代表前一版。主 Agent 将同一个 close toolbar 分别挂在各栏内容上，随后重新构建安装。2026-10-21 18:25–18:29 使用新会话 `Issue 146 Empty Dismiss` 验证，PID `48741`。本版 `CalendarDebugSplitView.swift` 的实际 SHA-256、HEAD 与原生 capture 状态保存在 [关闭修复版清单](close-fix-manifest.json)，保留前一版独立 manifest，不覆盖旧证据。
+
+| 场景 | 实际结果 | 截图 | hierarchy |
+| --- | --- | --- | --- |
+| 两栏以全屏打开，尚未选择对象 | 导航栏左上可见“关闭”；位置 `{{24.0, 66.0}, {64.3, 36.0}}`，hitPoint `{56.2, 84.0}`；重复选择、清除详情均禁用，证明未建立详情选择 | [初始截图](close-fix-01-two-fullscreen-unselected-screenshot.png) | [层级](close-fix-01-two-fullscreen-unselected-hierarchy.txt) |
+| 点击两栏导航栏关闭 | 直接返回父层根设置页，设置 Tab 选中 | [返回截图](close-fix-02-two-dismissed-to-settings-screenshot.png) | [层级](close-fix-02-two-dismissed-to-settings-hierarchy.txt) |
+| 三栏以全屏打开，尚未选择分类或对象 | 同样在导航栏左上显示“关闭”，hitPoint `{56.2, 84.0}`；仍为分类一／分类二初始列表，详情操作禁用 | [初始截图](close-fix-03-three-fullscreen-unselected-screenshot.png) | [层级](close-fix-03-three-fullscreen-unselected-hierarchy.txt) |
+| 点击三栏导航栏关闭 | 直接返回父层根设置页，设置 Tab 选中 | [返回截图](close-fix-04-three-dismissed-to-settings-screenshot.png) | [层级](close-fix-04-three-dismissed-to-settings-hierarchy.txt) |
+
+以上两条流程没有先选择对象，也未借助详情内容中的“关闭当前模态”。每次点击都使用当前 hierarchy 的按钮 hitPoint。四个 capture 均为 `Running`、同一 PID，未观察到崩溃或关闭按钮重叠、不可读问题。[本版日志摘要](close-fix-console-summary.txt)保留关键日志筛选结果。
+
+本轮完成两栏／三栏 fullScreen 从未选择初态直接退出的最小验收；未扩大到仅选分类、清除详情后关闭、宽屏／旋转或嵌套全矩阵。18:29 已停止设备调用，并将有效 session key 交主 Agent 关闭。

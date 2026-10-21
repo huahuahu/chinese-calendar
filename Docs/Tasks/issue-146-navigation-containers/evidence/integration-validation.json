@@ -279,7 +279,8 @@
       "state": "Passed"
     }
   ],
-  "testSummaryGeneratedAt": "2026-10-21T10:09:09Z",
-  "testSummarySHA256": "fd97f47f890f57d2eb6319baf1beb83141ef75802d04a6fbaee1d25086b48f4b",
-  "runtimeEvidence": "integration-runtime/README.md；区分 Context 修复版与最终缓存生命周期修复版的交互记录"
+  "testSummaryGeneratedAt": "2026-10-21T10:24:48Z",
+  "testSummarySHA256": "5ead4a3ee84d5521b1713ac18c064d1e9df15c5899128758346c59ff53dad5a3",
+  "runtimeEvidence": "integration-runtime/README.md；区分 Context 修复版与最终缓存生命周期修复版的交互记录",
+  "finalUIChange": "各栏内容与详情实际栈根内提供关闭 toolbar；重新运行347项测试与构建安装，实际空态全屏退出见运行记录"
 }

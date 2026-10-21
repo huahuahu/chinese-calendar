@@ -1,7 +1,7 @@
 {
   "baseCommit": "3d57050b9fbcc30619e78d552760f68b6d043650",
   "featureCommit": "e6d13c22b5cb2e9967995ce4cb7896a2f0d1b7dc",
-  "snapshotDescription": "PR #157 整合 main #156、修复分栏 push Context 注入及数据替换状态生命周期后的最终源码；2026-10-21 原生 Xcode 347 项测试通过",
+  "snapshotDescription": "PR #157 整合 main #156，并修复分栏 push Context 注入、数据替换状态生命周期和空态全屏关闭入口后的最终源码；2026-10-21 原生 Xcode 347 项测试通过",
   "sourceSHA256": {
     "Sources/ChineseCalendarLocalization/Resources/Calendar.xcstrings": "03e05027a9e7a3864735849da42053a056ca53fa515aa6a86cb3f1fce3563f7a",
     "Sources/ChineseCalendarLocalization/Strings/CalendarStringKey+DebugSplit.swift": "c99dd66d5097227297a18120a98022cf51dbad0021a25d0cf6005c4462b96499",
@@ -16,7 +16,7 @@
     "Sources/ChineseCalendarUI/Debug/CalendarDebugSplitLayout.swift": "fa0611ca1dd976c8d191caa42d2b566a64f20ef1964af73400d4d0a4391a2e61",
     "Sources/ChineseCalendarUI/Debug/CalendarDebugSplitLayoutStatus.swift": "5f661ba626aecee9fea7484e3cbda176ed923bfed4661fcc1ec9e244b7295fb4",
     "Sources/ChineseCalendarUI/Debug/CalendarDebugSplitState.swift": "a691580fea5084c627a539816eeb2ddb6f461b93ca0d89ef9e74a7c00ada7f66",
-    "Sources/ChineseCalendarUI/Debug/CalendarDebugSplitView.swift": "e33c61cdc30cb6110b328646104e0179839947585ffa4f311f1c38dca1e72c2a",
+    "Sources/ChineseCalendarUI/Debug/CalendarDebugSplitView.swift": "72faa11e8adebce8cb03d695b6183a32f07f15d3c1b01264a3fe61fabd4a31bc",
     "Sources/ChineseCalendarUI/Home/CalendarHomeCoordinator.swift": "deb08113116065807b213b934e90d0e1530f3efeab8f51fd5658a5eed0425889",
     "Sources/ChineseCalendarUI/Home/Navigation/CalendarDestination.swift": "5e18bae6936109c2713a2627e76aa04f7364e3701f3c10fa23b23e26193f0891",
     "Sources/ChineseCalendarUI/Home/Navigation/CalendarDestinationView.swift": "1570226e13075addea0399ca6cd5ba907d2f9e68391cb20c159cbfac3c414504",

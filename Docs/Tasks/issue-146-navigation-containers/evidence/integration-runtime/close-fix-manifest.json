@@ -1,0 +1,27 @@
+{
+  "date": "2026-10-21",
+  "session": "Issue 146 Empty Dismiss",
+  "pid": 48741,
+  "head": "5125093dea91f3847f5505ce0c18662dfaef536c",
+  "source_sha256": {
+    "Sources/ChineseCalendarUI/Debug/CalendarDebugSplitView.swift": "72faa11e8adebce8cb03d695b6183a32f07f15d3c1b01264a3fe61fabd4a31bc"
+  },
+  "captures": [
+    {
+      "stage": "close-fix-01-two-fullscreen-unselected",
+      "applicationState": "Running"
+    },
+    {
+      "stage": "close-fix-02-two-dismissed-to-settings",
+      "applicationState": "Running"
+    },
+    {
+      "stage": "close-fix-03-three-fullscreen-unselected",
+      "applicationState": "Running"
+    },
+    {
+      "stage": "close-fix-04-three-dismissed-to-settings",
+      "applicationState": "Running"
+    }
+  ]
+}

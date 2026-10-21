@@ -48,6 +48,7 @@
                             ContentUnavailableView {
                                 Label(CalendarStringKey.Debug.Split.chooseCategory, systemSymbol: .listBullet)
                             }
+                            .toolbar { closeToolbar }
                         }
                     } detail: {
                         detail
@@ -55,13 +56,6 @@
                 }
             }
             .environment(state)
-            .toolbar {
-                if presentation.isPresented {
-                    ToolbarItem(placement: .cancellationAction) {
-                        Button(CalendarStringKey.Common.Action.close) { presentation.dismiss() }
-                    }
-                }
-            }
         }
 
         private var categoryList: some View {
@@ -80,6 +74,7 @@
                 CalendarDebugSplitLayoutStatus(state: state)
             }
             .navigationTitle(layout.title)
+            .toolbar { closeToolbar }
         }
 
         private func itemList(_ items: [CalendarDebugSplitItem]) -> some View {
@@ -92,18 +87,31 @@
                 CalendarDebugSplitControls(state: state, navigation: navigation)
                 CalendarDebugSplitLayoutStatus(state: state)
             }
+            .toolbar { closeToolbar }
         }
 
         private var detail: some View {
             NavigationScopeView(context: navigation, presentation: presentation) {
-                if let item = state.item {
-                    CalendarDebugSplitDetailView(item: item, level: 0)
-                } else {
-                    ContentUnavailableView {
-                        Label(CalendarStringKey.Debug.Split.emptyTitle, systemSymbol: .listBullet)
-                    } description: {
-                        Text(CalendarStringKey.Debug.Split.emptyMessage)
+                Group {
+                    if let item = state.item {
+                        CalendarDebugSplitDetailView(item: item, level: 0)
+                    } else {
+                        ContentUnavailableView {
+                            Label(CalendarStringKey.Debug.Split.emptyTitle, systemSymbol: .listBullet)
+                        } description: {
+                            Text(CalendarStringKey.Debug.Split.emptyMessage)
+                        }
                     }
+                }
+                .toolbar { closeToolbar }
+            }
+        }
+
+        @ToolbarContentBuilder
+        private var closeToolbar: some ToolbarContent {
+            if presentation.isPresented {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button(CalendarStringKey.Common.Action.close) { presentation.dismiss() }
                 }
             }
         }
