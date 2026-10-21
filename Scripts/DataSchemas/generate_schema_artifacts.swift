@@ -1,7 +1,8 @@
 #!/usr/bin/env swift
 import Foundation
 
-// Keep a Swift-shaped command surface while the schema tooling lives in Node.
+// 将命令行参数转交同目录的 generate_schema_artifacts.mjs，由 Node 生成 Swift 导入记录和 TypeScript 类型定义。
+// 等待子进程结束并返回其退出码，供命令行和 CI 判断是否成功。
 let scriptPath = URL(fileURLWithPath: CommandLine.arguments[0])
 let scriptDirectory = scriptPath.deletingLastPathComponent()
 let nodeScript = scriptDirectory.appendingPathComponent("generate_schema_artifacts.mjs").path

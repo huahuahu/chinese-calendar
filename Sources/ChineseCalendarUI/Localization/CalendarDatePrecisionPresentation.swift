@@ -2,7 +2,7 @@ import ChineseCalendarLocalization
 import ChineseCalendarPersistence
 import Foundation
 
-/// 在界面边界将数据模型的日期精度映射为基础文案资源。
+/// 将模型中的年、月、日等日期精度，转换为界面可显示的本地化名称。
 enum CalendarDatePrecisionPresentation {
     static func title(for precision: ChineseDatePrecision) -> LocalizedStringResource {
         switch precision {

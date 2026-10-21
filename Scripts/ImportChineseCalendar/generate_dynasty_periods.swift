@@ -1,8 +1,8 @@
 #!/usr/bin/env swift
 import Foundation
 
-// This Swift file keeps the project command surface consistent.
-// The dynasty/orthodox-period transform lives in the adjacent Node script.
+// 将命令行参数转交同目录的 generate_dynasty_periods.mjs，由 Node 转换朝代和正统时期数据。
+// 等待子进程结束并返回其退出码，供命令行和 CI 判断是否成功。
 let scriptPath = URL(fileURLWithPath: CommandLine.arguments[0])
 let scriptDirectory = scriptPath.deletingLastPathComponent()
 let nodeScript = scriptDirectory.appendingPathComponent("generate_dynasty_periods.mjs").path

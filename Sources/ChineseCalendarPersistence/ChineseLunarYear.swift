@@ -9,7 +9,8 @@ public final class ChineseLunarYear {
     public var yearStemIndex: Int
     public var yearBranchIndex: Int
 
-    /// One-to-many owner side for all lunar months in this lunar year.
+    /// 这个农历年包含的月份，与 ChineseLunarMonth.chineseLunarYear 互为反向关系。
+    /// 删除此年时，级联删除其月份；数组本身不保证月份顺序。
     @Relationship(deleteRule: .cascade, inverse: \ChineseLunarMonth.chineseLunarYear)
     public var months: [ChineseLunarMonth]
 

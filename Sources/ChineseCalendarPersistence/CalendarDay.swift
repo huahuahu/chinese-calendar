@@ -8,11 +8,11 @@ public final class CalendarDay {
     public var dayIndex: Int
     public var julianDayNumber: Int
 
-    /// One-to-one owner side for the civil expression of this absolute day.
+    /// 同一天的民用日期表示，与 CivilDate.calendarDay 互为一对一关系；删除此 CalendarDay 时级联删除它。
     @Relationship(deleteRule: .cascade, inverse: \CivilDate.calendarDay)
     public var civilDate: CivilDate?
 
-    /// One-to-one owner side for the lunar expression of this absolute day.
+    /// 同一天的农历日期表示，与 ChineseLunarDay.calendarDay 互为一对一关系；删除此 CalendarDay 时级联删除它。
     @Relationship(deleteRule: .cascade, inverse: \ChineseLunarDay.calendarDay)
     public var chineseLunarDay: ChineseLunarDay?
 

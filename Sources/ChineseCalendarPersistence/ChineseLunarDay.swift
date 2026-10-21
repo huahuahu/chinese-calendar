@@ -10,10 +10,10 @@ public final class ChineseLunarDay {
     public var dayStemIndex: Int
     public var dayBranchIndex: Int
 
-    /// Inverse side of CalendarDay.chineseLunarDay.
+    /// 此农历日对应的绝对日期记录，可继续通过它读取民用日期；与 CalendarDay.chineseLunarDay 互为反向关系。
     public var calendarDay: CalendarDay?
 
-    /// Inverse side of ChineseLunarMonth.days.
+    /// 此日所属的农历月，对应 ChineseLunarMonth.days 中的这条日记录。
     public var chineseLunarMonth: ChineseLunarMonth?
 
     public init(
