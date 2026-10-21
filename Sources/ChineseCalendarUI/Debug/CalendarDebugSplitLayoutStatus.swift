@@ -2,7 +2,8 @@
     import ChineseCalendarLocalization
     import SwiftUI
 
-    /// 显示系统 Binding 的实际值，方便检查窄屏返回与宽屏切换后的写回。
+    /// 显示绑定给 SplitView 的 columnVisibility 和 preferredCompactColumn 当前值，
+    /// 用于观察系统返回及宽窄切换后，这两个布局状态是否被系统写回更新。
     struct CalendarDebugSplitLayoutStatus: View {
         let state: CalendarDebugSplitState
 

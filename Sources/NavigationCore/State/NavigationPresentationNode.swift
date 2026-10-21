@@ -9,7 +9,7 @@ import Observation
 @MainActor
 @Observable
 public final class NavigationPresentationNode<
-    Scope: Hashable,
+    Scope: NavigationScope,
     Destination: NavigationDestination,
     AlertRoute: NavigationAlertRoute
 >: Identifiable {
@@ -21,7 +21,8 @@ public final class NavigationPresentationNode<
         return id
     }
 
-    /// 构建模态初始页面所需的路由数据；后续 push 的页面保存在栈的 path 中。
+    /// 打开整个模态时使用的 Destination，例如包含多个 Tab 的 .tabs。
+    /// 模态内各栈的栈底页面和 push 路径另存于栈状态；修改它们不会改变此属性。
     public var destination: Destination {
         layer.route.destination
     }

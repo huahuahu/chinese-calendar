@@ -5,15 +5,16 @@ import Foundation
 /// 快照中只保存数据，不持有运行中的 Context 或可观察状态对象。
 /// 子模态仍使用这个快照类型，所以用 indirect 支持逐层嵌套的结构。
 public indirect enum NavigationPresentationSnapshot<
-    Scope: Hashable,
+    Scope: NavigationScope,
     Destination: NavigationDestination,
     AlertRoute: NavigationAlertRoute
 > {
     /// 保存业务提示 ID 和路由；alert 没有导航栈，也没有子模态。
     case alert(NavigationAlertNode<AlertRoute>)
 
-    /// id 标识这一次页面展示，destination 用于构建页面，style 指定展示方式。
-    /// layer 保存页面内部各栈的路径，以及从这里继续打开的页面或业务提示。
+    /// id 标识这一次模态展示，destination 构建整个模态的入口页面，style 指定展示方式。
+    /// 例如 destination 为 .tabs 时，layer 保存每个 Tab 栈的栈底页面和 push 路径，
+    /// 也保存选中的栈，以及从此模态继续打开的子模态或业务提示。
     case node(
         id: UUID,
         destination: Destination,
@@ -64,7 +65,9 @@ extension NavigationPresentationSnapshot {
             let node = NavigationPresentationNode<Scope, Destination, AlertRoute>(
                 id: id,
                 destination: destination,
-                style: style
+                style: style,
+                initialStack: layer.selectedStack,
+                rootDestinations: destination.providesNavigationContainer ? layer.rootDestinations : [:]
             )
             node.layer.restore(layer)
             return .page(node)

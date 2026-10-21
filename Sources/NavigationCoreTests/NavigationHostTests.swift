@@ -6,7 +6,7 @@ import Testing
 @MainActor
 @Suite("根宿主配置与页面环境")
 struct NavigationHostTests {
-    fileprivate enum Tab: Hashable { case home, history }
+    fileprivate enum Tab: NavigationScope { case home, history }
     fileprivate enum Route: NavigationDestination {
         case root, detail, tabs
         var providesNavigationContainer: Bool {
@@ -31,8 +31,16 @@ struct NavigationHostTests {
     }
 
     @Test func nearestHostWinsForIdenticalRouteTypesAndPagesReadLocalEnvironment() {
-        let outer = Router(rootDestination: .root, selectedScope: .home)
-        let inner = Router(rootDestination: .root, selectedScope: .history)
+        let outer = Router(
+            rootDestination: .root,
+            selectedScope: .home,
+            rootDestinations: [.home: .detail, .history: .detail]
+        )
+        let inner = Router(
+            rootDestination: .root,
+            selectedScope: .history,
+            rootDestinations: [.home: .detail, .history: .detail]
+        )
         let recorder = HostTestRecorder()
         let content = VStack {
             HostTestConfiguredPage()
@@ -58,7 +66,11 @@ struct NavigationHostTests {
     }
 
     @Test func rootEntryUsesTheSharedBuilderAndRootPresentationEnvironment() {
-        let router = Router(rootDestination: .root, selectedScope: .home)
+        let router = Router(
+            rootDestination: .root,
+            selectedScope: .home,
+            rootDestinations: [.home: .detail, .history: .detail]
+        )
         let recorder = HostTestRecorder()
         let content = NavigationRootView(context: router.rootPresentation)
             .navigationHost(
@@ -86,9 +98,17 @@ struct NavigationHostTests {
     }
 
     @Test func modalEntryUsesTheSameBuilderAndInheritsTheHostEnvironment() throws {
-        let router = Router(rootDestination: .root, selectedScope: .home)
+        let router = Router(
+            rootDestination: .root,
+            selectedScope: .home,
+            rootDestinations: [.home: .detail, .history: .detail]
+        )
         let recorder = HostTestRecorder()
-        #expect(router.rootPresentation.present(.tabs, initialStack: .scope(.home)))
+        #expect(router.rootPresentation.present(
+            .tabs,
+            initialStack: .scope(.home),
+            rootDestinations: [.scope(.home): .detail, .scope(.history): .detail]
+        ))
         let node = try #require(router.presentedNode)
         let modal = router.presentationContext(for: node)
         let content = NavigationPresentationNodeView(node: node, context: modal)
@@ -102,13 +122,56 @@ struct NavigationHostTests {
         #expect(Set(recorder.pages) == ["shared:zh_CN"])
     }
 
+    @Test func inactiveLayerKeepsItsDestinationWithoutBuildingContent() throws {
+        let router = Router(
+            rootDestination: .root,
+            selectedScope: .home,
+            rootDestinations: [.home: .detail, .history: .detail]
+        )
+        #expect(router.rootPresentation.present(
+            .tabs, initialStack: .scope(.home), rootDestinations: [.scope(.home): .detail]
+        ))
+        let node = try #require(router.presentedNode)
+        let modal = router.presentationContext(for: node)
+        let recorder = HostTestRecorder()
+        let content = VStack {
+            NavigationLayerContent(context: modal)
+            Color.clear.frame(width: 10, height: 10)
+        }
+        .navigationHost(
+            context: router.rootPresentation,
+            configuration: HostTestConfiguration(name: "modal", recorder: recorder)
+        )
+        #expect(ImageRenderer(content: content).cgImage != nil)
+        #expect(recorder.routes == [.tabs])
+        recorder.routes.removeAll()
+        #expect(modal.dismiss())
+        #expect(!modal.isActive)
+        #expect(modal.destination == .tabs)
+        #expect(node.destination == .tabs)
+        #expect(ImageRenderer(content: content).cgImage != nil)
+        #expect(recorder.routes.isEmpty)
+    }
+
     @Test func configurationSupportsModalTabsWithoutChangingContextOwnership() throws {
-        let router = Router(rootDestination: .root, selectedScope: .home)
-        let independent = Router(rootDestination: .root, selectedScope: .home)
+        let router = Router(
+            rootDestination: .root,
+            selectedScope: .home,
+            rootDestinations: [.home: .detail, .history: .detail]
+        )
+        let independent = Router(
+            rootDestination: .root,
+            selectedScope: .home,
+            rootDestinations: [.home: .detail, .history: .detail]
+        )
         let configuration = HostTestConfiguration(name: "shared", recorder: HostTestRecorder())
         #expect(Route.tabs.providesNavigationContainer)
         #expect(!Route.detail.providesNavigationContainer)
-        #expect(router.rootPresentation.present(.tabs, initialStack: .scope(.history)))
+        #expect(router.rootPresentation.present(
+            .tabs,
+            initialStack: .scope(.history),
+            rootDestinations: [.scope(.home): .detail, .scope(.history): .detail]
+        ))
         let modal = try router.presentationContext(for: #require(router.presentedNode))
         let modalHistory = modal.context(for: .scope(.history))
         #expect(modalHistory.push(.detail))

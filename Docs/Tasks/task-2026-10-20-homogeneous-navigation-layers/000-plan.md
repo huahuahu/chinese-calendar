@@ -2,7 +2,7 @@
 
 - 状态：实现完成，自动检查通过；交互验证边界见 [结果](001-result.md)
 - 日期：2026-10-20
-- 前序：[Destination 容器与层入口](../issue-152-destination-containers/000-plan.md)、[呈现层与多栈](../issue-145-unified-navigation/008-presentation-layers.md)
+- 前序：[Destination 容器与层入口](../issue-152-destination-containers/000-plan.md)、[NavigationLayer 与多栈](../issue-145-unified-navigation/008-presentation-layers.md)
 - 依据：用户确认根层与每层模态使用同一结构，每层选择由页面提供导航容器或由 Core 提供 NavigationStack；页面不声明允许出现的位置。此决定替代 #152 的入口白名单和 Core 多栏预留声明。
 
 ## 目标与设计

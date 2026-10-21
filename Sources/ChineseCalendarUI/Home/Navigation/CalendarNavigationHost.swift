@@ -2,7 +2,8 @@ import NavigationCore
 import SwiftData
 import SwiftUI
 
-/// 根呈现宿主独立于数据页面的 identity，使下载完成和外部导航能跨越容器切换。
+/// 将导航宿主放在按数据库 identity 重建的页面内容之外。
+/// 完整数据下载后切换 ModelContainer 时，原宿主仍能接收模态关闭通知并继续等待中的外部导航。
 private struct CalendarNavigationHost<BottomStatusBar: View>: ViewModifier {
     let coordinator: CalendarHomeCoordinator
     let storeCoordinator: ChineseCalendarStoreCoordinator?

@@ -1,6 +1,7 @@
 import SwiftUI
 
-/// 用发起页的选择与 ModelContext 构建年份选择器，不借用根页面的日历状态。
+/// 按 sessionID 取得打开年份选择器时保存的会话，使用发起页的 CalendarSelection 和 ModelContext。
+/// 选年结果经该会话回传给发起页，避免改到另一个日历页面的选择。
 struct CalendarYearPickerDestinationView: View {
     let sessionID: UUID
     @Environment(CalendarHomeCoordinator.self) private var coordinator

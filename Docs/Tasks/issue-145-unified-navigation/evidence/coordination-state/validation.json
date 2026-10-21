@@ -1,0 +1,92 @@
+{
+  "date": "2026-10-21",
+  "timezone": "Asia/Shanghai",
+  "git_head": "c18ae98cf0d35d9c8f491bda377bccbf2d8675e7",
+  "code_state": "Uncommitted workspace; pre-existing primary stack and terminology changes preserved. No Swift source changes after test execution.",
+  "project": "ChineseCalendar.xcodeproj",
+  "scheme": "ChineseCalendar-iOS",
+  "simulator_name": "chinesedate iPhone 18 Pro Max (885f)",
+  "simulator_id": "16A9CAA7-45CE-46D5-8915-F61531FC617C",
+  "tool": "mcp__xcode__RunAllTests",
+  "tests": {
+    "passed": 361,
+    "failed": 0,
+    "skipped": 0,
+    "not_run": 0
+  },
+  "new_scenarios": [
+    {
+      "TEST_IDENTIFIER": "NavigationCoordinationTests/pendingRequestResolvesIndependentlyOfAcceptedRequest(approve:resolveBeforeDismissal:)",
+      "TEST_DISPLAY_NAME": "true, true",
+      "TEST_STATE": "Passed"
+    },
+    {
+      "TEST_IDENTIFIER": "NavigationCoordinationTests/pendingRequestResolvesIndependentlyOfAcceptedRequest(approve:resolveBeforeDismissal:)",
+      "TEST_DISPLAY_NAME": "true, false",
+      "TEST_STATE": "Passed"
+    },
+    {
+      "TEST_IDENTIFIER": "NavigationCoordinationTests/pendingRequestResolvesIndependentlyOfAcceptedRequest(approve:resolveBeforeDismissal:)",
+      "TEST_DISPLAY_NAME": "false, true",
+      "TEST_STATE": "Passed"
+    },
+    {
+      "TEST_IDENTIFIER": "NavigationCoordinationTests/pendingRequestResolvesIndependentlyOfAcceptedRequest(approve:resolveBeforeDismissal:)",
+      "TEST_DISPLAY_NAME": "false, false",
+      "TEST_STATE": "Passed"
+    },
+    {
+      "TEST_IDENTIFIER": "NavigationCoordinationTests/alertReplacementKeepsLatestRequestAndPolicy(firstRequiresConfirmation:latestRequiresConfirmation:)",
+      "TEST_DISPLAY_NAME": "true, true",
+      "TEST_STATE": "Passed"
+    },
+    {
+      "TEST_IDENTIFIER": "NavigationCoordinationTests/alertReplacementKeepsLatestRequestAndPolicy(firstRequiresConfirmation:latestRequiresConfirmation:)",
+      "TEST_DISPLAY_NAME": "true, false",
+      "TEST_STATE": "Passed"
+    },
+    {
+      "TEST_IDENTIFIER": "NavigationCoordinationTests/alertReplacementKeepsLatestRequestAndPolicy(firstRequiresConfirmation:latestRequiresConfirmation:)",
+      "TEST_DISPLAY_NAME": "false, true",
+      "TEST_STATE": "Passed"
+    },
+    {
+      "TEST_IDENTIFIER": "NavigationCoordinationTests/alertReplacementKeepsLatestRequestAndPolicy(firstRequiresConfirmation:latestRequiresConfirmation:)",
+      "TEST_DISPLAY_NAME": "false, false",
+      "TEST_STATE": "Passed"
+    },
+    {
+      "TEST_IDENTIFIER": "NavigationCoordinationTests/dismissAllAbsorbsIndividualDismissalsWhileAlertIsActive(allFirst:)",
+      "TEST_DISPLAY_NAME": "true",
+      "TEST_STATE": "Passed"
+    },
+    {
+      "TEST_IDENTIFIER": "NavigationCoordinationTests/dismissAllAbsorbsIndividualDismissalsWhileAlertIsActive(allFirst:)",
+      "TEST_DISPLAY_NAME": "false",
+      "TEST_STATE": "Passed"
+    }
+  ],
+  "format": {
+    "files": 290,
+    "requiring_formatting": 0
+  },
+  "lint": {
+    "files": 279,
+    "violations": 0
+  },
+  "test_summary_local_path": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/RunAllTests/62622BD2-7994-47CD-AD61-CBC675B353A1.txt",
+  "source_sha256": {
+    "Sources/NavigationCore/State/NavigationCoordinationState.swift": "85e5a7934418313efedf72232ecb1b344db3208ce6312f78d7e5971daed42995",
+    "Sources/NavigationCore/Routing/NavigationRouter.swift": "448b517dee65795f58a219fa850a87cc504931f51b861dc992c21580c2164a0d",
+    "Sources/NavigationCore/Routing/NavigationRouter+Contexts.swift": "4dcd7dc373ecd2fd7421231cbe7d58f43cfd99c6eeb887a06d138b0275a1bfad",
+    "Sources/NavigationCore/Routing/NavigationRouter+Alerts.swift": "4186ae3b3e86a4d7483e8742b222125ff4db148ea358c01f5abbaefe0d015ded",
+    "Sources/NavigationCore/Routing/NavigationPresentationContext.swift": "a876dadc428539f4b3189af280bfd0438920abe99bf43acc667c7ed4d51f4f97",
+    "Sources/NavigationCoreTests/NavigationCoordinationTests.swift": "ca06a3dfb0724e9cf159fb3102d9756a9ab9e91157a4dd52f0d7f59a39482953"
+  },
+  "limitations": [
+    "No manual Simulator interaction",
+    "No physical device verification",
+    "No standalone Release build or remote CI",
+    "No independent review"
+  ]
+}

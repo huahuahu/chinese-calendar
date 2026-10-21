@@ -1,6 +1,6 @@
-/// 页面和 alert 共用的数据入口；只有页面模态需要选择初始导航栈。
+/// 用强类型数据描述一次页面模态或业务 alert 的呈现请求；只有页面模态需要配置导航栈。
 public enum NavigationPresentationRequest<
-    Scope: Hashable,
+    Scope: NavigationScope,
     Destination: NavigationDestination,
     AlertRoute: NavigationAlertRoute
 > {

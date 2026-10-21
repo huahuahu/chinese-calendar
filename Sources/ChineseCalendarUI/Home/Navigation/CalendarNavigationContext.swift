@@ -1,13 +1,17 @@
+import Foundation
 import NavigationCore
 
-/// 当前栈的 push/pop 入口；页面呈现单独读取 CalendarPresentationContext。
+/// 日历页面使用的栈 Context，操作本栈的栈底页面、path 和 push/pop。
+/// 打开或关闭模态单独使用 CalendarPresentationContext。
 typealias CalendarNavigationContext = NavigationContext<CalendarTab, CalendarDestination>
 
-/// 当前层的模态入口；各栈注入的入口共享层状态，并保留各自的发起栈身份。
+/// 日历页面使用的呈现 Context，操作所在层的模态、alert 和选中栈。
+/// 同层各栈的呈现 Context 共享模态状态，默认记录各自的发起栈，以限制后台 Tab 打开模态。
 typealias CalendarPresentationContext = NavigationPresentationContext<CalendarTab, CalendarDestination, CalendarAlert>
 
 extension CalendarPresentationContext {
-    /// 主标签页可从任何有效层打开，各 Tab 的选中项、路径和子模态互不共享。
+    /// 在当前层上打开一个包含日历、历史和设置 Tab 的新模态。
+    /// 新模态的选中 Tab、各栈路径和子模态状态独立于父层；新模态内各 Tab 仍共享该层的呈现状态。
     @discardableResult
     func presentMainTabs(
         style: NavigationPresentationStyle = .sheet,
@@ -20,3 +24,29 @@ extension CalendarPresentationContext {
         )
     }
 }
+
+#if DEBUG
+    extension CalendarPresentationContext {
+        /// 分栏容器与详情空态分别声明路由，详情栈从创建时就具有有效根页面。
+        @discardableResult
+        func presentDebugSplit(
+            layout: CalendarDebugSplitLayout, style: NavigationPresentationStyle = .sheet
+        ) -> Bool {
+            present(.debugSplit(layout: layout), style: style, rootDestinations: [.primary: .debugSplitEmpty])
+        }
+
+        @discardableResult
+        func presentDebugNavigationTabs(
+            id: UUID = UUID(), style: NavigationPresentationStyle = .fullScreen,
+            selectedTab: CalendarTab = .years
+        ) -> Bool {
+            present(
+                .debugNavigationTabs(id: id), style: style, initialStack: .scope(selectedTab),
+                rootDestinations: [
+                    .scope(.years): .debugNavigation(id: id),
+                    .scope(.history): .debugSplitEmpty, .scope(.settings): .debugSplitEmpty
+                ]
+            )
+        }
+    }
+#endif

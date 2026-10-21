@@ -5,7 +5,7 @@ import Testing
 @MainActor
 @Suite("普通根层的导航请求与栈根替换")
 struct NavigationPrimaryLayerTests {
-    private enum Tab: String, Codable { case home, history }
+    private enum Tab: String, Codable, NavigationScope { case home, history }
     private enum Route: String, Codable, NavigationDestination {
         case home, detail, tabs
         var providesNavigationContainer: Bool {
@@ -15,6 +15,75 @@ struct NavigationPrimaryLayerTests {
 
     private typealias Router = NavigationRouter<Tab, Route, NoNavigationAlert>
     private typealias Snapshot = NavigationSnapshot<Tab, Route, NoNavigationAlert>
+
+    @Test func primarySelectionHasNoScopeForCoreAndExternalContainers() throws {
+        for destination in [Route.home, .tabs] {
+            let router = Router(
+                rootDestination: destination,
+                rootDestinations: destination.providesNavigationContainer ? [.primary: .home] : [:],
+                paths: [.primary: [.detail]]
+            )
+            let before = router.snapshot
+            #expect(router.selectedScope == nil)
+            #expect(before.selectedScope == nil)
+            #expect(router.rootPresentation.selectedStack == .primary)
+            #expect(router.selectedDestination == .detail)
+            router.selectedScope = nil
+            #expect(router.snapshot == before)
+            let decoded = try JSONDecoder().decode(Snapshot.self, from: JSONEncoder().encode(before))
+            #expect(decoded.selectedScope == nil)
+            #expect(decoded.layer.selectedStack == .primary)
+            #expect(decoded == before)
+        }
+        let router = Router(rootDestination: .home)
+        let before = router.snapshot
+        router.selectedScope = .history
+        #expect(router.selectedScope == nil)
+        #expect(router.snapshot == before)
+    }
+
+    @Test func namedScopeSelectionPreservesPathsAndIgnoresNilWrites() {
+        let router = Router(
+            rootDestination: .tabs, initialStack: .scope(.home),
+            rootDestinations: [.primary: .home, .scope(.home): .home, .scope(.history): .detail],
+            paths: [.scope(.home): [.detail], .scope(.history): [.home]]
+        )
+        #expect(router.selectedScope == .home)
+        let original = router.snapshot
+        router.selectedScope = .history
+        #expect(router.selectedScope == .history)
+        #expect(router.snapshot.selectedScope == .history)
+        #expect(original.selectedScope == .home)
+        let selected = router.snapshot
+        router.selectedScope = nil
+        #expect(router.snapshot == selected)
+        router.rootPresentation.selectedStack = .primary
+        #expect(router.selectedScope == nil)
+        #expect(router.snapshot.selectedScope == nil)
+        router.selectedScope = .home
+        #expect(router.selectedScope == .home)
+        #expect(router.snapshot == original)
+    }
+
+    @Test func scopeProjectionFollowsRestorationBetweenPrimaryAndNamedRoots() {
+        let router = Router(
+            rootDestination: .tabs,
+            selectedScope: .history,
+            rootDestinations: [.home: .home, .history: .detail],
+            paths: [.history: [.detail]]
+        )
+        let named = router.snapshot
+        let primary = Router(rootDestination: .home, paths: [.primary: [.detail]]).snapshot
+        #expect(router.restore(primary))
+        #expect(router.selectedScope == nil)
+        #expect(router.snapshot.selectedScope == nil)
+        #expect(router.rootPresentation.selectedStack == .primary)
+        #expect(router.selectedDestination == .detail)
+        #expect(router.restore(named))
+        #expect(router.selectedScope == .history)
+        #expect(router.snapshot.selectedScope == .history)
+        #expect(router.snapshot == named)
+    }
 
     @Test func primaryRequestsUseTheRootStackAndRejectUnrelatedNamedStacks() {
         let router = Router(rootDestination: .home)
@@ -31,7 +100,6 @@ struct NavigationPrimaryLayerTests {
         #expect(router.selectedDestination == .detail)
         #expect(router.rootPresentation.destination == .home)
         let before = router.snapshot
-        #expect(router.submit(.setRoot(nil, on: .primary)) == .rejected)
         #expect(router.submit(.selectStack(.scope(.history))) == .rejected)
         #expect(router.submit(.push(.detail, on: .scope(.history))) == .rejected)
         #expect(router.submit(.replacePath([.tabs], on: .scope(.home))) == .rejected)

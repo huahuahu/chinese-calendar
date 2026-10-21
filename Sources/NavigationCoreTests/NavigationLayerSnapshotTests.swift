@@ -5,7 +5,7 @@ import Testing
 @MainActor
 @Suite("根层与递归模态的统一快照")
 struct NavigationLayerSnapshotTests {
-    private enum Tab: String, Codable { case home, history }
+    private enum Tab: String, Codable, NavigationScope { case home, history }
     private enum Route: String, Codable, NavigationDestination {
         case home, detail, tabs
         var providesNavigationContainer: Bool {

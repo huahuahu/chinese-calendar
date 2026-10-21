@@ -4,7 +4,7 @@ import Testing
 @MainActor
 @Suite("导航层承载切换恢复")
 struct NavigationLayerRestorationTests {
-    private enum Tab: Hashable { case home }
+    private enum Tab: NavigationScope { case home }
     private enum Route: NavigationDestination {
         case tabs, home, detail
 

@@ -1,15 +1,17 @@
 import SwiftUI
 
 /// 一棵导航树的页面构建与呈现策略，只由 View 宿主持有，不属于 Router 或操作 Context。
-/// 使用保存业务依赖的值类型与方法实现；不要把根页面的临时选择或回调捕获为全树上下文。
+/// 使用保存业务依赖的值类型与方法实现；各页的选择、数据会话和回调仍由对应页面提供，
+/// 不能把根页面的这类临时状态固定到配置中，再交给所有模态和栈使用。
 @MainActor
 public protocol NavigationHostConfiguration<Scope, Destination, AlertRoute> {
-    associatedtype Scope: Hashable
+    associatedtype Scope: NavigationScope
     associatedtype Destination: NavigationDestination
     associatedtype AlertRoute: NavigationAlertRoute
     associatedtype DestinationContent: View
 
-    /// 所有栈的 push 页面与模态初始页面，统一继承所在作用域的环境。
+    /// 构建根界面、模态入口、由 Destination 指定的栈底页面，以及所有 push 页面。
+    /// 宿主为页面注入所在层的呈现 Context；栈内页面还会得到所属栈的 NavigationContext。
     @ViewBuilder func destination(for destination: Destination) -> DestinationContent
 
     func confirmationContent(for request: NavigationRequest<Scope, Destination>) -> NavigationConfirmationContent?

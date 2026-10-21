@@ -53,17 +53,19 @@ extension NavigationRouter {
         return true
     }
 
-    /// 只有真实关闭完成后才能调用；业务提示先排完，再重新评估外部导航。
+    /// 尝试继续排队的操作；只要还有活动 alert（包括关闭动画和按钮动作）就返回。
+    /// 先执行延后的模态关闭，再展示排队内容，最后重新提交等待 alert 的导航请求。
     func resumePresentations() {
         guard !hasActiveAlert else { return }
-        if dismissAllWaitingForAlert {
-            dismissAllWaitingForAlert = false
+        switch coordinationState.takeDismissalAfterAlert() {
+        case .none:
+            break
+        case .all:
             dismissAllPresentations()
-        }
-        let dismissals = dismissalsWaitingForAlert
-        dismissalsWaitingForAlert.removeAll()
-        for id in dismissals {
-            dismissPresentation(id: id)
+        case let .presentations(ids):
+            for id in ids {
+                dismissPresentation(id: id)
+            }
         }
         guard !layers.contains(where: \.isAwaitingDismissal) else { return }
         for layer in layers.reversed() where layer.presentedContent == nil && !layer.isAwaitingDismissal {
@@ -72,10 +74,7 @@ extension NavigationRouter {
                 return
             }
         }
-        guard let request = requestWaitingForAlert else { return }
-        let needsConfirmation = waitingRequestNeedsConfirmation
-        requestWaitingForAlert = nil
-        waitingRequestNeedsConfirmation = false
-        _ = submit(request, confirmIfPresented: needsConfirmation)
+        guard let request = coordinationState.takeRequestAfterAlert() else { return }
+        _ = submit(request.request, confirmIfPresented: request.needsConfirmation)
     }
 }

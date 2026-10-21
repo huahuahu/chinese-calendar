@@ -5,6 +5,8 @@
 - 更新日期：2026-10-21
 - 决策依据：2026-10-20 明确的 App 原生分栏组合边界，取代此前由 SDK 建立普通／两栏／三栏通用容器状态、容器 Context 和多栏快照的草案
 
+后续调整：2026-10-21 经用户确认，详情根及空态改由 Destination builder 构建，栈根和 path 改为非可选；本文中 root closure 与独立对象 selection 的接法由 [002：栈根统一使用 Destination](002-routed-stack-roots.md) 取代。原生 SplitView、分类与布局由 App 管理的边界保持。
+
 ## 背景、目标与范围
 
 使用原生 `NavigationSplitView` 表达 App 的分类和对象选择，并复用 NavigationCore 已有详情栈、模态、alert 与外部请求协调。业务选择决定详情根内容，SDK 只管理详情 push path；避免把 App 列表联动和 SwiftUI 布局状态变成框架新的结构模型。
@@ -21,7 +23,7 @@
 - [NavigationLayerContent](../../../Sources/NavigationCore/SwiftUI/NavigationLayerContent.swift) 已根据 `providesNavigationContainer` 决定是否为入口包栈；自带容器入口直接由配置构建。
 - [NavigationContext](../../../Sources/NavigationCore/Routing/NavigationContext.swift) 已通过独立栈状态和窄访问约束处理 path／push／pop。基线的 path setter 不返回是否接受，因此 App 不能据其返回值决定是否同步修改 selection。
 - 基线的 `NavigationContainerKind` 含 `.stack` 与被拒绝的 `.twoColumn`／`.threeColumn` 预留值；预留值不是已实现的 SplitView 能力。该类型及 Destination 入口白名单已由后续 [#156 同构导航层](../task-2026-10-20-homogeneous-navigation-layers/001-result.md) 删除，不属于合并后的 API。
-- [NavigationPresentationContext](../../../Sources/NavigationCore/Routing/NavigationPresentationContext.swift) 和 [NavigationRouter](../../../Sources/NavigationCore/Routing/NavigationRouter.swift) 已负责独立呈现层、业务 alert、请求确认与关闭协调。本轮继续复用这些入口。
+- [NavigationPresentationContext](../../../Sources/NavigationCore/Routing/NavigationPresentationContext.swift) 和 [NavigationRouter](../../../Sources/NavigationCore/Routing/NavigationRouter.swift) 已负责独立 `NavigationLayer`、业务 alert、请求确认与关闭协调。本轮继续复用这些入口。
 
 旧任务的测试、构建和交互记录只能说明旧代码状态；本轮组合后的宽窄切换、系统返回及布局写回仍须验证。
 
@@ -91,4 +93,4 @@ SDK 快照继续覆盖其已有路由、path 和呈现结构，不保存 App sel
 - 原生 SplitView 在深 path、系统返回及程序修改布局 Binding 时的具体行为，须以本轮指定 Simulator 和系统版本交互为准。若平台行为阻止验收，记录复现与限制，不将新 SDK 容器抽象作为默认补救。
 - 外部请求实际应用与 App selection 同步必须验证取消、批准、alert 队列和真实关闭时序；不得仅凭静态调用顺序标为通过。
 - 2026-10-20：采用 App 原生分栏组合与最小 `setPath` 反馈，替代旧草案的 SDK 多栏状态、通用容器 Context、跨栏结构事务及多栏恢复模型。正式历史 Tab 保持首轮范围之外。
-- 2026-10-21：合并 main 的 #156 同构导航层。根层与模态层复用 `NavigationLayer`、`NavigationLayerContent` 与 `NavigationLayerSnapshot`；普通根／模态使用 `.primary`，请求以 StackID 寻址，快照使用 `rootDestination + layer`。容器归属不变时恢复复用根栈，归属改变时重建栈并失效旧 Context。分栏仍由 App 组织，混合 Tab 从当前呈现层取得各栈；移除白名单不允许业务为同层同栈重复建立宿主。旧 255 项测试属于合并前快照，不能作为这次适配的通过证据；合并后构建、测试及文档检查由结果记录另行补充。
+- 2026-10-21：合并 main 的 #156 同构导航层。根层与模态层复用 `NavigationLayer`、`NavigationLayerContent` 与 `NavigationLayerSnapshot`；普通根／模态使用 `.primary`，请求以 StackID 寻址，快照使用 `rootDestination + layer`。容器归属不变时恢复复用根栈，归属改变时重建栈并失效旧 Context。分栏仍由 App 组织，混合 Tab 从当前 `NavigationLayer` 取得各栈；移除白名单不允许业务为同层同栈重复建立宿主。旧 255 项测试属于合并前快照，不能作为这次适配的通过证据；合并后构建、测试及文档检查由结果记录另行补充。

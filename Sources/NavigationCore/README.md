@@ -1,6 +1,6 @@
 # NavigationCore
 
-`NavigationCore` 用强类型数据表示 Tab、push path、递归页面模态和业务 alert。`present` 接收路由数据，宿主根据路由构建页面或系统提示。状态与路由层不解析 URL、不持有业务模型或查询、不保存 View 或页面回调；页面构建配置由 SwiftUI 宿主持有。
+`NavigationCore` 用强类型数据表示各层导航栈、push path、递归页面模态和业务 alert。根界面可以使用普通单栈，也可以由 App 组合 TabView 或 NavigationSplitView。`present` 接收路由数据，宿主根据路由构建页面或系统提示。状态与路由层不解析 URL、不持有业务模型或查询、不保存 View 或页面回调；页面构建配置由 SwiftUI 宿主持有。
 
 ## 源码目录
 
@@ -17,22 +17,24 @@
 
 ## 状态与作用域
 
+`Scope` 必须显式遵循 [NavigationScope](State/NavigationScope.swift)。这是继承 `Hashable` 的标记协议，不新增方法或属性，只表示业务命名的导航栈身份；不要求 `CaseIterable`、`Codable` 或布局信息。需要编码快照时，调用方再为 Scope 提供 `Codable`。从旧的 `Scope: Hashable` 接口迁移时，为已有作用域类型补充协议遵循即可，栈身份和快照编码结构保持不变。
+
 ```text
 NavigationRouter<Scope, Destination, AlertRoute>
-└── 根呈现层 NavigationLayer
+└── 根 NavigationLayer
     ├── route → 根／模态入口 Destination + 纯身份 ID
     ├── selectedStack
     ├── stacks[StackID] → NavigationStackState
     │   └── rootDestination / path
     └── presentedContent?（二选一）
-        ├── page → id / destination / style / 下一呈现层
+        ├── page → id / destination / style / 下一 NavigationLayer
         │                                    └── 同样的栈与 presentedContent
         └── alert → id / 业务提示路由（没有栈，也没有下一层）
 ```
 
-每层包含独立栈集合和一个可选的直接呈现内容，页面模态与业务 alert 共用 `NavigationPresentation` 状态。`sheet`／`fullScreen` 是页面节点的只读样式查询。一个层可以只有一个栈，也可以包含多个 Tab 的栈；alert 位于呈现链末端，不能在它上面再叠一个系统 alert。
+导航层（`NavigationLayer`）表示 App 根界面或一次 sheet／fullScreen 打开的整个界面范围。每层包含独立栈集合和一个可选的直接呈现内容，页面模态与业务 alert 共用 `NavigationPresentation` 状态。`sheet`／`fullScreen` 是页面节点的只读样式查询。一个层可以只有一个栈，也可以包含多个 Tab 的栈；alert 位于呈现链末端，不能在它上面再叠一个系统 alert。
 
-每个 `NavigationStackState` 是该栈根身份与 path 的唯一运行时来源，不依赖 Router、呈现层或模态生命周期。层的 `roots`／`paths` 是栈对象的值投影，供快照与兼容 API 使用。整批替换路径和同种容器归属的根快照恢复会更新原栈对象，已有根上下文继续连接真实状态。根层在自带容器与 Core 单栈之间切换时重建栈，使旧栈上下文失效。仅获取上下文不会在快照里增加空路径条目；内部保留“未记录路径”和“显式空路径”的区别，页面读取时两者均为空数组。App 组合原生分栏时可通过根内容闭包使用 App selection 构建详情根页面；该 selection 不进入栈状态，path 仍只有这一份。
+每个 `NavigationStackState` 是该栈根身份与 path 的唯一运行时来源，不依赖 Router、`NavigationLayer` 或模态生命周期。每个已声明栈必须具有非可选 `rootDestination`，`path` 使用非可选数组，空数组表示停留在根页面。层的 `roots`／`paths` 是栈对象的值投影，供快照与兼容 API 使用。整批替换路径和同种容器归属的根快照恢复会更新仍存在的栈对象；删除栈或改变根层容器归属会使旧 Context 失效。获取 Context 不创建栈；未声明栈返回无效 Context，随后注册同 ID 栈也不会使它复活。快照省略空 path，缺失条目与显式空数组统一为空，不再记录路径是否曾被写入。
 
 环境上下文按职责分为两种：
 
@@ -41,10 +43,13 @@ NavigationRouter<Scope, Destination, AlertRoute>
 
 `NavigationStackAccess` 只描述栈是否有效、是否允许修改，不解释阻止操作的原因。Router 作为组合方，用弱捕获的闭包实时检查层与栈的对象身份、待确认请求和关闭事务。这样上下文既不会延长 Router 或已关闭层的生命周期，也不必理解 presentation；栈状态与访问约束是内部类型，页面继续通过现有公开 API 取得上下文。
 
-`NavigationStackID<Scope>` 用 `.primary` 表示 Core 提供的单栈，用 `.scope(scope)` 表示页面提供的命名栈；根层与模态层遵循同一规则。同名栈在不同呈现层中互相隔离。根 Router 的 `selectedScope`、`paths` 和 `rootDestinations` 仅是面向根 Tab 的便利投影；通用访问使用 `rootPresentation.selectedStack` 和 `context(for:)`。
+`NavigationStackID<Scope>` 用 `.primary` 表示默认栈，用 `.scope(scope)` 表示业务命名的栈；根层与模态层遵循同一规则，不要求根层使用 TabView。同名栈在不同 `NavigationLayer` 中互相隔离。根 Router 的 `selectedScope`、`paths` 和 `rootDestinations` 是面向命名栈的便利投影；通用访问使用 `rootPresentation.selectedStack` 和该 Context 的 `context(for:)`。
+
+Router 和快照的 `selectedScope` 都是 `Scope?`：选中 `.primary` 时返回 `nil`，选中 `.scope(scope)` 时返回对应值。Router 写入非 `nil` scope 保留原有直接切换命名栈的语义，写入 `nil` 不改变选择；切换到默认栈需显式设置 `rootPresentation.selectedStack = .primary`，并遵守该 Context 的事务检查。调用方需要适配可选返回值，TabView 的绑定应使用完整的 `selectedStack`，不要用默认 Tab 填补 `nil`。快照编码格式保持不变，完整选择仍存于 `layer.selectedStack`。
 
 | 上下文 | 栈导航 | 模态呈现 |
 | --- | --- | --- |
+| `router.rootPresentation.context(for: .primary)` | 根层默认栈的 path／push／pop | 不提供 |
 | `router.context(for: tab)` | 指定根 Tab 的 path／push／pop | 不提供 |
 | `router.context(for: node)` | 模态 `.primary` 栈的 path／push／pop | 不提供 |
 | `layer.context(for: .scope(tab))` | 当前层指定 Tab 的 path／push／pop | 不提供 |
@@ -71,13 +76,13 @@ NavigationRouter<Scope, Destination, AlertRoute>
 
 两栏、三栏由 App 组合原生 NavigationSplitView 与最后一栏的 Core 详情栈，不是 SDK 提供的容器种类。接法见下文“App 原生分栏组合”。
 
-Router 的 canonical 初始化器与 `present` 使用同形参数：入口 Destination、`initialStack`、以 `NavigationStackID` 为 key 的 `rootDestinations` 和 `paths`。普通单栈可以省略后三项；页面自带容器时由调用方提供初始栈结构。外部容器也可以用带 root closure 的栈宿主，具体配置完整性由该宿主保证。
+Router 的 canonical 初始化器与 `present` 使用同形参数：入口 Destination、`initialStack`、以 `NavigationStackID` 为 key 的 `rootDestinations` 和 `paths`。普通单栈可以省略后三项；页面自带容器时，调用方必须为初始选中栈和所有带路径栈声明根。非法 Router 初始化触发前置条件失败，非法 `present` 或快照恢复返回 false 并保持原状态。需要随后增加命名栈时，先用 Router 的 `setRootDestination` 或 `.setRoot` 请求明确声明根，再获取 Context；push、path 赋值及切换选中栈不会隐式创建栈。
 
-页面不声明允许出现的位置，不再提供入口白名单或尚未实现的 Core 多栏声明。push、path 赋值、栈根替换和恢复不会按页面身份拒绝；普通 push 继续在当前栈直接构建页面，不自动再创建一个呈现层。容器入口的导航结构由它自己的 View 和当前层状态协作提供。App 原生分栏的栏目联动、宽窄布局边界及实际验收见 [#146 任务记录](../../Docs/Tasks/issue-146-navigation-containers/000-plan.md)。
+页面不声明允许出现的位置，不再提供入口白名单或尚未实现的 Core 多栏声明。push、path 赋值、栈根替换和恢复不会按页面身份拒绝；普通 push 继续在当前栈直接构建页面，不自动再创建一个 `NavigationLayer`。容器入口的导航结构由它自己的 View 和当前层状态协作提供。App 原生分栏的栏目联动、宽窄布局边界及实际验收见 [#146 任务记录](../../Docs/Tasks/issue-146-navigation-containers/000-plan.md)。
 
 层入口与内部栈页面有不同职责。主 Tab 容器在根层或模态层作为入口时，取得该层独立的栈集合；在某个栈内部再次嵌套同一个 Tab 容器，会重复绑定正在展示它的栈，形成结构循环。移除数据入口白名单不代表这类循环布局可用；业务 View 仍须保证同一层同一栈只有一个宿主。此处不增加 push 容器的独立栈命名空间。
 
-`NavigationLayerRoute` 为 `.root(destination:)` 或 `.presentation(id:destination:)`，由层状态唯一保存。`presentation.route` / `presentation.destination` 读取本层入口，失效后为 nil；节点的 id/destination 也投影同一个来源。`route.id` 才是缓存、关闭和查找使用的纯身份。push、切 Tab 不改变层入口；同一 destination 再次打开会生成新 UUID。不要把入口 destination 与本栈的 `rootDestination`、path 或当前详情混淆。
+`NavigationLayerRoute` 为 `.root(destination:)` 或 `.presentation(id:destination:)`，由层与其呈现 Context 共享一份可观察记录。`presentation.route` / `presentation.destination` 均非可选，Context 失效或层释放后仍能读取最后的入口；是否允许操作和渲染由 `isActive` 及现有事务检查决定。记录不持有 Router、Layer 或栈，Context 仍弱引用它们。根快照恢复会更新已有根及 scoped Context 的路由；恢复出的同 ID 模态使用新记录，不改变旧 Context 的信息或有效性。`NavigationLayerContent` 只在 Context 有效时构建页面。节点的 id/destination 也投影同一份层记录；`route.id` 才是缓存、关闭和查找使用的纯身份。push、切 Tab 不改变层入口；同一 destination 再次打开会生成新 UUID。不要把入口 destination 与本栈的 `rootDestination`、path 或当前详情混淆。设计与验证见[路由读取与有效性记录](../../Docs/Tasks/issue-145-unified-navigation/016-readable-context-route.md)。
 
 | 要判断的事情 | 依据 |
 | --- | --- |
@@ -92,12 +97,28 @@ Router 的 canonical 初始化器与 `present` 使用同形参数：入口 Desti
 
 `NavigationScopeView` 在栈和每个 push 目标页面上显式注入同一个导航 Context 与对应的呈现 Context，保证 App SplitView 的紧凑布局也能取得正确作用域。业务页面只读取环境，不重复注册路径或自行创建 Context。
 
+### 普通单栈根入口与 Tab 模态
+
+根层使用普通 NavigationStack，随后打开的模态可以使用 TabView。每个导航层独立选择自己的容器结构；根层的结构不会限制后续模态。
+
+```text
+根层：.home → .primary 栈
+└── sheet / full-screen：.tabs → TabView
+    ├── 首页 Tab：.scope(.home) 栈
+    └── 历史 Tab：.scope(.history) 栈
+        └── 还可继续呈现普通单栈模态或另一个 Tab 模态
+```
+
+下面是这个组合的完整示例。`AppTab` 为导航树中可能出现的 Tab 命名，本例仅在 Tab 模态中使用；根 Router 以 `.home` 初始化，默认选择 `.primary`。只有 `.tabs` 声明 `providesNavigationContainer == true`，由 `DemoTabs` 构建 TabView；其他路由由 Core 提供单栈。
+
+`DemoTabs` 从环境取得当前模态层的呈现 Context，绑定该层的 `selectedStack` 并取得各 Tab 栈。根 View 只安装一次 `navigationHost`，Tab 模态复用同一配置和 Core 为它创建的呈现宿主。
+
 ```swift
 import NavigationCore
 import SwiftUI
 
-enum AppTab: String, Codable, Hashable { case home, history }
-enum AppRoute: Codable, NavigationDestination {
+nonisolated enum AppTab: String, Codable, NavigationScope { case home, history }
+nonisolated enum AppRoute: Codable, NavigationDestination {
     case home, history, detail(String), tabs
 
     var providesNavigationContainer: Bool { self == .tabs }
@@ -134,15 +155,14 @@ struct DemoConfiguration: @MainActor NavigationHostConfiguration {
     func alertContent(for route: AppAlert) -> NavigationAlertContent<AppAlert.Action>? {
         NavigationAlertContent(
             title: "提示", message: "这是一个业务提示。",
-            buttons: [NavigationAlertButton("知道了", action: .acknowledge)]
+            firstButton: NavigationAlertButton("知道了", action: .acknowledge)
         )
     }
 }
 
 struct DemoRoot: View {
     @State private var router = NavigationRouter<AppTab, AppRoute, AppAlert>(
-        rootDestination: .tabs, initialStack: .scope(.home),
-        rootDestinations: [.scope(.home): .home, .scope(.history): .history]
+        rootDestination: .home
     )
 
     var body: some View {
@@ -176,10 +196,17 @@ struct DemoPage: View {
         List {
             NavigationLink("资料", value: AppRoute.detail("资料"))
             Button("下一页") { navigation.push(.detail("下一页")) }
+            Button("返回上一页") { navigation.pop() }
+                .disabled(navigation.path.isEmpty)
             Button("弹窗") { presentation.present(.sheet(.detail("弹窗"))) }
             Button("全屏") { presentation.present(.fullScreen(.detail("全屏"))) }
             Button("多 Tab 弹窗") {
                 presentation.present(.tabs, initialStack: .scope(.home), rootDestinations: [
+                    .scope(.home): .home, .scope(.history): .history
+                ])
+            }
+            Button("多 Tab 全屏") {
+                presentation.present(.tabs, style: .fullScreen, initialStack: .scope(.history), rootDestinations: [
                     .scope(.home): .home, .scope(.history): .history
                 ])
             }
@@ -197,27 +224,75 @@ struct DemoPage: View {
 #Preview { DemoRoot() }
 ```
 
-根和模态复用 `DemoTabs`，各自从本层栈状态取得根 Destination。多 Tab 模态不再挂 `navigationHost`：框架已为本层提供唯一递归呈现宿主。普通根入口与普通模态均以入口 Destination 初始化 `.primary` 栈根。最底层也可以直接使用 `NavigationRouter<AppTab, AppRoute, AppAlert>(rootDestination: .home)`。
+点击根页面的“多 Tab 弹窗”或“多 Tab 全屏”，新模态才构建 `DemoTabs`。每个 Tab 使用该模态层的独立 NavigationStack；在其中切换 Tab、push 或继续打开子模态，都不会改变底下根层的 `.primary` 选择和路径。关闭 Tab 模态后回到根栈原来的页面。
 
-`rootDestinations` 保存各栈的根页面身份，`setRootDestination` 清空相应 path，但不改变层入口，替换后的根状态可以保存并恢复。使用路由根页面的栈采用无 root 闭包的 `NavigationScopeView(stack:presentation:)`，从状态读取根路由，直接调用共享页面构建方法。带 `root` 闭包的初始化器用于 App selection 决定详情根内容的原生分栏，也可用于独立 Preview／测试；它不会把 App selection 转成 Core 的根路由或快照。未提供 root 闭包的有效 Context 缺少已声明栈根属于接入错误；关闭过程中的失效 Context 不再按路由构建根页面。
+`router.selectedScope` 与 `router.snapshot.selectedScope` 只投影**根层**的选择。本例中即使 Tab 模态选中了历史，它们仍为 `nil`；模态选择应读取该模态的 `presentation.selectedStack`，不能从根 Router 取代它。
+
+持有 Router 的协调器可分别取得根栈和模态层。例如，下面在普通根栈已有 push 页面时打开 Tab 模态：
+
+```swift
+let router = NavigationRouter<AppTab, AppRoute, AppAlert>(rootDestination: .home)
+let rootNavigation = router.rootPresentation.context(for: .primary)
+rootNavigation.push(.detail("根详情"))
+router.rootPresentation.present(.tabs, initialStack: .scope(.home), rootDestinations: [
+    .scope(.home): .home, .scope(.history): .history
+])
+
+if let node = router.presentedNode {
+    let modal = router.presentationContext(for: node)
+    modal.selectedStack = .scope(.history)
+    modal.context(for: .scope(.history)).push(.detail("模态详情"))
+
+    assert(modal.selectedStack == .scope(.history))
+    assert(rootNavigation.path == [.detail("根详情")])
+    assert(router.rootPresentation.selectedStack == .primary)
+    assert(router.selectedScope == nil)
+    assert(router.snapshot.selectedScope == nil)
+}
+```
+
+只有整棵导航树都不需要命名栈时，才适合用 `Never` 作为 Scope。根层不用 TabView，并不意味着 Scope 应为 `Never`。
+
+### 根层也使用 TabView 的变体
+
+沿用上面的 `AppTab`、`AppRoute`、`DemoConfiguration` 和页面，只需改变根层初始化：
+
+```swift
+struct DemoTabRoot: View {
+    @State private var router = NavigationRouter<AppTab, AppRoute, AppAlert>(
+        rootDestination: .tabs, initialStack: .scope(.home),
+        rootDestinations: [.scope(.home): .home, .scope(.history): .history]
+    )
+
+    var body: some View {
+        NavigationRootView(context: router.rootPresentation)
+            .navigationHost(context: router.rootPresentation, configuration: DemoConfiguration())
+    }
+}
+```
+
+此时根层与 Tab 模态复用 `DemoTabs`，各自从所在层取得选择、栈根和路径。两种根入口共用相同的宿主与模态机制。
+
+`rootDestinations` 保存各栈的根页面身份，`setRootDestination` 接收非可选 Destination，清空相应 path，但不改变层入口；替换后的根状态可以保存并恢复。正式页面采用 `NavigationScopeView(stack:presentation:)`，从状态读取根路由，直接调用共享页面构建方法。带 `root` 闭包的初始化器保留给独立 Preview／测试覆盖显示内容，仍要求栈已声明根，覆盖内容不会改变快照。`NavigationContext.rootDestination` 仍返回可选值，用 nil 表示 Context 未声明或已失效；有效栈的根本身不可空。
 
 ## App 原生分栏组合
 
-App 自行声明两栏或三栏 `NavigationSplitView`，管理前栏 selection、分类与对象的业务联动、`columnVisibility`、`preferredCompactColumn` 及系统写回。前面的列表栏没有独立 push 栈，最后一栏通过现有 `NavigationScopeView(context:presentation:root:)` 提供唯一的 detail `NavigationStack`，并继承 `navigationHost` 配置来构建 push Destination。
+App 自行声明两栏或三栏 `NavigationSplitView`，管理分类与对象的业务联动、`columnVisibility`、`preferredCompactColumn` 及系统写回。整个容器可以由 `.debugSplit(layout:)` 这样的 Destination 构建；最后一栏的空态和详情使用独立根 Destination。前面的列表栏没有独立 push 栈，最后一栏通过 `NavigationScopeView(stack:presentation:)` 提供唯一的 detail `NavigationStack`，根页和 push 页面均由同一个 `navigationHost` 配置构建。
 
 | 状态或动作 | Owner 与接入方式 |
 | --- | --- |
-| 分类、对象选择及空详情 | App；由 selection 构建 `NavigationScopeView` 的根内容，根内容不计入 path |
+| 分类与选择策略 | App；明确切换分类时保留还是清空详情 |
+| 当前对象及空详情 | App 定义根 Destination，例如 `.debugSplitDetail(item:level: 0)`／`.debugSplitEmpty`；selection 从详情根投影，根不计入 path |
 | 详情 push、pop、系统返回 | SDK 的一个 `NavigationContext` 与 path；根页及 push 后代共享它 |
 | 前栏发起详情操作 | App 显式传入详情 Context 或业务动作，不依赖前栏环境猜测目标 |
 | 宽窄布局与显示哪一栏 | App 持有原生布局 Binding，并接收系统写回；不映射为 `selectedStack` |
 | 模态、alert、离开确认 | 既有 `NavigationPresentationContext` 与同层唯一 presentation host |
 
-不同对象的选择动作先调用 `detailNavigation.setPath([])`，返回 true 后同步修改 App selection；返回 false 时保留选择。重复选择同一对象保留详情 path，清空选择同时清空 path。切换分类时由业务动作显式选择保留详情及其 path，或一起清空。这里的 `setPath(_:) -> Bool` 只报告本栈路径操作是否被接受；它不拥有 selection，不构成通用容器事务。App 不通过多个 `onChange` 相互同步选择与路径。
+不同对象的选择动作调用 `detailNavigation.setRootDestination(.debugSplitDetail(item: item, level: 0))`，同时换根并清空旧 path。清空选择使用 `.debugSplitEmpty`，无需 nil 根或伪造对象。重复选择同一对象不换根，保留 path；若该动作还要更新 App 布局，可先用 `setPath(currentPath)` 检查是否接受操作。切换分类时由业务动作明确保留详情及其 path，或换为空态根。仅在栈操作返回 true 后更新分类和布局，返回 false 时保持界面。App 不另存当前对象，也不通过多个 `onChange` 相互同步选择与路径。
 
 容器作为 sheet／full-screen 入口时声明 `providesNavigationContainer == true`，宿主跳过外层包栈，容器只在最后一栏创建详情栈。继承当前树的 `navigationHost` 配置和本层呈现 Context，不再挂第二个根呈现宿主；父层、模态层与其他 Tab 的详情 Context 彼此隔离。前栏没有独立栈，因此不把它们注册为多个互斥 Tab，也不引入通用容器 Context、列类型或多栏快照。
 
-外部请求沿用既有确认、业务 alert 排队和真实 dismiss 完成流程。等待确认、仅收到批准或等待关闭期间不提前修改 App selection；取消保持原选择、path 与呈现状态，批准的请求实际应用时再同步业务选择。SDK 快照不包含 selection、分类或布局 Binding，不承诺单独恢复详情 path 就能重建完整分栏页面。
+外部请求沿用既有确认、业务 alert 排队和真实 dismiss 完成流程。等待确认、仅收到批准或等待关闭期间不提前修改根路由及外部业务选择；取消保持原选择、path 与呈现状态，批准的请求实际应用时再同步业务选择。SDK 快照保存详情根 Destination 与 path，因此可以恢复路由所表达的对象；分类、保留策略及布局 Binding 仍由 App 管理，不承诺仅靠 SDK 快照恢复完整分栏界面。App 的 DEBUG 路由继续禁止持久恢复，测试中直接恢复 Core 快照只验证结构能力。
 
 本轮通过固定小数据的 DEBUG 普通／两栏／三栏入口验证组合，正式历史 Tab 保持既有布局。原生折叠、深 path 下的系统返回和布局写回需要独立的 Simulator 交互证据；上述 API 接法不等于这些行为已通过验收。完整方案见 [Issue #146 任务记录](../../Docs/Tasks/issue-146-navigation-containers/000-plan.md)，项目调用规则见[导航规范 NAV-07](../../Docs/Conventions/Navigation.md#nav-07--app-原生分栏与详情栈组合)。
 
@@ -247,7 +322,7 @@ router.submit(
 
 没有模态时立即应用并返回 `.applied`。有模态时返回 `.awaitingConfirmation`，保留全部 path 和模态，`pendingConfirmation` 保存请求及唯一 ID。**必须为宿主提供 `confirmationContent` 或自行处理 pendingConfirmation**；Core 不提供默认业务文案。
 
-页面若需要业务自己的离开决策，可不提供默认 `confirmationContent`，直接观察呈现环境的 `confirmation`，完成保存或确认后在呈现 context 调用 `confirmNavigation(id:)`／`cancelNavigation(id:)`。只有当前应处理请求的最前呈现层会读到确认数据，同层多个 Tab 共享该数据；由容器协调一次提示，避免每个 Tab 重复处理。根可通过 `pendingConfirmation` 管理整笔请求。不要同时启用默认提示和页面自己的提示。
+页面若需要业务自己的离开决策，可不提供默认 `confirmationContent`，直接观察呈现环境的 `confirmation`，完成保存或确认后在呈现 context 调用 `confirmNavigation(id:)`／`cancelNavigation(id:)`。只有当前应处理请求的最前方的 `NavigationLayer` 会读到确认数据，同层多个 Tab 共享该数据；由容器协调一次提示，避免每个 Tab 重复处理。根可通过 `pendingConfirmation` 管理整笔请求。不要同时启用默认提示和页面自己的提示。
 
 默认宿主只在最上层模态展示提示。取消保留页面；确认调用 `confirmNavigation(id:)`，先关闭根模态树，返回转场前的页面结构，直到根宿主报告 `onDismiss` 才应用请求。子模态的关闭通知不能提前完成全局跳转。
 
@@ -256,6 +331,28 @@ router.submit(
 提示宿主使用 `UIAlertController`，将按钮动作与真正的关闭完成分开。新确认 ID 会先关闭旧提示再展示新提示，旧 ID 不能批准新请求。`dismiss(animated:completion:)` 的 completion 在 `viewDidDisappear` 之后调用，框架以此推进流程，不使用固定延时。旧的 SwiftUI `alert(item:content:)` 确认宿主已移除；业务页面也不直接挂另一份 alert。依据见 [Apple 的关闭完成说明](https://developer.apple.com/documentation/uikit/uiviewcontroller/dismiss(animated:completion:))。
 
 `submit` 默认 `confirmIfPresented: false`，供业务已经批准的导航使用；有模态时返回 `.deferredUntilPresentationDismisses`，关闭期间以最新的已批准请求为准。自定义宿主必须在真实根关闭完成后调用 `presentationDidDismiss(isRoot: true)`；使用内置宿主则不必手动通知。
+
+## 提示按钮的构造约束
+
+`NavigationAlertContent` 使用必填 `firstButton` 保证至少存在一个普通／危险按钮，其他按钮通过 `additionalButtons` 按顺序提供。集合以 `Action` 为身份：相同 Action 后写覆盖先写的标题和样式，但保留首次出现的位置，不会因为重复配置而触发 `precondition`。构造完成后的按钮集合只读。
+
+取消按钮使用独立的 `NavigationAlertCancelButton` 和单个可选 `cancelButton` 参数。普通按钮的 `Role` 只有 `.standard`、`.destructive`，不能把第二个取消按钮放入普通集合。只有取消按钮的提示使用 `init(title:message:cancelButton:)`；两个初始化入口都不能构造没有按钮的提示。
+
+```swift
+enum EditAction: Hashable { case save, delete, cancel }
+
+NavigationAlertContent(
+    title: "处理资料", message: "选择操作",
+    firstButton: NavigationAlertButton("保存", action: EditAction.save),
+    additionalButtons: [
+        NavigationAlertButton("删除", action: .delete, role: .destructive),
+        NavigationAlertButton("保存修改", action: .save)
+    ],
+    cancelButton: NavigationAlertCancelButton("取消", action: .cancel)
+)
+```
+
+普通集合的结果为“保存修改、删除”。取消按钮独立置于宿主按钮列表的首位，不参与普通集合的 Action 覆盖，允许与普通按钮产生相同业务动作。宿主使用同一份展开结果构建显示内容和点击索引映射，保持取消、危险样式及动作回传一致。旧数组调用需迁移为 `firstButton`／`additionalButtons`，原 `.cancel` 按钮需移至 `cancelButton`。
 
 ## 业务 alert 期间收到新请求
 
@@ -275,6 +372,8 @@ router.submit(.push(.detail("链接目标"), on: .history), confirmIfPresented: 
 业务 alert 的“确定”只处理业务动作，不表示批准等待中的 Deep Link。按钮本身明确要求导航时，可以在 `handleAlertAction` 里 `submit` 已批准的请求，它也会等动作和系统关闭完成。请求之间采用 latest-wins，不复用之前请求的确认授权。
 
 页面的关闭请求也会等活动 alert／业务动作完成，避免移除仍负责展示提示的页面。关闭后丢弃该层排队的提示，旧 Context 和旧回调不能控制新层。`router.alertRoutes` 可查询当前与排队中的业务路由，供 App 清理临时消息数据；它不包含导航确认。
+
+Router 内部由一个 `NavigationCoordinationState` 管理请求与延迟关闭意图。`deferredRequest`、`pendingConfirmation`、`requestWaitingForAlert` 是只读投影：已接受 A、等待确认 B 可以并存，取消 B 不撤销 A；alert 后请求将目标与确认策略保存在同一个枚举值中，全部关闭覆盖指定节点集合。转换只管理协调意图，真实模态关闭和 alert 会话仍以 `NavigationLayer` 的生命周期为准，不重复保存。方案与回归范围见[请求协调状态](../../Docs/Tasks/issue-145-unified-navigation/015-coordination-state.md)。
 
 内部 `NavigationAlertSession` 以单个枚举记录生命周期：`presented → dismissing → handlingCompletion → nil`。`presented` 仅表示会话已占用；`isConfirmation` 独立表示提示种类。宿主通过 `alertWillDismiss` 从 `presented` 开始关闭，在真实 UIKit completion 中调用 `beginAlertCompletion` 从 `dismissing` 取得一次业务动作处理权，等待动作结束后才调用 `alertDidDismiss` 从 `handlingCompletion` 释放会话。各入口同时核对会话 ID 和 Context 有效性；提前、重复或过期回调被忽略，不能跳过阶段、使状态倒退或提前恢复队列。无按钮选择时也遵循同一顺序。
 

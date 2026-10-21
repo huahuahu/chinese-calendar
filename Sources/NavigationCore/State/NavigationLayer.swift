@@ -1,54 +1,54 @@
 import Observation
 
-/// 保存一个呈现层的导航状态。App 根界面和每个模态页面各有自己的一层。
+/// 保存 App 根界面或一个模态页面的导航状态；它们各自拥有独立的 NavigationLayer。
 ///
 /// 一层可以包含多个导航栈，例如多个 Tab，但同一时刻只能直接展示一个页面模态或业务 alert。
 /// 页面模态有自己的层，可以继续打开下一层；alert 没有下一层，后续提示先排队。
 /// Router 和模态节点持有这些状态，页面通过对应的 Context 操作它们。
 @MainActor
 @Observable
-final class NavigationLayer<Scope: Hashable, Destination: NavigationDestination, AlertRoute: NavigationAlertRoute> {
-    var route: NavigationLayerRoute<Destination>
+final class NavigationLayer<
+    Scope: NavigationScope,
+    Destination: NavigationDestination,
+    AlertRoute: NavigationAlertRoute
+> {
+    let routeState: NavigationLayerRouteState<Destination>
+
+    var route: NavigationLayerRoute<Destination> {
+        get { routeState.route }
+        set { routeState.route = newValue }
+    }
+
     var id: NavigationLayerID {
         route.id
     }
 
     /// 当前选中的导航栈。切换 Tab 时，其他栈已经 push 的页面会保留。
     var selectedStack: NavigationStackID<Scope>
-    /// 当前呈现层拥有的导航栈；每个栈分别保存根页面的路由数据和 push 路径。
+    /// 当前 NavigationLayer 拥有的导航栈；每个栈分别保存栈底页面的 Destination 和 push 路径。
     private(set) var stacks: [NavigationStackID<Scope>: NavigationStackState<Destination>] = [:]
 
-    /// 读取时汇总各栈的根页面路由数据，赋值时更新各栈中保存的数据。
-    /// 这里不另存一份字典；新值中没有的栈会清除其根页面路由数据。
+    /// 汇总已声明栈的栈底页面；不另存一份根路由字典。
     var roots: [NavigationStackID<Scope>: Destination] {
-        get { stacks.compactMapValues(\.rootDestination) }
-        set {
-            for (id, state) in stacks {
-                state.rootDestination = newValue[id]
-            }
-            for (id, root) in newValue where stacks[id] == nil {
-                stack(for: id).rootDestination = root
-            }
-        }
+        stacks.mapValues(\.rootDestination)
     }
 
     /// 读取时汇总各栈的 push 路径，赋值时更新各栈中保存的路径。
     /// 整体替换时保留原来的栈对象，让页面已持有的 Context 继续读写它们。
     var paths: [NavigationStackID<Scope>: [Destination]] {
-        get { stacks.compactMapValues(\.path) }
+        get { stacks.mapValues(\.path).filter { !$0.value.isEmpty } }
         set {
+            // 路径不能隐式创建无根栈；非法整批替换保持原状态。
+            guard newValue.keys.allSatisfy({ stacks[$0] != nil }) else { return }
             for (id, state) in stacks {
-                state.path = newValue[id]
-            }
-            for (id, path) in newValue where stacks[id] == nil {
-                stack(for: id).path = path
+                state.path = newValue[id] ?? []
             }
         }
     }
 
     /// 页面模态和业务 alert 共用这一份呈现状态。
     var presentedContent: NavigationPresentation<Scope, Destination, AlertRoute>?
-    /// 当前 alert 结束后依次处理的数据请求，不在已有 alert 上叠加提示。
+    /// 已接受但暂不能展示的页面模态或业务提示；允许继续呈现时按入队顺序处理。
     var queuedPresentations: [NavigationPresentation<Scope, Destination, AlertRoute>] = []
     /// 系统已开始展示或正在关闭的 alert；业务动作处理完成后才释放这次会话。
     var alertSession: NavigationAlertSession?
@@ -79,9 +79,9 @@ final class NavigationLayer<Scope: Hashable, Destination: NavigationDestination,
         roots: [NavigationStackID<Scope>: Destination] = [:],
         paths: [NavigationStackID<Scope>: [Destination]] = [:]
     ) {
-        self.route = route
+        routeState = NavigationLayerRouteState(route: route)
         self.selectedStack = selectedStack
-        self.roots = roots
+        stacks = roots.mapValues { NavigationStackState(rootDestination: $0) }
         self.paths = paths
     }
 
@@ -91,8 +91,10 @@ final class NavigationLayer<Scope: Hashable, Destination: NavigationDestination,
         snapshot: NavigationLayerSnapshot<Scope, Destination, AlertRoute>
     ) {
         self.init(
-            route: route, selectedStack: snapshot.selectedStack,
-            roots: snapshot.rootDestinations, paths: snapshot.paths
+            route: route,
+            selectedStack: snapshot.selectedStack,
+            roots: snapshot.rootDestinations,
+            paths: snapshot.paths
         )
         presentedContent = snapshot.presentation?.makePresentation()
     }
@@ -104,21 +106,31 @@ final class NavigationLayer<Scope: Hashable, Destination: NavigationDestination,
         )
     }
 
-    /// 同一种承载结构保留栈对象；切换容器归属时重建栈，使旧宿主的 Context 失效。
+    /// 默认更新已有栈对象，让页面持有的 Context 继续连接它们。
+    /// 从 Core 单栈切换为页面自带容器，或反向切换时，调用方传入 resetStacks = true，
+    /// 重建全部栈对象，使旧宿主的栈 Context 失效。
     func restore(_ snapshot: NavigationLayerSnapshot<Scope, Destination, AlertRoute>, resetStacks: Bool = false) {
         if resetStacks { stacks.removeAll() }
         selectedStack = snapshot.selectedStack
-        roots = snapshot.rootDestinations
+        stacks = stacks.filter { snapshot.rootDestinations[$0.key] != nil }
+        for (id, root) in snapshot.rootDestinations {
+            if let state = stacks[id] {
+                state.rootDestination = root
+            } else {
+                stacks[id] = NavigationStackState(rootDestination: root)
+            }
+        }
         paths = snapshot.paths
         presentedContent = snapshot.presentation?.makePresentation()
     }
 
-    /// 获取指定栈；第一次访问时创建，后续访问复用同一个对象。
-    /// 仅创建栈对象不会向 roots 或 paths 中添加数据，生成的快照也不会因此改变。
-    func stack(for id: NavigationStackID<Scope>) -> NavigationStackState<Destination> {
-        if let existing = stacks[id] { return existing }
-        let state = NavigationStackState<Destination>()
-        stacks[id] = state
-        return state
+    /// 显式声明或替换栈根，并清空旧路径；仅获取 Context 不会创建栈。
+    func setRoot(_ destination: Destination, for id: NavigationStackID<Scope>) {
+        if let state = stacks[id] {
+            state.rootDestination = destination
+            state.path = []
+        } else {
+            stacks[id] = NavigationStackState(rootDestination: destination)
+        }
     }
 }

@@ -1,11 +1,11 @@
 import Foundation
 import Observation
 
-/// 管理整个 App 的导航状态，包括根 Tab、各层模态，以及外部导航请求的执行顺序。
+/// 管理一棵导航树的状态，包括 App 根层的各栈、逐层打开的模态，以及外部导航请求的执行顺序。
 ///
 /// Scope 用来命名导航栈，通常对应 Tab；Destination 是构建页面所需的路由数据。
 /// AlertRoute 是业务提示的数据，包含按钮动作的类型，但不保存 View 或业务闭包。
-/// 每个呈现层保存自己的栈和子模态，页面分别通过 NavigationContext 和
+/// 每个 NavigationLayer 保存自己的栈和子模态，页面分别通过 NavigationContext 和
 /// NavigationPresentationContext 操作它们。业务数据、URL 解析和 View 创建由 App 负责。
 ///
 /// 直接修改根栈的方法不会自动提示用户或关闭模态。
@@ -14,27 +14,35 @@ import Observation
 @MainActor
 @Observable
 public final class NavigationRouter<
-    Scope: Hashable,
+    Scope: NavigationScope,
     Destination: NavigationDestination,
     AlertRoute: NavigationAlertRoute
 > {
     let rootLayer: NavigationLayer<Scope, Destination, AlertRoute>
+    var coordinationState = NavigationCoordinationState<Scope, Destination>()
     /// 已经接受、正在等待根模态关闭后执行的请求。等待期间，以最新接受的请求为准。
-    public private(set) var deferredRequest: NavigationRequest<Scope, Destination>?
+    public var deferredRequest: NavigationRequest<Scope, Destination>? {
+        coordinationState.deferredRequest
+    }
+
     /// 等待用户确认的请求。即使模态自行关闭，这条请求仍需用户批准后才能执行。
-    public internal(set) var pendingConfirmation: NavigationConfirmation<Scope, Destination>?
+    public var pendingConfirmation: NavigationConfirmation<Scope, Destination>? {
+        coordinationState.pendingConfirmation
+    }
+
     /// alert 期间收到的最新导航请求，保留它原本是否要求离开确认。
-    public internal(set) var requestWaitingForAlert: NavigationRequest<Scope, Destination>?
-    var waitingRequestNeedsConfirmation = false
-    var dismissalsWaitingForAlert: Set<UUID> = []
-    var dismissAllWaitingForAlert = false
+    public var requestWaitingForAlert: NavigationRequest<Scope, Destination>? {
+        coordinationState.requestWaitingForAlert
+    }
+
     // 缓存 Context，让页面多次获取时使用同一个对象。
     // 路径保存在各栈对象中，模态保存在所属层中。
     @ObservationIgnored var contexts: [NavigationContextID<Scope>: NavigationContext<Scope, Destination>] = [:]
     @ObservationIgnored var presentationContexts:
         [NavigationLayerID: NavigationPresentationContext<Scope, Destination, AlertRoute>] = [:]
 
-    /// 创建根层。普通入口使用 primary 栈，外部容器自行指定各栈和初始选择。
+    /// 创建 App 根层。Core 自动提供 NavigationStack 时使用 primary 栈；
+    /// 页面自带 TabView／SplitView 等容器时，由 App 指定各栈及初始选择。
     /// 根层与 present 创建的模态层采用相同的初始化规则。
     public init(
         rootDestination: Destination,
@@ -45,7 +53,7 @@ public final class NavigationRouter<
         guard let snapshot = NavigationLayerSnapshot<Scope, Destination, AlertRoute>(
             destination: rootDestination, initialStack: initialStack,
             rootDestinations: rootDestinations, paths: paths
-        ) else { preconditionFailure("A Core navigation layer requires its primary stack") }
+        ) else { preconditionFailure("Every selected or routed navigation stack requires a root Destination") }
         rootLayer = NavigationLayer(route: .root(destination: rootDestination), snapshot: snapshot)
     }
 
@@ -63,22 +71,22 @@ public final class NavigationRouter<
         )
     }
 
-    /// App 根界面当前选中的 Tab 或命名栈，可绑定根 TabView 的 selection。
-    /// 直接赋值只切换根 Tab，保留各栈的路径，也不会关闭模态或提示用户确认。
-    public var selectedScope: Scope {
+    /// 根层当前选中命名栈的 scope；选中 primary 时返回 nil。
+    /// 写入非 nil 值只切换命名栈，保留路径和模态；写入 nil 不改变选择。
+    /// 完整栈身份及 primary 的切换使用 rootPresentation.selectedStack。
+    public var selectedScope: Scope? {
         get {
-            guard case let .scope(scope) = rootLayer.selectedStack else {
-                preconditionFailure("Root navigation requires an explicit scope")
-            }
+            guard case let .scope(scope) = rootLayer.selectedStack else { return nil }
             return scope
         }
         set {
-            guard rootLayer.route.destination.providesNavigationContainer else { return }
+            guard let newValue, rootLayer.route.destination.providesNavigationContainer,
+                  rootLayer.stacks[.scope(newValue)] != nil else { return }
             rootLayer.selectedStack = .scope(newValue)
         }
     }
 
-    /// 汇总 App 根层各栈保存的根页面路由数据，不包含模态内部的数据。
+    /// 汇总 App 根层各命名栈的栈底页面 Destination，不包含 primary 栈或模态内部的数据。
     public var rootDestinations: [Scope: Destination] {
         Dictionary(uniqueKeysWithValues: rootLayer.roots.compactMap { key, value in
             guard case let .scope(scope) = key else { return nil }
@@ -86,7 +94,9 @@ public final class NavigationRouter<
         })
     }
 
-    /// App 根层各栈的 push 路径。读取时汇总各栈的数据，赋值时替换整个根层的路径集合。
+    /// 读取 App 根层各命名栈的 push 路径，不包含 primary 栈。
+    /// 页面自带容器时，赋值会替换根层的完整路径集合，连同未列出的栈路径一起清除；
+    /// Core 自动提供单栈时忽略赋值，操作 primary 路径应使用 rootPresentation.context(for: .primary)。
     /// 这是直接修改数据的入口，等待确认或关闭动画时也能写入；需要协调这些流程时使用 submit。
     public var paths: [Scope: [Destination]] {
         get {
@@ -121,57 +131,57 @@ public final class NavigationRouter<
         rootLayer.presentedContent != nil
     }
 
-    /// 根模态已经开始关闭，但界面容器还没有通知关闭动画完成。
+    /// App 根层直接打开的模态已经开始关闭，但界面容器还没有通知关闭动画完成。
     /// 等待中的外部跳转需要等这个阶段结束后再执行。
     public var isAwaitingPresentationDismissal: Bool {
         rootLayer.isAwaitingDismissal
     }
 
-    /// App 根层选中栈的最后一个 push 页面；没有 push 页面时返回它的根页面路由数据。
+    /// App 根层选中栈的最后一个 push 页面；没有 push 页面时返回它记录的栈底页面 Destination。
     /// 即使有模态覆盖，查询的仍然是根层选中的栈。
     public var selectedDestination: Destination? {
         let state = rootLayer.stacks[rootLayer.selectedStack]
-        return state?.path?.last ?? state?.rootDestination
+        return state?.path.last ?? state?.rootDestination
     }
 
-    /// 读取指定根栈的根页面路由数据。静态根页可能没有保存这项数据，此时返回 nil。
+    /// 读取 App 根层指定命名栈的栈底页面 Destination。
+    /// 未声明该栈时返回 nil。
     public func rootDestination(for scope: Scope) -> Destination? {
         rootLayer.stacks[.scope(scope)]?.rootDestination
     }
 
-    /// 更新或清除指定根栈的根页面路由数据，并清空该栈的 push 路径，保留当前 Tab 选择。
-    /// App 的根页面构建闭包需要读取这项数据，才能据此更新界面。
-    public func setRootDestination(_ destination: Destination?, for scope: Scope) {
+    /// 声明或替换 App 根层指定命名栈的栈底页面，并清空该栈的 push 路径。
+    /// 不切换选中的栈；空详情使用明确的空态 Destination。
+    public func setRootDestination(_ destination: Destination, for scope: Scope) {
         guard rootLayer.route.destination.providesNavigationContainer else { return }
-        let state = rootLayer.stack(for: .scope(scope))
-        state.rootDestination = destination
-        state.path = []
+        rootLayer.setRoot(destination, for: .scope(scope))
     }
 
-    /// 读取指定根栈已经 push 的页面列表；尚未记录路径时返回空数组。
+    /// 读取 App 根层指定命名栈已经 push 的页面列表；尚未记录路径时返回空数组。
     public func path(for scope: Scope) -> [Destination] {
         rootLayer.stacks[.scope(scope)]?.path ?? []
     }
 
-    /// 替换指定根栈的 push 路径，保留根页面路由数据、当前 Tab 选择和模态。
+    /// 替换 App 根层指定命名栈的 push 路径，保留栈底页面、选中的栈和模态。
     public func setPath(_ path: [Destination], for scope: Scope) {
         guard rootLayer.route.destination.providesNavigationContainer else { return }
-        rootLayer.stack(for: .scope(scope)).path = path
+        rootLayer.stacks[.scope(scope)]?.path = path
     }
 
-    /// 读取指定根栈最后一个 push 页面的路由数据；没有 push 页面时返回根页面路由数据。
+    /// 读取 App 根层指定命名栈的最后一个 push 页面；没有 push 页面时返回其栈底页面 Destination。
     public func currentDestination(on scope: Scope) -> Destination? {
         path(for: scope).last ?? rootDestination(for: scope)
     }
 
-    /// 切换到指定根 Tab，再 push 一个页面；省略 scope 时在当前根 Tab 中 push。
+    /// 选中 App 根层的指定命名栈，再 push 一个页面；省略 scope 时在根层当前选中的栈中 push。
+    /// 当前选中的是 primary 栈时也可省略 scope，不要求根界面使用 TabView。
     /// 此方法会保留已经打开的模态。需要先确认并关闭模态时，向 submit 提交 .push 请求。
     public func push(_ destination: Destination, on scope: Scope? = nil) {
         let targetStack = scope.map(NavigationStackID.scope) ?? rootLayer.selectedStack
-        guard rootLayer.route.destination.providesNavigationContainer || targetStack == .primary else { return }
+        guard rootLayer.route.destination.providesNavigationContainer || targetStack == .primary,
+              let state = rootLayer.stacks[targetStack] else { return }
         rootLayer.selectedStack = targetStack
-        let state = rootLayer.stack(for: targetStack)
-        state.path = (state.path ?? []) + [destination]
+        state.path.append(destination)
     }
 
     /// 从当前最上层模态继续打开 sheet；没有模态时从 App 根层打开。
@@ -223,34 +233,28 @@ public final class NavigationRouter<
     ) -> NavigationRequestResult {
         if !rootLayer.route.destination.providesNavigationContainer {
             guard request.stack == .primary else { return .rejected }
-            if case .setRoot(nil, _) = request { return .rejected }
         }
-        if hasBusinessAlert || (hasActiveAlert && !confirmIfPresented) {
-            requestWaitingForAlert = request
-            waitingRequestNeedsConfirmation = confirmIfPresented
-            return .deferredUntilAlertDismisses
+        // 换根请求显式提供了根，可以声明新栈；其他请求不得创建无根栈。
+        switch request {
+        case .setRoot: break
+        default:
+            guard rootLayer.stacks[request.stack] != nil else { return .rejected }
         }
-        // 新请求取代仍未批准的旧请求；若旧请求已获批准，新请求的确认不能撤销它。
-        if !confirmIfPresented || waitingRequestNeedsConfirmation {
-            requestWaitingForAlert = nil
-            waitingRequestNeedsConfirmation = false
-        }
-        let needsConfirmation = hasActivePresentation || isAwaitingPresentationDismissal ||
-            pendingConfirmation != nil || hasActiveAlert
-        if confirmIfPresented, needsConfirmation {
-            if pendingConfirmation?.request != request {
-                pendingConfirmation = NavigationConfirmation(request: request)
-            }
-            return .awaitingConfirmation
-        }
-        guard !hasActivePresentation, !isAwaitingPresentationDismissal else {
-            deferredRequest = request
+        let result = coordinationState.submit(
+            request, confirmIfPresented: confirmIfPresented,
+            alert: hasBusinessAlert ? .business : (hasActiveAlert ? .confirmation : .none),
+            hasPresentation: hasActivePresentation || isAwaitingPresentationDismissal
+        )
+        switch result {
+        case .deferredUntilPresentationDismisses:
             rootLayer.isAwaitingDismissal = true
             dismissAllPresentations()
-            return .deferredUntilPresentationDismisses
+        case .applied:
+            apply(request)
+        case .rejected, .awaitingConfirmation, .deferredUntilAlertDismisses:
+            break
         }
-        apply(request)
-        return .applied
+        return result
     }
 
     /// 根模态的关闭动画完成后，执行最后一条已接受、正在等待关闭的请求。
@@ -263,19 +267,18 @@ public final class NavigationRouter<
     @discardableResult
     public func applyDeferredRequestIfReady() -> NavigationRequest<Scope, Destination>? {
         guard isAwaitingPresentationDismissal, !hasActivePresentation else { return nil }
-        let request = deferredRequest
-        deferredRequest = nil
+        let request = coordinationState.presentationDidDismiss()
         rootLayer.isAwaitingDismissal = false
         guard let request else { return nil }
         apply(request)
         return request
     }
 
-    /// 关闭根模态以及它继续打开的所有模态，保留根 Tab 路径和待确认请求。
-    /// 这一步清空模态数据，随后仍需等待界面容器通知关闭动画完成。
+    /// 关闭 App 根层打开的模态及其全部子模态，保留根层各栈的路径和待确认请求。
+    /// 有活动 alert 时，先等提示关闭及按钮动作完成；模态数据清空后，仍需等待关闭动画完成。
     public func dismissAllPresentations() {
         if hasActiveAlert {
-            dismissAllWaitingForAlert = true
+            coordinationState.deferAllDismissalsUntilAlertEnds()
             return
         }
         rootLayer.queuedPresentations.removeAll()
@@ -294,14 +297,11 @@ public final class NavigationRouter<
         case .selectStack:
             break
         case let .setRoot(destination, stack):
-            let state = rootLayer.stack(for: stack)
-            state.rootDestination = destination
-            state.path = []
+            rootLayer.setRoot(destination, for: stack)
         case let .replacePath(path, stack):
-            rootLayer.stack(for: stack).path = path
+            rootLayer.stacks[stack]?.path = path
         case let .push(destination, stack):
-            let state = rootLayer.stack(for: stack)
-            state.path = (state.path ?? []) + [destination]
+            rootLayer.stacks[stack]?.path.append(destination)
         }
     }
 }

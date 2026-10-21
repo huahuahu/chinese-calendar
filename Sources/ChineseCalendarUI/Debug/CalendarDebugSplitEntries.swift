@@ -13,22 +13,17 @@
                 ForEach(CalendarDebugSplitLayout.allCases) { layout in
                     Menu {
                         Button(CalendarStringKey.Debug.Split.openSheet) {
-                            presentation.present(.debugSplit(layout: layout))
+                            presentation.presentDebugSplit(layout: layout)
                         }
                         Button(CalendarStringKey.Debug.Split.openFullScreen) {
-                            presentation.present(.debugSplit(layout: layout), style: .fullScreen)
+                            presentation.presentDebugSplit(layout: layout, style: .fullScreen)
                         }
                     } label: {
                         Text(layout.title)
                     }
                 }
                 Button(CalendarStringKey.Debug.Split.mixedTabs) {
-                    let id = UUID()
-                    presentation.present(
-                        .debugNavigationTabs(id: id), style: .fullScreen,
-                        initialStack: .scope(.years),
-                        rootDestinations: [.scope(.years): .debugNavigation(id: id)]
-                    )
+                    presentation.presentDebugNavigationTabs()
                 }
             }
         }

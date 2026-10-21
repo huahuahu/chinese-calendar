@@ -59,7 +59,7 @@
 
 ### 2. 年份选择器：显式传递发起页上下文
 
-拟采用 UI 层的短生命周期年份选择会话：从 `YearMonthHeader` 打开时，关联当前页面的 `CalendarSelection`、`ModelContext` 和原 `selectYear` 回调；destination 只引用会话 ID，由业务呈现层解析并构建 `CalendarYearPickerView`。
+拟采用 UI 层的短生命周期年份选择会话：从 `YearMonthHeader` 打开时，关联当前页面的 `CalendarSelection`、`ModelContext` 和原 `selectYear` 回调；destination 只引用会话 ID，由业务代码解析会话并构建 `CalendarYearPickerView`。
 
 - 不从根部随意查找一个全局 selection，不把已有页面的选择覆盖为同一个实例。
 - 保留 `CalendarYearPickerView.initialScrollTarget`、当前年份高亮、原有查询和 `YearMonthHeader` 的跨年准备／完成链路。选择同一年、向前／向后选年、BCE/CE 边界仍沿用原语义。

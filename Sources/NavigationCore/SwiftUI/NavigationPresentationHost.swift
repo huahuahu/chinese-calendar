@@ -3,7 +3,7 @@ import SwiftUI
 /// 根据当前层的数据展示页面或 alert，并在系统关闭完成后通知该层。
 /// App 根界面挂载一次；框架会给每个模态继续添加这个容器，支持逐层打开模态。
 private struct NavigationPresentationHost<
-    Scope: Hashable,
+    Scope: NavigationScope,
     Destination: NavigationDestination, AlertRoute: NavigationAlertRoute
 >: ViewModifier {
     let context: NavigationPresentationContext<Scope, Destination, AlertRoute>
@@ -11,9 +11,13 @@ private struct NavigationPresentationHost<
 
     func body(content: Content) -> some View {
         content
-            .sheet(item: binding(for: .sheet), onDismiss: didDismiss, content: { node in
-                presentation(node)
-            })
+            .sheet(
+                item: binding(for: .sheet),
+                onDismiss: didDismiss,
+                content: { node in
+                    presentation(node)
+                }
+            )
             .fullScreenCover(
                 item: binding(for: .fullScreen),
                 onDismiss: didDismiss,
@@ -65,7 +69,11 @@ private struct NavigationPresentationHost<
 extension View {
     /// 仅由根宿主和递归模态调用，业务内容不重复挂载本层呈现宿主。
     func navigationPresentations(
-        context: NavigationPresentationContext<some Hashable, some NavigationDestination, some NavigationAlertRoute>
+        context: NavigationPresentationContext<
+            some NavigationScope,
+            some NavigationDestination,
+            some NavigationAlertRoute
+        >
     ) -> some View {
         modifier(NavigationPresentationHost(context: context))
     }

@@ -1,4 +1,4 @@
-# 呈现层与多栈：本轮 Simulator 验证
+# `NavigationLayer` 与多栈：本轮 Simulator 验证
 
 日期：2026-10-11，22:26–22:30。设备为共享配置的 `chinesedate iPhone 18 Pro Max (885f)`，iOS 27.0，UUID `16A9CAA7-45CE-46D5-8915-F61531FC617C`；项目为 d18d worktree，scheme `ChineseCalendar-iOS`，Debug，竖屏。
 
