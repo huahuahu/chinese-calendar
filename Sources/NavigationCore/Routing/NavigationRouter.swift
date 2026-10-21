@@ -185,7 +185,7 @@ public final class NavigationRouter<
     }
 
     /// 从当前最上层模态继续打开 sheet；没有模态时从 App 根层打开。
-    /// 本方法不返回操作结果。需要指定发起层或判断是否成功时，使用该层呈现 Context 的 present。
+    /// 本方法不返回操作结果。需要指定发起层或判断是否成功时，使用该层 NavigationPresentationContext 的 present。
     public func presentSheet(_ destination: Destination) {
         let context = frontmostPresentationNode.map { presentationContext(for: $0) } ?? rootPresentation
         context.present(destination, style: .sheet)
@@ -193,7 +193,7 @@ public final class NavigationRouter<
 
     /// 从当前最上层模态继续打开全屏页；没有模态时从 App 根层打开。
     /// 多 Tab 页面可以指定初始选中的栈。正在等待确认或关闭时仍可能被拒绝，
-    /// 需要判断是否成功时，使用该层呈现 Context 的 present。
+    /// 需要判断是否成功时，使用该层 NavigationPresentationContext 的 present。
     public func presentFullScreen(
         _ destination: Destination, initialStack: NavigationStackID<Scope> = .primary
     ) {

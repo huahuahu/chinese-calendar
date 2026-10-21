@@ -12,7 +12,7 @@
 3. Router 根入口与 present 使用一致的 initialStack、rootDestinations、paths 参数。原有面向根 Tab 的便利 API 可投影统一状态，但不再限制根层必须是命名栈。普通根层和普通模态可以替换栈根，层入口保持不变。
 4. 根快照复用 `NavigationLayerSnapshot`，递归保存每层栈和下一层。恢复先验证完整结构、重复 ID 与事务状态；页面数据的可恢复性仍由业务适配层判断。同种容器归属的恢复保留根栈对象连接；容器归属切换时重建栈、失效旧根栈 Context，避免旧宿主读取已经移除的根页。恢复后旧模态 Context 仍保持失效。
 5. App `.root` 重命名为 `.mainTabs`，表示页面内容。主 Tab 页面使用当前层的 presentation 和 selectedStack，避免操作全局根层。模态关闭控件根据运行时层／栈位置决定，不再通过入口白名单推断。
-6. 页面提供的 Tab 容器保留选中栈的呈现约束；同时可见的 SplitView 栏目可显式使用本层的非排他呈现上下文。完整栏目联动和折叠设计继续由 [#146](https://github.com/huahuahu/chinese-calendar/issues/146) 负责。本次不引入生产多栏产品布局。
+6. 页面提供的 Tab 容器保留选中栈的呈现约束；同时可见的 SplitView 栏目可显式使用本层的非排他 `NavigationPresentationContext`。完整栏目联动和折叠设计继续由 [#146](https://github.com/huahuahu/chinese-calendar/issues/146) 负责。本次不引入生产多栏产品布局。
 7. 使用可触达的 DEBUG 场景验证主 Tab 模态、普通模态以及递归嵌套；保持业务 alert、外部导航及真实 dismissal 完成后的请求协调。
 
 ## 验收

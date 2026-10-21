@@ -5,8 +5,8 @@ import NavigationCore
 /// 打开或关闭模态单独使用 CalendarPresentationContext。
 typealias CalendarNavigationContext = NavigationContext<CalendarTab, CalendarDestination>
 
-/// 日历页面使用的呈现 Context，操作所在层的模态、alert 和选中栈。
-/// 同层各栈的呈现 Context 共享模态状态，默认记录各自的发起栈，以限制后台 Tab 打开模态。
+/// 日历页面使用的 NavigationPresentationContext，操作所在层的模态、alert 和选中栈。
+/// 同层各栈的 NavigationPresentationContext 共享模态状态，默认记录各自的发起栈，以限制后台 Tab 打开模态。
 typealias CalendarPresentationContext = NavigationPresentationContext<CalendarTab, CalendarDestination, CalendarAlert>
 
 extension CalendarPresentationContext {

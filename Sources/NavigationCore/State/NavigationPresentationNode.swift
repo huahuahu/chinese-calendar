@@ -53,7 +53,7 @@ public final class NavigationPresentationNode<
     }
 
     /// 默认 primary 栈中已经 push 的页面，供只读查询。
-    /// 多 Tab 模态应通过呈现 Context 的 context(for:) 访问各 Tab 的栈。
+    /// 多 Tab 模态应通过 NavigationPresentationContext 的 context(for:) 访问各 Tab 的栈。
     public var path: [Destination] {
         layer.stacks[.primary]?.path ?? []
     }

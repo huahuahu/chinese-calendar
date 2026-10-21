@@ -28,7 +28,7 @@
 
 ## 实际结果
 
-已实现。新增 `NavigationCoordinationState.swift`，Router 及呈现 Context 的原有读写改为调用状态操作。三个公开属性保留只读读取；原有三个独立 Boolean／集合存储已移除。请求提交结果仍由 Router 转换成关闭或导航副作用，确认 ID 校验和真实关闭门禁沿用原入口。
+已实现。新增 `NavigationCoordinationState.swift`，Router 及 `NavigationPresentationContext` 的原有读写改为调用状态操作。三个公开属性保留只读读取；原有三个独立 Boolean／集合存储已移除。请求提交结果仍由 Router 转换成关闭或导航副作用，确认 ID 校验和真实关闭门禁沿用原入口。
 
 新增 `NavigationCoordinationTests.swift`：确认／取消 × 根模态关闭前后共 4 个场景，alert 前后请求的确认策略共 4 个场景，以及全部关闭先于／晚于指定节点关闭共 2 个场景。旧确认重复操作、重复关闭和重新打开页面的保护也在这些场景中断言。既有 alert、Context、快照与 App 导航测试一并通过。
 

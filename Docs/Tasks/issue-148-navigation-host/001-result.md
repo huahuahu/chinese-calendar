@@ -15,7 +15,7 @@
 
 `CalendarNavigationConfiguration` 收拢原根栈与模态构建入口，以及提示和清理回调。三个根 Tab、下载演示的两个 Tab、`SampleNavigationPreview` 均删除重复映射。模态页面仍从当前 store coordinator 注入数据环境；年份选择器仍按 session ID 使用发起页的 selection、ModelContext 和回调。模态 push 根据层 ID 选择构建入口，关闭动画期间不会因 Context 已失效而切回普通页面映射。
 
-Router、栈／呈现 Context、状态树、快照与年份选择会话无改动。Core README 的完整双 Tab／多 Tab 模态／独立 Preview 示例和导航规范已同步。原仅检查 builder 初始化的测试由新的配置环境、实际页面渲染和状态隔离测试替代。
+Router、`NavigationContext`／`NavigationPresentationContext`、状态树、快照与年份选择会话无改动。Core README 的完整双 Tab／多 Tab 模态／独立 Preview 示例和导航规范已同步。原仅检查 builder 初始化的测试由新的配置环境、实际页面渲染和状态隔离测试替代。
 
 历史页的示例数据／空状态 Preview 也使用 `SampleNavigationPreview`，使预览中的值导航有真实栈宿主。为通过 Xcode Preview 生成代码的重载解析，将该页 `ForEach` 的函数引用改为显式尾随闭包，保留原 row 函数与数据身份；修复前诊断和修复后截图单独记录。
 

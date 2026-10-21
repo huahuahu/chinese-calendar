@@ -3,7 +3,7 @@ import Observation
 
 /// 供页面操作自己所在的 NavigationLayer：打开模态、关闭当前模态、切换本层 Tab，以及处理离开确认。
 ///
-/// 同一个 NavigationLayer 可以对应多个呈现 Context。例如一个只使用 3 个固定 Tab 栈的层，
+/// 同一个 NavigationLayer 可以对应多个 NavigationPresentationContext。例如一个只使用 3 个固定 Tab 栈的层，
 /// 最多有 4 个实例：1 个不指定发起栈的层级 Context，以及每个 Tab 各 1 个 scoped Context。
 /// 这些实例按需创建并缓存，全部属于同一层，共享入口路由、选中栈、模态呈现和离开确认状态。
 /// scoped Context 额外记录 sourceStack，用于限制未选中 Tab 发起模态；它不会创建新的导航层。
@@ -11,7 +11,7 @@ import Observation
 ///
 /// NavigationScopeView 通过 scoped(to:) 取得对应栈的呈现入口；TabView 附件等公共控件
 /// 使用不指定发起栈的层级 Context。各 Tab 的 path 和 push/pop 由各自的 NavigationContext 管理。
-/// App 根界面拥有根层；每次打开 sheet／full-screen 才会创建下一层及其自己的呈现 Context。
+/// App 根界面拥有根层；每次打开 sheet／full-screen 才会创建下一层及其自己的 NavigationPresentationContext。
 ///
 /// 这里只弱引用 Router 和所属层。即使旧页面仍持有 Context，也不会阻止它们释放。
 /// 独立保留共享的入口记录，让路由读取不依赖层是否仍有效。
@@ -28,7 +28,7 @@ public final class NavigationPresentationContext<
     @ObservationIgnored weak var layer: NavigationLayer<Scope, Destination, AlertRoute>?
     private let routeState: NavigationLayerRouteState<Destination>
     private let sourceStack: NavigationStackID<Scope>?
-    /// 仅由本层不指定发起栈的层级 Context 保存和使用的缓存；各 scoped Context 的字典始终为空。
+    /// 仅由本层不指定sourceStack的层级 Context 保存和使用的缓存；各 scoped Context 的字典始终为空。
     /// 层级 Context 初始化时缓存也为空，首次 scoped(to:) 后才写入对应条目。
     /// 普通单栈的默认宿主会缓存 .primary 对应的 scoped Context；Tab 层按需缓存各 Tab 的入口。
     /// 即使从 scoped Context 再调用 scoped(to:)，也会回到本层层级 Context 查找或写入。
@@ -117,8 +117,8 @@ public final class NavigationPresentationContext<
         router?.canNavigate(in: layer) == true
     }
 
-    /// 获取指定栈使用的呈现 Context。同一有效栈多次获取会返回同一个对象。
-    /// 它与本层其他呈现 Context 共享状态，但只有这个栈被选中时才允许 present。
+    /// 获取指定栈使用的 NavigationPresentationContext。同一有效栈多次获取会返回同一个对象。
+    /// 它与本层其他 NavigationPresentationContext 共享状态，但只有这个栈被选中时才允许 present。
     /// NavigationScopeView 会自动把它放入页面环境。原 Context 失效后，调用此方法也不会重新连接新层。
     public func scoped(to stack: NavigationStackID<Scope>) -> NavigationPresentationContext {
         guard let router, let layer, isActive else { return self }
@@ -129,7 +129,7 @@ public final class NavigationPresentationContext<
         return context
     }
 
-    /// 取得不限制发起栈的本层呈现 Context，调用 present 时不要求某个栈被选中。
+    /// 取得不限制发起栈的本层 NavigationPresentationContext，调用 present 时不要求某个栈被选中。
     /// 适用于 TabView 附件或同时可见的 SplitView 栏目；App 决定哪些控件可以打开模态。
     /// 已失效的 Context 不会连接到新层。
     public func unscoped() -> NavigationPresentationContext {

@@ -1,7 +1,7 @@
 import SwiftUI
 
 /// 显示一个模态，并为它继续打开的子模态和 alert 安装唯一的呈现宿主。
-/// 使用该模态自己的呈现 Context，继承根 navigationHost 的页面构建配置；
+/// 使用该模态自己的 NavigationPresentationContext，继承根 navigationHost 的页面构建配置；
 /// Core 自动提供 primary 栈，或由声明 providesNavigationContainer 的页面自行组织各栈。
 public struct NavigationPresentationNodeView<
     Scope: NavigationScope,

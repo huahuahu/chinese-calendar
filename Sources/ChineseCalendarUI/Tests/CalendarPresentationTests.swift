@@ -4,7 +4,7 @@ import SwiftData
 import Testing
 
 @MainActor
-@Suite("页面呈现上下文与协调")
+@Suite("页面 NavigationPresentationContext 与协调")
 struct CalendarPresentationTests {
     @Test func yearSelectionReturnsOnlyToItsOriginatingPage() throws {
         let coordinator = CalendarHomeCoordinator()

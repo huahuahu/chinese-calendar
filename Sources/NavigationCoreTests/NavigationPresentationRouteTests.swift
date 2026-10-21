@@ -5,7 +5,7 @@ import Synchronization
 import Testing
 
 @MainActor
-@Suite("呈现 Context 的路由读取与有效性")
+@Suite("NavigationPresentationContext 的路由读取与有效性")
 struct NavigationPresentationRouteTests {
     private enum Scope: NavigationScope { case home }
     private enum Route: NavigationDestination { case home, detail }

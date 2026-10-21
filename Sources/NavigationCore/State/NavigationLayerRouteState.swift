@@ -1,6 +1,6 @@
 import Observation
 
-/// 导航层及其呈现 Context 共享的入口记录。
+/// 导航层及其 NavigationPresentationContext 共享的入口记录。
 ///
 /// 使用引用类型，让 NavigationLayer、普通 Context 和 scoped Context 共用同一份路由，
 /// 避免各自保存值副本后再逐一同步。根快照恢复更新这份记录时，

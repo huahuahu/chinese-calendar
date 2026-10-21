@@ -8,7 +8,7 @@
 ## 方案
 
 1. 每层以一个枚举保存直接呈现的页面模态或业务 alert。页面模态拥有下一层，alert 只保存 ID 和强类型路由数据，不创建导航栈。
-2. Router、呈现 Context 和快照增加 AlertRoute 泛型；AlertRoute 声明业务 Action 类型。NavigationContext 仍只依赖栈状态，不增加呈现依赖。
+2. Router、`NavigationPresentationContext` 和快照增加 AlertRoute 泛型；AlertRoute 声明业务 Action 类型。NavigationContext 仍只依赖栈状态，不增加呈现依赖。
 3. 已有业务 alert 时，后续业务 alert 按顺序排队；外部导航保留最新请求及其确认要求。原提示处理完并关闭后，重新检查页面模态，按需要提示离开；业务按钮不会批准外部请求。
 4. 离开确认和业务提示使用同一个 alert 宿主。通过 UIKit 原生 UIAlertController 和关闭完成回调串行展示，不叠加两个 alert、不使用固定延迟、不继承或修改系统 alert 的私有视图。
 5. 呈现期间和业务动作处理期间阻止栈修改；回调用 ID 和原层对象校验。异步业务动作结束后才继续处理后续提示和导航。失效层的排队提示不会转移到新页面。

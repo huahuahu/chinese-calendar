@@ -11,7 +11,7 @@ public protocol NavigationHostConfiguration<Scope, Destination, AlertRoute> {
     associatedtype DestinationContent: View
 
     /// 构建根界面、模态入口、由 Destination 指定的栈底页面，以及所有 push 页面。
-    /// 宿主为页面注入所在层的呈现 Context；栈内页面还会得到所属栈的 NavigationContext。
+    /// 宿主为页面注入所在层的 NavigationPresentationContext；栈内页面还会得到所属栈的 NavigationContext。
     @ViewBuilder func destination(for destination: Destination) -> DestinationContent
 
     func confirmationContent(for request: NavigationRequest<Scope, Destination>) -> NavigationConfirmationContent?

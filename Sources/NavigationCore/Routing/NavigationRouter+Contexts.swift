@@ -1,7 +1,7 @@
 import Foundation
 
 public extension NavigationRouter {
-    /// App 根层的呈现 Context，供根界面容器和 TabView 附件等控件使用。
+    /// App 根层的 NavigationPresentationContext，供根界面容器和 TabView 附件等控件使用。
     /// 根层命名栈的 push/pop 使用 context(for: scope)；默认栈使用 rootPresentation.context(for: .primary)。
     var rootPresentation: NavigationPresentationContext<Scope, Destination, AlertRoute> {
         presentationContext(in: rootLayer)
@@ -21,7 +21,7 @@ public extension NavigationRouter {
         context(in: node.layer, stack: .primary)
     }
 
-    /// 获取指定模态的呈现 Context，NavigationScopeView 再为各栈取得带发起栈信息的 Context。
+    /// 获取指定模态的 NavigationPresentationContext，NavigationScopeView 再为各栈取得带发起栈信息的 Context。
     func presentationContext(
         for node: NavigationPresentationNode<Scope, Destination, AlertRoute>
     ) -> NavigationPresentationContext<Scope, Destination, AlertRoute> {
@@ -126,7 +126,7 @@ extension NavigationRouter {
         return context
     }
 
-    /// 每个有效层复用一个呈现 Context。检查原层对象，避免把旧模态的 Context 交给新模态。
+    /// 每个有效层复用一个 NavigationPresentationContext。检查原层对象，避免把旧模态的 Context 交给新模态。
     func presentationContext(
         in layer: NavigationLayer<Scope, Destination, AlertRoute>
     ) -> NavigationPresentationContext<Scope, Destination, AlertRoute> {

@@ -8,7 +8,7 @@
 ## 方案
 
 1. NavigationContext 只暴露栈身份、有效性、path、push/pop，通过 Router 和原始层的弱引用访问状态，不依赖 NavigationPresentationContext。
-2. 页面分别读取 navigation 与 presentation 环境。模态状态、dismiss、isPresented 和确认仍归呈现上下文；业务 coordinator 接收发起页面的呈现上下文。
+2. 页面分别读取 navigation 与 presentation 环境。模态状态、dismiss、isPresented 和确认仍归 `NavigationPresentationContext`；业务 coordinator 接收发起页面的 `NavigationPresentationContext`。
 3. NavigationScopeView 从所属层的呈现环境取得带发起栈身份的呈现入口并注入后代。不同栈的入口共享原始层状态，但 present 会检查发起栈是否仍选中；层级控件继续使用不绑定栈的入口。入口身份不进入快照。
 4. 导航和呈现均通过 Router 检查层对象有效性及确认／根关闭事务。保留旧上下文失效、取消不改变状态、实际关闭完成后再跳转等语义。
 5. 同步 App、测试、Core README 和导航规范，保留此前工作区改动。
@@ -22,9 +22,9 @@
 
 ## 结果
 
-已完成 Core、App 调用点、测试与文档迁移。`NavigationContext` 不再引用呈现上下文；两种上下文通过 Router 共同校验原层身份及导航事务。`NavigationScopeView` 分别注入栈上下文和带来源栈身份的呈现入口。来源栈只影响操作许可，不增加导航状态或快照字段。
+已完成 Core、App 调用点、测试与文档迁移。`NavigationContext` 不再引用 `NavigationPresentationContext`；两种上下文通过 Router 共同校验原层身份及导航事务。`NavigationScopeView` 分别注入栈上下文和带来源栈身份的呈现入口。来源栈只影响操作许可，不增加导航状态或快照字段。
 
-年份选择器与设置 Debug 下载演示向 coordinator 传入页面的呈现上下文，呈现被拒绝时释放刚创建的业务会话。下载演示容器及关闭按钮直接读取呈现环境。页面的 push/pop 仍读取导航环境。
+年份选择器与设置 Debug 下载演示向 coordinator 传入页面的 `NavigationPresentationContext`，呈现被拒绝时释放刚创建的业务会话。下载演示容器及关闭按钮直接读取呈现环境。页面的 push/pop 仍读取导航环境。
 
 - 代码状态：`codex/issue-145-unified-navigation`，HEAD `88e3b74ae7bab044389a9a471346e16f9880bd1c` 加未提交工作区；本次检查对应 [源码 SHA-256](evidence/context-separation/source-sha256.txt)，不以 HEAD 代表全部实现。
 - 环境：`ChineseCalendar-iOS`，`chinesedate iPhone 18 Pro Max (885f)`，Simulator ID `16A9CAA7-45CE-46D5-8915-F61531FC617C`，iOS 27.0。

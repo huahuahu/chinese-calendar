@@ -1,7 +1,7 @@
 import Foundation
 
 public extension NavigationRouter {
-    /// 从当前最上层页面展示业务提示；页面自己的操作应优先使用环境中的呈现 Context。
+    /// 从当前最上层页面展示业务提示；页面自己的操作应优先使用环境中的 NavigationPresentationContext。
     @discardableResult
     func presentAlert(_ destination: AlertRoute) -> Bool {
         let context = frontmostPresentationNode.map { presentationContext(for: $0) } ?? rootPresentation

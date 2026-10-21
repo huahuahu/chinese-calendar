@@ -218,7 +218,7 @@
     {
       "path": "Sources/ChineseCalendarUI/Home/Navigation/CalendarNavigationContext.swift",
       "tested": "56c77fc4db8b1971c9d9890385146c51ae3bb9376577a8ef41e989300b7f0448",
-      "final": "56c77fc4db8b1971c9d9890385146c51ae3bb9376577a8ef41e989300b7f0448"
+      "final": "c05b38be9044ec74d1b210cfbcdeb25d106ab76a23bdc072a3b4b9fec81bfba5"
     },
     {
       "path": "Sources/ChineseCalendarUI/Home/Navigation/CalendarNavigationHost.swift",
@@ -281,6 +281,11 @@
       "final": "b0c8c99c645e647efab6fd44b5b64cc7cc618ffc937b2632f643a847fe237fe2"
     },
     {
+      "path": "Sources/ChineseCalendarUI/Tests/CalendarPresentationTests.swift",
+      "tested": "ae67c181ff5f45d7684a5a2f9356c8620a76fd26620e42116ea37a1a9c11bb1d",
+      "final": "6634c9f1dd869482f56cd5ffcaea61d670454602b9975f098966264421368801"
+    },
+    {
       "path": "Sources/ChineseCalendarUI/Tests/CalendarStoreEnvironmentTests.swift",
       "tested": "f5418148bb500f4cd74ed7a222419a3167abc68597fc7c0be62335ca12acb797",
       "final": "f5418148bb500f4cd74ed7a222419a3167abc68597fc7c0be62335ca12acb797"
@@ -308,7 +313,7 @@
     {
       "path": "Sources/NavigationCore/Routing/NavigationContext.swift",
       "tested": "58f2844e928c64c0f8f111aac37853a05d7b61fc4567b8ac033799e06da1ebcf",
-      "final": "58f2844e928c64c0f8f111aac37853a05d7b61fc4567b8ac033799e06da1ebcf"
+      "final": "ab41e59252596d2f29c654494bab15a760f3e7c04f24720868b8417c1760956f"
     },
     {
       "path": "Sources/NavigationCore/Routing/NavigationContextID.swift",
@@ -318,7 +323,7 @@
     {
       "path": "Sources/NavigationCore/Routing/NavigationPresentationContext.swift",
       "tested": "db015ec5215d2e5c28730562b963dce7b663aa90bba67b6de1d14aac2f1aeab4",
-      "final": "7fd0044a70d1f07e937312713983c3ace28e1031713e70d52fd3330642851adc"
+      "final": "d6103abf6882806a289364b3a882f3d350dd6a500ce1871354f0c884a527b319"
     },
     {
       "path": "Sources/NavigationCore/Routing/NavigationPresentationRequest.swift",
@@ -338,17 +343,17 @@
     {
       "path": "Sources/NavigationCore/Routing/NavigationRouter+Alerts.swift",
       "tested": "d3589f1d46194f294d1d9fd41ba423f32a0400a2f25ec4c83db1654ae9460862",
-      "final": "d3589f1d46194f294d1d9fd41ba423f32a0400a2f25ec4c83db1654ae9460862"
+      "final": "0fa9e28f07b53a5272250fba1f956da66d6cdda1b5aea9ea9f50bc49f6224e85"
     },
     {
       "path": "Sources/NavigationCore/Routing/NavigationRouter+Contexts.swift",
       "tested": "aad3783553167591a457cc94d135243ddfff42607ce693002497542d6c2c482e",
-      "final": "aad3783553167591a457cc94d135243ddfff42607ce693002497542d6c2c482e"
+      "final": "b573da6de7161347c2d7ced6e06813e99d5c01e81a0dbc89eff5f441ec6d6dab"
     },
     {
       "path": "Sources/NavigationCore/Routing/NavigationRouter.swift",
       "tested": "95d4569f187680306090f07390d72f2f5b1b23bc5f49237375596870868603f4",
-      "final": "95d4569f187680306090f07390d72f2f5b1b23bc5f49237375596870868603f4"
+      "final": "7eba0012b65bf9267824f70483a94340bc965493db05155d84d2ba5cb8ed6a70"
     },
     {
       "path": "Sources/NavigationCore/State/NavigationCoordinationState.swift",
@@ -378,7 +383,7 @@
     {
       "path": "Sources/NavigationCore/State/NavigationLayerRouteState.swift",
       "tested": "1859bf095fd3275efe0057ee09a984386e70dbecd7fd7551138ab22ecd3b96f5",
-      "final": "1859bf095fd3275efe0057ee09a984386e70dbecd7fd7551138ab22ecd3b96f5"
+      "final": "43139bf92bc4ee6c534d1a2f58145c57434779e5b50aab802624ada8739db67b"
     },
     {
       "path": "Sources/NavigationCore/State/NavigationPresentation.swift",
@@ -388,7 +393,7 @@
     {
       "path": "Sources/NavigationCore/State/NavigationPresentationNode.swift",
       "tested": "4471ac076052eda1507f6ed36b2747be2fca9a45c91e01388ef2df888b2b15c0",
-      "final": "4471ac076052eda1507f6ed36b2747be2fca9a45c91e01388ef2df888b2b15c0"
+      "final": "6dd191b820a68fe8b955a5c8c8ed4cd059005e5607220fc274868a0a0edda6d0"
     },
     {
       "path": "Sources/NavigationCore/State/NavigationScope.swift",
@@ -433,7 +438,7 @@
     {
       "path": "Sources/NavigationCore/SwiftUI/NavigationHostConfiguration.swift",
       "tested": "f181f456043934457ad7a689c06317646cb89ad3dd7c67b663489973e8a89baa",
-      "final": "f181f456043934457ad7a689c06317646cb89ad3dd7c67b663489973e8a89baa"
+      "final": "0f85afe15665cfd0575b80e6935414bc082cce1776985ccd39f1d5cec69e3963"
     },
     {
       "path": "Sources/NavigationCore/SwiftUI/NavigationLayerContent.swift",
@@ -448,7 +453,7 @@
     {
       "path": "Sources/NavigationCore/SwiftUI/NavigationPresentationNodeView.swift",
       "tested": "3a83e1a6b9c9acef2a93dd7bcdcd65beb645dede15cbd4f38a33c27295ad142c",
-      "final": "3a83e1a6b9c9acef2a93dd7bcdcd65beb645dede15cbd4f38a33c27295ad142c"
+      "final": "e1f605c13816017b5695bd793e7da8150c1a2e4f30c9287f424f185999979a6b"
     },
     {
       "path": "Sources/NavigationCore/SwiftUI/NavigationRootView.swift",
@@ -458,7 +463,7 @@
     {
       "path": "Sources/NavigationCore/SwiftUI/NavigationScopeView.swift",
       "tested": "134bb3339e1c14c94e72cd03b5cc159007700d8accebfc26ff39c1f69b7d7834",
-      "final": "134bb3339e1c14c94e72cd03b5cc159007700d8accebfc26ff39c1f69b7d7834"
+      "final": "20c87b0a650e3c0151fa3577ebf4b21147332e202ff52566c9be0db4f1a23bf5"
     },
     {
       "path": "Sources/NavigationCore/SwiftUI/NavigationSystemAlert.swift",
@@ -513,7 +518,7 @@
     {
       "path": "Sources/NavigationCoreTests/NavigationPresentationRouteTests.swift",
       "tested": "7a77b1bbc6f1aa74c282813c0ed7cb384ca5fb03a8dc2b81704cd0aa0e66356e",
-      "final": "7a77b1bbc6f1aa74c282813c0ed7cb384ca5fb03a8dc2b81704cd0aa0e66356e"
+      "final": "221fcca5599fffa403d20cf9817ad5b363d97113a250fb31cb1b56af478fcd57"
     },
     {
       "path": "Sources/NavigationCoreTests/NavigationPrimaryLayerTests.swift",
@@ -539,6 +544,36 @@
     {
       "path": "Sources/NavigationCore/Routing/NavigationPresentationContext.swift",
       "description": "Added documentation about layer-level and scoped Context instances; executable content unchanged after removing line comments."
+    },
+    {
+      "paths": [
+        "Sources/ChineseCalendarUI/Home/Navigation/CalendarNavigationContext.swift",
+        "Sources/ChineseCalendarUI/Tests/CalendarPresentationTests.swift",
+        "Sources/NavigationCore/Routing/NavigationContext.swift",
+        "Sources/NavigationCore/Routing/NavigationPresentationContext.swift",
+        "Sources/NavigationCore/Routing/NavigationRouter+Alerts.swift",
+        "Sources/NavigationCore/Routing/NavigationRouter+Contexts.swift",
+        "Sources/NavigationCore/Routing/NavigationRouter.swift",
+        "Sources/NavigationCore/State/NavigationLayerRouteState.swift",
+        "Sources/NavigationCore/State/NavigationPresentationNode.swift",
+        "Sources/NavigationCore/SwiftUI/NavigationHostConfiguration.swift",
+        "Sources/NavigationCore/SwiftUI/NavigationPresentationNodeView.swift",
+        "Sources/NavigationCore/SwiftUI/NavigationScopeView.swift",
+        "Sources/NavigationCoreTests/NavigationPresentationRouteTests.swift"
+      ],
+      "description": "Documentation terminology and two Suite display titles only. Compared with commit 754a3222 after removing line comments and normalizing Suite display titles; executable statements and assertions are unchanged."
     }
-  ]
+  ],
+  "documentation_append": {
+    "base_commit": "754a32228b8c1b3a3450a5985c824ec3549b0236",
+    "scope": "README onboarding rewrite, new MIGRATION guide, NavigationPresentationContext terminology and two test suite display titles",
+    "changed_swift_files": 13,
+    "format_exit_code": 0,
+    "lint_exit_code": 0,
+    "diff_check_exit_code": 0,
+    "local_document_links": 134,
+    "anchors": 9,
+    "broken_links": 0,
+    "tests": "Reused the recorded 384 passing tests; no rerun for comment and Suite title changes."
+  }
 }

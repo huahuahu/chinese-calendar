@@ -6,7 +6,7 @@ import Observation
 /// 路径直接保存在 NavigationStackState 中，这里根据传入的规则判断是否还能访问和修改。
 /// 打开或关闭模态时，页面单独读取环境中的 NavigationPresentationContext。
 ///
-/// 通过 Router 或呈现 Context 获取实例，再由 NavigationScopeView 放入页面环境。
+/// 通过 Router 或 NavigationPresentationContext 获取实例，再由 NavigationScopeView 放入页面环境。
 /// 跨 Tab 跳转或需要先关闭模态的 Deep Link 请求，交给根 Router 处理。
 @MainActor
 @Observable

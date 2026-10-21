@@ -1,20 +1,20 @@
-# 呈现 Context 的路由读取与有效性
+# `NavigationPresentationContext` 的路由读取与有效性
 
 > 本文保留该子任务的 43 项阶段验证及当时格式检查结果。当前统一 PR 已补跑全套回归并修复剩余格式问题，最终源码标识和验证结果见[整合记录](017-navigation-state-integration.md)。
 
 - 日期：2026-10-21
 - 依据：用户确认“页面路由始终可读，操作有效性单独判断”；[导航规范 NAV-03](../../Conventions/Navigation.md#nav-03--发起作用域与生命周期)
-- 范围：仅调整呈现 Context 的 route／destination、导航层内容的渲染判断和相关回归；栈 Context 的 rootDestination 不在本轮范围内。
+- 范围：仅调整 `NavigationPresentationContext` 的 route／destination、导航层内容的渲染判断和相关回归；栈 Context 的 rootDestination 不在本轮范围内。
 
 ## 方案
 
 `NavigationPresentationContext.route` 和 `destination` 改为非可选。Context 失效或 Router／Layer 释放后，仍可读取原层的路由信息；操作入口继续检查 `isActive` 和现有事务条件。`NavigationLayerContent` 以 `isActive` 判断是否渲染，直接使用非可选 destination。
 
-层与其所有呈现 Context 共享一份轻量、可观察的路由记录，记录不引用 Router、Layer 或导航栈。根快照恢复更新同一记录，既有根 Context 和 scoped Context 立即读到新入口；释放后仍保留最后的值。恢复出的同 ID 模态拥有新记录，旧 Context 不连接新层。
+层与其所有 `NavigationPresentationContext` 共享一份轻量、可观察的路由记录，记录不引用 Router、Layer 或导航栈。根快照恢复更新同一记录，既有根 Context 和 scoped Context 立即读到新入口；释放后仍保留最后的值。恢复出的同 ID 模态拥有新记录，旧 Context 不连接新层。
 
 ## 验收与结果
 
-已实现。新增 `NavigationLayerRouteState` 保存唯一的入口记录，Layer 和呈现 Context 共用它；宿主改为以 `isActive` 控制渲染。三个新增状态测试覆盖释放后的读取、同 ID 新层隔离及根恢复的观察更新；新增宿主测试通过 `ImageRenderer` 验证失效内容不调用页面 builder，并更新既有旧 Context 断言。
+已实现。新增 `NavigationLayerRouteState` 保存唯一的入口记录，Layer 和 `NavigationPresentationContext` 共用它；宿主改为以 `isActive` 控制渲染。三个新增状态测试覆盖释放后的读取、同 ID 新层隔离及根恢复的观察更新；新增宿主测试通过 `ImageRenderer` 验证失效内容不调用页面 builder，并更新既有旧 Context 断言。
 
 | 验证 | 结果 |
 | --- | --- |
