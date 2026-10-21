@@ -3,7 +3,8 @@ import Foundation
 import Observation
 import SwiftData
 
-/// 协调页面入口和呈现上下文；导航结构由 Router 保存，业务状态仍属于对应 feature。
+/// 把 Deep Link、年份选择和下载相关动作交给 Router，并保存这些流程所需的临时业务数据。
+/// 例如年份选择会话保存发起页的 CalendarSelection、ModelContext 和回调；模态与路径仍由 Router 保存。
 @MainActor
 @Observable
 final class CalendarHomeCoordinator {
@@ -108,12 +109,13 @@ final class CalendarHomeCoordinator {
     }
 
     #if DEBUG
-        /// 选择与布局跟随实际详情栈，数据页面重建时仍与原路径保持一致。
+        /// 按详情栈 Context 的对象身份复用分栏选择和布局，避免页面重建后只剩旧 path、丢失详情选择。
+        /// 新打开的模态即使使用同名栈，也会得到独立的分栏状态。
         func debugSplitState(for navigation: CalendarNavigationContext) -> CalendarDebugSplitState {
             let identity = ObjectIdentifier(navigation)
             // 关闭动画中的旧页面仍读取原状态，待宿主完成关闭后再统一释放。
             if let session = debugSplitStates[identity] { return session.state }
-            let state = CalendarDebugSplitState()
+            let state = CalendarDebugSplitState(navigation: navigation)
             if navigation.isActive { debugSplitStates[identity] = (navigation, state) }
             return state
         }

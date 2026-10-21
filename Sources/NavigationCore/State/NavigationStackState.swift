@@ -1,16 +1,15 @@
 import Observation
 
-/// 保存一个导航栈的根页面路由数据和 push 路径。
+/// 保存一个导航栈的栈底页面 Destination，以及之后 push 的页面列表。
 /// 栈 Context 直接读写这个对象；它本身不处理模态展示或关闭。
 @MainActor
 @Observable
 final class NavigationStackState<Destination: NavigationDestination> {
-    var rootDestination: Destination?
-    /// nil 表示还没有记录路径；[] 表示已记录路径，但没有 push 页面。
-    /// 保存快照时保留这个区别，避免仅获取 Context 就增加一条空路径记录。
-    var path: [Destination]?
+    var rootDestination: Destination
+    /// 只保存根页面之上的 push 页面；空数组表示停留在栈根。
+    var path: [Destination]
 
-    init(rootDestination: Destination? = nil, path: [Destination]? = nil) {
+    init(rootDestination: Destination, path: [Destination] = []) {
         self.rootDestination = rootDestination
         self.path = path
     }

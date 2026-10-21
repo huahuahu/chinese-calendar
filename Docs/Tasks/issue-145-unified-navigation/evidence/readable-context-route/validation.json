@@ -1,0 +1,319 @@
+{
+  "testedAt": "2026-10-21T20:24:36+08:00",
+  "workspace": "/Users/tigerguo/.codex/worktrees/00eb/Chinese-date",
+  "scheme": "ChineseCalendar-iOS",
+  "simulator": {
+    "name": "chinesedate iPhone 18 Pro Max (885f)",
+    "id": "16A9CAA7-45CE-46D5-8915-F61531FC617C",
+    "osVersion": "27.0"
+  },
+  "tool": "mcp__xcode__RunSomeTests",
+  "counts": {
+    "expectedFailures": 0,
+    "failed": 0,
+    "notRun": 0,
+    "passed": 43,
+    "skipped": 0,
+    "total": 43
+  },
+  "results": [
+    {
+      "identifier": "NavigationDestinationTests/coreOwnedRootAndModalUseTheSamePrimaryStackRules(style:)",
+      "state": "Passed",
+      "targetName": "NavigationCoreTests",
+      "errorMessages": []
+    },
+    {
+      "identifier": "NavigationDestinationTests/coreOwnedRootAndModalUseTheSamePrimaryStackRules(style:)",
+      "state": "Passed",
+      "targetName": "NavigationCoreTests",
+      "errorMessages": []
+    },
+    {
+      "identifier": "NavigationDestinationTests/identicalContainerPagesOwnIndependentSelectionsPathsAndChildPresentation()",
+      "state": "Passed",
+      "targetName": "NavigationCoreTests",
+      "errorMessages": []
+    },
+    {
+      "identifier": "NavigationDestinationTests/everyDestinationCanEnterRootStackRootPushAndModal(route:)",
+      "state": "Passed",
+      "targetName": "NavigationCoreTests",
+      "errorMessages": []
+    },
+    {
+      "identifier": "NavigationDestinationTests/everyDestinationCanEnterRootStackRootPushAndModal(route:)",
+      "state": "Passed",
+      "targetName": "NavigationCoreTests",
+      "errorMessages": []
+    },
+    {
+      "identifier": "NavigationDestinationTests/everyDestinationCanEnterRootStackRootPushAndModal(route:)",
+      "state": "Passed",
+      "targetName": "NavigationCoreTests",
+      "errorMessages": []
+    },
+    {
+      "identifier": "NavigationDestinationTests/pathAndRootMutationsDoNotReintroduceContainerEntryRestrictions()",
+      "state": "Passed",
+      "targetName": "NavigationCoreTests",
+      "errorMessages": []
+    },
+    {
+      "identifier": "NavigationDestinationTests/repeatedDestinationAndRestoredUUIDNeverReviveOldContexts()",
+      "state": "Passed",
+      "targetName": "NavigationCoreTests",
+      "errorMessages": []
+    },
+    {
+      "identifier": "NavigationPresentationRouteTests/rootRoutesFollowRestorationAndRemainReadableAfterRelease()",
+      "state": "Passed",
+      "targetName": "NavigationCoreTests",
+      "errorMessages": []
+    },
+    {
+      "identifier": "NavigationPresentationRouteTests/dismissedRouteOutlivesItsLayerWithoutFollowingRestoredIdentity()",
+      "state": "Passed",
+      "targetName": "NavigationCoreTests",
+      "errorMessages": []
+    },
+    {
+      "identifier": "NavigationPresentationRouteTests/rootRestorationNotifiesRootAndScopedRouteObservers()",
+      "state": "Passed",
+      "targetName": "NavigationCoreTests",
+      "errorMessages": []
+    },
+    {
+      "identifier": "NavigationLayerRestorationTests/restoringCoreLayerInvalidatesFormerNamedStackContext()",
+      "state": "Passed",
+      "targetName": "NavigationCoreTests",
+      "errorMessages": []
+    },
+    {
+      "identifier": "NavigationLayerRestorationTests/restoringExternalContainerInvalidatesFormerPrimaryStackContext()",
+      "state": "Passed",
+      "targetName": "NavigationCoreTests",
+      "errorMessages": []
+    },
+    {
+      "identifier": "NavigationLayerRestorationTests/restoringSameContainerOwnershipPreservesPrimaryStackContext()",
+      "state": "Passed",
+      "targetName": "NavigationCoreTests",
+      "errorMessages": []
+    },
+    {
+      "identifier": "NavigationContextTests/localOperationsKeepTabAndModalPathsIndependent()",
+      "state": "Passed",
+      "targetName": "NavigationCoreTests",
+      "errorMessages": []
+    },
+    {
+      "identifier": "NavigationContextTests/childDismissalPreservesParentAndBlocksReopenUntilCompletion()",
+      "state": "Passed",
+      "targetName": "NavigationCoreTests",
+      "errorMessages": []
+    },
+    {
+      "identifier": "NavigationContextTests/inactiveTabCannotPresentOverCurrentTab()",
+      "state": "Passed",
+      "targetName": "NavigationCoreTests",
+      "errorMessages": []
+    },
+    {
+      "identifier": "NavigationContextTests/separateContextsDoNotKeepTheRouterAlive()",
+      "state": "Passed",
+      "targetName": "NavigationCoreTests",
+      "errorMessages": []
+    },
+    {
+      "identifier": "NavigationContextTests/rootDismissalWithoutRequestAllowsReopening(style:)",
+      "state": "Passed",
+      "targetName": "NavigationCoreTests",
+      "errorMessages": []
+    },
+    {
+      "identifier": "NavigationContextTests/rootDismissalWithoutRequestAllowsReopening(style:)",
+      "state": "Passed",
+      "targetName": "NavigationCoreTests",
+      "errorMessages": []
+    },
+    {
+      "identifier": "NavigationContextTests/confirmationIsVisibleOnlyOnTopModalAndCancelKeepsTheTree()",
+      "state": "Passed",
+      "targetName": "NavigationCoreTests",
+      "errorMessages": []
+    },
+    {
+      "identifier": "NavigationContextTests/approvalWaitsForRootDismissalAndRejectsChildCompletion()",
+      "state": "Passed",
+      "targetName": "NavigationCoreTests",
+      "errorMessages": []
+    },
+    {
+      "identifier": "NavigationContextTests/repeatedAndReplacedRequestsCannotReuseOldApproval()",
+      "state": "Passed",
+      "targetName": "NavigationCoreTests",
+      "errorMessages": []
+    },
+    {
+      "identifier": "NavigationContextTests/requestDuringApprovedDismissalRequiresItsOwnApproval()",
+      "state": "Passed",
+      "targetName": "NavigationCoreTests",
+      "errorMessages": []
+    },
+    {
+      "identifier": "NavigationContextTests/disappearingModalDoesNotImplicitlyApprovePendingRequest()",
+      "state": "Passed",
+      "targetName": "NavigationCoreTests",
+      "errorMessages": []
+    },
+    {
+      "identifier": "NavigationContextTests/coldRequestDoesNotRequireConfirmation()",
+      "state": "Passed",
+      "targetName": "NavigationCoreTests",
+      "errorMessages": []
+    },
+    {
+      "identifier": "NavigationContextTests/snapshotRoundTripRestoresIdentityAndIndependentNavigation()",
+      "state": "Passed",
+      "targetName": "NavigationCoreTests",
+      "errorMessages": []
+    },
+    {
+      "identifier": "NavigationContextTests/restoreRejectsBusyStateAndStaleContextWithReusedID()",
+      "state": "Passed",
+      "targetName": "NavigationCoreTests",
+      "errorMessages": []
+    },
+    {
+      "identifier": "NavigationContextTests/malformedSnapshotsAreRejectedWithoutPartialMutation()",
+      "state": "Passed",
+      "targetName": "NavigationCoreTests",
+      "errorMessages": []
+    },
+    {
+      "identifier": "NavigationContextTests/tabsSharePresentationStateButHaveIndependentStacks()",
+      "state": "Passed",
+      "targetName": "NavigationCoreTests",
+      "errorMessages": []
+    },
+    {
+      "identifier": "NavigationContextTests/modalTabsShareTheirLayerWithoutSharingRootPaths()",
+      "state": "Passed",
+      "targetName": "NavigationCoreTests",
+      "errorMessages": []
+    },
+    {
+      "identifier": "NavigationContextTests/eachLayerAcceptsOnlyOneChildUntilDismissalCompletes(style:)",
+      "state": "Passed",
+      "targetName": "NavigationCoreTests",
+      "errorMessages": []
+    },
+    {
+      "identifier": "NavigationContextTests/eachLayerAcceptsOnlyOneChildUntilDismissalCompletes(style:)",
+      "state": "Passed",
+      "targetName": "NavigationCoreTests",
+      "errorMessages": []
+    },
+    {
+      "identifier": "NavigationContextTests/snapshotRestoresAllModalStacksAndTheirSelectedStack()",
+      "state": "Passed",
+      "targetName": "NavigationCoreTests",
+      "errorMessages": []
+    },
+    {
+      "identifier": "NavigationContextTests/staleLayerCannotReacquireStacksAfterRestoreWithTheSameID()",
+      "state": "Passed",
+      "targetName": "NavigationCoreTests",
+      "errorMessages": []
+    },
+    {
+      "identifier": "NavigationContextTests/modalTabConfirmationUsesTheLayerAndCancellationPreservesEveryStack()",
+      "state": "Passed",
+      "targetName": "NavigationCoreTests",
+      "errorMessages": []
+    },
+    {
+      "identifier": "NavigationHostTests/configurationDefaultsToAbsentAndEnvironmentCopiesStayIndependent()",
+      "state": "Passed",
+      "targetName": "NavigationCoreTests",
+      "errorMessages": []
+    },
+    {
+      "identifier": "NavigationHostTests/nearestHostWinsForIdenticalRouteTypesAndPagesReadLocalEnvironment()",
+      "state": "Passed",
+      "targetName": "NavigationCoreTests",
+      "errorMessages": []
+    },
+    {
+      "identifier": "NavigationHostTests/rootEntryUsesTheSharedBuilderAndRootPresentationEnvironment()",
+      "state": "Passed",
+      "targetName": "NavigationCoreTests",
+      "errorMessages": []
+    },
+    {
+      "identifier": "NavigationHostTests/pageMethodBuildsFromAnExistentialConfiguration()",
+      "state": "Passed",
+      "targetName": "NavigationCoreTests",
+      "errorMessages": []
+    },
+    {
+      "identifier": "NavigationHostTests/modalEntryUsesTheSameBuilderAndInheritsTheHostEnvironment()",
+      "state": "Passed",
+      "targetName": "NavigationCoreTests",
+      "errorMessages": []
+    },
+    {
+      "identifier": "NavigationHostTests/inactiveLayerKeepsItsDestinationWithoutBuildingContent()",
+      "state": "Passed",
+      "targetName": "NavigationCoreTests",
+      "errorMessages": []
+    },
+    {
+      "identifier": "NavigationHostTests/configurationSupportsModalTabsWithoutChangingContextOwnership()",
+      "state": "Passed",
+      "targetName": "NavigationCoreTests",
+      "errorMessages": []
+    }
+  ],
+  "checks": {
+    "scopedFormat": {
+      "files": 7,
+      "requiringFormatting": 0
+    },
+    "strictLint": {
+      "files": 286,
+      "violations": 0
+    },
+    "diffCheck": "passed",
+    "repositoryFormat": {
+      "passed": false,
+      "remainingFile": "Sources/NavigationCore/SwiftUI/NavigationPresentationHost.swift",
+      "reason": "Other existing worktree changes; not edited in this task"
+    }
+  },
+  "boundaries": [
+    "Validation includes other pre-existing worktree changes.",
+    "After tests, only a blank line was added in NavigationLayer.swift; documentation and evidence were updated.",
+    "No manual Simulator interaction, physical device validation, Release build or remote CI was run in this task."
+  ],
+  "gitHeadAtValidation": "c18ae98cf0d35d9c8f491bda377bccbf2d8675e7",
+  "testedSourceSHA256": {
+    "Sources/NavigationCore/State/NavigationLayerRouteState.swift": "e81b3b8fed6ebb4526b54c8d3302f5e6bf929d03bee5a4193be94e575b0452d3",
+    "Sources/NavigationCore/State/NavigationLayer.swift": "6b2c10a636576a45c6d064b72f7ecb59bd69d289e9e16337f5b64293d24767c7",
+    "Sources/NavigationCore/Routing/NavigationPresentationContext.swift": "db015ec5215d2e5c28730562b963dce7b663aa90bba67b6de1d14aac2f1aeab4",
+    "Sources/NavigationCore/SwiftUI/NavigationLayerContent.swift": "392f81c399284654384bcccaf8f28d07ddcf0aaf364b7dbb6b36e8ac2533d4f2",
+    "Sources/NavigationCoreTests/NavigationPresentationRouteTests.swift": "7a77b1bbc6f1aa74c282813c0ed7cb384ca5fb03a8dc2b81704cd0aa0e66356e",
+    "Sources/NavigationCoreTests/NavigationDestinationTests.swift": "02679729abc31e88fbe20902b198824549c96313a620595b5749478b19c338d5",
+    "Sources/NavigationCoreTests/NavigationHostTests.swift": "0ee0a88169676ed02672fc7665c817c16ce05ef5fe6af973fe9e3794aeeb5bbc"
+  },
+  "finalSourceSHA256": {
+    "Sources/NavigationCore/State/NavigationLayerRouteState.swift": "e81b3b8fed6ebb4526b54c8d3302f5e6bf929d03bee5a4193be94e575b0452d3",
+    "Sources/NavigationCore/State/NavigationLayer.swift": "c909bfdcab0e215eec904fe351ad15a9c20e0446b3b1ddf4d1c62bbe577085ac",
+    "Sources/NavigationCore/Routing/NavigationPresentationContext.swift": "db015ec5215d2e5c28730562b963dce7b663aa90bba67b6de1d14aac2f1aeab4",
+    "Sources/NavigationCore/SwiftUI/NavigationLayerContent.swift": "392f81c399284654384bcccaf8f28d07ddcf0aaf364b7dbb6b36e8ac2533d4f2",
+    "Sources/NavigationCoreTests/NavigationPresentationRouteTests.swift": "7a77b1bbc6f1aa74c282813c0ed7cb384ca5fb03a8dc2b81704cd0aa0e66356e",
+    "Sources/NavigationCoreTests/NavigationDestinationTests.swift": "02679729abc31e88fbe20902b198824549c96313a620595b5749478b19c338d5",
+    "Sources/NavigationCoreTests/NavigationHostTests.swift": "0ee0a88169676ed02672fc7665c817c16ce05ef5fe6af973fe9e3794aeeb5bbc"
+  }
+}

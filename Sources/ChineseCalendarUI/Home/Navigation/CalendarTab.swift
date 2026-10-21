@@ -1,8 +1,9 @@
 import ChineseCalendarLocalization
 import Foundation
+import NavigationCore
 import SFSafeSymbols
 
-enum CalendarTab: Codable, Hashable, CaseIterable, Identifiable {
+enum CalendarTab: Codable, NavigationScope, CaseIterable, Identifiable {
     case years
     case history
     case settings

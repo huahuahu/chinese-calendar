@@ -7,11 +7,13 @@ import Foundation
 /// 快照包含当前业务提示路由，不包含 View、业务会话、排队请求、按钮动作或关闭动画状态。
 /// App 还需检查路由数据能否重新构建页面，例如临时回调就无法仅凭 ID 恢复。
 public struct NavigationSnapshot<
-    Scope: Hashable,
+    Scope: NavigationScope,
     Destination: NavigationDestination,
     AlertRoute: NavigationAlertRoute
 > {
-    /// 整个根层的入口，不等于选中 Tab 的根页面。
+    /// 构建 App 根界面时使用的 Destination。
+    /// 例如根界面是 .tabs 时，各 Tab 栈的 .home、.history 另存于 layer.rootDestinations；
+    /// 普通单栈中，这个值可以与栈底页面相同。
     public let rootDestination: Destination
     /// 根层与每个模态层共用相同的栈、路径和子呈现结构。
     public let layer: NavigationLayerSnapshot<Scope, Destination, AlertRoute>
@@ -43,15 +45,14 @@ public struct NavigationSnapshot<
         )
     }
 
-    /// 命名栈容器选中的 scope；primary 层应读取 layer.selectedStack。
-    public var selectedScope: Scope {
-        guard case let .scope(scope) = layer.selectedStack else {
-            preconditionFailure("A primary navigation layer has no selected scope")
-        }
+    /// 根层当前选中命名栈的 scope；选中 primary 时返回 nil，完整身份读取 layer.selectedStack。
+    public var selectedScope: Scope? {
+        guard case let .scope(scope) = layer.selectedStack else { return nil }
         return scope
     }
 
-    /// 命名栈根的便利投影；完整结构位于 layer.rootDestinations。
+    /// 只包含 .scope(...) 命名栈的栈底页面，不包含 primary 栈。
+    /// 包含所有栈的数据位于 layer.rootDestinations。
     public var rootDestinations: [Scope: Destination] {
         Dictionary(uniqueKeysWithValues: layer.rootDestinations.compactMap { key, value in
             guard case let .scope(scope) = key else { return nil }
@@ -59,7 +60,7 @@ public struct NavigationSnapshot<
         })
     }
 
-    /// 命名栈路径的便利投影；完整结构位于 layer.paths。
+    /// 只包含 .scope(...) 命名栈的 push 路径；包含 primary 栈的数据位于 layer.paths。
     public var paths: [Scope: [Destination]] {
         Dictionary(uniqueKeysWithValues: layer.paths.compactMap { key, value in
             guard case let .scope(scope) = key else { return nil }
@@ -102,7 +103,9 @@ public extension NavigationRouter {
     /// 有模态尚未关闭、正在等待关闭完成、正在等待用户确认，或快照中有重复模态 ID 时，
     /// 返回 false，并保留当前全部导航数据。App 需提前检查页面数据是否仍可使用。
     /// 模态会沿用快照中的 ID，但使用新对象，所以旧模态 Context 仍然失效。
-    /// 根层容器归属不变时保留栈对象；在 Core 单栈和外部容器间切换时，旧栈 Context 失效。
+    /// rootDestination.providesNavigationContainer 不变时保留根层的栈对象；
+    /// 在 Core 提供 NavigationStack 与页面自带 TabView／SplitView 等容器之间切换时，
+    /// 会重建根层的栈，旧栈 Context 随之失效。
     /// - Returns: 全部导航数据恢复成功时返回 true；界面的展示动画可能尚未完成。
     @discardableResult
     func restore(_ snapshot: NavigationSnapshot<Scope, Destination, AlertRoute>) -> Bool {

@@ -18,6 +18,7 @@ enum CalendarDestination: Codable, NavigationDestination, Identifiable {
     #if DEBUG
         case debugNavigation(id: UUID)
         case debugSplit(layout: CalendarDebugSplitLayout)
+        case debugSplitEmpty
         case debugSplitDetail(item: CalendarDebugSplitItem, level: Int)
         case debugNavigationTabs(id: UUID)
         case downloadPreview(sessionID: UUID)
@@ -55,6 +56,8 @@ enum CalendarDestination: Codable, NavigationDestination, Identifiable {
                 "debug-navigation-\(id)"
             case let .debugSplit(layout):
                 "debug-split-\(layout.rawValue)"
+            case .debugSplitEmpty:
+                "debug-split-empty"
             case let .debugSplitDetail(item, level):
                 "debug-split-detail-\(item.rawValue)-\(level)"
             case let .debugNavigationTabs(id):
@@ -96,7 +99,7 @@ enum CalendarDestination: Codable, NavigationDestination, Identifiable {
         case .yearPicker, .downloadDetails:
             false
         #if DEBUG
-            case .debugNavigation, .debugSplit, .debugSplitDetail, .debugNavigationTabs,
+            case .debugNavigation, .debugSplit, .debugSplitEmpty, .debugSplitDetail, .debugNavigationTabs,
                  .downloadPreview, .downloadPreviewScenarios, .downloadPreviewSwitch,
                  .downloadPreviewDetails:
                 false

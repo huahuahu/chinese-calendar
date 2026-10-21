@@ -75,7 +75,7 @@ enum PreviewHistoricalCalendarData {
             firstJulianDay: 1_721_082
         ), year: previousYear, context: context)
 
-        // 公元前 1 年完整的十二个月；公元 0 年是内部天文年号，不应作为显示名称。
+        // 公元前 1 年完整的十二个月；内部天文年份编号为 0，界面应显示“公元前 1 年”。
         let dayCounts = [29, 30, 29, 30, 30, 29, 30, 29, 30, 29, 30, 29]
         var firstJulianDay = 1_721_112
         for (offset, count) in dayCounts.enumerated() {

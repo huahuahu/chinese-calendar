@@ -11,7 +11,7 @@
 - `NavigationDestination` 将 `providesNavigationContainer`、Core 的 `navigationContainer` 和 `allowedNavigationEntries` 放在路由数据上；删除宿主的容器判断转发。新 Bool 为 true 表示页面组织顶层容器，语义与旧 true 表示 Core 包栈相反。
 - 根和模态共用 `NavigationLayerContent` 的入口承载逻辑。`NavigationRootView` 构建 App 根入口，`NavigationScopeView(stack:presentation:)` 从状态读取各栈根路由。普通 push 直接使用既有栈的页面映射。
 - App `.root`、日历／历史／设置根页及下载预览两个 Tab 均有明确 Destination，由 `CalendarNavigationConfiguration` 的统一 builder 构建。底部附件继续通过 View 配置传递，不写入 Router。
-- `NavigationLayer.route` 是层入口的唯一状态来源。节点 id/destination 与呈现 Context 的 route/destination 从中投影；栈的 root/path 独立保存，push、切 Tab 和替换栈根均不更改层入口。恢复同 UUID 时仍检查层／栈对象身份。
+- `NavigationLayer.route` 是层入口的唯一状态来源。节点 id/destination 与 `NavigationPresentationContext` 的 route/destination 从中投影；栈的 root/path 独立保存，push、切 Tab 和替换栈根均不更改层入口。恢复同 UUID 时仍检查层／栈对象身份。
 - `NavigationSnapshot` 保存根入口，恢复前完整校验根、栈根、路径、模态及重复 ID，非法恢复不部分修改状态。App 额外要求三个根 Tab 齐全，并继续拒绝业务提示、年份选择及下载演示等临时会话。
 - 普通根／模态入口自动成为其承载栈的初始根，只校验相应 `.root`／`.presentation` 权限；显式 Tab 根和替换栈根才要求 `.stackRoot`。普通根替换栈根后的快照可以恢复，层入口仍保留原值。
 - 两栏／三栏仅有类型化声明，当前状态入口与恢复均拒绝未实现的 Core 容器。SplitView 状态、栏间联动、折叠与栏目呈现权限仍由 #146 实现。

@@ -96,7 +96,7 @@ public struct 干支年: Codable, Hashable, Sendable {
     /// 一个干支循环包含 60 年。
     public static let 循环长度 = 60
 
-    /// 第几个六十年循环。
+    /// 调用方提供的六十年周期编号；本类型不规定纪元起点，也不进行公历年份换算。
     public let 周期: Int
 
     /// 在当前六十年循环中的序号，0 表示甲子，59 表示癸亥。
@@ -138,7 +138,8 @@ public struct 干支年: Codable, Hashable, Sendable {
     }
 }
 
-/// 农历月序，不包含闰月信息。
+/// 农历月号，1 表示正月、12 表示十二月，不包含闰月信息。
+/// 不表示跨年份递增的月份索引，也不表示该月在古历年中的先后位置。
 public enum 农历月序: Int, Codable, CaseIterable, Sendable {
     case 正月 = 1
     case 二月
@@ -177,9 +178,9 @@ public enum 农历闰月名称样式: String, Codable, CaseIterable, Sendable {
     }
 }
 
-/// 农历中的某个月，闰月与普通月共享同一月序。
+/// 农历月份的名称信息；例如二月和闰二月的月号相同，通过“是闰月”区分。
 public struct 农历月: Codable, Hashable, Sendable {
-    /// 基础月序，例如正月、二月、三月。
+    /// 不带闰月标记的月号，例如正月、二月、三月。
     public let 月序: 农历月序
 
     /// 是否为闰月。
@@ -223,7 +224,7 @@ public struct 农历月: Codable, Hashable, Sendable {
     }
 }
 
-/// 农历日期，使用枚举避免出现非法日值。
+/// 月内的农历日号，取值 1...30；是否超出某个具体月份的天数，需要结合该月数据判断。
 public enum 农历日: Int, Codable, CaseIterable, Sendable {
     case 初一 = 1
     case 初二

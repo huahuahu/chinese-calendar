@@ -5,7 +5,7 @@ import Testing
 @MainActor
 @Suite("Destination 容器与同构导航层")
 struct NavigationDestinationTests {
-    private enum Tab: String, Codable { case home, history }
+    private enum Tab: String, Codable, NavigationScope { case home, history }
     enum Route: String, Codable, NavigationDestination {
         case tabs, split, home, detail
 
@@ -116,7 +116,8 @@ struct NavigationDestinationTests {
 
     @Test(arguments: [Route.home, .tabs, .split])
     func everyDestinationCanEnterRootStackRootPushAndModal(route: Route) throws {
-        let directRoot = Router(rootDestination: route)
+        let roots: [NavigationStackID<Tab>: Route] = route.providesNavigationContainer ? [.primary: .home] : [:]
+        let directRoot = Router(rootDestination: route, rootDestinations: roots)
         #expect(directRoot.rootPresentation.destination == route)
         #expect(directRoot.restore(directRoot.snapshot))
 
@@ -127,7 +128,7 @@ struct NavigationDestinationTests {
         #expect(stack.rootDestination == route)
         #expect(stack.push(route))
         #expect(stack.path == [route])
-        #expect(router.rootPresentation.present(route))
+        #expect(router.rootPresentation.present(route, rootDestinations: roots))
         #expect(router.presentedNode?.destination == route)
         let snapshot = try JSONDecoder().decode(Snapshot.self, from: JSONEncoder().encode(router.snapshot))
         let restored = makeRouter()
@@ -175,7 +176,7 @@ struct NavigationDestinationTests {
         #expect(stack.push(.detail))
         let snapshot = router.snapshot
         #expect(old.dismiss())
-        #expect(old.route == nil)
+        #expect(old.route == .presentation(id: first.id, destination: .tabs))
         #expect(stack.rootDestination == nil)
         #expect(!stack.setPath([.home]))
         #expect(first.layer.paths[.scope(.home)] == [.detail])
@@ -191,7 +192,7 @@ struct NavigationDestinationTests {
         let current = router.presentationContext(for: restored)
         #expect(restored.id == first.id)
         #expect(!old.isActive)
-        #expect(old.destination == nil)
+        #expect(old.destination == .tabs)
         #expect(!oldScoped.present(.detail))
         #expect(!stack.setPath([.home]))
         #expect(!stack.push(.detail))

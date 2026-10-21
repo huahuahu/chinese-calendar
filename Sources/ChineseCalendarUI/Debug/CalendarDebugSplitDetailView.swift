@@ -25,7 +25,7 @@
                         navigation.push(.debugSplitDetail(item: item, level: level + 1))
                     }
                 }
-                CalendarDebugSplitControls(state: state, navigation: navigation)
+                CalendarDebugSplitControls(state: state)
                 CalendarDebugSplitLayoutStatus(state: state)
                 CalendarDebugNavigationActions()
                 CalendarDebugSplitEntries()

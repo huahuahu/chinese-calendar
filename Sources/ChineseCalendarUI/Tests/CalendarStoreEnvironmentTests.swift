@@ -12,11 +12,11 @@ struct CalendarStoreEnvironmentTests {
         let container = try PreviewSampleData.makeModelContainer()
         let expectedYears = try container.mainContext.fetch(FetchDescriptor<ChineseLunarYear>()).count
         let router = NavigationRouter<CalendarTab, StoreEnvironmentDestination, CalendarAlert>(
-            rootDestination: .root, selectedScope: .years
+            rootDestination: .root, selectedScope: .years, rootDestinations: [.years: .probe]
         )
         let store = ChineseCalendarStoreCoordinator(fullStoreConfiguration: nil)
         let root = router.rootPresentation
-        #expect(root.present(.probe))
+        #expect(root.present(.probe, rootDestinations: [.primary: .probe]))
         let node = try #require(router.sheet)
         let modal = router.presentationContext(for: node)
         let recorder = StoreEnvironmentRecorder()
@@ -43,10 +43,10 @@ struct CalendarStoreEnvironmentTests {
         let second = try PreviewSampleData.makeModelContainer()
         let expectedYears = try second.mainContext.fetch(FetchDescriptor<ChineseLunarYear>()).count
         let router = NavigationRouter<CalendarTab, StoreEnvironmentDestination, CalendarAlert>(
-            rootDestination: .root, selectedScope: .years
+            rootDestination: .root, selectedScope: .years, rootDestinations: [.years: .probe]
         )
         let root = router.rootPresentation
-        #expect(root.present(.probe))
+        #expect(root.present(.probe, rootDestinations: [.primary: .probe]))
         let node = try #require(router.sheet)
         let modal = router.presentationContext(for: node)
         let recorder = StoreEnvironmentRecorder()
@@ -76,7 +76,7 @@ struct CalendarStoreEnvironmentTests {
     @Test func unavailableStorePreservesAnInheritedPreviewEnvironment() throws {
         let container = try PreviewSampleData.makeModelContainer(includesSampleData: false)
         let router = NavigationRouter<CalendarTab, StoreEnvironmentDestination, CalendarAlert>(
-            rootDestination: .root, selectedScope: .years
+            rootDestination: .root, selectedScope: .years, rootDestinations: [.years: .probe]
         )
         let recorder = StoreEnvironmentRecorder()
         let content = StoreEnvironmentProbe(recorder: recorder)

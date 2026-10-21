@@ -6,6 +6,29 @@ import Testing
 @MainActor
 @Suite("App 使用局部导航框架")
 struct CalendarNavigationContextTests {
+    @Test func rootSelectionProjectionSupportsPrimaryWithoutInventingATab() {
+        let router = CalendarRouter(selectedTab: .history, historyPath: [.dynasty(orthodoxPeriodID: "ming")])
+        let named = router.navigation.snapshot
+        #expect(router.selectedTab == .history)
+        #expect(router.selectedDestination == .dynasty(orthodoxPeriodID: "ming"))
+        let primary = NavigationRouter<CalendarTab, CalendarDestination, CalendarAlert>(
+            rootDestination: .calendarHome, paths: [.primary: [.lunarYear(2026)]]
+        ).snapshot
+        #expect(router.navigation.restore(primary))
+        #expect(router.selectedTab == nil)
+        #expect(router.selectedDestination == .lunarYear(2026))
+        router.selectedTab = nil
+        #expect(router.navigation.snapshot == primary)
+        #expect(router.navigation.rootPresentation.context(for: .primary).pop())
+        #expect(router.selectedDestination == .calendarHome)
+        #expect(router.navigation.restore(named))
+        #expect(router.selectedTab == .history)
+        #expect(router.selectedDestination == .dynasty(orthodoxPeriodID: "ming"))
+        router.selectedTab = .settings
+        #expect(router.selectedTab == .settings)
+        #expect(router.selectedDestination == .settings)
+    }
+
     @Test(arguments: CalendarTab.allCases)
     func rootAndLocalOperationsUseTheSamePathForEveryTab(tab: CalendarTab) {
         let router = CalendarRouter()
@@ -185,8 +208,13 @@ struct CalendarNavigationContextTests {
                 #expect(!router.restore(invalidSnapshot))
                 #expect(router.navigation.snapshot == before)
                 let source = CalendarRouter()
-                #expect(source.navigation.restore(invalidSnapshot))
-                #expect(source.restorableSnapshot == nil)
+                let original = source.navigation.snapshot
+                if source.navigation.restore(invalidSnapshot) {
+                    // Core 只检查每个已声明栈的根，App 还要求三个业务 Tab 齐全。
+                    #expect(source.restorableSnapshot == nil)
+                } else {
+                    #expect(source.navigation.snapshot == original)
+                }
             }
         }
     }

@@ -4,7 +4,8 @@ import SFSafeSymbols
 import SwiftData
 import SwiftUI
 
-/// 朝代 Tab 根页面，按默认正统传统列出每一段正统时期。
+/// 列出默认正统传统下的各段正统时期，按 OrthodoxPeriod.sequenceIndex 排序。
+/// 此时间线用作历史 Tab 的栈底页面。
 struct CalendarHistoryHomeView: View {
     // swiftformat:disable:next enumNamespaces
     private struct Constants {

@@ -1,7 +1,8 @@
 #!/usr/bin/env swift
 import Foundation
 
-// Keep a Swift-shaped command surface while the JSON Schema validator lives in Node.
+// 将命令行参数转交同目录的 validate_swiftdata_import.mjs，由 Node 按 JSON Schema 校验导入数据。
+// 等待子进程结束并返回其退出码，供命令行和 CI 判断是否成功。
 let scriptPath = URL(fileURLWithPath: CommandLine.arguments[0])
 let scriptDirectory = scriptPath.deletingLastPathComponent()
 let nodeScript = scriptDirectory.appendingPathComponent("validate_swiftdata_import.mjs").path

@@ -15,42 +15,41 @@ enum CalendarAlertContent {
             return NavigationAlertContent(
                 title: CalendarStringKey.Settings.ClearData.confirmationTitle,
                 message: CalendarStringKey.Settings.ClearData.confirmationMessage,
-                buttons: [
-                    NavigationAlertButton(CalendarStringKey.Common.Action.cancel, action: .cancel, role: .cancel),
-                    NavigationAlertButton(
-                        CalendarStringKey.Settings.ClearData.action, action: .clearDownloadedData, role: .destructive
-                    )
-                ]
+                firstButton: NavigationAlertButton(
+                    CalendarStringKey.Settings.ClearData.action, action: .clearDownloadedData, role: .destructive
+                ),
+                cancelButton: NavigationAlertCancelButton(CalendarStringKey.Common.Action.cancel, action: .cancel)
             )
         case .clearDataSucceeded:
             return NavigationAlertContent(
                 title: CalendarStringKey.Settings.ClearData.successTitle,
-                message: CalendarStringKey.Settings.ClearData.successMessage, buttons: [acknowledge]
+                message: CalendarStringKey.Settings.ClearData.successMessage, firstButton: acknowledge
             )
         case let .clearDataFailed(id):
             return NavigationAlertContent(
                 title: CalendarStringKey.Settings.ClearData.failureTitle,
-                message: messages[id] ?? CalendarStringKey.Common.Error.retryLater, buttons: [acknowledge]
+                message: messages[id] ?? CalendarStringKey.Common.Error.retryLater, firstButton: acknowledge
             )
         case let .downloadFailed(id):
             return NavigationAlertContent(
                 title: CalendarStringKey.Store.Download.failureTitle,
-                message: messages[id] ?? CalendarStringKey.Common.Error.retryLater, buttons: [acknowledge]
+                message: messages[id] ?? CalendarStringKey.Common.Error.retryLater, firstButton: acknowledge
             )
         #if DEBUG
             case let .debugNotice(number):
                 return NavigationAlertContent(
                     title: CalendarStringKey.Debug.Alert.noticeTitle(number: number),
-                    message: CalendarStringKey.Debug.Alert.noticeMessage, buttons: [acknowledge]
+                    message: CalendarStringKey.Debug.Alert.noticeMessage, firstButton: acknowledge
                 )
             case .debugNavigationChoice:
                 return NavigationAlertContent(
                     title: CalendarStringKey.Debug.Alert.navigationTitle,
                     message: CalendarStringKey.Debug.Alert.navigationMessage,
-                    buttons: [
-                        NavigationAlertButton(CalendarStringKey.Common.Action.cancel, action: .cancel, role: .cancel),
-                        NavigationAlertButton(CalendarStringKey.Debug.Navigation.pushOnHistory, action: .openHistory)
-                    ]
+                    firstButton: NavigationAlertButton(
+                        CalendarStringKey.Debug.Navigation.pushOnHistory,
+                        action: .openHistory
+                    ),
+                    cancelButton: NavigationAlertCancelButton(CalendarStringKey.Common.Action.cancel, action: .cancel)
                 )
         #endif
         }

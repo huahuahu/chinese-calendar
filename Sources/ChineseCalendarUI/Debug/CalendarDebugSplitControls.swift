@@ -5,23 +5,22 @@
     /// 前栏与详情页共用的选择动作，显式操作同一个 detail 栈。
     struct CalendarDebugSplitControls: View {
         let state: CalendarDebugSplitState
-        let navigation: CalendarNavigationContext
 
         var body: some View {
             Section {
                 Button(CalendarStringKey.Debug.Split.nextItem) {
-                    state.selectItem(state.item?.next ?? .first, navigation: navigation)
+                    state.selectItem(state.item?.next ?? .first)
                 }
                 Button(CalendarStringKey.Debug.Split.repeatSelection) {
-                    state.selectItem(state.item, navigation: navigation)
+                    state.selectItem(state.item)
                 }
                 .disabled(state.item == nil)
                 Button(CalendarStringKey.Debug.Split.clearSelection) {
-                    state.selectItem(nil, navigation: navigation)
+                    state.selectItem(nil)
                 }
                 .disabled(state.item == nil)
                 Button(CalendarStringKey.Debug.Split.showDetail) {
-                    state.showDetail(navigation: navigation)
+                    state.showDetail()
                 }
                 .disabled(state.item == nil)
                 Button(CalendarStringKey.Debug.Split.showSidebar) {

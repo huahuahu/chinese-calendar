@@ -1,13 +1,13 @@
 import Foundation
 
 public extension NavigationRouter {
-    /// App 根层的呈现 Context，供根界面容器和 TabView 附件等控件使用。
-    /// 根 Tab 的 push/pop 使用 context(for: scope)。
+    /// App 根层的 NavigationPresentationContext，供根界面容器和 TabView 附件等控件使用。
+    /// 根层命名栈的 push/pop 使用 context(for: scope)；默认栈使用 rootPresentation.context(for: .primary)。
     var rootPresentation: NavigationPresentationContext<Scope, Destination, AlertRoute> {
         presentationContext(in: rootLayer)
     }
 
-    /// 获取指定根 Tab 的 NavigationContext；多次获取复用同一个对象，不切换当前 Tab。
+    /// 获取 App 根层指定命名栈的 NavigationContext；有效栈多次获取复用同一对象，不切换选中的栈。
     func context(for scope: Scope) -> NavigationContext<Scope, Destination> {
         context(in: rootLayer, stack: .scope(scope))
     }
@@ -21,7 +21,7 @@ public extension NavigationRouter {
         context(in: node.layer, stack: .primary)
     }
 
-    /// 获取指定模态的呈现 Context，NavigationScopeView 再为各栈取得带发起栈信息的 Context。
+    /// 获取指定模态的 NavigationPresentationContext，NavigationScopeView 再为各栈取得带发起栈信息的 Context。
     func presentationContext(
         for node: NavigationPresentationNode<Scope, Destination, AlertRoute>
     ) -> NavigationPresentationContext<Scope, Destination, AlertRoute> {
@@ -40,7 +40,7 @@ public extension NavigationRouter {
 
     /// 按 ID 关闭指定模态，以及从它继续打开的所有模态，保留父层各栈的路径。
     /// 根 Router 可以用此方法关闭任意一层模态；页面的 presentation.dismiss() 则关闭自己所在的模态。
-    /// - Returns: 找到并移除指定模态时返回 true，否则返回 false。
+    /// - Returns: 找到模态并接受关闭请求时返回 true；有活动 alert 时先等待它结束。未找到时返回 false。
     @discardableResult
     func dismissPresentation(id: UUID) -> Bool {
         let layers = [rootLayer] + presentations.map(\.layer)
@@ -52,15 +52,13 @@ public extension NavigationRouter {
     /// 使用用户看到的那条提示的 ID，避免旧按钮批准后来替换的新目标。
     /// 先清除 pendingConfirmation，让已批准的请求可以继续执行。
     func confirmNavigation(id: UUID) {
-        guard let pendingConfirmation, pendingConfirmation.id == id else { return }
-        self.pendingConfirmation = nil
-        _ = submit(pendingConfirmation.request)
+        guard let request = coordinationState.resolveConfirmation(id: id) else { return }
+        _ = submit(request)
     }
 
     /// 取消 ID 匹配的待确认请求，保留当前页面，也保留另一条已经批准、正在等待关闭的请求。
     func cancelConfirmation(id: UUID) {
-        guard pendingConfirmation?.id == id else { return }
-        pendingConfirmation = nil
+        guard coordinationState.resolveConfirmation(id: id) != nil else { return }
         resumePresentations()
     }
 
@@ -78,7 +76,7 @@ public extension NavigationRouter {
 
 extension NavigationRouter {
     /// 检查这一层是否仍有效，以及当前是否允许导航操作。
-    /// 等待用户确认或等待根模态关闭时，暂不允许操作。
+    /// 等待用户确认、等待根模态关闭或仍有活动 alert 时，暂不允许操作。
     func canNavigate(in layer: NavigationLayer<Scope, Destination, AlertRoute>?) -> Bool {
         guard let layer, self.layer(id: layer.id) === layer else { return false }
         return !isAwaitingPresentationDismissal && pendingConfirmation == nil && !hasActiveAlert
@@ -104,11 +102,12 @@ extension NavigationRouter {
     func context(
         in layer: NavigationLayer<Scope, Destination, AlertRoute>, stack: NavigationStackID<Scope>
     ) -> NavigationContext<Scope, Destination> {
-        guard layer.route.destination.providesNavigationContainer || stack == .primary else {
+        guard layer.route.destination.providesNavigationContainer || stack == .primary,
+              let state = layer.stacks[stack]
+        else {
             return NavigationContext(id: stack, state: nil, access: .inactive)
         }
         let id = NavigationContextID(layer: layer.id, stack: stack)
-        let state = layer.stack(for: stack)
         if let existing = contexts[id], existing.state === state, existing.isActive { return existing }
         let access = NavigationStackAccess(
             isActive: { [weak self, weak layer, weak state] in
@@ -127,7 +126,7 @@ extension NavigationRouter {
         return context
     }
 
-    /// 每个有效层复用一个呈现 Context。检查原层对象，避免把旧模态的 Context 交给新模态。
+    /// 每个有效层复用一个 NavigationPresentationContext。检查原层对象，避免把旧模态的 Context 交给新模态。
     func presentationContext(
         in layer: NavigationLayer<Scope, Destination, AlertRoute>
     ) -> NavigationPresentationContext<Scope, Destination, AlertRoute> {

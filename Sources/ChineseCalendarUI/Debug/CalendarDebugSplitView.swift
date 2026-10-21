@@ -70,7 +70,7 @@
                 Section {
                     Toggle(CalendarStringKey.Debug.Split.retainDetail, isOn: $state.retainsDetail)
                 }
-                CalendarDebugSplitControls(state: state, navigation: navigation)
+                CalendarDebugSplitControls(state: state)
                 CalendarDebugSplitLayoutStatus(state: state)
             }
             .navigationTitle(layout.title)
@@ -84,27 +84,14 @@
                         Text(item.title).tag(item)
                     }
                 }
-                CalendarDebugSplitControls(state: state, navigation: navigation)
+                CalendarDebugSplitControls(state: state)
                 CalendarDebugSplitLayoutStatus(state: state)
             }
             .toolbar { closeToolbar }
         }
 
         private var detail: some View {
-            NavigationScopeView(context: navigation, presentation: presentation) {
-                Group {
-                    if let item = state.item {
-                        CalendarDebugSplitDetailView(item: item, level: 0)
-                    } else {
-                        ContentUnavailableView {
-                            Label(CalendarStringKey.Debug.Split.emptyTitle, systemSymbol: .listBullet)
-                        } description: {
-                            Text(CalendarStringKey.Debug.Split.emptyMessage)
-                        }
-                    }
-                }
-                .toolbar { closeToolbar }
-            }
+            NavigationScopeView(stack: stack, presentation: presentation)
         }
 
         @ToolbarContentBuilder
@@ -118,13 +105,13 @@
 
         /// Binding 的写入集中经过受控动作；不使用多个 onChange 互相同步 selection 和 path。
         private var categorySelection: Binding<CalendarDebugSplitCategory?> {
-            Binding(get: { state.category }, set: { state.selectCategory($0, navigation: navigation) })
+            Binding(get: { state.category }, set: { state.selectCategory($0) })
         }
 
         private func itemSelection(in items: [CalendarDebugSplitItem]) -> Binding<CalendarDebugSplitItem?> {
             Binding(
                 get: { state.item.flatMap { items.contains($0) ? $0 : nil } },
-                set: { state.selectItem($0, navigation: navigation) }
+                set: { state.selectItem($0) }
             )
         }
     }

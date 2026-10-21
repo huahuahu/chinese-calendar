@@ -96,7 +96,8 @@ enum PreviewSampleData {
         context.insert(year2027)
     }
 
-    /// A complete transient parent for isolated cell/layout previews and tests.
+    /// 为独立日期单元格的 Preview 和测试创建一个已关联农历年的月份对象。
+    /// 不打开数据库，也不填充 days；调用方可用它作为测试日期的所属月份。
     static func makeStandaloneMonth() -> ChineseLunarMonth {
         ChineseLunarMonth(
             lunarMonthIndex: 3,

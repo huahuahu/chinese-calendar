@@ -1,9 +1,9 @@
-# 呈现层与导航栈分离
+# `NavigationLayer` 与导航栈分离
 
 > 后续调整：[009](009-separate-context-apis.md) 已接续本轮，移除栈上下文的呈现便利入口；以下保留本阶段决策与验证记录。
 
 - 日期：2026-10-11；状态：实施完成，构建、自动测试及关键 Simulator 交互已验证。
-- 用户确认：每个呈现层只有一个可选的子模态，展示方式为 sheet 或 fullScreen；同层可以包含一个或多个独立导航栈。根层的多个 Tab 共享模态状态，模态内部也允许多个 Tab。
+- 用户确认：每个 `NavigationLayer` 只有一个可选的子模态，展示方式为 sheet 或 fullScreen；同层可以包含一个或多个独立导航栈。根层的多个 Tab 共享模态状态，模态内部也允许多个 Tab。
 - 承接 [006](006-scoped-router-plan.md) 与 [007](007-debug-actions.md)，保留工作区已有实现及调试入口。本轮替代统一 context 中按 root／Tab／模态分支处理全部操作的结构。
 
 ## 实施方案

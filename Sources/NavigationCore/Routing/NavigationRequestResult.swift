@@ -1,6 +1,7 @@
 /// 说明 Router.submit 如何处理这次请求。数据更新完成后，SwiftUI 可能仍在更新界面或播放动画。
 public enum NavigationRequestResult: Equatable, Sendable {
-    /// 目标不允许出现在该入口，或请求了尚未支持的容器；原状态保持不变。
+    /// 请求与根层的栈配置不兼容，原状态保持不变。
+    /// 例如 Core 自动提供的单栈只接受 primary 目标，且不允许用 setRoot(nil) 清除栈底页面。
     case rejected
     /// 等待用户确认，当前页面和路径保持原样。提示容器或业务代码需处理 pendingConfirmation。
     case awaitingConfirmation

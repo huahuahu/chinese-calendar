@@ -1,7 +1,8 @@
 import NavigationCore
 import SwiftUI
 
-/// 日历导航树的 View 配置；具体页面的 selection、ModelContext 和回调仍由发起作用域提供。
+/// 为整棵日历导航树构建页面和提示，并处理 alert 按钮动作。
+/// 年份选择器等页面所需的 selection、ModelContext 和回调，仍从打开它的页面所创建的会话取得。
 struct CalendarNavigationConfiguration<BottomStatusBar: View>: @MainActor NavigationHostConfiguration {
     typealias Scope = CalendarTab
     typealias Destination = CalendarDestination

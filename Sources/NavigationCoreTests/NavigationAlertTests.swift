@@ -11,7 +11,7 @@ nonisolated private enum AlertTestNotice: String, Codable, NavigationAlertRoute 
 @MainActor
 @Suite("业务 alert 与导航的串行协调")
 struct NavigationAlertTests {
-    private enum Tab: String, Codable { case home, history }
+    private enum Tab: String, Codable, NavigationScope { case home, history }
     private enum Route: String, Codable, NavigationDestination {
         case root, first, second, third
         var providesNavigationContainer: Bool {
@@ -25,7 +25,7 @@ struct NavigationAlertTests {
     private typealias Presentation = NavigationPresentationContext<Tab, Route, Notice>
 
     @Test func rootAlertQueuesNavigationUntilActualDismissal() throws {
-        let router = Router(rootDestination: .root, selectedScope: .home, paths: [.home: [.first]])
+        let router = makeRouter(paths: [.home: [.first]])
         let context = router.rootPresentation
         let home = router.context(for: .home)
         #expect(context.present(.alert(.first)))
@@ -53,7 +53,7 @@ struct NavigationAlertTests {
 
     @Test(arguments: [NavigationPresentationStyle.sheet, .fullScreen])
     func modalAlertFinishesBeforeLeaveConfirmation(style: NavigationPresentationStyle) throws {
-        let router = Router(rootDestination: .root, selectedScope: .home)
+        let router = makeRouter()
         router.rootPresentation.present(.first, style: style)
         let page = try #require(router.presentedNode)
         let context = router.presentationContext(for: page)
@@ -80,7 +80,7 @@ struct NavigationAlertTests {
     }
 
     @Test func cancelLeaveConfirmationKeepsOriginalModalAndPaths() throws {
-        let router = Router(rootDestination: .root, selectedScope: .home)
+        let router = makeRouter()
         router.presentSheet(.first)
         let page = try #require(router.sheet)
         let context = router.presentationContext(for: page)
@@ -97,7 +97,7 @@ struct NavigationAlertTests {
     }
 
     @Test func queuedAlertsKeepOrderAndNavigationWaitsForAllOfThem() throws {
-        let router = Router(rootDestination: .root, selectedScope: .home)
+        let router = makeRouter()
         let context = router.rootPresentation
         context.presentAlert(.first)
         let first = try beginAlert(context)
@@ -121,7 +121,7 @@ struct NavigationAlertTests {
     }
 
     @Test func latestExternalRequestKeepsItsOwnConfirmationRequirement() throws {
-        let router = Router(rootDestination: .root, selectedScope: .home)
+        let router = makeRouter()
         router.presentSheet(.first)
         let context = try router.presentationContext(for: #require(router.sheet))
         context.presentAlert(.first)
@@ -136,7 +136,7 @@ struct NavigationAlertTests {
     }
 
     @Test func businessActionCanQueueResultBeforeExternalNavigationContinues() throws {
-        let router = Router(rootDestination: .root, selectedScope: .home)
+        let router = makeRouter()
         let context = router.rootPresentation
         context.presentAlert(.first)
         let id = try beginAlert(context)
@@ -157,7 +157,7 @@ struct NavigationAlertTests {
 
     @Test(arguments: [true, false])
     func latestRequestAfterAlertWinsDuringModalDismissal(requiresConfirmation: Bool) throws {
-        let router = Router(rootDestination: .root, selectedScope: .home)
+        let router = makeRouter()
         router.presentSheet(.first)
         let context = try router.presentationContext(for: #require(router.sheet))
         context.presentAlert(.first)
@@ -184,7 +184,7 @@ struct NavigationAlertTests {
     }
 
     @Test func alertActionNavigationWaitsForAlertAndThenModalDismissal() throws {
-        let router = Router(rootDestination: .root, selectedScope: .home)
+        let router = makeRouter()
         router.presentSheet(.first)
         let context = try router.presentationContext(for: #require(router.sheet))
         context.presentAlert(.first)
@@ -200,7 +200,7 @@ struct NavigationAlertTests {
     }
 
     @Test func newConfirmationKeepsRequestApprovedDuringAlertCompletion() throws {
-        let router = Router(rootDestination: .root, selectedScope: .home)
+        let router = makeRouter()
         router.presentSheet(.first)
         let context = try router.presentationContext(for: #require(router.sheet))
         router.submit(.push(.second, on: .history), confirmIfPresented: true)
@@ -222,7 +222,7 @@ struct NavigationAlertTests {
     }
 
     @Test func newConfirmationKeepsAcceptedRequestAfterBusinessAlertEnds() throws {
-        let router = Router(rootDestination: .root, selectedScope: .home)
+        let router = makeRouter()
         router.presentSheet(.first)
         let context = try router.presentationContext(for: #require(router.sheet))
         context.presentAlert(.first)
@@ -243,7 +243,7 @@ struct NavigationAlertTests {
     }
 
     @Test func dismissingModalWaitsForAlertAndInvalidatesItsContext() throws {
-        let router = Router(rootDestination: .root, selectedScope: .home)
+        let router = makeRouter()
         router.presentSheet(.first)
         let page = try #require(router.sheet)
         let context = router.presentationContext(for: page)
@@ -265,13 +265,13 @@ struct NavigationAlertTests {
 
 extension NavigationAlertTests {
     @Test func backgroundTabCannotPresentAlert() {
-        let router = Router(rootDestination: .root, selectedScope: .home)
+        let router = makeRouter()
         #expect(!router.rootPresentation.scoped(to: .scope(.history)).presentAlert(.first))
         #expect(!router.hasActivePresentation)
     }
 
     @Test func closingModalDiscardsItsQueuedAlerts() throws {
-        let router = Router(rootDestination: .root, selectedScope: .home)
+        let router = makeRouter()
         router.presentSheet(.first)
         let context = try router.presentationContext(for: #require(router.sheet))
         context.presentAlert(.first)
@@ -288,7 +288,7 @@ extension NavigationAlertTests {
     }
 
     @Test func customConfirmationCancellationResumesQueuedAlert() throws {
-        let router = Router(rootDestination: .root, selectedScope: .home)
+        let router = makeRouter()
         router.presentSheet(.first)
         let context = try router.presentationContext(for: #require(router.sheet))
         router.submit(.push(.second, on: .history), confirmIfPresented: true)
@@ -301,7 +301,7 @@ extension NavigationAlertTests {
     }
 
     @Test func childDismissalFinishesBeforeParentShowsConfirmation() throws {
-        let router = Router(rootDestination: .root, selectedScope: .home)
+        let router = makeRouter()
         router.presentSheet(.first)
         let parent = try router.presentationContext(for: #require(router.sheet))
         parent.present(.second)
@@ -314,7 +314,7 @@ extension NavigationAlertTests {
     }
 
     @Test func snapshotPreservesAlertDataWithoutCreatingAStackForIt() throws {
-        let router = Router(rootDestination: .root, selectedScope: .home)
+        let router = makeRouter()
         router.presentSheet(.first)
         let page = try #require(router.sheet)
         router.presentationContext(for: page).presentAlert(.second)
@@ -322,7 +322,7 @@ extension NavigationAlertTests {
         #expect(snapshot.presentation?.alerts == [.second])
         #expect(router.presentations.count == 1)
         let data = try JSONEncoder().encode(snapshot)
-        let restored = Router(rootDestination: .root, selectedScope: .history)
+        let restored = makeRouter(selectedScope: .history)
         #expect(try restored.restore(JSONDecoder().decode(NavigationSnapshot<Tab, Route, Notice>.self, from: data)))
         #expect(restored.snapshot == snapshot)
         let context = try restored.presentationContext(for: #require(restored.sheet))
@@ -330,7 +330,7 @@ extension NavigationAlertTests {
     }
 
     @Test func cannotRestoreWhileAlertIsClosingOrItsActionIsRunning() throws {
-        let router = Router(rootDestination: .root, selectedScope: .home)
+        let router = makeRouter()
         let clean = router.snapshot
         let context = router.rootPresentation
         context.presentAlert(.first)
@@ -347,5 +347,14 @@ extension NavigationAlertTests {
         let node = try #require(context.presentedAlert)
         #expect(context.alertWillPresent(id: node.id, isConfirmation: false))
         return node.id
+    }
+}
+
+private extension NavigationAlertTests {
+    private func makeRouter(selectedScope: Tab = .home, paths: [Tab: [Route]] = [:]) -> Router {
+        Router(
+            rootDestination: .root, selectedScope: selectedScope,
+            rootDestinations: [.home: .first, .history: .second], paths: paths
+        )
     }
 }

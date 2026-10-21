@@ -1,6 +1,6 @@
 import Foundation
 
-/// 仅供系统适配层使用的显示配置。持久状态仍是 Router 中的路由数据。
+/// 提供给原生 alert 宿主的显示内容和生命周期回调；当前提示的路由与会话状态仍由 Router 管理。
 struct NavigationSystemAlert {
     struct Button {
         let title: String

@@ -2,7 +2,7 @@ import SwiftUI
 
 /// 由根层 Destination 构建 App 入口；在外部挂载一次 navigationHost 提供配置与呈现。
 public struct NavigationRootView<
-    Scope: Hashable, Destination: NavigationDestination, AlertRoute: NavigationAlertRoute
+    Scope: NavigationScope, Destination: NavigationDestination, AlertRoute: NavigationAlertRoute
 >: View {
     private let context: NavigationPresentationContext<Scope, Destination, AlertRoute>
 

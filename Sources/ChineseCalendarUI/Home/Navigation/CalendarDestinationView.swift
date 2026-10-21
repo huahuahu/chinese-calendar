@@ -70,6 +70,12 @@ struct CalendarDestinationView<BottomStatusBar: View>: View {
                     CalendarDebugNavigationView(id: id)
                 case let .debugSplit(layout):
                     CalendarDebugSplitView(layout: layout)
+                case .debugSplitEmpty:
+                    ContentUnavailableView {
+                        Label(CalendarStringKey.Debug.Split.emptyTitle, systemSymbol: .listBullet)
+                    } description: {
+                        Text(CalendarStringKey.Debug.Split.emptyMessage)
+                    }
                 case let .debugSplitDetail(item, level):
                     CalendarDebugSplitDetailView(item: item, level: level)
                 case .debugNavigationTabs:

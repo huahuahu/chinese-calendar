@@ -4,7 +4,7 @@ import SFSafeSymbols
 import SwiftData
 import SwiftUI
 
-/// 按领域顺序展示一个朝代的皇帝；卡片本期不继续导航。
+/// 按 Emperor.sequenceIndex 展示一个朝代的皇帝；列表卡片只展示资料，不提供详情跳转。
 struct EmperorListView: View {
     // swiftformat:disable:next enumNamespaces
     private struct Constants {

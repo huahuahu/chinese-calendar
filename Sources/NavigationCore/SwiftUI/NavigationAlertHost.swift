@@ -2,7 +2,7 @@ import SwiftUI
 
 /// 业务提示和导航确认共用一个系统宿主，每次只展示一个 alert。
 struct NavigationAlertHost<
-    Scope: Hashable,
+    Scope: NavigationScope,
     Destination: NavigationDestination,
     AlertRoute: NavigationAlertRoute
 >: ViewModifier {
@@ -35,10 +35,8 @@ struct NavigationAlertHost<
                 id: request.id, isConfirmation: true,
                 copy: NavigationAlertContent(
                     title: copy.title, message: copy.message,
-                    buttons: [
-                        NavigationAlertButton(copy.cancel, action: false, role: .cancel),
-                        NavigationAlertButton(copy.confirm, action: true)
-                    ]
+                    firstButton: NavigationAlertButton(copy.confirm, action: true),
+                    cancelButton: NavigationAlertCancelButton(copy.cancel, action: false)
                 )
             ) { approved in
                 if approved {
@@ -55,22 +53,23 @@ struct NavigationAlertHost<
         id: UUID, isConfirmation: Bool, copy: NavigationAlertContent<Action>,
         action: @escaping @MainActor (Action) async -> Void
     ) -> NavigationSystemAlert {
-        NavigationSystemAlert(
+        let buttons = copy.presentationButtons
+        return NavigationSystemAlert(
             id: id, title: String(localized: copy.title), message: String(localized: copy.message),
-            buttons: copy.buttons.map { button in
+            buttons: buttons.map { button in
                 NavigationSystemAlert.Button(
                     title: String(localized: button.title),
-                    isCancel: button.role == .cancel, isDestructive: button.role == .destructive
+                    isCancel: button.isCancel, isDestructive: button.isDestructive
                 )
             },
             willPresent: { context.alertWillPresent(id: id, isConfirmation: isConfirmation) },
             willDismiss: { context.alertWillDismiss(id: id) },
             didDismiss: { selection in
-                // 生命周期归属本次呈现，不随业务页面 body 重建而取消。
+                // 用独立 Task 等待按钮动作完成，再释放本次 alert 会话；页面重建不会取消这项任务。
                 Task { @MainActor in
                     guard context.beginAlertCompletion(id: id) else { return }
-                    if let selection, copy.buttons.indices.contains(selection) {
-                        await action(copy.buttons[selection].action)
+                    if let selection, buttons.indices.contains(selection) {
+                        await action(buttons[selection].action)
                     }
                     context.alertDidDismiss(id: id)
                 }

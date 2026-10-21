@@ -16,7 +16,7 @@ public final class CivilDate {
         set { calendarStyleRawValue = newValue.rawValue }
     }
 
-    /// Inverse side of CalendarDay.civilDate.
+    /// 此民用日期对应的绝对日期记录，可继续通过它读取农历日期；与 CalendarDay.civilDate 互为反向关系。
     public var calendarDay: CalendarDay?
 
     public init(

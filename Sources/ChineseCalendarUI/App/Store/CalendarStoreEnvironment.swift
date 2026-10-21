@@ -14,7 +14,8 @@ extension EnvironmentValues {
 }
 
 extension View {
-    /// 覆盖整个导航树的数据环境；状态变化不替换呈现宿主的结构身份。
+    /// 为导航树提供就绪数据库的 ModelContext 和数据完整度。
+    /// 通过修改 Environment 更新数据，不按存储状态创建不同的 View 分支，以保留导航宿主的生命周期。
     func calendarStoreEnvironment(state: CalendarStoreBootstrapState) -> some View {
         transformEnvironment(\.self) { environment in
             if case let .ready(container, contentLevel, _) = state {

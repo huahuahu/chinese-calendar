@@ -1,6 +1,7 @@
 import Foundation
 
-/// 农历基础月序，使用枚举避免出现非法月份值。
+/// 农历月号，1 表示正月、12 表示十二月，不包含闰月信息。
+/// 这不是跨年份递增的 lunarMonthIndex，也不表示该月在某个古历年中的先后位置。
 public enum LunarMonthNumber: Int, Codable, CaseIterable, Sendable {
     case one = 1
     case two
@@ -39,7 +40,8 @@ public enum LunarIntercalaryMonthNameStyle: String, Codable, CaseIterable, Senda
     }
 }
 
-/// 农历中的某个月，闰月与普通月共享同一月序。
+/// 农历月份的名称信息，由月号、是否为闰月及闰月命名样式组成。
+/// 例如二月和闰二月的 number 都是 .two，通过 isLeapMonth 区分。
 public struct LunarMonth: Codable, Equatable, Sendable {
     public let number: LunarMonthNumber
     public let isLeapMonth: Bool
@@ -91,7 +93,7 @@ public struct LunarMonth: Codable, Equatable, Sendable {
     }
 }
 
-/// 农历日期，使用枚举避免出现非法日期值。
+/// 月内的农历日号，取值 1...30；是否超出某个具体月份的天数，需要结合该月数据判断。
 public enum LunarDay: Int, Codable, CaseIterable, Sendable {
     case one = 1
     case two

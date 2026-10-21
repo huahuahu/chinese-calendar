@@ -1,11 +1,23 @@
-/// 页面和 alert 共用的数据入口；只有页面模态需要选择初始导航栈。
-public enum NavigationPresentationRequest<
-    Scope: Hashable,
+// swiftformat:disable modifierOrder
+
+/// 用强类型数据描述一次页面模态或业务 alert 的呈现请求；只有页面模态需要配置导航栈。
+nonisolated public enum NavigationPresentationRequest<
+    Scope: NavigationScope,
     Destination: NavigationDestination,
     AlertRoute: NavigationAlertRoute
 > {
-    case sheet(Destination, initialStack: NavigationStackID<Scope> = .primary)
-    case fullScreen(Destination, initialStack: NavigationStackID<Scope> = .primary)
+    case sheet(
+        Destination,
+        initialStack: NavigationStackID<Scope> = .primary,
+        rootDestinations: [NavigationStackID<Scope>: Destination] = [:],
+        paths: [NavigationStackID<Scope>: [Destination]] = [:]
+    )
+    case fullScreen(
+        Destination,
+        initialStack: NavigationStackID<Scope> = .primary,
+        rootDestinations: [NavigationStackID<Scope>: Destination] = [:],
+        paths: [NavigationStackID<Scope>: [Destination]] = [:]
+    )
     case alert(AlertRoute)
 }
 
@@ -14,8 +26,10 @@ public extension NavigationPresentationContext {
     @discardableResult
     func present(_ request: NavigationPresentationRequest<Scope, Destination, AlertRoute>) -> Bool {
         switch request {
-        case let .sheet(destination, stack): present(destination, style: .sheet, initialStack: stack)
-        case let .fullScreen(destination, stack): present(destination, style: .fullScreen, initialStack: stack)
+        case let .sheet(destination, stack, roots, paths):
+            present(destination, style: .sheet, initialStack: stack, rootDestinations: roots, paths: paths)
+        case let .fullScreen(destination, stack, roots, paths):
+            present(destination, style: .fullScreen, initialStack: stack, rootDestinations: roots, paths: paths)
         case let .alert(destination): presentAlert(destination)
         }
     }

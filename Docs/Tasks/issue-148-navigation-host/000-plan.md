@@ -14,7 +14,7 @@
 
 1. 在 NavigationCore 的 SwiftUI 层新增 `NavigationHostConfiguration` 协议，提供普通栈页面、呈现页面及其 push 后代、容器策略、确认文案、业务 alert 和动作／清理入口。业务实现保存所需的 coordinator 引用，以方法构建页面；环境不保存裸 builder 闭包。
 2. 根 `navigationHost(context:configuration:)` 将配置放入仅当前子树可见的泛型环境，并挂载唯一根呈现宿主。独立树可使用相同路由类型但不同配置；无进程级注册。配置缺失为接入错误，不能静默构建空页面。
-3. `NavigationScopeView` 只需栈身份、所属呈现层与根内容；自行读取配置，在每个实际 `NavigationStack` 内注册 destination。保留显式 context 初始化入口。配置的 View 类型只在框架的页面构建边界擦除，不把 `AnyView` 放入 Router 或 Context。
+3. `NavigationScopeView` 只需栈身份、所属 `NavigationLayer` 与根内容；自行读取配置，在每个实际 `NavigationStack` 内注册 destination。保留显式 context 初始化入口。配置的 View 类型只在框架的页面构建边界擦除，不把 `AnyView` 放入 Router 或 Context。
 4. 递归呈现宿主自动继承配置。普通模态仍提供 primary 栈；多 Tab 模态仍由内部各栈负责容器，不重复呈现宿主。
 5. App 的配置实现集中原有两个构建入口及提示／回调。不捕获根页的 selection、ModelContext 或选年回调；继续由带 session ID 的年份选择流程查找发起页上下文。模态及其 push 页面保留现有 store 环境注入。
 6. 更新三个根 Tab、下载演示的两个 Tab、独立 Preview 和 Core README 示例。遵循 [Common](../../Conventions/Common.md)、[SwiftUI](../../Conventions/SwiftUI.md) 与导航规范。

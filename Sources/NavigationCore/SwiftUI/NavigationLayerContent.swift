@@ -1,14 +1,16 @@
 import SwiftUI
 
-/// 根层与模态层共用的容器选择；不挂载呈现宿主，也不为 push 页面创建容器。
+/// 构建根界面或模态入口：页面自带容器时直接构建，否则用 NavigationScopeView 提供 primary 栈。
+/// 本视图不处理模态和 alert；它们由所在层的 navigationPresentations 宿主统一展示。
 struct NavigationLayerContent<
-    Scope: Hashable, Destination: NavigationDestination, AlertRoute: NavigationAlertRoute
+    Scope: NavigationScope, Destination: NavigationDestination, AlertRoute: NavigationAlertRoute
 >: View {
     let context: NavigationPresentationContext<Scope, Destination, AlertRoute>
     @Environment(\.[navigation: NavigationConfigurationKey<Scope, Destination, AlertRoute>()]) private var configuration
 
     var body: some View {
-        if let destination = context.destination {
+        if context.isActive {
+            let destination = context.destination
             if let configuration {
                 if destination.providesNavigationContainer {
                     configuration.page(for: destination)

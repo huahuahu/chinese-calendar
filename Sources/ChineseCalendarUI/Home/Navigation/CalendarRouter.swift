@@ -12,7 +12,8 @@ final class CalendarRouter {
         [.scope(.years): .calendarHome, .scope(.history): .historyHome, .scope(.settings): .settings]
     }
 
-    var selectedTab: CalendarTab {
+    /// 根层选中的命名 Tab；使用 primary 栈时没有 Tab 选择。
+    var selectedTab: CalendarTab? {
         get { navigation.selectedScope }
         set { navigation.selectedScope = newValue }
     }
@@ -36,7 +37,7 @@ final class CalendarRouter {
     }
 
     var selectedDestination: CalendarDestination? {
-        currentDestination(on: selectedTab)
+        navigation.selectedDestination
     }
 
     var hasActivePresentation: Bool {

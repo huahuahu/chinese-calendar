@@ -69,7 +69,7 @@ public extension CalendarStringKey.Debug.Navigation {
         CalendarStringKey.resource(
             "debug.navigation.mainTabsSheet",
             defaultValue: "Sheet 打开主标签页",
-            comment: "导航调试菜单中以弹窗展示独立主标签页的按钮，用于验证各呈现层的标签和导航路径互不影响。"
+            comment: "导航调试菜单中以弹窗展示独立主标签页的按钮，用于验证各 NavigationLayer 的标签和导航路径互不影响。"
         )
     }
 

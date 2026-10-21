@@ -1,9 +1,10 @@
 import SwiftUI
 
-/// 为一个模态提供独立 Context、可选 primary 栈及唯一子呈现宿主。
-/// 页面和策略自动继承根 navigationHost 配置；多 Tab 页面自行创建各栈。
+/// 显示一个模态，并为它继续打开的子模态和 alert 安装唯一的呈现宿主。
+/// 使用该模态自己的 NavigationPresentationContext，继承根 navigationHost 的页面构建配置；
+/// Core 自动提供 primary 栈，或由声明 providesNavigationContainer 的页面自行组织各栈。
 public struct NavigationPresentationNodeView<
-    Scope: Hashable,
+    Scope: NavigationScope,
     Destination: NavigationDestination,
     AlertRoute: NavigationAlertRoute
 >: View {

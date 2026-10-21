@@ -1,8 +1,8 @@
 #!/usr/bin/env swift
 import Foundation
 
-// This Swift file keeps the project command surface consistent.
-// The streaming JSONL transform lives in the adjacent Node script.
+// 将命令行参数转交同目录的 generate_swiftdata_import.mjs，由 Node 流式转换 JSONL 导入数据。
+// 等待子进程结束并返回其退出码，供命令行和 CI 判断是否成功。
 let scriptPath = URL(fileURLWithPath: CommandLine.arguments[0])
 let scriptDirectory = scriptPath.deletingLastPathComponent()
 let nodeScript = scriptDirectory.appendingPathComponent("generate_swiftdata_import.mjs").path

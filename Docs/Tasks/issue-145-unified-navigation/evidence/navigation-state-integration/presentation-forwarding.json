@@ -1,0 +1,79 @@
+{
+  "recorded_at": "2026-10-21T22:24:00+08:00",
+  "base_commit": "560ad23fac8632051b4e04ca4d2e49ef263943a0",
+  "finding": "presentation-contract-001",
+  "fix": "Forward initialStack, rootDestinations and paths through typed sheet/fullScreen requests and Router conveniences; return acceptance; explicitly nonisolated request and stack identity values.",
+  "environment": {
+    "project": "ChineseCalendar.xcodeproj",
+    "scheme": "ChineseCalendar-iOS",
+    "simulator": "chinesedate iPhone 18 Pro Max (885f)",
+    "simulator_id": "16A9CAA7-45CE-46D5-8915-F61531FC617C"
+  },
+  "checks": {
+    "format": {
+      "exit_code": 0,
+      "checked_files": 297
+    },
+    "lint": {
+      "exit_code": 0,
+      "checked_files": 286,
+      "violations": 0
+    },
+    "diff_check": {
+      "exit_code": 0
+    }
+  },
+  "build": "Succeeded as part of RunSomeTests",
+  "initial_build_failure": "Empty dictionary defaults required nonisolated NavigationStackID Hashable conformance under the target MainActor default; fixed before the passing test run.",
+  "build_warnings": [
+    "Existing test-link sysroot warnings",
+    "Existing weak-variable and macro/test warnings",
+    "Existing arrowTriangleBranch deprecation"
+  ],
+  "tests": {
+    "tool": "mcp__xcode__RunSomeTests",
+    "passed": 159,
+    "failed": 0,
+    "skipped": 0,
+    "not_run": 0,
+    "new_parameterized_cases": 8,
+    "selection": "All NavigationCore tests plus CalendarPresentationTests, CalendarDebugSplitStateTests and CalendarRouterRestorationTests",
+    "results": "presentation-forwarding-tests.tsv",
+    "target_counts": {
+      "NavigationCoreTests": 125,
+      "ChineseCalendarUITests": 34
+    }
+  },
+  "source_sha256": [
+    {
+      "path": "Sources/NavigationCore/Routing/NavigationPresentationRequest.swift",
+      "tested": "29bbc3a5f09b8ca38df8b55f1559e0aa300530898f4e47d48409a655b4d1536e",
+      "final": "29bbc3a5f09b8ca38df8b55f1559e0aa300530898f4e47d48409a655b4d1536e"
+    },
+    {
+      "path": "Sources/NavigationCore/Routing/NavigationRouter.swift",
+      "tested": "38deb19a003635dd53b80cd9ccfc61df8059f5c97795a68f3034e7ac5041a934",
+      "final": "38deb19a003635dd53b80cd9ccfc61df8059f5c97795a68f3034e7ac5041a934"
+    },
+    {
+      "path": "Sources/NavigationCore/State/NavigationStackID.swift",
+      "tested": "b17e1f4dbe824a43aadd9274e9c9bc1931434b11dbafdd0ebf534af24eccdfac",
+      "final": "98a75670fc6549d91326f8298be6c00ff80ffb4d070d0df150242541705d73bc"
+    },
+    {
+      "path": "Sources/NavigationCoreTests/NavigationPrimaryLayerTests.swift",
+      "tested": "164478dadea55dfbe0f0bff15a9043ced64572ac40074bacf03e5b279a8d3863",
+      "final": "164478dadea55dfbe0f0bff15a9043ced64572ac40074bacf03e5b279a8d3863"
+    }
+  ],
+  "post_test_changes": [
+    "Moved only the SwiftFormat directive in NavigationStackID.swift before its declaration; executable statements unchanged."
+  ],
+  "not_run": [
+    "New full local test suite; prior 384-pass run remains stage evidence",
+    "Manual Simulator interaction",
+    "Physical device validation",
+    "Independent Release build",
+    "Broad independent PR review"
+  ]
+}
