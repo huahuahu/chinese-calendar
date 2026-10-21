@@ -43,6 +43,6 @@ Core 快照保存其管理的根和路径，App 的分类及栏布局仍不由 C
 
 测试覆盖请求协调、primary 投影、栈根与快照约束、Context 生命周期与观察更新、失效宿主不构建页面、alert 按钮顺序和 App SplitView 状态。测试手动推进生命周期及 ImageRenderer 断言不能替代系统动画、宽窄切换或实际点击验证。
 
-测试后仅格式化 `NavigationPresentationHost.swift` 的换行和缩进，去掉空白后与受测文件完全一致；没有修改执行代码。94 个改动源文件的受测／最终 SHA-256、测试明细和检查结果见[整合证据](evidence/navigation-state-integration/validation.json)。015／016 中的 361 项和 43 项结果保留为阶段证据，不代表最终工作区。
+测试后格式化 `NavigationPresentationHost.swift` 的换行和缩进，并补充 `NavigationPresentationContext.swift` 的层级／scoped 实例说明。前者去掉空白后与受测文件完全一致，后者去掉行注释后与受测文件完全一致；没有修改执行代码。94 个改动源文件的受测／最终 SHA-256、测试明细和检查结果见[整合证据](evidence/navigation-state-integration/validation.json)。015／016 中的 361 项和 43 项结果保留为阶段证据，不代表最终工作区。
 
 构建成功但仍报告测试链接的 sysroot 警告及 `arrowTriangleBranch` 弃用警告，本轮没有处理或宣称消除它们。远端 CI 状态以新 PR 的实际检查为准。

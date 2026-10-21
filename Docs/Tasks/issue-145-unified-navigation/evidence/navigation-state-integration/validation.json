@@ -49,10 +49,6 @@
       "exit_code": 0
     }
   },
-  "post_test_change": {
-    "path": "Sources/NavigationCore/SwiftUI/NavigationPresentationHost.swift",
-    "description": "SwiftFormat whitespace only; removing whitespace yields identical text. No executable code changed."
-  },
   "build_warnings": [
     "Test link tasks: macOS 27.0 sysroot while targeting iOS Simulator.",
     "CalendarDebugActionsMenu.swift: arrowTriangleBranch deprecated in iOS 18.0."
@@ -322,7 +318,7 @@
     {
       "path": "Sources/NavigationCore/Routing/NavigationPresentationContext.swift",
       "tested": "db015ec5215d2e5c28730562b963dce7b663aa90bba67b6de1d14aac2f1aeab4",
-      "final": "db015ec5215d2e5c28730562b963dce7b663aa90bba67b6de1d14aac2f1aeab4"
+      "final": "ead95f8d89241922e235f7b16abaca8e8f3bf23e0fefcae7967f26a208758762"
     },
     {
       "path": "Sources/NavigationCore/Routing/NavigationPresentationRequest.swift",
@@ -533,6 +529,16 @@
       "path": "Sources/NavigationCoreTests/NavigationStackStateTests.swift",
       "tested": "ead1f46f0a68d2f1719c509cdfe206733c339095138c374c52d08ce2cfaf1f85",
       "final": "ead1f46f0a68d2f1719c509cdfe206733c339095138c374c52d08ce2cfaf1f85"
+    }
+  ],
+  "post_test_changes": [
+    {
+      "path": "Sources/NavigationCore/SwiftUI/NavigationPresentationHost.swift",
+      "description": "SwiftFormat whitespace only; removing whitespace yields identical text. No executable code changed."
+    },
+    {
+      "path": "Sources/NavigationCore/Routing/NavigationPresentationContext.swift",
+      "description": "Added documentation about layer-level and scoped Context instances; executable content unchanged after removing line comments."
     }
   ]
 }

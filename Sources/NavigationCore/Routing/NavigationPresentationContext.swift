@@ -3,10 +3,14 @@ import Observation
 
 /// 供页面操作自己所在的 NavigationLayer：打开模态、关闭当前模态、切换本层 Tab，以及处理离开确认。
 ///
-/// App 根层和每个模态层都有自己的呈现 Context。NavigationScopeView 通过 scoped(to:)
-/// 取得记录了发起栈的 Context，使未选中的 Tab 无法弹出模态；这些 Context 仍共享本层状态。
-/// TabView 附件等不属于具体栈的控件，可以使用本层不指定发起栈的 Context。
-/// push/pop 由页面的 NavigationContext 处理。
+/// 同一个 NavigationLayer 可以对应多个呈现 Context。例如一个只使用 3 个固定 Tab 栈的层，
+/// 最多有 4 个实例：1 个不指定发起栈的层级 Context，以及每个 Tab 各 1 个 scoped Context。
+/// 这些实例按需创建并缓存，全部属于同一层，共享入口路由、选中栈、模态呈现和离开确认状态。
+/// scoped Context 额外记录 sourceStack，用于限制未选中 Tab 发起模态；它不会创建新的导航层。
+///
+/// NavigationScopeView 通过 scoped(to:) 取得对应栈的呈现入口；TabView 附件等公共控件
+/// 使用不指定发起栈的层级 Context。各 Tab 的 path 和 push/pop 由各自的 NavigationContext 管理。
+/// App 根界面拥有根层；每次打开 sheet／full-screen 才会创建下一层及其自己的呈现 Context。
 ///
 /// 这里只弱引用 Router 和所属层。即使旧页面仍持有 Context，也不会阻止它们释放。
 /// 独立保留共享的入口记录，让路由读取不依赖层是否仍有效。
