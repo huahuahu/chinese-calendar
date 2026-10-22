@@ -1,0 +1,23 @@
+{
+  "head": "b347895eefe45d0b3ba539912ab2e7a4fe52fda6",
+  "files": {
+    "Docs/Conventions/Navigation.md": "e26d5abbc78b849325f3074ccf1df449424439097e53b766e7e59943d9309d6e",
+    "Sources/NavigationCore/README.md": "00302402b6533b71bc14ef059f2bb4c673159354b8b9d151fdc1caf0a166800c",
+    "Sources/NavigationCore/MIGRATION.md": "5661076c7748723288468c7af63aa5246df5dbf42704a1938a43cc9ccf4b1c97",
+    "Sources/NavigationCore/SwiftUI/Hosting/NavigationHostConfiguration.swift": "443e65d59265d88d7b69bbad694cf93482f2bcc3360f211e5ac2b0cfcdc4ef8c",
+    "Sources/NavigationCore/SwiftUI/Presentation/NavigationPresentationHost.swift": "2ef603f8d4679b8c4d27890b156746a55777de76ae282dbf1f71f8d9219b0515",
+    "Sources/NavigationCore/State/Layer/NavigationLayer.swift": "fccce7f8729cdb7784b45ec3354bcb70bf1b80172e29c51a0c95e7215756faba",
+    "Sources/NavigationCore/Routing/Presentation/NavigationPresentationContext.swift": "6b5d92bda7399c1971a496864c916db56268a033403a44750391850748be20d3",
+    "Sources/NavigationCore/Routing/Router/NavigationRouter.swift": "207b75df878ca000f00db77f147492ba730b82099c23fe638869620d4bee4562",
+    "Sources/NavigationCore/Routing/Router/NavigationRouter+Retention.swift": "a767ae3210be67ca8520028c70d54aed63ab4eedbaba9cbd1924b7cc342d10a6",
+    "Sources/ChineseCalendarUI/Home/CalendarHomeCoordinator.swift": "6c8fcac5f1bdd19a6421e62f4bc078e29ce313b506789745df05cf8a29a58533",
+    "Sources/ChineseCalendarUI/Home/Navigation/CalendarNavigationConfiguration.swift": "4a19a0a313f7f20c296c3bd848d67f91cd1b4efb3f58415f80d1b03744634f1d",
+    "Sources/ChineseCalendarUI/Home/Navigation/CalendarNavigationHost.swift": "6039dcb66f0ab2d6b6c10813a240d6b29ce615eb60ef9106a7dcca7e9661657f",
+    "Sources/ChineseCalendarUI/Home/Navigation/CalendarNavigationSessionCleanup.swift": "078a0f7d489a27e3fea84de46fa6152c6616579eb353e752466ac73f722ef399",
+    "Sources/ChineseCalendarUI/Tests/CalendarPresentationTests.swift": "c16c5b49fa32a50b923d18228c0575f79d7d52153c4c42c022461db085707c46",
+    "Sources/ChineseCalendarUI/Tests/CalendarSessionRetentionTests.swift": "3494af7d077eca612e43d1979d8a94f7a043e62631c9faf99dc1de5eb7e024df",
+    "Sources/ChineseCalendarUI/Tests/CalendarSessionCleanupHostTests.swift": "daded34f300113f98fafb3ea30ffa1625c9355648dc85021b79b89afeb543a5d",
+    "Sources/NavigationCoreTests/NavigationPresentationRouteTests.swift": "7e1a153da4162e36e7a669851b9ab8bc139b6695a2d514d98a7302014712dfff",
+    "Sources/NavigationCoreTests/NavigationRetentionTests.swift": "8b6f98e99d3b7e74320a2e37f92c9b77677d653d478ee2d6ec2463098ebfad94"
+  }
+}

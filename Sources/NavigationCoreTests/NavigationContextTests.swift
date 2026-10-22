@@ -20,56 +20,57 @@ struct NavigationContextTests {
         let history = router.context(for: .history)
         let presentation = router.rootPresentation.scoped(to: .scope(.history))
         #expect(history === router.context(for: .history))
-        #expect(history.push(.first))
-        #expect(presentation.present(.second))
+        #expect(history.push(.first) == .applied)
+        #expect(presentation.present(.second) == .applied)
         let node = try #require(router.sheet)
         let modal = router.context(for: node)
-        #expect(modal.push(.third))
+        #expect(modal.push(.third) == .applied)
         #expect(node.path == [.third])
         #expect(history.path == [.first])
         #expect(router.path(for: .home) == [.third])
-        #expect(modal.pop())
-        #expect(!modal.pop())
-        #expect(!presentation.dismiss())
+        #expect(modal.pop() == .applied)
+        #expect(modal.pop() == .noChange(.alreadyAtRoot))
+        #expect(presentation.dismiss() == .noChange(.notPresented))
         #expect(router.selectedScope == .history)
     }
 
     @Test func childDismissalPreservesParentAndBlocksReopenUntilCompletion() throws {
         let router = makeRouter()
-        #expect(router.rootPresentation.present(.first))
+        #expect(router.rootPresentation.present(.first) == .applied)
         let parent = try #require(router.sheet)
         let context = router.context(for: parent)
         let presentation = router.presentationContext(for: parent).scoped(to: .primary)
         context.push(.second)
-        #expect(presentation.present(.third, style: .fullScreen))
-        #expect(!presentation.present(.first))
+        #expect(presentation.present(.third, style: .fullScreen) == .applied)
+        #expect(presentation.present(.first) == .rejected(.presentationAlreadyExists))
         let childNode = try #require(parent.fullScreen)
         let child = router.context(for: childNode)
         let childPresentation = router.presentationContext(for: childNode).scoped(to: .primary)
-        #expect(childPresentation.present(.second))
-        #expect(childPresentation.dismiss())
+        #expect(childPresentation.present(.second) == .applied)
+        #expect(childPresentation.dismiss() == .applied)
         #expect(!child.isActive)
-        #expect(!child.push(.first))
-        #expect(!childPresentation.present(.first))
-        #expect(!childPresentation.dismiss())
+        #expect(child.push(.first) == .rejected(.inactiveContext))
+        #expect(childPresentation.present(.first) == .rejected(.inactiveContext))
+        #expect(childPresentation.dismiss() == .rejected(.inactiveContext))
         #expect(parent.path == [.second])
         #expect(router.sheet === parent)
         #expect(parent.fullScreen == nil)
-        #expect(!presentation.present(.third))
+        #expect(presentation.present(.third) == .rejected(.awaitingDismissal))
         router.presentSheet(.third)
         #expect(parent.sheet == nil)
         presentation.presentationDidDismiss()
-        #expect(presentation.present(.third))
+        #expect(presentation.present(.third) == .applied)
     }
 
     @Test func inactiveTabCannotPresentOverCurrentTab() {
         let router = makeRouter()
         let history = router.rootPresentation.scoped(to: .scope(.history))
-        #expect(!history.present(.first))
+        #expect(history.present(.first) == .rejected(.sourceStackNotSelected))
         #expect(router.sheet == nil)
         router.selectedScope = .history
-        #expect(history.present(.first))
-        #expect(!router.rootPresentation.scoped(to: .scope(.home)).present(.second))
+        #expect(history.present(.first) == .applied)
+        #expect(router.rootPresentation.scoped(to: .scope(.home))
+            .present(.second) == .rejected(.presentationAlreadyExists))
     }
 
     @Test func separateContextsDoNotKeepTheRouterAlive() throws {
@@ -77,14 +78,14 @@ struct NavigationContextTests {
         weak var weakRouter = router
         let navigation = try #require(router?.context(for: .home))
         let presentation = try #require(router?.rootPresentation.scoped(to: .scope(.home)))
-        #expect(navigation.push(.first))
+        #expect(navigation.push(.first) == .applied)
         router = nil
         #expect(weakRouter == nil)
         #expect(!navigation.isActive)
         #expect(navigation.path.isEmpty)
-        #expect(!navigation.push(.second))
+        #expect(navigation.push(.second) == .rejected(.inactiveContext))
         #expect(!presentation.isActive)
-        #expect(!presentation.present(.second))
+        #expect(presentation.present(.second) == .rejected(.inactiveContext))
     }
 
     @Test(arguments: [NavigationPresentationStyle.sheet, .fullScreen])
@@ -93,12 +94,12 @@ struct NavigationContextTests {
         let home = router.rootPresentation.scoped(to: .scope(.home))
         home.present(.first, style: style)
         let modal = try router.presentationContext(for: #require(router.frontmostPresentationNode))
-        #expect(modal.dismiss())
+        #expect(modal.dismiss() == .applied)
         #expect(router.isAwaitingPresentationDismissal)
-        #expect(!home.present(.second, style: style))
+        #expect(home.present(.second, style: style) == .rejected(.awaitingDismissal))
         router.rootPresentation.presentationDidDismiss()
         #expect(!router.isAwaitingPresentationDismissal)
-        #expect(home.present(.second, style: style))
+        #expect(home.present(.second, style: style) == .applied)
     }
 
     @Test func confirmationIsVisibleOnlyOnTopModalAndCancelKeepsTheTree() throws {
@@ -121,7 +122,7 @@ struct NavigationContextTests {
         #expect(router.paths == [.home: [.first]])
         #expect(parent.path.isEmpty)
         #expect(child.path.isEmpty)
-        #expect(!child.push(.first))
+        #expect(child.push(.first) == .rejected(.awaitingConfirmation))
         childPresentation.cancelNavigation(id: confirmation.id)
         #expect(router.pendingConfirmation == nil)
         #expect(router.sheet === parent)
@@ -130,7 +131,7 @@ struct NavigationContextTests {
         #expect(router.paths == [.home: [.first]])
         #expect(parent.path.isEmpty)
         #expect(child.path.isEmpty)
-        #expect(child.push(.first))
+        #expect(child.push(.first) == .applied)
     }
 
     @Test func approvalWaitsForRootDismissalAndRejectsChildCompletion() throws {
@@ -228,10 +229,10 @@ struct NavigationContextTests {
         router.rootLayer.presentation = replacement
         #expect(replacement.id == original.id)
         #expect(!oldContext.isActive)
-        #expect(!oldContext.push(.second))
-        #expect(!oldPresentation.dismiss())
+        #expect(oldContext.push(.second) == .rejected(.inactiveContext))
+        #expect(oldPresentation.dismiss() == .rejected(.inactiveContext))
         #expect(router.context(for: replacement) !== oldContext)
-        #expect(router.context(for: replacement).push(.second))
+        #expect(router.context(for: replacement).push(.second) == .applied)
     }
 }
 
@@ -249,10 +250,10 @@ extension NavigationContextTests {
         history.push(.second)
         #expect(home.path == [.first])
         #expect(history.path == [.second])
-        #expect(homePresentation.present(.third))
+        #expect(homePresentation.present(.third) == .applied)
         #expect(homePresentation.presentedNode === historyPresentation.presentedNode)
-        #expect(!homePresentation.dismiss())
-        #expect(!router.rootPresentation.dismiss())
+        #expect(homePresentation.dismiss() == .noChange(.notPresented))
+        #expect(router.rootPresentation.dismiss() == .noChange(.notPresented))
         #expect(try #require(router.presentedNode).style == .sheet)
     }
 
@@ -273,33 +274,34 @@ extension NavigationContextTests {
         #expect(homePresentation.id != router.rootPresentation.id)
         home.push(.first)
         history.push(.second)
-        #expect(!historyPresentation.present(.third))
+        #expect(historyPresentation.present(.third) == .rejected(.sourceStackNotSelected))
         layer.selectedStack = .scope(.history)
-        #expect(historyPresentation.present(.third, style: .fullScreen))
+        #expect(historyPresentation.present(.third, style: .fullScreen) == .applied)
         let child = try #require(layer.presentedNode)
-        #expect(router.presentationContext(for: child).dismiss())
+        #expect(router.presentationContext(for: child).dismiss() == .applied)
         #expect(home.path == [.first])
         #expect(history.path == [.second])
         #expect(router.path(for: .home) == [.third])
-        #expect(!homePresentation.present(.third))
+        #expect(homePresentation.present(.third) == .rejected(.awaitingDismissal))
         layer.presentationDidDismiss()
-        #expect(historyPresentation.present(.third))
+        #expect(historyPresentation.present(.third) == .applied)
     }
 
     @Test(arguments: [NavigationPresentationStyle.sheet, .fullScreen])
     func eachLayerAcceptsOnlyOneChildUntilDismissalCompletes(style: NavigationPresentationStyle) throws {
         let router = makeRouter()
         let root = router.rootPresentation
-        #expect(root.present(.first, style: style))
+        #expect(root.present(.first, style: style) == .applied)
         let original = try #require(root.presentedNode)
-        #expect(!root.present(.second, style: style == .sheet ? .fullScreen : .sheet))
+        #expect(root
+            .present(.second, style: style == .sheet ? .fullScreen : .sheet) == .rejected(.presentationAlreadyExists))
         #expect(root.presentedNode === original)
-        #expect(root.dismissPresented(id: original.id))
-        #expect(!root.present(.second))
+        #expect(root.dismissPresented(id: original.id) == .applied)
+        #expect(root.present(.second) == .rejected(.awaitingDismissal))
         root.presentationDidDismiss()
-        #expect(root.present(.second))
+        #expect(root.present(.second) == .applied)
         let replacement = try #require(root.presentedNode)
-        #expect(!root.dismissPresented(id: original.id))
+        #expect(root.dismissPresented(id: original.id) == .noChange(.presentationNotFound))
         #expect(root.presentedNode === replacement)
     }
 
@@ -315,7 +317,7 @@ extension NavigationContextTests {
         let oldStack = oldLayer.context(for: .scope(.home))
         let oldPresentation = oldLayer.scoped(to: .scope(.home))
         oldStack.push(.second)
-        #expect(oldLayer.dismiss())
+        #expect(oldLayer.dismiss() == .applied)
         router.rootPresentation.presentationDidDismiss()
         router.rootLayer.presentation = NavigationPresentationNode(
             id: node.id, destination: .tabs, initialStack: .scope(.home),
@@ -324,12 +326,12 @@ extension NavigationContextTests {
         )
         let newLayer = try router.presentationContext(for: #require(router.presentedNode))
         #expect(!oldLayer.isActive)
-        #expect(!oldLayer.context(for: .scope(.history)).push(.third))
-        #expect(!oldLayer.present(.third))
-        #expect(!oldStack.pop())
-        #expect(!oldPresentation.present(.third))
-        #expect(!oldPresentation.scoped(to: .scope(.history)).present(.third))
-        #expect(newLayer.scoped(to: .scope(.home)).present(.third))
+        #expect(oldLayer.context(for: .scope(.history)).push(.third) == .rejected(.inactiveContext))
+        #expect(oldLayer.present(.third) == .rejected(.inactiveContext))
+        #expect(oldStack.pop() == .rejected(.inactiveContext))
+        #expect(oldPresentation.present(.third) == .rejected(.inactiveContext))
+        #expect(oldPresentation.scoped(to: .scope(.history)).present(.third) == .rejected(.inactiveContext))
+        #expect(newLayer.scoped(to: .scope(.home)).present(.third) == .applied)
         #expect(newLayer.context(for: .scope(.home)).path == [.second])
     }
 

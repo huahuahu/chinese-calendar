@@ -15,15 +15,19 @@ public final class NavigationContext<Scope: NavigationScope, Destination: Naviga
     public let id: NavigationStackID<Scope>
     @ObservationIgnored private(set) weak var state: NavigationStackState<Destination>?
     private let access: NavigationStackAccess
+    /// 只保存诊断身份，不保留层对象；独立构造的栈可以没有所属层。
+    private let layerID: NavigationLayerID?
 
     init(
         id: NavigationStackID<Scope>,
         state: NavigationStackState<Destination>?,
-        access: NavigationStackAccess
+        access: NavigationStackAccess,
+        layerID: NavigationLayerID? = nil
     ) {
         self.id = id
         self.state = state
         self.access = access
+        self.layerID = layerID
     }
 
     /// 这个 Context 是否仍可访问原来的栈。未选中的 Tab 也可以有效。
@@ -32,8 +36,9 @@ public final class NavigationContext<Scope: NavigationScope, Destination: Naviga
         state != nil && access.isActive()
     }
 
-    private var canMutate: Bool {
-        isActive && access.canMutate()
+    private var mutationRejection: NavigationRejectionReason? {
+        if let reason = access.rejectionReason() { return reason }
+        return isActive ? nil : .inactiveContext
     }
 
     /// 当前导航栈的栈底页面 Destination，不包含之后 push 的页面。
@@ -45,11 +50,11 @@ public final class NavigationContext<Scope: NavigationScope, Destination: Naviga
 
     /// 替换本栈的栈底页面并清空 push 路径，不改变打开整层时的 Destination 或其他栈。
     @discardableResult
-    public func setRootDestination(_ destination: Destination) -> Bool {
-        guard canMutate else { return false }
+    public func setRootDestination(_ destination: Destination) -> NavigationMutationResult {
+        if let reason = mutationRejection { return record(.rejected(reason), operation: "setRootDestination") }
         state?.rootDestination = destination
         state?.path = []
-        return true
+        return record(.applied, operation: "setRootDestination")
     }
 
     /// 这个栈中已经 push 的页面列表，不包含栈底页面。
@@ -62,29 +67,34 @@ public final class NavigationContext<Scope: NavigationScope, Destination: Naviga
     }
 
     /// 替换本栈的 push 路径。需要同步更新业务选择时，调用方应先确认路径修改成功。
-    /// - Returns: 接受完整路径时返回 true；Context 失效或当前不允许修改时返回 false。
+    /// 重复设置相同路径仍返回 applied；拒绝时返回原因，并保持路径不变。
     @discardableResult
-    public func setPath(_ newPath: [Destination]) -> Bool {
-        guard canMutate, let state else { return false }
-        state.path = newPath
-        return true
+    public func setPath(_ newPath: [Destination]) -> NavigationMutationResult {
+        if let reason = mutationRejection { return record(.rejected(reason), operation: "setPath") }
+        state?.path = newPath
+        return record(.applied, operation: "setPath")
     }
 
     /// 在本栈中 push 一个页面，不切换所在层选中的栈，也不改变其他栈的路径。
-    /// - Returns: 成功把页面加入路径时返回 true；Context 失效或不允许修改时返回 false。
+    /// - Returns: 已应用或具体拒绝原因；拒绝时不修改路径。
     @discardableResult
-    public func push(_ destination: Destination) -> Bool {
-        guard canMutate else { return false }
-        path.append(destination)
-        return true
+    public func push(_ destination: Destination) -> NavigationMutationResult {
+        if let reason = mutationRejection { return record(.rejected(reason), operation: "push") }
+        state?.path.append(destination)
+        return record(.applied, operation: "push")
     }
 
     /// 返回本栈的上一页。已在栈底页面时不执行操作，也不会关闭所在模态。
-    /// - Returns: 成功移除最后一个 push 页面时返回 true，否则返回 false。
+    /// - Returns: 已应用、已经在栈底，或具体拒绝原因。
     @discardableResult
-    public func pop() -> Bool {
-        guard canMutate, !path.isEmpty else { return false }
-        path.removeLast()
-        return true
+    public func pop() -> NavigationMutationResult {
+        if let reason = mutationRejection { return record(.rejected(reason), operation: "pop") }
+        guard state?.path.isEmpty == false else { return record(.noChange(.alreadyAtRoot), operation: "pop") }
+        state?.path.removeLast()
+        return record(.applied, operation: "pop")
+    }
+
+    private func record(_ result: NavigationMutationResult, operation: String) -> NavigationMutationResult {
+        NavigationCoreLog.record(result, operation: operation, layer: layerID, stack: String(describing: id))
     }
 }

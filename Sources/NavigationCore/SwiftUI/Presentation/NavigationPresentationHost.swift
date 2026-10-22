@@ -60,9 +60,7 @@ private struct NavigationPresentationHost<
 
     private func didDismiss() {
         // 先通知框架关闭动画已完成，让本层可以重新展示，或执行等待中的根层跳转。
-        // 然后通知业务清理临时数据，业务回调无需再次通知 Router。
         context.presentationDidDismiss()
-        configuration?.presentationDidDismiss()
     }
 }
 

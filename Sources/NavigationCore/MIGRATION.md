@@ -4,12 +4,40 @@
 
 下面按需要改动的接口组织，目标都是当前 API。历史任务记录解释当时的决策和验证范围，其中的中间方案可能已经被后续设计替代。
 
+## 将命令的 Bool／Void 返回值迁移为结果枚举
+
+本次直接迁移命令 API，不保留旧 Bool 包装。方法仍标记 `@discardableResult`，仅发起操作的调用可以继续忽略结果；读取结果的调用按下表更新。
+
+| 原调用合同 | 当前合同与调用方式 |
+| --- | --- |
+| 栈修改返回 Bool，部分 Router 修改方法返回 Void | 返回 `NavigationMutationResult`：`.applied`、`.noChange(reason)`、`.rejected(reason)`；原 `if navigation.push(...)` 改为 `if navigation.push(...).isApplied` |
+| `present`、`presentAlert`、`dismiss` 等返回 Bool | 返回 `NavigationPresentationResult`：`.applied`、`.queued`、`.noChange(reason)`、`.rejected(reason)`；仅判断是否接受请求时使用 `.isAccepted` |
+| `NavigationRequestResult.rejected` 没有原因 | 改为 `.rejected(NavigationRejectionReason)`，匹配时读取关联原因 |
+| `confirmNavigation(id:)` 返回 Void | 返回 `NavigationRequestResult`，过期确认返回 `.noChange(.staleConfirmation)`，批准后仍可能等待关闭 |
+| `cancelNavigation(id:)`／`cancelConfirmation(id:)` 返回 Void | 返回 `NavigationMutationResult`，成功取消为 `.applied`，过期确认为 `.noChange(.staleConfirmation)` |
+| 通过属性赋值，无法读取拒绝结果 | setter 转调对应命令；Binding 接法不变，需要结果时调用 `setPath`、`setSelectedStack` 等方法 |
+
+`isApplied` 只接受 `.applied`，适用于成功修改导航数据后再同步业务状态。`isAccepted` 包括 `.applied` 和 `.queued`，适用于判断呈现／关闭请求是否被接受；不要用它作为完成通知。`.applied` 不代表界面动画结束，`.queued` 可能在所属层失效后丢弃，不保证最终执行。
+
+正常无操作有独立原因：栈底 pop 为 `.noChange(.alreadyAtRoot)`，根层 dismiss 为 `.noChange(.notPresented)`，不存在的指定模态为 `.noChange(.presentationNotFound)`。不要把所有 `isApplied == false` 或 `isAccepted == false` 都当成失败。重复写入同一合法 path 或选中栈仍为 `.applied`，保留 App 先校验访问权限、再同步布局的用法。
+
+例如，原先以 Bool 结果保护业务选择的代码应改为：
+
+```swift
+guard navigation.setRootDestination(destination).isApplied else { return }
+selectedCategory = category
+```
+
+保存命令为函数值时，函数的返回类型也要同步修改；需要 `() -> Void` 的位置用闭包显式忽略结果。根请求的等待确认、等待 alert 和等待根模态关闭阶段保留，不能将它们归并为“成功完成”。
+
+诊断统一使用 `NavigationCoreLog` 的 `navigation` category：非法栈／容器配置为 `notice`，其余命令结果为 `debug`。最终决策记录一次，转发不重复记录；查询及内部幂等回调不打日志。动态层／栈身份为 private，不输出业务 Destination；调用方通过结果枚举决策，无需解析日志。方案和本次验证入口见[导航操作结果与诊断](../../Docs/Tasks/task-2026-10-22-navigation-results/000-plan.md)。
+
 ## 分开栈操作与层级呈现
 
 - 根 `rootContext` 改为 `rootPresentation`，类型为 `NavigationPresentationContext<Scope, Destination, AlertRoute>`。
 - `NavigationContext<Scope, Destination>` 只负责本栈的根、path、push、pop。页面另外从环境读取 `NavigationPresentationContext` 来 present／dismiss，不能通过 navigation 转取 presentation。
 - Router 和呈现相关类型增加 `AlertRoute` 泛型。业务提示遵循 `NavigationAlertRoute`，声明强类型 `Action`；不使用业务提示时采用 `NoNavigationAlert`。
-- `dismiss()` 关闭当前所在的模态及后代；根层调用返回 `false`。父层关闭指定子模态使用 `dismissPresented(id:)`，栈内返回使用 `pop()`。
+- `dismiss()` 关闭当前所在的模态及后代；根层调用返回 `.noChange(.notPresented)`。父层关闭指定子模态使用 `dismissPresented(id:)`，栈内返回使用 `pop()`。
 
 栈宿主默认注入记录发起栈的 `NavigationPresentationContext`。同层多个实例共享状态，不能依靠对象是否相同判断是否属于同一层。Tab 公共控件使用层级入口；同时可交互的分栏可显式使用 `unscoped()` 或 `restrictsPresentationToSelectedStack: false`。
 
@@ -29,7 +57,9 @@
 
 递归呈现宿主由 Core 创建，业务 Tab 或多 Tab 模态不重复挂 `navigationHost`。独立导航树和独立 Preview 各自提供根配置。
 
-原模态 builder 中用于全 App 的数据注入应移到根呈现宿主外。发起页面自己的 selection、ModelContext、回调仍按会话传递，不能用根页面固定上下文替代。`presentationDidDismiss` 仅做业务清理，全局导航由 Router 完成。
+原模态 builder 中用于全 App 的数据注入应移到根呈现宿主外。发起页面自己的 selection、ModelContext、回调仍按会话传递，不能用根页面固定上下文替代。
+
+配置协议的 `presentationDidDismiss()` 已移除；删除实现及手动转调。Core 宿主仍自动处理实际关闭与全局导航。业务会话改为观察 `router.retainedPresentationRoutes`，根据具体 destination 的会话 ID 清理；投影包含排队和正在关闭的节点，不能用仅包含活动页面的 `presentations` 替代。栈缓存用 `router.retains(context)` 判断是否仍由本树保留。稳定的业务宿主还应观察会话 ID 登记与 `alertRoutes`，覆盖尚未显示就被丢弃的队列。日历 App 已在 `CalendarNavigationSessionCleanup` 接入，无需逐页配置关闭回调。
 
 ## 容器声明改由 Destination 提供
 
@@ -51,7 +81,7 @@ App 的主 Tab 入口由 `.root` 改名为 `.mainTabs`。页面读取当前层�
 - Scope 从 `Hashable` 约束改为显式遵循 `NavigationScope`。给已有类型增加协议遵循即可；协议继承 `Hashable`，不要求 `CaseIterable` 或 `Codable`。
 - 新接入使用 `NavigationStackID<Scope>`：默认栈为 `.primary`，命名栈为 `.scope(scope)`。旧代码若以 `Never` 作为 Scope，应改用显式遵循 `NavigationScope` 的业务类型；只有默认栈时可定义无成员的 `enum AppScope: NavigationScope {}`，需要命名栈时再增加成员。
 - Router 初始化增加整个根层的 `rootDestination`。统一初始化器与 `present` 均使用 `initialStack`、以 StackID 为 key 的 `rootDestinations` 和 `paths`；基于 Scope 的根 Tab 便利入口仍存在。
-- `NavigationPresentationRequest.sheet`／`.fullScreen` 与 Router 的 `presentSheet`／`presentFullScreen` 同样接受 `initialStack`、`rootDestinations` 和 `paths`。容器入口必须通过这些参数声明根；普通页面可继续省略。匹配请求枚举时，两个页面 case 现在各有四个关联值。Router 两个便利方法返回可忽略的 `Bool`，便于判断请求是否接受；若曾把方法保存为返回 `Void` 的函数值，改为闭包并显式忽略结果。
+- `NavigationPresentationRequest.sheet`／`.fullScreen` 与 Router 的 `presentSheet`／`presentFullScreen` 同样接受 `initialStack`、`rootDestinations` 和 `paths`。容器入口必须通过这些参数声明根；普通页面可继续省略。匹配请求枚举时，两个页面 case 现在各有四个关联值。Router 两个便利方法当前返回可忽略的 `NavigationPresentationResult`；使用 `.isAccepted` 判断是否接受请求，不能据此判断界面完成。
 - 外部容器为要显示的各栈声明根，至少覆盖初始选中栈及所有带 path 的栈。push、写 path、切栈和获取 Context 都不隐式创建无根栈；需要动态增加根层命名栈时，先通过 Router 的 `setRootDestination` 或 `.setRoot` 请求声明根，再获取 Context。
 - 栈根必须是非可选 Destination。`setRootDestination`／`.setRoot` 不接受 nil；SplitView 的空详情使用明确的空态路由。换根同时清空 path，同一对象重复选择时由 App 保留原根和 path。
 - `NavigationContext.rootDestination` 仍是可选查询，nil 表示未声明或已失效的 Context。Preview 的 root closure 只覆盖显示内容，不能绕过根声明。
@@ -88,6 +118,7 @@ Router 的 `deferredRequest`、`pendingConfirmation`、`requestWaitingForAlert` 
 
 | 主题 | 记录 |
 | --- | --- |
+| 强类型操作结果与诊断 | [2026-10-22 方案](../../Docs/Tasks/task-2026-10-22-navigation-results/000-plan.md)，迁移旧 Bool／Void 命令合同 |
 | 初始统一导航与作用域 | [#145 计划](../../Docs/Tasks/issue-145-unified-navigation/000-plan.md)、[独立环境 API](../../Docs/Tasks/issue-145-unified-navigation/009-separate-context-apis.md) |
 | 业务 alert 与请求协调 | [统一提示](../../Docs/Tasks/issue-145-unified-navigation/011-unified-alerts.md)、[协调状态](../../Docs/Tasks/issue-145-unified-navigation/015-coordination-state.md) |
 | 路由读取与 Context 有效性 | [层入口路由](../../Docs/Tasks/issue-145-unified-navigation/016-readable-context-route.md) |

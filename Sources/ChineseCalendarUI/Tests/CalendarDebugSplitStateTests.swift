@@ -18,8 +18,8 @@
             #expect(split.navigation.isActive)
             #expect(split.navigation.rootDestination == .debugSplitEmpty)
             #expect(split.state.selectItem(.first))
-            #expect(split.navigation.push(firstPath[0]))
-            #expect(split.navigation.push(firstPath[1]))
+            #expect(split.navigation.push(firstPath[0]) == .applied)
+            #expect(split.navigation.push(firstPath[1]) == .applied)
             #expect(split.state.selectItem(.first))
             #expect(split.state.item == .first)
             #expect(split.navigation.path == firstPath)
@@ -29,8 +29,8 @@
             #expect(split.state.category == .second)
             #expect(split.navigation.path.isEmpty)
             #expect(split.navigation.rootDestination == .debugSplitDetail(item: .third, level: 0))
-            #expect(split.navigation.push(.debugSplitDetail(item: .third, level: 1)))
-            #expect(split.navigation.pop())
+            #expect(split.navigation.push(.debugSplitDetail(item: .third, level: 1)) == .applied)
+            #expect(split.navigation.pop() == .applied)
             #expect(split.navigation.path.isEmpty)
         }
 
@@ -38,7 +38,7 @@
             let split = try makeSplit(layout: .threeColumn)
             let destination = CalendarDestination.debugSplitDetail(item: .first, level: 1)
             #expect(split.state.selectItem(.first))
-            #expect(split.navigation.push(destination))
+            #expect(split.navigation.push(destination) == .applied)
             #expect(split.state.selectCategory(.first))
             #expect(split.state.item == .first)
             #expect(split.navigation.path == [destination])
@@ -48,7 +48,7 @@
             #expect(split.state.item == nil)
             #expect(split.navigation.path.isEmpty)
             #expect(split.state.selectItem(.third))
-            #expect(split.navigation.push(.debugSplitDetail(item: .third, level: 1)))
+            #expect(split.navigation.push(.debugSplitDetail(item: .third, level: 1)) == .applied)
             #expect(split.state.selectCategory(nil))
             #expect(split.state.category == nil)
             #expect(split.state.item == nil)
@@ -60,7 +60,7 @@
             let destination = CalendarDestination.debugSplitDetail(item: .first, level: 1)
             split.state.retainsDetail = true
             #expect(split.state.selectItem(.first))
-            #expect(split.navigation.push(destination))
+            #expect(split.navigation.push(destination) == .applied)
             #expect(split.state.selectCategory(.second))
             #expect(split.state.category == .second)
             #expect(split.state.item == .first)
@@ -78,7 +78,7 @@
             let split = try makeSplit()
             split.state.retainsDetail = retainsDetail
             #expect(split.state.selectItem(.first))
-            #expect(split.navigation.push(.debugSplitDetail(item: .first, level: 1)))
+            #expect(split.navigation.push(.debugSplitDetail(item: .first, level: 1)) == .applied)
             #expect(split.state.selectItem(nil))
             #expect(split.state.item == nil)
             #expect(split.navigation.path.isEmpty)
@@ -88,7 +88,7 @@
     extension CalendarDebugSplitStateTests {
         @Test func modalTabsAndNestedSplitKeepIndependentSelectionAndPaths() throws {
             let router = CalendarRouter(historyPath: [.emperor("ming-taizu")])
-            #expect(router.navigation.rootPresentation.presentDebugNavigationTabs(selectedTab: .history))
+            #expect(router.navigation.rootPresentation.presentDebugNavigationTabs(selectedTab: .history) == .applied)
             let tabs = try router.navigation.presentationContext(for: #require(router.fullScreen))
             let twoColumn = tabs.context(for: .scope(.history))
             let threeColumn = tabs.context(for: .scope(.settings))
@@ -99,19 +99,19 @@
             #expect(twoColumn !== threeColumn)
             #expect(twoColumn !== router.navigation.context(for: .history))
             #expect(firstState.selectItem(.first))
-            #expect(twoColumn.push(firstDestination))
+            #expect(twoColumn.push(firstDestination) == .applied)
             tabs.selectedStack = .scope(.settings)
             secondState.retainsDetail = true
             #expect(secondState.selectItem(.third))
-            #expect(threeColumn.push(secondDestination))
-            #expect(tabs.scoped(to: .scope(.settings)).presentDebugSplit(layout: .twoColumn))
+            #expect(threeColumn.push(secondDestination) == .applied)
+            #expect(tabs.scoped(to: .scope(.settings)).presentDebugSplit(layout: .twoColumn) == .applied)
             let child = try router.navigation.presentationContext(for: #require(tabs.presentedNode))
             let childNavigation = child.context(for: .primary)
             let childState = CalendarDebugSplitState(navigation: childNavigation)
             #expect(childNavigation !== twoColumn)
             #expect(childState.selectItem(.second))
-            #expect(childNavigation.push(.debugSplitDetail(item: .second, level: 1)))
-            #expect(child.dismiss())
+            #expect(childNavigation.push(.debugSplitDetail(item: .second, level: 1)) == .applied)
+            #expect(child.dismiss() == .applied)
 
             #expect(firstState.item == .first)
             #expect(secondState.item == .third)
@@ -127,8 +127,8 @@
             let original = try #require(split.router.sheet)
             let destination = CalendarDestination.debugSplitDetail(item: .first, level: 1)
             #expect(split.state.selectItem(.first))
-            #expect(split.navigation.push(destination))
-            #expect(split.presentation.dismiss())
+            #expect(split.navigation.push(destination) == .applied)
+            #expect(split.presentation.dismiss() == .applied)
             #expect(!split.navigation.isActive)
             #expect(!split.state.selectItem(.third))
             #expect(!split.state.selectCategory(.second))
@@ -137,7 +137,7 @@
             #expect(original.path == [destination])
 
             split.router.rootPresentationDidDismiss()
-            #expect(split.router.navigation.rootPresentation.presentDebugSplit(layout: .twoColumn))
+            #expect(split.router.navigation.rootPresentation.presentDebugSplit(layout: .twoColumn) == .applied)
             let reopened = try #require(split.router.sheet)
             let navigation = split.router.navigation.context(for: reopened)
             let state = CalendarDebugSplitState(navigation: navigation)
@@ -147,7 +147,7 @@
             #expect(state.category == nil)
             #expect(navigation.path.isEmpty)
             #expect(state.selectItem(.third))
-            #expect(navigation.push(.debugSplitDetail(item: .third, level: 1)))
+            #expect(navigation.push(.debugSplitDetail(item: .third, level: 1)) == .applied)
             #expect(!split.state.selectItem(nil))
             #expect(split.state.item == nil)
             #expect(original.path == [destination])
@@ -160,7 +160,7 @@
             let original = try #require(split.router.sheet)
             let destination = CalendarDestination.debugSplitDetail(item: .first, level: 1)
             #expect(split.state.selectItem(.first))
-            #expect(split.navigation.push(destination))
+            #expect(split.navigation.push(destination) == .applied)
             #expect(split.router
                 .openDeepLink(.emperor("ming-taizu"), confirmIfPresented: true) == .awaitingConfirmation)
             let cancelled = try #require(split.presentation.confirmation)
@@ -199,8 +199,8 @@
             let split = try makeSplit()
             let destination = CalendarDestination.debugSplitDetail(item: .first, level: 1)
             #expect(split.state.selectItem(.first))
-            #expect(split.navigation.push(destination))
-            #expect(split.presentation.presentAlert(.debugNotice(1)))
+            #expect(split.navigation.push(destination) == .applied)
+            #expect(split.presentation.presentAlert(.debugNotice(1)) == .applied)
             #expect(split.router.navigation.hasActiveAlert)
             #expect(!split.state.selectItem(.third))
             #expect(!split.state.selectItem(nil))
@@ -216,19 +216,19 @@
         ) {
             let pathSource = CalendarRouter()
             let navigation = pathSource.navigation.context(for: .years)
-            #expect(navigation.push(destination))
+            #expect(navigation.push(destination) == .applied)
             #expect(navigation.path == [destination])
 
             let stackRootSource = CalendarRouter(yearsPath: [.lunarYear(2024)])
             let stackRoot = stackRootSource.navigation.context(for: .years)
-            #expect(stackRoot.setRootDestination(destination))
+            #expect(stackRoot.setRootDestination(destination) == .applied)
             #expect(stackRoot.rootDestination == destination)
             #expect(stackRoot.path.isEmpty)
 
             let modalSource = CalendarRouter()
             #expect(modalSource.navigation.rootPresentation.present(
                 destination, initialStack: initialStack(for: destination), rootDestinations: roots(for: destination)
-            ))
+            ) == .applied)
             #expect(modalSource.sheet?.destination == destination)
 
             for source in [pathSource, stackRootSource, modalSource] {
@@ -261,7 +261,7 @@
             let split = try makeSplit(layout: layout)
             #expect(split.state.selectItem(.third))
             let path: [CalendarDestination] = [.debugSplitDetail(item: .third, level: 1)]
-            #expect(split.navigation.setPath(path))
+            #expect(split.navigation.setPath(path) == .applied)
             #expect(split.router.sheet?.destination == .debugSplit(layout: layout))
             let node = try #require(split.router.sheet)
             let navigation = split.presentation.context(for: .primary)
@@ -285,14 +285,14 @@
         func storeReplacementKeepsSplitSelectionLayoutAndPath(layout: CalendarDebugSplitLayout) throws {
             let coordinator = CalendarHomeCoordinator()
             coordinator.storeIdentityDidChange("base")
-            #expect(coordinator.router.navigation.rootPresentation.presentDebugSplit(layout: layout))
+            #expect(coordinator.router.navigation.rootPresentation.presentDebugSplit(layout: layout) == .applied)
             let node = try #require(coordinator.router.sheet)
             let presentation = coordinator.router.navigation.presentationContext(for: node)
             let navigation = presentation.context(for: .primary)
             let state = coordinator.debugSplitState(for: navigation)
             #expect(state.selectItem(.first))
             let destination = CalendarDestination.debugSplitDetail(item: .first, level: 1)
-            #expect(navigation.push(destination))
+            #expect(navigation.push(destination) == .applied)
             state.retainsDetail = true
             state.columnVisibility = .detailOnly
             state.preferredCompactColumn = .detail
@@ -317,7 +317,7 @@
             #expect(coordinator.router.navigation.rootPresentation.presentDebugNavigationTabs(
                 id: id,
                 selectedTab: .history
-            ))
+            ) == .applied)
             let node = try #require(coordinator.router.fullScreen)
             let presentation = coordinator.router.navigation.presentationContext(for: node)
             let twoColumn = presentation.context(for: .scope(.history))
@@ -327,8 +327,8 @@
             #expect(firstState !== secondState)
             #expect(firstState.selectItem(.first))
             #expect(secondState.selectItem(.third))
-            #expect(twoColumn.push(.debugSplitDetail(item: .first, level: 1)))
-            #expect(threeColumn.push(.debugSplitDetail(item: .third, level: 1)))
+            #expect(twoColumn.push(.debugSplitDetail(item: .first, level: 1)) == .applied)
+            #expect(threeColumn.push(.debugSplitDetail(item: .third, level: 1)) == .applied)
             secondState.retainsDetail = true
             firstState.columnVisibility = .detailOnly
             secondState.columnVisibility = .all
@@ -350,14 +350,14 @@
 
         @Test func dismissalReleasesSplitStateAndReopeningCreatesIndependentState() throws {
             let coordinator = CalendarHomeCoordinator()
-            #expect(coordinator.router.navigation.rootPresentation.presentDebugSplit(layout: .twoColumn))
+            #expect(coordinator.router.navigation.rootPresentation.presentDebugSplit(layout: .twoColumn) == .applied)
             let original = try #require(coordinator.router.sheet)
             let presentation = coordinator.router.navigation.presentationContext(for: original)
             let navigation = presentation.context(for: .primary)
             weak var state = coordinator.debugSplitState(for: navigation)
             #expect(state?.selectItem(.first) == true)
-            #expect(navigation.push(.debugSplitDetail(item: .first, level: 1)))
-            #expect(presentation.dismiss())
+            #expect(navigation.push(.debugSplitDetail(item: .first, level: 1)) == .applied)
+            #expect(presentation.dismiss() == .applied)
             #expect(!navigation.isActive)
             #expect(state != nil)
             #expect(coordinator.debugSplitState(for: navigation) === state)
@@ -368,7 +368,7 @@
             weak var inactiveState = coordinator.debugSplitState(for: navigation)
             #expect(inactiveState == nil)
 
-            #expect(coordinator.router.navigation.rootPresentation.presentDebugSplit(layout: .twoColumn))
+            #expect(coordinator.router.navigation.rootPresentation.presentDebugSplit(layout: .twoColumn) == .applied)
             let reopened = try #require(coordinator.router.sheet)
             let reopenedNavigation = coordinator.router.navigation.context(for: reopened)
             let reopenedState = coordinator.debugSplitState(for: reopenedNavigation)
@@ -417,7 +417,7 @@
 
         func makeSplit(layout: CalendarDebugSplitLayout = .twoColumn) throws -> SplitSession {
             let router = CalendarRouter(yearsPath: [.lunarYear(2024)])
-            #expect(router.navigation.rootPresentation.presentDebugSplit(layout: layout))
+            #expect(router.navigation.rootPresentation.presentDebugSplit(layout: layout) == .applied)
             let presentation = try router.navigation.presentationContext(for: #require(router.sheet))
             return SplitSession(
                 router: router, presentation: presentation,

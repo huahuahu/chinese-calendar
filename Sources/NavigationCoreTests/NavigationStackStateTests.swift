@@ -23,34 +23,34 @@ struct NavigationStackStateTests {
         let context = NavigationContext<Tab, Route>(
             id: .primary,
             state: state,
-            access: NavigationStackAccess(isActive: { policy.isActive }, canMutate: { policy.canMutate })
+            access: NavigationStackAccess(isActive: { policy.isActive }, rejectionReason: { policy.rejectionReason })
         )
         #expect(context.isActive)
         #expect(context.path == [.second])
-        #expect(context.setPath([.first, .second]))
+        #expect(context.setPath([.first, .second]) == .applied)
         #expect(state.path == [.first, .second])
         #expect(context.rootDestination == .first)
         context.path = [.second]
-        #expect(context.push(.third))
+        #expect(context.push(.third) == .applied)
         #expect(state.path == [.second, .third])
-        #expect(context.pop())
+        #expect(context.pop() == .applied)
         state.path = [.first]
         #expect(context.path == [.first])
 
-        policy.canMutate = false
-        #expect(!context.setPath([.third]))
+        policy.rejectionReason = .awaitingConfirmation
+        #expect(context.setPath([.third]) == .rejected(.awaitingConfirmation))
         context.path = [.third]
-        #expect(!context.push(.second))
-        #expect(!context.pop())
+        #expect(context.push(.second) == .rejected(.awaitingConfirmation))
+        #expect(context.pop() == .rejected(.awaitingConfirmation))
         #expect(state.path == [.first])
         #expect(context.isActive)
 
         policy.isActive = false
-        policy.canMutate = true
+        policy.rejectionReason = nil
         #expect(!context.isActive)
         #expect(context.path.isEmpty)
-        #expect(!context.setPath([.third]))
-        #expect(!context.push(.second))
+        #expect(context.setPath([.third]) == .rejected(.inactiveContext))
+        #expect(context.push(.second) == .rejected(.inactiveContext))
         #expect(state.path == [.first])
     }
 
@@ -71,15 +71,15 @@ struct NavigationStackStateTests {
         #expect(router.paths[.home] == nil)
         #expect(history.path == [.third])
         #expect(router.rootDestination(for: .home) == .first)
-        #expect(home.push(.second))
+        #expect(home.push(.second) == .applied)
         #expect(router.paths == [.home: [.second], .history: [.third]])
 
         router.setRootDestination(.third, for: .home)
         #expect(router.rootDestination(for: .home) == .third)
         #expect(home.path.isEmpty)
         #expect(router.paths[.home] == nil)
-        #expect(home.setPath([.second]))
-        #expect(home.push(.third))
+        #expect(home.setPath([.second]) == .applied)
+        #expect(home.push(.third) == .applied)
         #expect(home.rootDestination == .third)
         #expect(home.path == [.second, .third])
         #expect(history.path == [.third])
@@ -125,7 +125,7 @@ struct NavigationStackStateTests {
         } onChange: {
             changes.withLock { $0 += 1 }
         }
-        #expect(history.push(.first))
+        #expect(history.push(.first) == .applied)
         #expect(changes.withLock { $0 } == 0)
         router.setPath([.second], for: .home)
         #expect(changes.withLock { $0 } == 1)
@@ -143,24 +143,24 @@ struct NavigationStackStateTests {
         router.presentSheet(.second)
         router.submit(.replacePath([.third], on: .home), confirmIfPresented: true)
         let confirmation = try #require(router.pendingConfirmation)
-        #expect(!home.setPath([.second]))
+        #expect(home.setPath([.second]) == .rejected(.awaitingConfirmation))
         home.path = [.second]
-        #expect(!home.push(.second))
-        #expect(!home.pop())
+        #expect(home.push(.second) == .rejected(.awaitingConfirmation))
+        #expect(home.pop() == .rejected(.awaitingConfirmation))
         #expect(home.path == [.first])
         router.cancelConfirmation(id: confirmation.id)
-        #expect(home.setPath([.first, .second]))
+        #expect(home.setPath([.first, .second]) == .applied)
         router.submit(.replacePath([.third], on: .home))
         #expect(home.isActive)
         #expect(router.isAwaitingPresentationDismissal)
-        #expect(!home.setPath([]))
+        #expect(home.setPath([]) == .rejected(.awaitingDismissal))
         home.path = []
-        #expect(!home.pop())
+        #expect(home.pop() == .rejected(.awaitingDismissal))
         #expect(home.path == [.first, .second])
         router.rootPresentation.presentationDidDismiss()
         #expect(home.path == [.third])
-        #expect(home.setPath([]))
-        #expect(home.push(.first))
+        #expect(home.setPath([]) == .applied)
+        #expect(home.push(.first) == .applied)
     }
 }
 
@@ -168,7 +168,7 @@ private extension NavigationStackStateTests {
     @MainActor
     final class AccessPolicy {
         var isActive = true
-        var canMutate = true
+        var rejectionReason: NavigationRejectionReason?
     }
 }
 
@@ -177,14 +177,14 @@ extension NavigationStackStateTests {
         let router = Router(rootDestination: .root, selectedScope: .home, rootDestinations: [.home: .first])
         let missing = router.context(for: .history)
         #expect(!missing.isActive)
-        #expect(!missing.push(.second))
-        #expect(!missing.setRootDestination(.second))
+        #expect(missing.push(.second) == .rejected(.undeclaredStack))
+        #expect(missing.setRootDestination(.second) == .rejected(.undeclaredStack))
         router.selectedScope = .history
         router.rootPresentation.selectedStack = .scope(.history)
         router.setPath([.second], for: .history)
         router.paths = [.history: [.second]]
         router.push(.second, on: .history)
-        #expect(router.submit(.push(.second, on: .history)) == .rejected)
+        #expect(router.submit(.push(.second, on: .history)) == .rejected(.undeclaredStack))
         #expect(router.selectedScope == .home)
         #expect(router.rootDestinations == [.home: .first])
         #expect(router.paths.isEmpty)
@@ -194,7 +194,7 @@ extension NavigationStackStateTests {
         #expect(registered.isActive)
         #expect(registered.rootDestination == .second)
         #expect(!missing.isActive)
-        #expect(!missing.setPath([.first]))
+        #expect(missing.setPath([.first]) == .rejected(.undeclaredStack))
     }
 
     @Test func emptyAndMissingPathsHaveTheSameRuntimeMeaning() {
@@ -204,7 +204,7 @@ extension NavigationStackStateTests {
         #expect(absent.rootLayer.paths.isEmpty)
         #expect(empty.rootLayer.roots == absent.rootLayer.roots)
         let stack = empty.rootPresentation.context(for: .primary)
-        #expect(stack.setPath([]))
+        #expect(stack.setPath([]) == .applied)
         #expect(stack.isActive)
         #expect(stack.rootDestination == .first)
         #expect(empty.rootLayer.paths.isEmpty)
@@ -212,13 +212,13 @@ extension NavigationStackStateTests {
 
     @Test func containersRejectMissingRootsBeforeChangingPresentation() {
         let router = Router(rootDestination: .first, paths: [.primary: [.second]])
-        #expect(!router.rootPresentation.present(.root))
-        #expect(!router.rootPresentation.present(
+        #expect(router.rootPresentation.present(.root) == .rejected(.missingRootDestination))
+        #expect(router.rootPresentation.present(
             .root, initialStack: .scope(.history), rootDestinations: [.scope(.home): .first]
-        ))
-        #expect(!router.rootPresentation.present(
+        ) == .rejected(.missingRootDestination))
+        #expect(router.rootPresentation.present(
             .root, rootDestinations: [.primary: .first], paths: [.scope(.history): []]
-        ))
+        ) == .rejected(.missingRootDestination))
         #expect(router.rootPresentation.destination == .first)
         #expect(router.rootLayer.roots == [.primary: .first])
         #expect(router.rootLayer.paths == [.primary: [.second]])

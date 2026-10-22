@@ -1,8 +1,12 @@
+// swiftformat:disable modifierOrder
+
 /// 说明 Router.submit 如何处理这次请求。数据更新完成后，SwiftUI 可能仍在更新界面或播放动画。
-public enum NavigationRequestResult: Equatable, Sendable {
+nonisolated public enum NavigationRequestResult: Equatable, Sendable {
     /// 请求与根层的栈配置不兼容，原状态保持不变。
-    /// 例如 Core 自动提供的单栈只接受 primary 目标，且不允许用 setRoot(nil) 清除栈底页面。
-    case rejected
+    /// 例如 Core 自动提供的单栈只接受 primary 目标，其他请求须指向已经声明的栈。
+    case rejected(NavigationRejectionReason)
+    /// 确认已过期或已处理，不会影响后来的请求。
+    case noChange(NavigationNoChangeReason)
     /// 等待用户确认，当前页面和路径保持原样。提示容器或业务代码需处理 pendingConfirmation。
     case awaitingConfirmation
     /// 请求已写入根层导航数据，SwiftUI 会据此更新界面。

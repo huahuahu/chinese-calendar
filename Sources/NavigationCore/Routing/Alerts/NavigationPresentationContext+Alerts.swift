@@ -2,6 +2,8 @@ import Foundation
 
 extension NavigationPresentationContext {
     /// 宿主准备展示时占用本层提示，后续提示等待它真正关闭。
+    /// - Parameter isConfirmation: 仅导航离开确认为 true，此时 id 必须匹配待处理的 NavigationConfirmation。
+    ///   业务 alert 即使包含确认按钮也传 false，并使用业务提示的 ID。
     func alertWillPresent(id: UUID, isConfirmation: Bool) -> Bool {
         guard isActive, let layer, layer.alertSession == nil else { return false }
         let expectedID = isConfirmation ? confirmation?.id : presentedAlert?.id

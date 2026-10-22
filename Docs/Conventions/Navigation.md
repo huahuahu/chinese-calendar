@@ -26,7 +26,7 @@ Router 保存“去哪里”的页面身份和导航结构。业务层负责 des
 
 每个栈注入绑定本栈的 `CalendarNavigationContext`，根页及其 push 后代共享它。它只提供本栈身份、有效性、根 Destination、`setRootDestination`、path、`setPath`、`push` 和 `pop`，不公开 presentation，也不转发 `present`、`dismiss` 或 `isPresented`。页面直接读取 `CalendarPresentationContext` 发起模态操作；需要业务协调时传递发起页面的 `NavigationPresentationContext`，不能借 navigation 获取。带发起栈身份的呈现入口拒绝后台 Tab 的 present；TabView 附件等层级控件使用不绑定栈的呈现入口。页面提供的 SplitView 同时可见栏目，可通过 `NavigationScopeView` 显式关闭选中栈限制，使用当前层不绑定栈的呈现入口。
 
-栈 context 只弱引用独立栈状态，依赖仅含 isActive/canMutate 判断的窄接口，不直接引用 Router、NavigationLayer 或 `NavigationPresentationContext`。Router 在组合时通过弱捕获注入对象身份和事务检查；`NavigationPresentationContext` 则弱引用原层及 Router，负责呈现生命周期。
+栈 Context 只弱引用独立栈状态，通过窄接口查询 isActive 和 rejectionReason（nil 表示允许修改），不直接引用 Router、NavigationLayer 或 `NavigationPresentationContext`。Router 在组合时通过弱捕获注入对象身份和事务检查；Context 仅额外保存用于诊断的层 ID，不保活层对象。`NavigationPresentationContext` 则弱引用原层及 Router，负责呈现生命周期。
 
 每个 Router 独立持有 MainActor 隔离的内部 `NavigationContextStore`，统一管理栈 Context、层级呈现 Context 和带 sourceStack 的呈现 Context。缓存命中核对原层／栈对象身份；有效入口重复获取保持对象身份，旧入口的调用不得覆盖有效缓存。模态从树中移除时 Context 立即失效，真实 dismiss 完成后通过 `removeInactiveContexts()` 统一释放失效缓存，不依赖 View 重建或零散清理。
 
@@ -34,7 +34,13 @@ Router 保存“去哪里”的页面身份和导航结构。业务层负责 des
 
 根层与模态层使用相同配置：由 Core 提供容器时使用 `.primary` 栈；页面提供 Tab 等容器时使用 `.scope(...)` 命名栈并显式设置 `initialStack`，为选中栈和所有带路径栈声明根。单详情栈的 SplitView 也可使用 `.primary`。二者共用内部初始化校验，完整校验通过后才建立状态；同名栈在不同层中互相隔离。
 
-`dismiss()` 表示关闭当前所在的模态及其后代。根层的 `NavigationPresentationContext` 没有自身所在的模态，调用时返回 `false`；它们不能用此方法关闭自己展示的模态。栈内返回单独使用 `pop()`。跨 Tab、外部请求和整树管理使用根 Router。
+`dismiss()` 表示关闭当前所在的模态及其后代。根层的 `NavigationPresentationContext` 没有自身所在的模态，调用时返回 `.noChange(.notPresented)`；它们不能用此方法关闭自己展示的模态。栈内返回单独使用 `pop()`。跨 Tab、外部请求和整树管理使用根 Router。
+
+同步栈／根／选择修改返回 `NavigationMutationResult`，以 `isApplied` 判断数据是否已应用；呈现及关闭返回 `NavigationPresentationResult`，以 `isAccepted` 判断是否立即应用或进入队列。`.noChange(reason)` 表示正常无操作，`.rejected(reason)` 表示未接受的具体原因，不通过数字错误码或日志文本驱动业务。重复写入同一合法 path 或选中栈仍为 `.applied`；栈底 pop、根层 dismiss 和过期确认分别返回对应 noChange 原因。属性 setter 转调同一命令，业务代码需要结果时直接调用方法。
+
+`.applied` 不保证 SwiftUI 更新或动画已经完成，`.queued` 也不保证最终执行，所属层失效时可能丢弃。不能在仅接受或排队时提交依赖实际完成的业务状态。根请求继续使用 `NavigationRequestResult` 区分应用、确认及延迟阶段；`confirmNavigation` 返回该类型，过期请求为 `.noChange(.staleConfirmation)`。`cancelNavigation`／`cancelConfirmation` 返回 `NavigationMutationResult`，失效 Context 返回 `.rejected(.inactiveContext)`。
+
+导航诊断使用共享日志入口的 `navigation` category，最终命令决策记录一次；转发不重复记录，查询 getter 和内部幂等回调不打日志。非法栈／容器配置使用 `notice`，正常应用、等待、无操作及生命周期／事务阻挡使用 `debug`，不能把正常幂等当作 error。动态层／栈身份按 private 处理，不输出业务 Destination。级别和隐私遵循[通用规范](Common.md#日志)。操作结果方案及验证见[2026-10-22 任务记录](../Tasks/task-2026-10-22-navigation-results/000-plan.md)。
 
 需要回传结果的页面必须使用正确发起页的上下文。年份选择器继承该页面的 `CalendarSelection`、ModelContext 和年份选择回调，不能从根部借用另一个日历页的选择。
 
@@ -78,7 +84,7 @@ App 主 Tab 页面由 `.mainTabs` Destination 描述，根层选择它作为入�
 
 配置属于 View 宿主，不进入 Router 或两种操作 Context，不使用进程级注册。独立导航树可提供不同配置；同树的 Tab、模态及多 Tab 模态统一调用 `destination(for:)`，保留各自状态与 Context。栈只绑定 path、显示根页并调用页面构建方法，不根据所在层选择不同 builder，也不增加转调 builder 的包装 View。App 共享的数据上下文、数据完整度和 store coordinator 在覆盖根呈现宿主的位置统一注入；每个模态在入口获得本层 presentation，每个栈注入自己的 navigation 与发起栈信息。页面的 selection、业务会话 ModelContext 和回调仍按发起作用域传递，不能捕获根页固定业务上下文代替。
 
-业务配置提供页面和提示文案；容器归属由 Destination 声明，共享数据环境由 App 根部提供。`handleAlertAction` 处理业务动作，宿主等待它完成；`presentationDidDismiss` 仅用于业务上下文清理，不重复处理全局导航。独立 Preview 也提供根配置；已经属于导航树的多 Tab 模态不再挂第二个根宿主。
+业务配置提供页面和提示文案；容器归属由 Destination 声明，共享数据环境由 App 根部提供。`handleAlertAction` 处理业务动作，宿主等待它完成。配置不提供无参数的模态关闭回调，Core 自动处理实际关闭和延迟导航。业务根宿主观察 `retainedPresentationRoutes` 与 `alertRoutes`，按会话身份释放数据；前者包含活动、排队及关闭动画中的模态，栈缓存以 `router.retains(context)` 判断是否仍需保留。同步观察业务会话登记，覆盖同一轮界面更新前就被丢弃的队列。独立 Preview 也提供根配置；已经属于导航树的多 Tab 模态不再挂第二个根宿主。
 
 Core 管理当前运行时的根、path、Tab 选择和递归模态，不提供完整导航树的公开快照、编码或恢复 API，App 也没有整树恢复适配。运行期间保留父层状态和各 Tab 路径，不等于跨启动恢复。新建 Router 和模态通过正常初始化建立；未来业务持久化需求需单独定义保存范围、数据校验和迁移策略，不能将临时会话、回调或 ModelContext 视为可保存的导航身份。
 
@@ -115,7 +121,7 @@ App 的选择动作必须明确根内容与路径的关系：
 - 选择不同对象时通过 `setRootDestination` 同时换根并清空详情 path；重复选择同一对象保留根和 path。
 - 切换分类时显式决定保留当前详情及其 path，或同时清空详情选择与 path；不得让多个 `onChange` 相互回写来猜测策略。
 - 清空对象选择使用空态根 Destination，同时清空 path，不能留下挂在空详情上的旧路径。
-- 根或路径操作返回 true 后才能同步修改 App 分类和布局；返回 false 时保持原状态。重复选择等只更新布局的动作也应先确认栈允许操作，例如 `navigation.setPath(navigation.path)`。这些方法沿用本栈有效性与事务访问约束，不能绕过离开确认或关闭事务。
+- 根或路径操作结果的 `isApplied` 为 true 后才能同步修改 App 分类和布局；未应用时保持原状态。重复选择等只更新布局的动作也应先确认栈允许操作，例如检查 `navigation.setPath(navigation.path).isApplied`。这些方法沿用本栈有效性与事务访问约束，不能绕过离开确认或关闭事务。
 
 分栏容器作为 sheet／full-screen 入口时，Destination 声明 `providesNavigationContainer == true`，Core 跳过外层包栈；内部只为最后一栏创建详情栈。同层仍只有一个 presentation host，分栏容器继承既有配置与本层 `NavigationPresentationContext`，不再挂第二份 `navigationHost`。不同 Tab 或模态中的详情 Context 独立，关闭后的旧 Context 继续失效。移除入口白名单不改变“一层同一栈一个宿主”的接入要求；普通 push 不为嵌套容器创建新的栈命名空间。
 

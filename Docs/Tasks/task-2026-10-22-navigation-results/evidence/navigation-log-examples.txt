@@ -1,0 +1,10 @@
+来源：2026-10-22 最终 RunAllTests 的 navigation 日志。
+仅摘取操作、结果、原因字段，省略时间、进程与动态层／栈身份。
+
+operation=push outcome=rejected reason=undeclaredStack
+operation=push outcome=rejected reason=inactiveContext
+operation=setPath outcome=rejected reason=awaitingConfirmation
+operation=setPath outcome=rejected reason=awaitingDismissal
+operation=pop outcome=noChange reason=alreadyAtRoot
+operation=presentAlert outcome=queued reason=none
+operation=present outcome=applied reason=none

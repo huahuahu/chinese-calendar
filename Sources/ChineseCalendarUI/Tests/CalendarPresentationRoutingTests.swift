@@ -52,11 +52,11 @@ import Testing
     router.navigation.presentationContext(for: child).present(.lunarYear(2027), style: .fullScreen)
     #expect(router.presentations.count == 3)
 
-    #expect(router.dismissPresentation(id: child.id))
+    #expect(router.dismissPresentation(id: child.id) == .applied)
     #expect(router.fullScreen === parent)
     #expect(parent.sheet == nil)
     #expect(parent.path == [.lunarYear(2026)])
     #expect(router.yearsPath == [.lunarYear(2024)])
     #expect(!router.isAwaitingPresentationDismissal)
-    #expect(!router.dismissPresentation(id: child.id))
+    #expect(router.dismissPresentation(id: child.id) == .noChange(.presentationNotFound))
 }

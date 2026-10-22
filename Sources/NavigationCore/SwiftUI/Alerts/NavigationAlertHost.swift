@@ -49,6 +49,8 @@ struct NavigationAlertHost<
         return nil
     }
 
+    /// 两类提示共用系统展示与关闭生命周期，导航请求的批准和取消仍由 Router 处理。
+    /// - Parameter isConfirmation: 仅导航框架的离开确认为 true，不表示一般业务提示是否需要用户确认。
     private func makeAlert<Action: Hashable>(
         id: UUID, isConfirmation: Bool, copy: NavigationAlertContent<Action>,
         action: @escaping @MainActor (Action) async -> Void

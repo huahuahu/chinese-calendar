@@ -162,7 +162,7 @@ struct NavigationAlertSessionTests {
     }
 
     private func beginAlert(_ context: Presentation) throws -> UUID {
-        #expect(context.presentAlert(.first))
+        #expect(context.presentAlert(.first) == .applied)
         let id = try #require(context.presentedAlert).id
         #expect(context.alertWillPresent(id: id, isConfirmation: false))
         return id

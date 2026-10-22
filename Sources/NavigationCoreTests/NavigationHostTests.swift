@@ -108,7 +108,7 @@ struct NavigationHostTests {
             .tabs,
             initialStack: .scope(.home),
             rootDestinations: [.scope(.home): .detail, .scope(.history): .detail]
-        ))
+        ) == .applied)
         let node = try #require(router.presentedNode)
         let modal = router.presentationContext(for: node)
         let content = NavigationPresentationNodeView(node: node, context: modal)
@@ -130,7 +130,7 @@ struct NavigationHostTests {
         )
         #expect(router.rootPresentation.present(
             .tabs, initialStack: .scope(.home), rootDestinations: [.scope(.home): .detail]
-        ))
+        ) == .applied)
         let node = try #require(router.presentedNode)
         let modal = router.presentationContext(for: node)
         let recorder = HostTestRecorder()
@@ -145,7 +145,7 @@ struct NavigationHostTests {
         #expect(ImageRenderer(content: content).cgImage != nil)
         #expect(recorder.routes == [.tabs])
         recorder.routes.removeAll()
-        #expect(modal.dismiss())
+        #expect(modal.dismiss() == .applied)
         #expect(!modal.isActive)
         #expect(modal.destination == .tabs)
         #expect(node.destination == .tabs)
@@ -171,15 +171,15 @@ struct NavigationHostTests {
             .tabs,
             initialStack: .scope(.history),
             rootDestinations: [.scope(.home): .detail, .scope(.history): .detail]
-        ))
+        ) == .applied)
         let modal = try router.presentationContext(for: #require(router.presentedNode))
         let modalHistory = modal.context(for: .scope(.history))
-        #expect(modalHistory.push(.detail))
+        #expect(modalHistory.push(.detail) == .applied)
         #expect(router.context(for: .history).path.isEmpty)
         #expect(modal.context(for: .scope(.home)).path.isEmpty)
         #expect(independent.context(for: .history).path.isEmpty)
-        #expect(modal.dismiss())
-        #expect(!modalHistory.push(.tabs))
+        #expect(modal.dismiss() == .applied)
+        #expect(modalHistory.push(.tabs) == .rejected(.inactiveContext))
 
         // 所有栈及节点只接收身份和根内容，不再接收 builder；配置不会改变状态归属。
         _ = NavigationScopeView(stack: .scope(.home), presentation: router.rootPresentation) { Color.clear }

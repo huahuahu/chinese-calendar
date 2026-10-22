@@ -17,10 +17,16 @@ final class NavigationContextStore<
         stack: NavigationStackID<Scope>,
         router: NavigationRouter<Scope, Destination, AlertRoute>
     ) -> NavigationContext<Scope, Destination> {
-        guard layer.route.destination.providesNavigationContainer || stack == .primary,
-              let state = layer.stacks[stack]
-        else {
-            return NavigationContext(id: stack, state: nil, access: .inactive)
+        guard router.layer(id: layer.id) === layer else {
+            return NavigationContext(id: stack, state: nil, access: .inactive, layerID: layer.id)
+        }
+        guard layer.route.destination.providesNavigationContainer || stack == .primary else {
+            return NavigationContext(
+                id: stack, state: nil, access: .unavailable(.incompatibleContainer), layerID: layer.id
+            )
+        }
+        guard let state = layer.stacks[stack] else {
+            return NavigationContext(id: stack, state: nil, access: .unavailable(.undeclaredStack), layerID: layer.id)
         }
         let id = NavigationContextID(layer: layer.id, stack: stack)
         if let existing = contexts[id], existing.state === state, existing.isActive { return existing }
@@ -29,13 +35,16 @@ final class NavigationContextStore<
                 guard let router, let layer, let state else { return false }
                 return router.layer(id: layer.id) === layer && layer.stacks[stack] === state
             },
-            canMutate: { [weak router, weak layer] in
-                guard let router, let layer else { return false }
-                return (layer.route.destination.providesNavigationContainer || stack == .primary) &&
-                    router.canNavigate(in: layer)
+            rejectionReason: { [weak router, weak layer, weak state] in
+                guard let router, let layer, let state,
+                      router.layer(id: layer.id) === layer, layer.stacks[stack] === state
+                else {
+                    return .inactiveContext
+                }
+                return router.navigationRejection(in: layer)
             }
         )
-        let context = NavigationContext(id: stack, state: state, access: access)
+        let context = NavigationContext(id: stack, state: state, access: access, layerID: layer.id)
         // 旧节点仍可能被页面持有；失效入口不能覆盖同 ID 新状态的有效缓存。
         if context.isActive { contexts[id] = context }
         return context

@@ -1,0 +1,140 @@
+{
+  "recordedAt": "2026-10-22",
+  "project": "ChineseCalendar.xcodeproj",
+  "scheme": "ChineseCalendar-iOS",
+  "simulator": "chinesedate iPhone 18 Pro Max (885f)",
+  "simulatorId": "16A9CAA7-45CE-46D5-8915-F61531FC617C",
+  "build": {
+    "buildResult": "The project built successfully.",
+    "elapsedTime": 19.62,
+    "errors": [],
+    "fullLogPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/BuildProject/BuildProject-Log-20261022-204638.txt"
+  },
+  "fullTests": {
+    "counts": {
+      "expectedFailures": 0,
+      "failed": 0,
+      "notRun": 0,
+      "passed": 415,
+      "skipped": 0,
+      "total": 415
+    },
+    "fullConsoleLogsPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/RunAllTests/test-console-log-2026-10-22T20-57-40+08-00.txt",
+    "fullSummaryPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/RunAllTests/40AFE3A1-9DB6-44E6-A16B-3D49240DE005.txt",
+    "message": "Results truncated to 100 of 415 tests. Failed tests shown first. Full logs available at /var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/RunAllTests/40AFE3A1-9DB6-44E6-A16B-3D49240DE005.txt.",
+    "schemeName": "ChineseCalendar-iOS",
+    "summary": "415 tests: 415 passed, 0 failed, 0 skipped, 0 expected failures, 0 not run",
+    "totalResults": 415,
+    "truncated": true,
+    "xcresultBundlePath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/RunAllTests/Test-ChineseCalendar-iOS-2026.10.22_20-57-40-+0800.xcresult"
+  },
+  "hostTests": {
+    "counts": {
+      "expectedFailures": 0,
+      "failed": 0,
+      "notRun": 0,
+      "passed": 2,
+      "skipped": 0,
+      "total": 2
+    },
+    "fullConsoleLogsPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/RunSomeTests/test-console-log-2026-10-22T20-53-04+08-00.txt",
+    "fullSummaryPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/RunSomeTests/E0943DCB-8657-49AB-ADA5-315AF3B1AD2D.txt",
+    "schemeName": "ChineseCalendar-iOS",
+    "summary": "2 tests: 2 passed, 0 failed, 0 skipped, 0 expected failures, 0 not run",
+    "totalResults": 2,
+    "truncated": false,
+    "xcresultBundlePath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/RunSomeTests/Test-ChineseCalendar-iOS-2026.10.22_20-53-04-+0800.xcresult"
+  },
+  "newTestResults": [
+    {
+      "TEST_TARGET": "NavigationCoreTests",
+      "TEST_IDENTIFIER": "NavigationRetentionTests/childCompletionReleasesOnlyItsSession(style:)",
+      "TEST_DISPLAY_NAME": ".sheet",
+      "TEST_STATE": "Passed",
+      "TEST_ISSUE_COUNT": "0"
+    },
+    {
+      "TEST_TARGET": "NavigationCoreTests",
+      "TEST_IDENTIFIER": "NavigationRetentionTests/childCompletionReleasesOnlyItsSession(style:)",
+      "TEST_DISPLAY_NAME": ".fullScreen",
+      "TEST_STATE": "Passed",
+      "TEST_ISSUE_COUNT": "0"
+    },
+    {
+      "TEST_TARGET": "NavigationCoreTests",
+      "TEST_IDENTIFIER": "NavigationRetentionTests/ancestorCompletionReleasesAlreadyClosingDescendantsWithoutReleasingNewPages()",
+      "TEST_DISPLAY_NAME": "ancestorCompletionReleasesAlreadyClosingDescendantsWithoutReleasingNewPages()",
+      "TEST_STATE": "Passed",
+      "TEST_ISSUE_COUNT": "0"
+    },
+    {
+      "TEST_TARGET": "NavigationCoreTests",
+      "TEST_IDENTIFIER": "NavigationRetentionTests/queuedPagesSurviveWaitingAndDisappearWhenTheirOwnerFinishes()",
+      "TEST_DISPLAY_NAME": "queuedPagesSurviveWaitingAndDisappearWhenTheirOwnerFinishes()",
+      "TEST_STATE": "Passed",
+      "TEST_ISSUE_COUNT": "0"
+    },
+    {
+      "TEST_TARGET": "NavigationCoreTests",
+      "TEST_IDENTIFIER": "NavigationRetentionTests/cancellingRootQueueNeedsNoPageDismissalCallback()",
+      "TEST_DISPLAY_NAME": "cancellingRootQueueNeedsNoPageDismissalCallback()",
+      "TEST_STATE": "Passed",
+      "TEST_ISSUE_COUNT": "0"
+    },
+    {
+      "TEST_TARGET": "NavigationCoreTests",
+      "TEST_IDENTIFIER": "NavigationRetentionTests/retainedRoutesPublishActualCompletionAndDoNotKeepTheTreeAlive()",
+      "TEST_DISPLAY_NAME": "retainedRoutesPublishActualCompletionAndDoNotKeepTheTreeAlive()",
+      "TEST_STATE": "Passed",
+      "TEST_ISSUE_COUNT": "0"
+    },
+    {
+      "TEST_TARGET": "ChineseCalendarUITests",
+      "TEST_IDENTIFIER": "CalendarSessionRetentionTests/ancestorCompletionReleasesPickersButKeepsSessionsDuringAnimation()",
+      "TEST_DISPLAY_NAME": "ancestorCompletionReleasesPickersButKeepsSessionsDuringAnimation()",
+      "TEST_STATE": "Passed",
+      "TEST_ISSUE_COUNT": "0"
+    },
+    {
+      "TEST_TARGET": "ChineseCalendarUITests",
+      "TEST_IDENTIFIER": "CalendarSessionRetentionTests/queuedPickerIsKeptUntilTheQueueIsDiscarded()",
+      "TEST_DISPLAY_NAME": "queuedPickerIsKeptUntilTheQueueIsDiscarded()",
+      "TEST_STATE": "Passed",
+      "TEST_ISSUE_COUNT": "0"
+    },
+    {
+      "TEST_TARGET": "ChineseCalendarUITests",
+      "TEST_IDENTIFIER": "CalendarSessionRetentionTests/rejectedPickerDoesNotLeaveABusinessSession()",
+      "TEST_DISPLAY_NAME": "rejectedPickerDoesNotLeaveABusinessSession()",
+      "TEST_STATE": "Passed",
+      "TEST_ISSUE_COUNT": "0"
+    },
+    {
+      "TEST_TARGET": "ChineseCalendarUITests",
+      "TEST_IDENTIFIER": "CalendarSessionRetentionTests/cleanupDuringNestedDismissalKeepsSplitStateUntilAncestorCompletes()",
+      "TEST_DISPLAY_NAME": "cleanupDuringNestedDismissalKeepsSplitStateUntilAncestorCompletes()",
+      "TEST_STATE": "Passed",
+      "TEST_ISSUE_COUNT": "0"
+    },
+    {
+      "TEST_TARGET": "ChineseCalendarUITests",
+      "TEST_IDENTIFIER": "CalendarSessionCleanupHostTests/hostReleasesSessionsAfterCompletionWithoutAConfigurationCallback()",
+      "TEST_DISPLAY_NAME": "hostReleasesSessionsAfterCompletionWithoutAConfigurationCallback()",
+      "TEST_STATE": "Passed",
+      "TEST_ISSUE_COUNT": "0"
+    },
+    {
+      "TEST_TARGET": "ChineseCalendarUITests",
+      "TEST_IDENTIFIER": "CalendarSessionCleanupHostTests/hostCleansQueueDiscardedBeforeItsNextUpdate()",
+      "TEST_DISPLAY_NAME": "hostCleansQueueDiscardedBeforeItsNextUpdate()",
+      "TEST_STATE": "Passed",
+      "TEST_ISSUE_COUNT": "0"
+    }
+  ],
+  "checks": {
+    "./Scripts/format.sh --check": "passed, 0/309 files require formatting",
+    "./Scripts/lint.sh": "passed, 0 violations in 298 files",
+    "git diff --check": "passed",
+    "scopedSourceHashes": "unchanged before and after final full tests"
+  }
+}

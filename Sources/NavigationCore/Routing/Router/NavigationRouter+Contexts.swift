@@ -40,26 +40,42 @@ public extension NavigationRouter {
 
     /// 按 ID 关闭指定模态，以及从它继续打开的所有模态，保留父层各栈的路径。
     /// 根 Router 可以用此方法关闭任意一层模态；页面的 presentation.dismiss() 则关闭自己所在的模态。
-    /// - Returns: 找到模态并接受关闭请求时返回 true；有活动 alert 时先等待它结束。未找到时返回 false。
+    /// - Returns: 已应用、等待 alert 的 queued，或没有匹配模态的 noChange。
     @discardableResult
-    func dismissPresentation(id: UUID) -> Bool {
+    func dismissPresentation(id: UUID) -> NavigationPresentationResult {
         let layers = [rootLayer] + presentations.map(\.layer)
-        guard let parent = layers.first(where: { $0.presentation?.id == id }) else { return false }
+        guard let parent = layers.first(where: { $0.presentation?.id == id }) else {
+            return NavigationCoreLog.record(
+                NavigationPresentationResult.noChange(.presentationNotFound),
+                operation: "dismissPresentation", layer: .presentation(id)
+            )
+        }
         return presentationContext(in: parent).dismissPresented(id: id)
     }
 
     /// 批准指定的待确认请求，然后交给 submit 处理模态关闭和跳转。
     /// 使用用户看到的那条提示的 ID，避免旧按钮批准后来替换的新目标。
     /// 先清除 pendingConfirmation，让已批准的请求可以继续执行。
-    func confirmNavigation(id: UUID) {
-        guard let request = coordinationState.resolveConfirmation(id: id) else { return }
-        _ = submit(request)
+    @discardableResult
+    func confirmNavigation(id: UUID) -> NavigationRequestResult {
+        guard let request = coordinationState.takeConfirmationRequest(id: id) else {
+            return NavigationCoreLog.record(
+                NavigationRequestResult.noChange(.staleConfirmation), operation: "confirmNavigation", layer: .root
+            )
+        }
+        return submit(request)
     }
 
     /// 取消 ID 匹配的待确认请求，保留当前页面，也保留另一条已经批准、正在等待关闭的请求。
-    func cancelConfirmation(id: UUID) {
-        guard coordinationState.resolveConfirmation(id: id) != nil else { return }
+    @discardableResult
+    func cancelConfirmation(id: UUID) -> NavigationMutationResult {
+        guard coordinationState.takeConfirmationRequest(id: id) != nil else {
+            return NavigationCoreLog.record(
+                NavigationMutationResult.noChange(.staleConfirmation), operation: "cancelConfirmation", layer: .root
+            )
+        }
         resumePresentations()
+        return NavigationCoreLog.record(NavigationMutationResult.applied, operation: "cancelConfirmation", layer: .root)
     }
 
     /// 由界面容器在模态关闭动画完成后调用，并清理已经失效的 Context 缓存。
@@ -74,11 +90,13 @@ public extension NavigationRouter {
 }
 
 extension NavigationRouter {
-    /// 检查这一层是否仍有效，以及当前是否允许导航操作。
-    /// 等待用户确认、等待根模态关闭或仍有活动 alert 时，暂不允许操作。
-    func canNavigate(in layer: NavigationLayer<Scope, Destination, AlertRoute>?) -> Bool {
-        guard let layer, self.layer(id: layer.id) === layer else { return false }
-        return !isAwaitingPresentationDismissal && pendingConfirmation == nil && !hasActiveAlert
+    /// 只返回判断结果，不在查询过程中输出日志；命令使用同一结果决定修改和诊断。
+    func navigationRejection(in layer: NavigationLayer<Scope, Destination, AlertRoute>?) -> NavigationRejectionReason? {
+        guard let layer, self.layer(id: layer.id) === layer else { return .inactiveContext }
+        if isAwaitingPresentationDismissal { return .awaitingDismissal }
+        if pendingConfirmation != nil { return .awaitingConfirmation }
+        if hasActiveAlert { return .alertInProgress }
+        return nil
     }
 
     /// 决定在哪一层显示待确认请求：优先最上层模态，没有模态时使用根层。

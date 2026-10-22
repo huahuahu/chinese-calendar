@@ -23,9 +23,6 @@ public protocol NavigationHostConfiguration<Scope, Destination, AlertRoute> {
         action: AlertRoute.Action,
         presentation: NavigationPresentationContext<Scope, Destination, AlertRoute>
     ) async
-
-    /// 任意层子模态实际关闭并由 Core 处理状态后调用，只用于业务清理。
-    func presentationDidDismiss()
 }
 
 public extension NavigationHostConfiguration {
@@ -44,7 +41,6 @@ public extension NavigationHostConfiguration {
         action: AlertRoute.Action,
         presentation: NavigationPresentationContext<Scope, Destination, AlertRoute>
     ) async {}
-    func presentationDidDismiss() {}
 }
 
 extension NavigationHostConfiguration {
