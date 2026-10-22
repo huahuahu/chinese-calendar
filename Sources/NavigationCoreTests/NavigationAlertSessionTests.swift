@@ -5,7 +5,6 @@ import Testing
 // swiftformat:disable:next modifierOrder
 nonisolated private enum SessionTestNotice: String, NavigationAlertRoute {
     case first, second
-    typealias Action = Bool
 }
 
 @MainActor

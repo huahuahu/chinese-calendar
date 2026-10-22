@@ -78,7 +78,7 @@ import SwiftUI
                 self.controller = nil
                 currentAlert = nil
                 isClosing = false
-                alert.didDismiss(selection)
+                _ = alert.didDismiss(selection)
                 scheduleUpdate()
             }
         }

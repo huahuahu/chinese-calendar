@@ -5,7 +5,6 @@ import Testing
 // swiftformat:disable:next modifierOrder
 nonisolated private enum OperationTestAlert: NavigationAlertRoute {
     case notice
-    typealias Action = Bool
 }
 
 @MainActor

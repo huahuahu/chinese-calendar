@@ -4,6 +4,25 @@
 
 下面按需要改动的接口组织，目标都是当前 API。历史任务记录解释当时的决策和验证范围，其中的中间方案可能已经被后续设计替代。
 
+## 每类业务 alert 使用自己的 Action
+
+移除 `NavigationAlertRoute.Action`。路由继续是 Hashable 数据，每类提示可定义独立的 `Action: Hashable`；相同选项的通知也可以共用一个 Action。不要将所有子 Action 包装到另一个大枚举。
+
+配置的 `alertContent(for:)` 与 `handleAlertAction(_:action:presentation:)` 合并为：
+
+```swift
+func alert(
+    for route: AlertRoute,
+    presentation: NavigationPresentationContext<Scope, Destination, AlertRoute>
+) -> NavigationAlertDefinition?
+```
+
+在每个 route 分支中，通过 `NavigationAlertDefinition(content:onAction:)` 将 `NavigationAlertContent<具体Action>` 与接收相同 Action 的异步 handler 配对。泛型初始化完成后才擦除具体类型，按钮去重和 Action 捕获已在同一类型下完成。将其他 Action 的按钮或 handler 传入会编译失败。完整双 Action 示例见 [README](README.md#业务-alert)。
+
+业务函数按 Action 拆分，不再接收大统一 Action 或用 route guard 过滤不可能的组合。需要清理消息时捕获该路由的 messageID；需要操作本层时使用配置方法传入的 presentation，不能固定使用根 Context。definition 只存在于配置／展示层，不能写入 Router、节点或排队状态。
+
+`NoNavigationAlert` 仍可作为不使用业务提示的 route，默认配置返回 nil。普通／取消按钮的构造和去重不变，框架确认仍独立。真实关闭后才调用 handler；异步完成前继续占用会话，重复／过期／失效回调不会再次执行业务。方案与证据见 [Issue #164](../../Docs/Tasks/issue-164-typed-alert-actions/000-plan.md)。
+
 ## 将 UUID 迁移为对应领域的身份
 
 直接修改保存身份的属性、字典键、集合、路由关联值和方法参数，不提供旧 UUID overload 或公开 raw-value 转换接口。
@@ -55,7 +74,7 @@ selectedCategory = category
 
 - 根 `rootContext` 改为 `rootPresentation`，类型为 `NavigationPresentationContext<Scope, Destination, AlertRoute>`。
 - `NavigationContext<Scope, Destination>` 只负责本栈的根、path、push、pop。页面另外从环境读取 `NavigationPresentationContext` 来 present／dismiss，不能通过 navigation 转取 presentation。
-- Router 和呈现相关类型增加 `AlertRoute` 泛型。业务提示遵循 `NavigationAlertRoute`，声明强类型 `Action`；不使用业务提示时采用 `NoNavigationAlert`。
+- Router 和呈现相关类型增加 `AlertRoute` 泛型。业务提示遵循 `NavigationAlertRoute`，在配置边界为各类内容绑定独立 Action 与 handler；不使用业务提示时采用 `NoNavigationAlert`。
 - `dismiss()` 关闭当前所在的模态及后代；根层调用返回 `.noChange(.notPresented)`。父层关闭指定子模态使用 `dismissPresented(id:)`，栈内返回使用 `pop()`。
 
 栈宿主默认注入记录发起栈的 `NavigationPresentationContext`。同层多个实例共享状态，不能依靠对象是否相同判断是否属于同一层。Tab 公共控件使用层级入口；同时可交互的分栏可显式使用 `unscoped()` 或 `restrictsPresentationToSelectedStack: false`。
@@ -117,7 +136,7 @@ Router 的 `selectedScope` 现在是 `Scope?`：`.primary` 对应 nil，写 nil 
 
 ## 业务提示统一进入呈现队列
 
-页面用 `presentation.present(.alert(route))` 提交业务提示，配置提供 `alertContent(for:)` 与可选的 `handleAlertAction`。移除为同一业务流程另设的 `.alert`／`.confirmationDialog` 呈现状态。Core 的确认适配已改用真实 UIKit 关闭 completion，旧 SwiftUI `alert(item:content:)` 确认宿主不再使用。
+页面用 `presentation.present(.alert(route))` 提交业务提示，配置通过 `alert(for:presentation:)` 返回绑定内容与 handler 的 `NavigationAlertDefinition`。移除为同一业务流程另设的 `.alert`／`.confirmationDialog` 呈现状态。Core 的确认适配已改用真实 UIKit 关闭 completion，旧 SwiftUI `alert(item:content:)` 确认宿主不再使用。
 
 | 旧按钮配置 | 当前配置 |
 | --- | --- |

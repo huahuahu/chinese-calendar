@@ -12,13 +12,6 @@ nonisolated enum CalendarAlert: NavigationAlertRoute {
         case debugNavigationChoice
     #endif
 
-    enum Action: Hashable {
-        case acknowledge, cancel, clearDownloadedData
-        #if DEBUG
-            case openHistory
-        #endif
-    }
-
     var messageID: CalendarAlertMessageID? {
         switch self {
         case let .clearDataFailed(id), let .downloadFailed(id): id

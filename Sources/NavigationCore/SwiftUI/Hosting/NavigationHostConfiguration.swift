@@ -15,14 +15,13 @@ public protocol NavigationHostConfiguration<Scope, Destination, AlertRoute> {
     @ViewBuilder func destination(for destination: Destination) -> DestinationContent
 
     func confirmationContent(for request: NavigationRequest<Scope, Destination>) -> NavigationConfirmationContent?
-    func alertContent(for route: AlertRoute) -> NavigationAlertContent<AlertRoute.Action>?
 
-    /// 系统 alert 实际关闭后调用，异步动作完成前不推进等待中的导航。
-    func handleAlertAction(
-        _ route: AlertRoute,
-        action: AlertRoute.Action,
+    /// 为当前层配对具体提示内容与同类型异步动作，再交给统一系统宿主。
+    /// 动作只在系统 alert 实际关闭后执行；异步动作完成前不推进等待中的导航。
+    func alert(
+        for route: AlertRoute,
         presentation: NavigationPresentationContext<Scope, Destination, AlertRoute>
-    ) async
+    ) -> NavigationAlertDefinition?
 }
 
 public extension NavigationHostConfiguration {
@@ -32,15 +31,12 @@ public extension NavigationHostConfiguration {
         nil
     }
 
-    func alertContent(for route: AlertRoute) -> NavigationAlertContent<AlertRoute.Action>? {
+    func alert(
+        for route: AlertRoute,
+        presentation: NavigationPresentationContext<Scope, Destination, AlertRoute>
+    ) -> NavigationAlertDefinition? {
         nil
     }
-
-    func handleAlertAction(
-        _ route: AlertRoute,
-        action: AlertRoute.Action,
-        presentation: NavigationPresentationContext<Scope, Destination, AlertRoute>
-    ) async {}
 }
 
 extension NavigationHostConfiguration {
