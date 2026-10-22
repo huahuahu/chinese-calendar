@@ -8,7 +8,7 @@ struct NavigationSystemAlert {
         let isDestructive: Bool
     }
 
-    let id: UUID
+    let id: NavigationSystemAlertID
     let title: String
     let message: String
     let buttons: [Button]

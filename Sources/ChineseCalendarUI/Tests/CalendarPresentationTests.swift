@@ -189,8 +189,8 @@ struct CalendarPresentationTests {
         }
     #endif
 
-    private func sessionID(in destination: CalendarDestination) throws -> UUID {
-        let id: UUID? = if case let .yearPicker(sessionID) = destination { sessionID } else { nil }
+    private func sessionID(in destination: CalendarDestination) throws -> YearPickerSessionID {
+        let id: YearPickerSessionID? = if case let .yearPicker(sessionID) = destination { sessionID } else { nil }
         return try #require(id)
     }
 }

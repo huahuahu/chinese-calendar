@@ -7,7 +7,7 @@
     @MainActor
     @Observable
     final class FullStoreDownloadPreviewState: Identifiable {
-        let id = UUID()
+        let id = DownloadPreviewSessionID()
         var stage = Stage.preparing
         var textSize = DynamicTypeSize.large
 

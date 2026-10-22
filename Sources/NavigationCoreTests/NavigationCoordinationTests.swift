@@ -124,10 +124,10 @@ struct NavigationCoordinationTests {
         if !allFirst { router.dismissAllPresentations() }
         #expect(router.sheet === parent)
         #expect(parent.sheet === child)
-        childContext.alertWillDismiss(id: alertID)
-        #expect(childContext.beginAlertCompletion(id: alertID))
+        childContext.alertWillDismiss(id: .business(alertID))
+        #expect(childContext.beginAlertCompletion(id: .business(alertID)))
         #expect(router.sheet === parent)
-        childContext.alertDidDismiss(id: alertID)
+        childContext.alertDidDismiss(id: .business(alertID))
         #expect(router.sheet == nil)
         #expect(router.isAwaitingPresentationDismissal)
         #expect(!parentContext.isActive)
@@ -136,13 +136,13 @@ struct NavigationCoordinationTests {
 
         router.presentSheet(.third)
         let reopened = try #require(router.sheet)
-        childContext.alertDidDismiss(id: alertID)
+        childContext.alertDidDismiss(id: .business(alertID))
         router.resumePresentations()
         #expect(router.sheet === reopened)
         #expect(router.alertRoutes.isEmpty)
     }
 
-    private func resolve(_ id: UUID, on router: Router, approve: Bool) {
+    private func resolve(_ id: NavigationConfirmationID, on router: Router, approve: Bool) {
         if approve {
             router.confirmNavigation(id: id)
         } else {
@@ -150,16 +150,16 @@ struct NavigationCoordinationTests {
         }
     }
 
-    private func beginAlert(_ context: Presentation) throws -> UUID {
+    private func beginAlert(_ context: Presentation) throws -> NavigationAlertID {
         #expect(context.presentAlert(.message) == .applied)
         let id = try #require(context.presentedAlert).id
-        #expect(context.alertWillPresent(id: id, isConfirmation: false))
+        #expect(context.alertWillPresent(id: .business(id)))
         return id
     }
 
-    private func finishAlert(_ id: UUID, on context: Presentation) {
-        context.alertWillDismiss(id: id)
-        #expect(context.beginAlertCompletion(id: id))
-        context.alertDidDismiss(id: id)
+    private func finishAlert(_ id: NavigationAlertID, on context: Presentation) {
+        context.alertWillDismiss(id: .business(id))
+        #expect(context.beginAlertCompletion(id: .business(id)))
+        context.alertDidDismiss(id: .business(id))
     }
 }

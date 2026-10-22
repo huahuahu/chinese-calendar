@@ -21,7 +21,7 @@ struct NavigationLayerInitializationTests {
     @Test(arguments: [false, true])
     func coreLayersRejectNamedStacksAndExplicitRoots(isModal: Bool) {
         let route: NavigationLayerRoute<Route> = isModal
-            ? .presentation(id: UUID(), destination: .home) : .root(destination: .home)
+            ? .presentation(id: NavigationPresentationID(), destination: .home) : .root(destination: .home)
         #expect(Layer(route: route, initialStack: .scope(.home)) == nil)
         #expect(Layer(route: route, rootDestinations: [.primary: .home]) == nil)
         #expect(Layer(route: route, rootDestinations: [.scope(.home): .home]) == nil)
@@ -32,7 +32,7 @@ struct NavigationLayerInitializationTests {
     @Test(arguments: [false, true])
     func containerLayersRequireRootsForSelectionAndEveryPath(isModal: Bool) {
         let route: NavigationLayerRoute<Route> = isModal
-            ? .presentation(id: UUID(), destination: .tabs) : .root(destination: .tabs)
+            ? .presentation(id: NavigationPresentationID(), destination: .tabs) : .root(destination: .tabs)
         #expect(Layer(route: route) == nil)
         #expect(Layer(
             route: route, initialStack: .scope(.history), rootDestinations: [.scope(.home): .home]
@@ -48,7 +48,7 @@ struct NavigationLayerInitializationTests {
     @Test(arguments: [false, true])
     func containerLayersPreservePrimaryAndNamedStacks(isModal: Bool) throws {
         let route: NavigationLayerRoute<Route> = isModal
-            ? .presentation(id: UUID(), destination: .tabs) : .root(destination: .tabs)
+            ? .presentation(id: NavigationPresentationID(), destination: .tabs) : .root(destination: .tabs)
         let roots: [StackID: Route] = [.primary: .home, .scope(.home): .detail, .scope(.history): .home]
         let layer = try #require(Layer(
             route: route, initialStack: .scope(.history), rootDestinations: roots,

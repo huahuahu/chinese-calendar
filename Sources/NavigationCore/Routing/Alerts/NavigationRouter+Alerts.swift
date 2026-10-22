@@ -32,7 +32,9 @@ extension NavigationRouter {
 
     var hasBusinessAlert: Bool {
         layers.contains { layer in
-            layer.alert != nil || layer.alertSession?.isConfirmation == false
+            if layer.alert != nil { return true }
+            if case .business = layer.alertSession?.id { return true }
+            return false
         }
     }
 

@@ -55,12 +55,12 @@ struct NavigationPresentationResultTests {
     @Test func dismissReportsNoChangeOrQueueWithoutAdvancingThePresentation() throws {
         let router = Router(rootDestination: .home)
         let root = router.rootPresentation
-        #expect(root.dismissPresented(id: UUID()) == .noChange(.presentationNotFound))
+        #expect(root.dismissPresented(id: NavigationPresentationID()) == .noChange(.presentationNotFound))
         #expect(root.present(.detail) == .applied)
         let page = try #require(root.presentedNode)
         let context = router.presentationContext(for: page)
         #expect(context.presentAlert(.first) == .applied)
-        #expect(root.dismissPresented(id: UUID()) == .noChange(.presentationNotFound))
+        #expect(root.dismissPresented(id: NavigationPresentationID()) == .noChange(.presentationNotFound))
         #expect(context.dismiss() == .queued)
         #expect(root.dismissPresented(id: page.id) == .queued)
         #expect(root.presentedNode === page)

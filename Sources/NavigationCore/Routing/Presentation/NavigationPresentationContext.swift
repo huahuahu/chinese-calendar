@@ -42,7 +42,7 @@ public final class NavigationPresentationContext<
     }
 
     /// Router 是否仍在使用这个 Context 最初关联的层对象。
-    /// 即使新层使用相同 UUID，旧模态 Context 也不能操作它。
+    /// 即使新层使用相同 NavigationPresentationID，旧模态 Context 也不能操作它。
     public var isActive: Bool {
         guard let layer else { return false }
         return router?.layer(id: id) === layer
@@ -178,7 +178,7 @@ public final class NavigationPresentationContext<
             )
         }
         guard let presentedLayer = NavigationLayer<Scope, Destination, AlertRoute>(
-            route: .presentation(id: UUID(), destination: destination),
+            route: .presentation(id: NavigationPresentationID(), destination: destination),
             initialStack: initialStack, rootDestinations: rootDestinations, paths: paths
         ) else {
             let reason = NavigationLayer<Scope, Destination, AlertRoute>.validationRejection(
@@ -236,7 +236,7 @@ public final class NavigationPresentationContext<
     /// - Returns: applied 表示已移除模态数据；有活动 alert 时返回 queued，等待它及业务动作完成。
     ///   失效 Context 返回拒绝原因，ID 不匹配返回 noChange(.presentationNotFound)。
     @discardableResult
-    public func dismissPresented(id nodeID: UUID) -> NavigationPresentationResult {
+    public func dismissPresented(id nodeID: NavigationPresentationID) -> NavigationPresentationResult {
         guard isActive, let router, let layer else {
             return NavigationCoreLog.record(
                 NavigationPresentationResult.rejected(.inactiveContext), operation: "dismissPresented", layer: id
@@ -260,7 +260,7 @@ public final class NavigationPresentationContext<
     /// 同意执行指定导航请求。有模态时，根 Router 会先关闭模态，等关闭完成后再跳转。
     /// 传入 confirmation 中的请求 ID；返回拒绝或过期原因，接受后仍可能等待关闭。
     @discardableResult
-    public func confirmNavigation(id: UUID) -> NavigationRequestResult {
+    public func confirmNavigation(id: NavigationConfirmationID) -> NavigationRequestResult {
         guard isActive, let router else {
             return NavigationCoreLog.record(
                 NavigationRequestResult.rejected(.inactiveContext), operation: "confirmNavigation", layer: self.id
@@ -271,7 +271,7 @@ public final class NavigationPresentationContext<
 
     /// 取消指定导航请求，保留当前页面和路径。过期 ID 不会取消后来收到的新请求。
     @discardableResult
-    public func cancelNavigation(id: UUID) -> NavigationMutationResult {
+    public func cancelNavigation(id: NavigationConfirmationID) -> NavigationMutationResult {
         guard isActive, let router else {
             return NavigationCoreLog.record(
                 NavigationMutationResult.rejected(.inactiveContext), operation: "cancelNavigation", layer: self.id

@@ -167,6 +167,20 @@ selectedCategory = newCategory
 
 Core 使用共享日志模块的 `navigation` category，在命令决策处记录一次操作、结果和原因，转发入口不重复记录。非法栈或容器配置记录为 `notice`；正常应用、排队、无操作和生命周期／事务阻挡记录为 `debug`。查询 getter 与内部幂等回调不产生日志；动态层和栈身份使用 private 隐私标记，不输出业务 Destination。日志用于排查，业务分支依赖结果枚举。方案及验证入口见[导航操作结果与诊断](../../Docs/Tasks/task-2026-10-22-navigation-results/000-plan.md)。
 
+## 不同领域的身份
+
+模态节点与 `NavigationLayerID.presentation` 共用 `NavigationPresentationID`，导航确认使用 `NavigationConfirmationID`，业务提示节点使用 `NavigationAlertID`。三者都是独立的 Hashable、Sendable 值类型，通过无参数初始化创建新身份；调用方保留节点或确认对象提供的 ID，再传给对应 API。
+
+| 操作 | 接受的身份 |
+| --- | --- |
+| `presentation(id:)`、`dismissPresentation(id:)`、`dismissPresented(id:)` | `NavigationPresentationID` |
+| `confirmNavigation(id:)`、`cancelNavigation(id:)`、`cancelConfirmation(id:)` | `NavigationConfirmationID` |
+| 业务提示节点的 `id` | `NavigationAlertID` |
+
+不同类型无法直接比较或互传，底层 UUID 不作为公开转换接口。系统提示宿主在内部通过 `.business(alertID)` / `.confirmation(confirmationID)` 保留来源，即使底层值相同也不会误接另一类回调。请求仍按内容去重，不增加请求 ID；相同模态 ID 的新对象也不会使旧 Context 重新有效。
+
+App 自己的年份选择、下载演示和提示文案会话分别使用业务类型，不借用 Core 模态身份。聚合观察时保留类别；迁移步骤见 [MIGRATION](MIGRATION.md#将-uuid-迁移为对应领域的身份)，验证记录见 [Issue #166](../../Docs/Tasks/issue-166-typed-navigation-ids/000-plan.md)。
+
 ## 常见组合
 
 下面的模态与 Tab 示例在最小示例上逐步扩展；业务 alert 是一个可选扩展。分栏部分链接到本仓库的完整实现。

@@ -4,7 +4,7 @@ import Foundation
 extension CalendarHomeCoordinator {
     /// 下载可能在任意页面结束，错误提示交给当前最上层页面；已有提示时排队。
     func presentDownloadError(_ message: LocalizedStringResource) -> Bool {
-        let id = UUID()
+        let id = CalendarAlertMessageID()
         alertMessages[id] = message
         if router.navigation.presentAlert(.downloadFailed(messageID: id)).isAccepted { return true }
         alertMessages[id] = nil
@@ -26,7 +26,7 @@ extension CalendarHomeCoordinator {
                 try await store.clearDownloadedData()
                 presentation.present(.alert(.clearDataSucceeded))
             } catch {
-                let id = UUID()
+                let id = CalendarAlertMessageID()
                 alertMessages[id] = CalendarStoreErrorPresentation.message(for: error, operation: .clear)
                 if !presentation.present(.alert(.clearDataFailed(messageID: id))).isAccepted { alertMessages[id] = nil }
             }

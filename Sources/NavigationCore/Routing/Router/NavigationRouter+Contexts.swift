@@ -34,7 +34,7 @@ public extension NavigationRouter {
     }
 
     /// 按 ID 查找仍在 Router 中的模态。已关闭的模态即使仍被其他对象持有，也不会返回。
-    func presentation(id: UUID) -> NavigationPresentationNode<Scope, Destination, AlertRoute>? {
+    func presentation(id: NavigationPresentationID) -> NavigationPresentationNode<Scope, Destination, AlertRoute>? {
         presentations.first { $0.id == id }
     }
 
@@ -42,7 +42,7 @@ public extension NavigationRouter {
     /// 根 Router 可以用此方法关闭任意一层模态；页面的 presentation.dismiss() 则关闭自己所在的模态。
     /// - Returns: 已应用、等待 alert 的 queued，或没有匹配模态的 noChange。
     @discardableResult
-    func dismissPresentation(id: UUID) -> NavigationPresentationResult {
+    func dismissPresentation(id: NavigationPresentationID) -> NavigationPresentationResult {
         let layers = [rootLayer] + presentations.map(\.layer)
         guard let parent = layers.first(where: { $0.presentation?.id == id }) else {
             return NavigationCoreLog.record(
@@ -57,7 +57,7 @@ public extension NavigationRouter {
     /// 使用用户看到的那条提示的 ID，避免旧按钮批准后来替换的新目标。
     /// 先清除 pendingConfirmation，让已批准的请求可以继续执行。
     @discardableResult
-    func confirmNavigation(id: UUID) -> NavigationRequestResult {
+    func confirmNavigation(id: NavigationConfirmationID) -> NavigationRequestResult {
         guard let request = coordinationState.takeConfirmationRequest(id: id) else {
             return NavigationCoreLog.record(
                 NavigationRequestResult.noChange(.staleConfirmation), operation: "confirmNavigation", layer: .root
@@ -68,7 +68,7 @@ public extension NavigationRouter {
 
     /// 取消 ID 匹配的待确认请求，保留当前页面，也保留另一条已经批准、正在等待关闭的请求。
     @discardableResult
-    func cancelConfirmation(id: UUID) -> NavigationMutationResult {
+    func cancelConfirmation(id: NavigationConfirmationID) -> NavigationMutationResult {
         guard coordinationState.takeConfirmationRequest(id: id) != nil else {
             return NavigationCoreLog.record(
                 NavigationMutationResult.noChange(.staleConfirmation), operation: "cancelConfirmation", layer: .root

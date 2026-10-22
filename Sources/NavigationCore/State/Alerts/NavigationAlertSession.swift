@@ -11,9 +11,6 @@ struct NavigationAlertSession {
         case handlingCompletion
     }
 
-    let id: UUID
-    /// 标记导航框架专用的离开确认，对应 Router 中待处理的 NavigationConfirmation。
-    /// true 表示按钮用于批准或取消该导航请求；业务 alert（包括删除等确认提示）均为 false。
-    let isConfirmation: Bool
+    let id: NavigationSystemAlertID
     var state: State = .presented
 }

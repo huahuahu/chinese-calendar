@@ -5,8 +5,8 @@ import NavigationCore
 nonisolated enum CalendarAlert: NavigationAlertRoute {
     case clearDownloadedData
     case clearDataSucceeded
-    case clearDataFailed(messageID: UUID)
-    case downloadFailed(messageID: UUID)
+    case clearDataFailed(messageID: CalendarAlertMessageID)
+    case downloadFailed(messageID: CalendarAlertMessageID)
     #if DEBUG
         case debugNotice(Int)
         case debugNavigationChoice
@@ -19,7 +19,7 @@ nonisolated enum CalendarAlert: NavigationAlertRoute {
         #endif
     }
 
-    var messageID: UUID? {
+    var messageID: CalendarAlertMessageID? {
         switch self {
         case let .clearDataFailed(id), let .downloadFailed(id): id
         default: nil

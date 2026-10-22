@@ -5,7 +5,7 @@ import Foundation
 /// 切换栈、替换栈底或 push/pop 都不会改变这里记录的 Destination。
 public enum NavigationLayerRoute<Destination: NavigationDestination>: Hashable {
     case root(destination: Destination)
-    case presentation(id: UUID, destination: Destination)
+    case presentation(id: NavigationPresentationID, destination: Destination)
 
     public var destination: Destination {
         switch self {

@@ -101,7 +101,7 @@ final class CalendarRouter {
     }
 
     @discardableResult
-    func dismissPresentation(id: UUID) -> NavigationPresentationResult {
+    func dismissPresentation(id: NavigationPresentationID) -> NavigationPresentationResult {
         navigation.dismissPresentation(id: id)
     }
 

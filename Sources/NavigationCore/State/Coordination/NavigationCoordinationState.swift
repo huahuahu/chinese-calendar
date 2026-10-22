@@ -44,7 +44,7 @@ struct NavigationCoordinationState<Scope: NavigationScope, Destination: Navigati
     enum DismissalIntent {
         case none
         /// 同一个模态的多次关闭请求按 ID 去重。
-        case presentations(Set<UUID>)
+        case presentations(Set<NavigationPresentationID>)
         /// 关闭全部模态，覆盖此前和此后加入的单个模态关闭请求。
         case all
     }
@@ -122,7 +122,7 @@ struct NavigationCoordinationState<Scope: NavigationScope, Destination: Navigati
     /// 取出并清除 ID 匹配的待确认请求，保留另一条已接受、正在等待关闭的请求。
     /// 确认和取消都调用此方法：Router 在确认时免确认地重新提交返回值，取消时丢弃它。
     /// 旧 ID 返回 nil 且不改变状态，避免迟到的按钮动作影响新请求。
-    mutating func takeConfirmationRequest(id: UUID) -> Request? {
+    mutating func takeConfirmationRequest(id: NavigationConfirmationID) -> Request? {
         guard let confirmation = pendingConfirmation, confirmation.id == id else { return nil }
         if let acceptedRequest = acceptedRequestWaitingForDismissal {
             requestState = .awaitingPresentationDismissal(
@@ -142,7 +142,7 @@ struct NavigationCoordinationState<Scope: NavigationScope, Destination: Navigati
         return request
     }
 
-    mutating func deferDismissalUntilAlertEnds(id: UUID) {
+    mutating func deferDismissalUntilAlertEnds(id: NavigationPresentationID) {
         switch dismissalAfterAlert {
         case .none:
             dismissalAfterAlert = .presentations([id])

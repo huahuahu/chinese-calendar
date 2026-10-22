@@ -26,13 +26,13 @@ struct NavigationAlertHost<
 
     private var alert: NavigationSystemAlert? {
         if let node = context.presentedAlert, let copy = alertContent(node.destination) {
-            return makeAlert(id: node.id, isConfirmation: false, copy: copy) { action in
+            return makeAlert(id: .business(node.id), copy: copy) { action in
                 await onAction(node.destination, action, context)
             }
         }
         if let request = context.confirmation, let copy = confirmationContent(request.request) {
             return makeAlert(
-                id: request.id, isConfirmation: true,
+                id: .confirmation(request.id),
                 copy: NavigationAlertContent(
                     title: copy.title, message: copy.message,
                     firstButton: NavigationAlertButton(copy.confirm, action: true),
@@ -50,9 +50,8 @@ struct NavigationAlertHost<
     }
 
     /// 两类提示共用系统展示与关闭生命周期，导航请求的批准和取消仍由 Router 处理。
-    /// - Parameter isConfirmation: 仅导航框架的离开确认为 true，不表示一般业务提示是否需要用户确认。
     private func makeAlert<Action: Hashable>(
-        id: UUID, isConfirmation: Bool, copy: NavigationAlertContent<Action>,
+        id: NavigationSystemAlertID, copy: NavigationAlertContent<Action>,
         action: @escaping @MainActor (Action) async -> Void
     ) -> NavigationSystemAlert {
         let buttons = copy.presentationButtons
@@ -64,7 +63,7 @@ struct NavigationAlertHost<
                     isCancel: button.isCancel, isDestructive: button.isDestructive
                 )
             },
-            willPresent: { context.alertWillPresent(id: id, isConfirmation: isConfirmation) },
+            willPresent: { context.alertWillPresent(id: id) },
             willDismiss: { context.alertWillDismiss(id: id) },
             didDismiss: { selection in
                 // 用独立 Task 等待按钮动作完成，再释放本次 alert 会话；页面重建不会取消这项任务。
