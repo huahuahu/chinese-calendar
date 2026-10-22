@@ -1,0 +1,42 @@
+{
+  "devicesAndConfigurations": [
+    {
+      "device": {
+        "architecture": "arm64",
+        "deviceId": "16A9CAA7-45CE-46D5-8915-F61531FC617C",
+        "deviceName": "chinesedate iPhone 18 Pro Max (885f)",
+        "modelName": "iPhone 18 Pro Max",
+        "osBuildNumber": "24A434",
+        "osVersion": "27.0",
+        "platform": "iOS Simulator"
+      },
+      "expectedFailures": 0,
+      "failedTests": 0,
+      "passedTests": 441,
+      "skippedTests": 0,
+      "testPlanConfiguration": {
+        "configurationId": "1",
+        "configurationName": "Test Scheme Action"
+      }
+    }
+  ],
+  "environmentDescription": "ChineseCalendar-iOS · Built with macOS 27.0.1",
+  "expectedFailures": 0,
+  "failedTests": 0,
+  "finishTime": 1792679652.392,
+  "passedTests": 341,
+  "result": "Passed",
+  "runtimeWarnings": [],
+  "skippedTests": 0,
+  "startTime": 1792679641.685,
+  "statistics": [
+    {
+      "subtitle": "151 test runs",
+      "title": "51 tests ran with dynamic parameters"
+    }
+  ],
+  "testFailures": [],
+  "title": "Test - ChineseCalendar-iOS",
+  "topInsights": [],
+  "totalTestCount": 341
+}

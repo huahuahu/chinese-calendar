@@ -1,0 +1,30 @@
+{
+  "source_commit": "cb289ddca44c1f210c48224ac752f5588121c4b7",
+  "build": {
+    "tool": "mcp__xcode__BuildProject",
+    "buildForTesting": true,
+    "result": "The project built successfully.",
+    "errors": [],
+    "scheme": "ChineseCalendar-iOS",
+    "sdk": "iOS 27.1 Simulator",
+    "destination": "chinesedate iPhone 18 Pro Max (885f)"
+  },
+  "tests": {
+    "result": "Passed",
+    "definitions": 341,
+    "executions": 441,
+    "failed": 0,
+    "skipped": 0,
+    "native_summary_unmatched_entries": 2,
+    "reconciliation": "Native summary retained two discovery UUID labels. xcresult passed 441 executions; console confirms noticesKeepASingleAcknowledgement(route:) passed with 3 cases."
+  },
+  "format": {
+    "files": 326,
+    "requiring_format": 0
+  },
+  "lint": {
+    "files": 315,
+    "violations": 0
+  },
+  "interaction": "Not performed for the compile-time identity migration."
+}
