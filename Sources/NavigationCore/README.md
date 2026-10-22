@@ -6,7 +6,24 @@
 
 本模块是 [Sources/Package.swift](../Package.swift) 中的一个共享 target，不依赖日历业务类型。App 定义页面地址，并告诉宿主如何把地址构建成 SwiftUI View。
 
-第一次接入可按“[核心概念](#核心概念) → [最小接入](#最小接入) → [常见组合](#常见组合)”阅读。需要追踪实现时看[源码目录](#源码目录)；已有调用方升级看[迁移说明](MIGRATION.md)。项目中的导航调用约定统一维护在[导航规范](../../Docs/Conventions/Navigation.md)。
+## 按需求阅读
+
+第一次接入先读[核心概念](#核心概念)和[最小接入](#最小接入)，再按页面结构选择示例。
+
+| 你要做什么 | 阅读入口 |
+| --- | --- |
+| 查 push、换根、present、dismiss 应从哪里调用 | [操作入口速查](#操作入口速查) |
+| 打开 sheet／full-screen | [打开和关闭模态](#打开和关闭模态) |
+| 为多个 Tab 保留各自路径 | [每个 Tab 保留独立路径](#每个-tab-保留独立路径) |
+| 接入两栏／三栏布局 | [App 原生分栏组合](#app-原生分栏组合) |
+| 显示提示并处理按钮动作 | [业务 alert](#业务-alert) |
+| 处理外部链接和离开确认 | [Deep Link 与离开确认](#deep-link-与离开确认) |
+| 排查操作被拒绝、Context 失效或后台 Tab 弹窗 | [操作约束与生命周期](#操作约束与生命周期) |
+| 注入业务依赖、配置页面或编写 Preview | [配置与业务数据放在哪里](#配置与业务数据放在哪里) |
+| 了解状态保留范围 | [运行时状态与启动边界](#运行时状态与启动边界) |
+| 阅读框架实现或查找 App 示例 | [源码目录](#源码目录)、[在日历 App 中继续阅读](#在日历-app-中继续阅读) |
+
+项目调用约定以[导航规范](../../Docs/Conventions/Navigation.md)为准；已有调用方升级看[迁移说明](MIGRATION.md)。
 
 ## 核心概念
 
@@ -105,6 +122,24 @@ struct DemoPage: View {
 普通路由的 `providesNavigationContainer` 默认为 `false`，Core 会创建 `.primary` 栈，并以 `.home` 为栈根。首页及所有 push 后代共享这个栈的 `NavigationContext`。业务页面无需再包 `NavigationStack` 或注册 `navigationDestination`。
 
 点击“查看资料 1”后，栈根仍为 `.home`，path 变为 `[.detail(id: 1)]`；返回后 path 为空。**根页面不计入 path**，所以 `navigation.path.isEmpty` 表示已经在栈底。
+
+## 操作入口速查
+
+页面从环境取得所属栈的 `navigation` 和所属层的 `presentation`；App 根部持有 `router`，协调外部导航。
+
+| 意图 | 入口 | 状态变化或注意点 |
+| --- | --- | --- |
+| 前进到下一页 | `navigation.push(destination)` | 追加当前栈的 path |
+| 返回上一页 | `navigation.pop()` | 移除当前栈的最后一个 path 元素 |
+| 切换栈底页面 | `navigation.setRootDestination(destination)` | 换根并清空当前栈 path |
+| 打开页面模态 | `presentation.present(.sheet(destination))`／`.fullScreen(destination)` | 创建新的导航层 |
+| 显示业务提示 | `presentation.present(.alert(route))` | 使用本层的统一提示宿主 |
+| 关闭当前模态 | `presentation.dismiss()` | 关闭所在模态及后代；根层返回 `false` |
+| 切换本层 Tab | 绑定 `presentation.selectedStack` | 各栈保留自己的根与 path |
+| 显式取得某个栈 | `presentation.context(for: stackID)` | 栈必须已声明；获取操作不会创建栈 |
+| 从外部链接跳转 | `router.submit(request, confirmIfPresented: true)` | 协调提示、离开确认与真实关闭，再应用请求 |
+
+栈修改、`present` 和 `dismiss` 返回是否接受操作；`submit` 返回请求处理阶段。**接受请求不等于界面已经显示或关闭。** 需要联动业务状态时，先检查返回结果；具体限制见[操作约束与生命周期](#操作约束与生命周期)。
 
 ## 常见组合
 
@@ -276,7 +311,7 @@ func alertContent(for route: AppAlert) -> NavigationAlertContent<AppAlert.Action
 
 提示必须至少有一个按钮：普通／危险按钮使用必填 `firstButton` 和可选 `additionalButtons`；取消按钮使用单独的 `cancelButton: NavigationAlertCancelButton<Action>`。只有取消按钮时，使用 `NavigationAlertContent(title:message:cancelButton:)`。
 
-普通按钮按 `Action` 去重：相同 Action 采用最后的标题和样式，保留首次出现的位置。取消按钮独立于普通按钮集合，宿主将它放在首位，并使用同一顺序映射点击动作。详细构造见 [NavigationAlertContent](SwiftUI/NavigationAlertContent.swift)。
+普通按钮按 `Action` 去重：相同 Action 采用最后的标题和样式，保留首次出现的位置。取消按钮独立于普通按钮集合，宿主将它放在首位，并使用同一顺序映射点击动作。详细构造见 [NavigationAlertContent](SwiftUI/Alerts/NavigationAlertContent.swift)。
 
 ## Deep Link 与离开确认
 
@@ -341,13 +376,21 @@ func confirmationContent(
 - **页面模态从当前层继续打开。** 同层已有页面模态时，新的 `present` 被拒绝；用该模态内部的 `NavigationPresentationContext` 继续嵌套。业务 alert 期间可排队，接受不等于立即显示。
 - **关闭后旧入口失效。** Context 弱引用导航状态，持有旧 Context 不会保活 Router 或模态。模态从树中移除时 Context 立即失效；对象身份检查确保同 ID 的新层或新栈不能让旧 Context 重新有效。
 
+### Context 缓存与释放
+
 每个 Router 独立持有一个 MainActor 隔离的内部 `NavigationContextStore`，统一缓存栈入口、层级呈现入口和带发起栈身份的呈现入口。重复获取有效入口复用同一对象；缓存命中同时核对原状态对象，旧入口不能覆盖新对象的有效缓存。真实 dismiss 完成后，Router 统一调用 `removeInactiveContexts()` 释放失效缓存；Context 的失效不等待这次清理。
 
+### 发起呈现的栈限制
+
 栈宿主默认注入 `presentation.scoped(to: stackID)`：它与本层其他 `NavigationPresentationContext` 共享状态，但额外限制只有选中栈可以发起 present，防止后台 Tab 的回调弹窗。因此“一层”不等于“只有一个 Context 对象”。Tab 公共附件使用层级入口；同时可交互的栏目可用 `unscoped()`，或给栈宿主传 `restrictsPresentationToSelectedStack: false`，显式取消发起栈限制。
+
+### 查询状态时区分层与栈
 
 `presentation.route` 和 `presentation.destination` 在 Context 失效后仍可读取原层最后的入口。是否还能操作应看 `isActive` 和方法结果；判断根层用 `presentation.id == .root`，判断栈底用 `navigation.path.isEmpty`。入口、对象有效性和当前页面是不同问题。
 
 Router 的 `selectedScope`、`paths`、`rootDestinations` 属性是**根层命名栈**的便利投影，不包含模态内部状态；其中 `paths` 和 `rootDestinations` 不包含 `.primary`。`selectedScope` 为可选值，根层选择 `.primary` 时返回 nil，写入 nil 不切换栈。容器绑定使用完整的 `presentation.selectedStack`，避免丢失 `.primary` 身份。
+
+### 容器入口与 push 的边界
 
 `providesNavigationContainer` 决定的是整层入口的承载方式。普通 push 在当前栈构建页面，不创建新的层或栈命名空间。每层的同一个栈只能有一个宿主；不要在某个 Tab 的栈内再次 push 复用这些同名栈的整个 Tab 容器。
 
@@ -371,17 +414,32 @@ Deep Link 继续由 App 解析稳定业务地址，再交给 Router 的请求协
 
 ## 源码目录
 
-第一次读实现可以沿着一个用户动作走：
+源码采用两级组织：一级目录表示实现层次，二级目录表示职责。
 
-- **一次 push：** [NavigationContext](Routing/NavigationContext.swift) 修改 [NavigationStackState](State/NavigationStackState.swift) 的 path → [NavigationScopeView](SwiftUI/NavigationScopeView.swift) 绑定 path → [NavigationHostConfiguration](SwiftUI/NavigationHostConfiguration.swift) 构建目标页。
-- **一次 present：** [NavigationPresentationContext](Routing/NavigationPresentationContext.swift) 创建节点并提交 → [NavigationRouter+Alerts](Routing/NavigationRouter+Alerts.swift) 接受或排队 → [NavigationPresentationHost](SwiftUI/NavigationPresentationHost.swift) 驱动系统呈现 → [NavigationPresentationNodeView](SwiftUI/NavigationPresentationNodeView.swift) 接入新层。
-- **一次外部跳转：** [NavigationRouter.submit](Routing/NavigationRouter.swift) 接收请求 → [NavigationCoordinationState](State/NavigationCoordinationState.swift) 保存确认与延迟意图 → 宿主报告真实关闭 → Router 应用目标。
+- `State` 保存导航结构和运行时状态。
+- `Routing` 提供操作入口、请求处理和生命周期协调。
+- `SwiftUI` 将状态接到页面、系统容器和提示宿主。
 
-| 目录 | 职责与阅读入口 |
-| --- | --- |
-| [State](State/) | 导航结构：栈状态、组合栈的 `NavigationLayer`、层入口记录、页面与 alert 节点、协调状态 |
-| [Routing](Routing/) | Router、两种 Context、内部 `NavigationContextStore`、请求与结果；栈访问约束见 `NavigationStackAccess` |
-| [SwiftUI](SwiftUI/) | 根与栈宿主、递归模态、页面配置、系统 alert 和确认提示适配 |
+按下面的职责行横向阅读，可以找到同一能力涉及的状态、操作和界面。空白位置用“—”表示该能力由其他分组共同承担，无需为保持对称而新建目录。
+
+| 职责 | State | Routing | SwiftUI |
+| --- | --- | --- | --- |
+| 导航栈：根页面、push 路径与操作入口 | [Stack](State/Stack/) | [Contexts](Routing/Contexts/) | [Stack](SwiftUI/Stack/) |
+| 导航层：层入口、栈集合与内容 | [Layer](State/Layer/) | [Presentation](Routing/Presentation/) | [Layer](SwiftUI/Layer/) |
+| 呈现：页面模态节点、请求与递归宿主 | [Presentation](State/Presentation/) | [Presentation](Routing/Presentation/) | [Presentation](SwiftUI/Presentation/) |
+| 提示：路由、会话、按钮与系统适配 | [Alerts](State/Alerts/) | [Alerts](Routing/Alerts/) | [Alerts](SwiftUI/Alerts/) |
+| 协调：外部请求、离开确认与操作约束 | [Coordination](State/Coordination/) | [Coordination](Routing/Coordination/) | 确认提示位于 [Alerts](SwiftUI/Alerts/) |
+| 整树入口与统一配置 | — | [Router](Routing/Router/) | [Hosting](SwiftUI/Hosting/) |
+
+`Layer` 表示一整层界面，根界面和模态界面都拥有自己的层；`Presentation` 表示呈现内容及其生命周期。`NavigationPresentationContext` 是层操作入口，因此也负责访问本层栈和选中栈。
+
+### 沿着一次操作阅读
+
+- **push：** [NavigationContext](Routing/Contexts/NavigationContext.swift) 修改 [NavigationStackState](State/Stack/NavigationStackState.swift) 的 path → [NavigationScopeView](SwiftUI/Stack/NavigationScopeView.swift) 绑定 path → [NavigationHostConfiguration](SwiftUI/Hosting/NavigationHostConfiguration.swift) 构建目标页。
+- **present：** [NavigationPresentationContext](Routing/Presentation/NavigationPresentationContext.swift) 创建节点并提交 → [NavigationRouter+Alerts](Routing/Alerts/NavigationRouter+Alerts.swift) 接受或排队 → [NavigationPresentationHost](SwiftUI/Presentation/NavigationPresentationHost.swift) 驱动系统呈现 → [NavigationPresentationNodeView](SwiftUI/Presentation/NavigationPresentationNodeView.swift) 接入新层。
+- **外部跳转：** [NavigationRouter.submit](Routing/Router/NavigationRouter.swift) 接收请求 → [NavigationCoordinationState](State/Coordination/NavigationCoordinationState.swift) 保存确认与延迟意图 → 宿主报告真实关闭 → Router 应用目标。
+
+`NavigationRouter+Alerts` 同时负责业务提示与页面模态的排队，追踪呈现流程时也需要阅读它。离开确认的数据在 `Routing/Coordination`，对应提示界面在 `SwiftUI/Alerts`。
 
 这些目录属于同一个 `NavigationCore` target。模块日志入口是 [NavigationCoreLog.swift](NavigationCoreLog.swift)，测试在相邻的 [NavigationCoreTests](../NavigationCoreTests/) target。
 
