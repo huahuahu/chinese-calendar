@@ -113,7 +113,7 @@ final class CalendarHomeCoordinator {
         alertMessages = alertMessages.filter { messageIDs.contains($0.key) }
         let destinations = Set(router.navigation.retainedPresentationRoutes.map(\.destination))
         yearPickerSessions = yearPickerSessions.filter { destinations.contains(.yearPicker(sessionID: $0.key)) }
-        historyStates = historyStates.filter(\.value.navigation.isActive)
+        historyStates = historyStates.filter { router.navigation.retains($0.value.navigation) }
         #if DEBUG
             downloadPreviewSessions = downloadPreviewSessions.filter {
                 destinations.contains(.downloadPreview(sessionID: $0.key))

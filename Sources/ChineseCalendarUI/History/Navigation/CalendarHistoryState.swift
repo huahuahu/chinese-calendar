@@ -45,7 +45,7 @@ final class CalendarHistoryState {
         let accepted = self.orthodoxPeriodID != orthodoxPeriodID || orthodoxPeriodID == nil
             ? navigation.setRootDestination(root)
             : navigation.setPath(navigation.path)
-        guard accepted else { return false }
+        guard accepted.isApplied else { return false }
         preferredCompactColumn = orthodoxPeriodID == nil ? .sidebar : .content
         return true
     }
@@ -57,7 +57,7 @@ final class CalendarHistoryState {
         let accepted = navigation.rootDestination != root || section == nil
             ? navigation.setRootDestination(root)
             : navigation.setPath(navigation.path)
-        guard accepted else { return false }
+        guard accepted.isApplied else { return false }
         preferredCompactColumn = section == nil ? .content : .detail
         return true
     }
@@ -76,7 +76,7 @@ final class CalendarHistoryState {
         default:
             return false
         }
-        guard navigation.setPath(navigation.path) else { return false }
+        guard navigation.setPath(navigation.path).isApplied else { return false }
         preferredCompactColumn = column
         return true
     }
@@ -87,6 +87,7 @@ final class CalendarHistoryState {
         guard navigation.rootDestination == .emperor(emperorID) else { return false }
         // 皇帝本身保留为详情根，避免折叠栏切换期间先换列表再补 push。
         guard navigation.setRootDestination(.historyEmperor(orthodoxPeriodID: orthodoxPeriodID, emperorID: emperorID))
+            .isApplied
         else { return false }
         preferredCompactColumn = .detail
         return true
