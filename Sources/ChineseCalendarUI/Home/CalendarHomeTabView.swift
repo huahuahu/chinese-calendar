@@ -24,10 +24,7 @@ struct CalendarHomeTabView<BottomStatusBar: View>: View {
             }
 
             Tab(value: NavigationStackID<CalendarTab>.scope(.history)) {
-                NavigationScopeView(
-                    stack: .scope(.history),
-                    presentation: presentation
-                )
+                CalendarHistoryHomeView(stack: .scope(.history))
             } label: {
                 Label(CalendarTab.history.title, systemSymbol: CalendarTab.history.systemSymbol)
             }

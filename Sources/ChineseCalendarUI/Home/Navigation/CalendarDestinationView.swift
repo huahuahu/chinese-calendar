@@ -25,6 +25,12 @@ struct CalendarDestinationView<BottomStatusBar: View>: View {
                 LunarYearDestinationView(landing: .year(number: ChineseLunarCalendar.yearNumber()))
             case .historyHome:
                 CalendarHistoryHomeView()
+            case .historyEmpty:
+                CalendarHistoryEmptyDetailView()
+            case let .historyDetail(orthodoxPeriodID, section):
+                CalendarHistoryDetailView(orthodoxPeriodID: orthodoxPeriodID, section: section)
+            case let .historyEmperor(_, emperorID):
+                EmperorDetailView(emperorID: emperorID)
             case .settings:
                 if let storeCoordinator {
                     CalendarSettingsView(coordinator: storeCoordinator, showsDoneButton: false)

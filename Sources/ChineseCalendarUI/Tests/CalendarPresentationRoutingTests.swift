@@ -11,17 +11,19 @@ import Testing
     #expect(router.openDeepLink(.lunarYear(2026, monthIndex: nil)) == .deferredUntilPresentationDismisses)
     #expect(router.openDeepLink(.emperor("ming-taizu")) == .deferredUntilPresentationDismisses)
     // 手动关闭和深链接主动关闭统一由 Core 等待最新请求。
-    #expect(router.navigation.deferredRequest == .replacePath([.emperor("ming-taizu")], on: .history))
+    #expect(router.navigation.deferredRequest == .setRoot(.emperor("ming-taizu"), on: .history))
     router.presentFullScreen(.downloadDetails)
     #expect(!router.hasActivePresentation)
     #expect(router.yearsPath == [.lunarYear(2024)])
     #expect(router.historyPath.isEmpty)
 
     router.rootPresentationDidDismiss()
-    #expect(router.historyPath == [.emperor("ming-taizu")])
+    #expect(router.navigation.rootDestination(for: .history) == .emperor("ming-taizu"))
+    #expect(router.historyPath.isEmpty)
     #expect(!router.isAwaitingPresentationDismissal)
     router.rootPresentationDidDismiss()
-    #expect(router.historyPath == [.emperor("ming-taizu")])
+    #expect(router.navigation.rootDestination(for: .history) == .emperor("ming-taizu"))
+    #expect(router.historyPath.isEmpty)
 }
 
 @MainActor

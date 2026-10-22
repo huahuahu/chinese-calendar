@@ -1,144 +1,110 @@
 import ChineseCalendarLocalization
 import ChineseCalendarPersistence
+import NavigationCore
 import SFSafeSymbols
 import SwiftData
 import SwiftUI
 
-/// 列出默认正统传统下的各段正统时期，按 OrthodoxPeriod.sequenceIndex 排序。
-/// 此时间线用作历史 Tab 的栈底页面。
+/// 前两栏管理历史选择，最后一栏复用当前导航层的唯一详情栈。
 struct CalendarHistoryHomeView: View {
     // swiftformat:disable:next enumNamespaces
     private struct Constants {
-        static let listSpacing: CGFloat = 0
-        static let horizontalPadding: CGFloat = 18
-        static let introductionBottomPadding: CGFloat = 20
-        static let sectionHeaderSpacing: CGFloat = 12
-        static let sectionHeaderMinimumSpacerLength: CGFloat = 12
-        static let sectionHeaderHorizontalInset: CGFloat = 2
-        static let sectionHeaderBottomPadding: CGFloat = 10
-        static let timelineStrokeWidth: CGFloat = 1
-        static let timelineVerticalInset: CGFloat = 36
-        static let timelineHorizontalOffset: CGFloat = 15
-        static let contentVerticalPadding: CGFloat = 12
-        static let maximumContentWidth: CGFloat = 760
+        static let sidebarMinimumWidth: CGFloat = 280
+        static let sidebarIdealWidth: CGFloat = 320
+        static let sidebarMaximumWidth: CGFloat = 400
+        static let contentMinimumWidth: CGFloat = 220
+        static let contentIdealWidth: CGFloat = 260
+        static let contentMaximumWidth: CGFloat = 340
     }
 
+    var stack: NavigationStackID<CalendarTab> = .primary
+    @Environment(CalendarHomeCoordinator.self) private var coordinator
+    @Environment(CalendarPresentationContext.self) private var presentation
+    @Environment(\.modelContext) private var modelContext
     @Query private var periods: [OrthodoxPeriod]
 
-    init() {
+    init(stack: NavigationStackID<CalendarTab> = .primary) {
+        self.stack = stack
         let traditionID = HistoryConfiguration.defaultOrthodoxTraditionID
         _periods = Query(
-            filter: #Predicate<OrthodoxPeriod> { period in
-                period.tradition?.id == traditionID
-            },
+            filter: #Predicate<OrthodoxPeriod> { $0.tradition?.id == traditionID },
             sort: \OrthodoxPeriod.sequenceIndex
         )
     }
 
+    private var navigation: CalendarNavigationContext {
+        presentation.context(for: stack)
+    }
+
+    private var state: CalendarHistoryState {
+        coordinator.historyState(for: navigation)
+    }
+
     var body: some View {
-        ScrollView {
-            timelineContent
+        @Bindable var state = state
+
+        NavigationSplitView(
+            columnVisibility: $state.columnVisibility,
+            preferredCompactColumn: $state.preferredCompactColumn
+        ) {
+            CalendarHistorySidebarView(periods: periods, selection: $state.orthodoxPeriodID)
+                .navigationSplitViewColumnWidth(
+                    min: Constants.sidebarMinimumWidth, ideal: Constants.sidebarIdealWidth,
+                    max: Constants.sidebarMaximumWidth
+                )
+                .toolbar { closeToolbar }
+        } content: {
+            if let periodID = state.orthodoxPeriodID {
+                CalendarHistoryContentView(orthodoxPeriodID: periodID, selection: $state.section)
+                    .navigationSplitViewColumnWidth(
+                        min: Constants.contentMinimumWidth, ideal: Constants.contentIdealWidth,
+                        max: Constants.contentMaximumWidth
+                    )
+                    .toolbar { closeToolbar }
+            } else {
+                ContentUnavailableView {
+                    Label(CalendarStringKey.History.Split.chooseDynastyTitle, systemSymbol: .buildingColumns)
+                } description: {
+                    Text(CalendarStringKey.History.Split.chooseDynastyMessage)
+                }
+                .toolbar { closeToolbar }
+            }
+        } detail: {
+            NavigationScopeView(stack: stack, presentation: presentation)
         }
-        .navigationTitle(CalendarStringKey.History.Timeline.title)
-        #if os(iOS)
-            .navigationBarTitleDisplayMode(.large)
-        #endif
-    }
-
-    private var timelineContent: some View {
-        LazyVStack(alignment: .leading, spacing: Constants.listSpacing) {
-            timelineIntroduction
-            timelineSection
-        }
-        .padding(.horizontal, Constants.horizontalPadding)
-        .padding(.vertical, Constants.contentVerticalPadding)
-        .frame(maxWidth: Constants.maximumContentWidth, alignment: .leading)
-    }
-
-    private var timelineIntroduction: some View {
-        Text(CalendarStringKey.History.Timeline.subtitle)
-            .font(.subheadline)
-            .foregroundStyle(.secondary)
-            .padding(.bottom, Constants.introductionBottomPadding)
-    }
-
-    @ViewBuilder
-    private var timelineSection: some View {
-        if periods.isEmpty {
-            emptyTimelineState
-        } else {
-            timelineSectionHeader
-            dynastyTimeline
+        .navigationSplitViewStyle(.balanced)
+        .environment(presentation.scoped(to: stack))
+        .onChange(of: navigation.rootDestination, initial: true) {
+            synchronizeSelection()
         }
     }
 
-    private var emptyTimelineState: some View {
-        ContentUnavailableView {
-            Label(CalendarStringKey.History.Timeline.Empty.title, systemSymbol: .timelineSelection)
-        } description: {
-            Text(CalendarStringKey.History.Timeline.Empty.message)
-        }
-        .frame(maxWidth: .infinity)
-        .padding(.vertical)
-    }
-
-    private var timelineSectionHeader: some View {
-        HStack(alignment: .firstTextBaseline, spacing: Constants.sectionHeaderSpacing) {
-            Text(CalendarStringKey.History.Timeline.listTitle)
-                .font(.headline)
-                .bold()
-
-            Spacer(minLength: Constants.sectionHeaderMinimumSpacerLength)
-
-            Text(CalendarStringKey.History.Timeline.sortLabel)
-                .font(.caption)
-                .foregroundStyle(.secondary)
-        }
-        .padding(.horizontal, Constants.sectionHeaderHorizontalInset)
-        .padding(.bottom, Constants.sectionHeaderBottomPadding)
-    }
-
-    private var dynastyTimeline: some View {
-        LazyVStack(spacing: Constants.listSpacing) {
-            ForEach(periods, id: \.id) { period in
-                dynastyTimelineRow(period)
+    @ToolbarContentBuilder
+    private var closeToolbar: some ToolbarContent {
+        if presentation.isPresented {
+            ToolbarItem(placement: .cancellationAction) {
+                Button(CalendarStringKey.Common.Action.close) { presentation.dismiss() }
             }
         }
-        .background(alignment: .leading) {
-            Rectangle()
-                .fill(.quaternary)
-                .frame(width: Constants.timelineStrokeWidth)
-                .padding(.vertical, Constants.timelineVerticalInset)
-                .offset(x: Constants.timelineHorizontalOffset)
-                .accessibilityHidden(true)
-        }
     }
 
-    @ViewBuilder
-    private func dynastyTimelineRow(_ period: OrthodoxPeriod) -> some View {
-        let model = DynastyCardModel(period: period)
-        if period.dynasty != nil {
-            NavigationLink(
-                value: CalendarDestination.dynasty(orthodoxPeriodID: period.id)
-            ) {
-                DynastyCard(model: model, showsDisclosureIndicator: true)
-            }
-            .buttonStyle(HistoryPressButtonStyle())
-            .calendarPresentationMenu(destination: .dynasty(orthodoxPeriodID: period.id))
-        } else {
-            DynastyCard(model: model, showsDisclosureIndicator: false)
-        }
+    /// 外部请求实际换根之后，才解析皇帝所属时期；不在确认或关闭流程中预写选择。
+    private func synchronizeSelection() {
+        state.synchronizeRoot()
+        guard case let .emperor(emperorID) = navigation.rootDestination else { return }
+        var descriptor = FetchDescriptor<Emperor>(predicate: #Predicate { $0.id == emperorID })
+        descriptor.fetchLimit = 1
+        guard let emperor = try? modelContext.fetch(descriptor).first,
+              let period = periods.first(where: { $0.dynasty?.id == emperor.dynasty.id })
+        else { return }
+        state.resolveEmperorRoot(emperorID: emperorID, orthodoxPeriodID: period.id)
     }
 }
 
-#Preview("示例数据", traits: .sampleData) {
-    SampleNavigationPreview(tab: .history) {
-        CalendarHistoryHomeView()
-    }
+#Preview("历史三栏", traits: .sampleData) {
+    CalendarHistoryHomeView(stack: .scope(.history))
 }
 
-#Preview("空状态", traits: .emptySampleData) {
-    SampleNavigationPreview(tab: .history) {
-        CalendarHistoryHomeView()
-    }
+#Preview("空时间线", traits: .emptySampleData) {
+    CalendarHistoryHomeView(stack: .scope(.history))
 }

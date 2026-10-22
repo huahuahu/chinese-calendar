@@ -79,7 +79,8 @@ struct CalendarNavigationContextTests {
             .confirmNavigation(id: #require(coordinator.router.navigation.pendingConfirmation).id)
         #expect(coordinator.router.historyPath.isEmpty)
         coordinator.rootPresentationDidDismiss()
-        #expect(coordinator.router.historyPath == [.emperor("ming-taizu")])
+        #expect(coordinator.router.navigation.rootDestination(for: .history) == .emperor("ming-taizu"))
+        #expect(coordinator.router.historyPath.isEmpty)
         #expect(coordinator.router.selectedTab == .history)
     }
 
@@ -87,7 +88,7 @@ struct CalendarNavigationContextTests {
         let router = CalendarRouter()
         #expect(router.navigation.rootPresentation.destination == .mainTabs)
         #expect(router.navigation.rootDestinations == [
-            .years: .calendarHome, .history: .historyHome, .settings: .settings
+            .years: .calendarHome, .history: .historyEmpty, .settings: .settings
         ])
         for tab in CalendarTab.allCases {
             #expect(router.navigation.context(for: tab).isActive)
@@ -100,9 +101,11 @@ struct CalendarNavigationContextTests {
         let years = router.navigation.context(for: .years)
         #expect(years.push(destination))
         #expect(years.path == [destination])
-        let accepted = destination == .mainTabs
-            ? router.navigation.rootPresentation.presentMainTabs()
-            : router.navigation.rootPresentation.present(destination)
+        let accepted = switch destination {
+        case .mainTabs: router.navigation.rootPresentation.presentMainTabs()
+        case .historyHome: router.navigation.rootPresentation.presentHistory()
+        default: router.navigation.rootPresentation.present(destination)
+        }
         #expect(accepted)
         let node = try #require(router.navigation.presentedNode)
         #expect(node.destination == destination)

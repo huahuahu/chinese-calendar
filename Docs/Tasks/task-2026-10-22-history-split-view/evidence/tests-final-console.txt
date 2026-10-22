@@ -1,0 +1,25 @@
+2026-10-22 原生 Xcode MCP RunAllTests 控制台摘录；完整汇总见 tests-final.json。
+
+✔ Test run with 10 tests in 0 suites passed after 0.013 seconds.
+✔ Test run with 3 tests in 0 suites passed after 0.001 seconds.
+✔ Suite "Seed store installation and identity" passed after 0.071 seconds.
+✔ Suite "NavigationPresentationContext 的路由读取与有效性" passed after 0.139 seconds.
+✔ Suite "提示会话的生命周期约束" passed after 0.143 seconds.
+✔ Suite "根层与递归模态的初始化约束" passed after 0.146 seconds.
+✔ Suite "独立栈状态与访问约束" passed after 0.148 seconds.
+✔ Suite "Context 缓存身份与释放" passed after 0.151 seconds.
+✔ Suite "业务 alert 与导航的串行协调" passed after 0.151 seconds.
+✔ Suite "普通根层的导航请求与栈根替换" passed after 0.151 seconds.
+✔ Test selectingEmperorsFromAnEmperorRootOpensTheList() passed after 2.207 seconds.
+✔ Test activeAlertRejectsResolvingTheCurrentEmperorRoot() passed after 2.211 seconds.
+✔ Suite "Lunar year transition direction" passed after 2.227 seconds.
+✔ Suite "App SplitView 选择与 SDK 单栈" passed after 2.227 seconds.
+✔ Suite "历史三栏选择与详情导航" passed after 2.226 seconds.
+✔ Suite "Calendar selected-day resolver" passed after 2.226 seconds.
+✔ Suite "业务提示的普通按钮与取消入口" passed after 2.226 seconds.
+✔ Suite "Calendar preview fixtures" passed after 2.226 seconds.
+✔ Suite "页面 NavigationPresentationContext 与协调" passed after 2.226 seconds.
+✔ Suite CalendarLocalizationPresentationTests passed after 2.226 seconds.
+✔ Suite "App 使用局部导航框架" passed after 2.227 seconds.
+✔ Suite "导航树共享数据环境" passed after 2.227 seconds.
+✔ Test run with 134 tests in 10 suites passed after 2.228 seconds.

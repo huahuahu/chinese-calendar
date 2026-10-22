@@ -30,9 +30,9 @@ enum CalendarNavigationConfirmation {
         switch destination {
         case let .lunarYear(year, _, _):
             LunarCalendarFormatting.yearTitle(lunarYearNumber: year)
-        case .dynasty:
+        case .dynasty, .historyDetail:
             String(localized: CalendarStringKey.Navigation.dynastyTarget)
-        case .emperor:
+        case .emperor, .historyEmperor:
             String(localized: CalendarStringKey.Navigation.emperorTarget)
         #if DEBUG
             case .debugNavigation:
