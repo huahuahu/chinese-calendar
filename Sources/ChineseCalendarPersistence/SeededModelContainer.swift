@@ -59,13 +59,15 @@ public enum ChineseCalendarModelContainerFactory {
             appGroupIdentifier: appGroupIdentifier,
             fileManager: fileManager
         )
-        let storeURL = try installSeedStoreIfNeeded(
+        let lease = try ChineseCalendarStoreGenerations.acquireCurrent(in: storeDirectory, fileManager: fileManager)
+        defer { withExtendedLifetime(lease) {} }
+        return try installSeedStoreIfNeeded(
             from: bundle,
             to: storeDirectory,
+            activeDirectory: lease.directory,
+            allowsSave: allowsSave,
             fileManager: fileManager
         )
-
-        return try makeContainer(at: storeURL, allowsSave: allowsSave)
     }
 
     public static func makeContainer(
@@ -83,7 +85,9 @@ public enum ChineseCalendarModelContainerFactory {
             allowsSave: allowsSave
         )
 
-        return try ModelContainer(for: schema, configurations: [configuration])
+        return try ChineseCalendarStoreGenerations.openContainer(at: storeURL) {
+            try ModelContainer(for: schema, configurations: [configuration])
+        }
     }
 
     public static func sharedStoreDirectory(
@@ -111,7 +115,7 @@ public enum ChineseCalendarModelContainerFactory {
         appGroupIdentifier: String = ChineseCalendarAppConfiguration.appGroupIdentifier,
         fileManager: FileManager = .default
     ) throws -> URL {
-        try sharedStoreDirectory(
+        try activeStoreDirectory(
             appGroupIdentifier: appGroupIdentifier,
             fileManager: fileManager
         )
@@ -122,11 +126,19 @@ public enum ChineseCalendarModelContainerFactory {
         appGroupIdentifier: String = ChineseCalendarAppConfiguration.appGroupIdentifier,
         fileManager: FileManager = .default
     ) throws -> URL {
-        try sharedStoreDirectory(
+        try activeStoreDirectory(
             appGroupIdentifier: appGroupIdentifier,
             fileManager: fileManager
         )
         .appendingPathComponent(ChineseCalendarSeedStore.manifestFileName)
+    }
+
+    private static func activeStoreDirectory(
+        appGroupIdentifier: String,
+        fileManager: FileManager
+    ) throws -> URL {
+        let root = try sharedStoreDirectory(appGroupIdentifier: appGroupIdentifier, fileManager: fileManager)
+        return try ChineseCalendarStoreGenerations.activeDirectory(in: root, fileManager: fileManager)
     }
 
     public static func downloadsDirectory(
@@ -180,20 +192,36 @@ public enum ChineseCalendarModelContainerFactory {
         return try seedStoreIdentityToken(at: manifestURL)
     }
 
+    /// 从容器实际打开的同一代目录读取元数据，不重新解析可能已经切换的当前指针。
+    public static func storeContentLevel(at storeURL: URL) throws -> ChineseCalendarSeedStoreContentLevel? {
+        let manifest = storeURL.deletingLastPathComponent()
+            .appendingPathComponent(ChineseCalendarSeedStore.manifestFileName)
+        guard FileManager.default.fileExists(atPath: manifest.path) else { return nil }
+        return try seedStoreContentLevel(at: manifest)
+    }
+
+    public static func storeIdentityToken(at storeURL: URL) throws -> String? {
+        let manifest = storeURL.deletingLastPathComponent()
+            .appendingPathComponent(ChineseCalendarSeedStore.manifestFileName)
+        guard FileManager.default.fileExists(atPath: manifest.path) else { return nil }
+        return try seedStoreIdentityToken(at: manifest)
+    }
+
     private static func installSeedStoreIfNeeded(
         from bundle: Bundle = .main,
         to storeDirectory: URL,
+        activeDirectory: URL,
+        allowsSave: Bool,
         fileManager: FileManager = .default
-    ) throws -> URL {
+    ) throws -> ModelContainer {
         try fileManager.createDirectory(at: storeDirectory, withIntermediateDirectories: true)
-
-        let storeURL = storeDirectory.appendingPathComponent(ChineseCalendarSeedStore.storeFileName)
+        let storeURL = activeDirectory.appendingPathComponent(ChineseCalendarSeedStore.storeFileName)
         let seedDirectory = seedStoreResourceURL(in: bundle)
 
         guard let seedDirectory else {
             if fileManager.fileExists(atPath: storeURL.path) {
                 ChineseCalendarLog.persistence.info("Using existing installed seed store")
-                return storeURL
+                return try makeContainer(at: storeURL, allowsSave: allowsSave)
             }
 
             ChineseCalendarLog.persistence.error("Missing bundled seed store resource")
@@ -204,30 +232,20 @@ public enum ChineseCalendarModelContainerFactory {
 
         if try shouldInstallSeedStore(
             seedDirectory: seedDirectory,
-            storeDirectory: storeDirectory,
+            storeDirectory: activeDirectory,
             fileManager: fileManager
         ) {
             ChineseCalendarLog.persistence.notice("Installing bundled seed store")
 
-            try ChineseCalendarSeedStoreFiles.removeStoreFiles(
-                in: storeDirectory,
-                fileManager: fileManager
-            )
-            try ChineseCalendarSeedStoreFiles.copyStoreFiles(
-                from: seedDirectory,
-                to: storeDirectory,
-                fileManager: fileManager
-            )
-            try copyManifestIfPresent(
-                from: seedDirectory,
-                to: storeDirectory,
-                fileManager: fileManager
+            return try installBundledGeneration(
+                from: seedDirectory, in: storeDirectory, allowsSave: allowsSave, fileManager: fileManager
             )
         } else {
             ChineseCalendarLog.persistence.info("Bundled seed store is already installed")
         }
 
-        return storeURL
+        try? ChineseCalendarStoreGenerations.collectRetired(in: storeDirectory, fileManager: fileManager)
+        return try makeContainer(at: storeURL, allowsSave: allowsSave)
     }
 
     static func shouldInstallSeedStore(
@@ -281,7 +299,7 @@ public enum ChineseCalendarModelContainerFactory {
     }
 }
 
-private extension ChineseCalendarModelContainerFactory {
+extension ChineseCalendarModelContainerFactory {
     private static func seedStoreArtifactVersion(at manifestURL: URL) throws -> String? {
         try seedStoreManifest(at: manifestURL)["artifactVersion"] as? String
     }
@@ -324,7 +342,7 @@ private extension ChineseCalendarModelContainerFactory {
         )
     }
 
-    private static func copyManifestIfPresent(
+    static func copyManifestIfPresent(
         from seedDirectory: URL,
         to storeDirectory: URL,
         fileManager: FileManager
@@ -348,7 +366,7 @@ public extension ChineseCalendarModelContainerFactory {
         bundle: Bundle = .main,
         appGroupIdentifier: String = ChineseCalendarAppConfiguration.appGroupIdentifier,
         fileManager: FileManager = .default
-    ) throws -> URL {
+    ) throws -> ModelContainer {
         let storeDirectory = try sharedStoreDirectory(
             appGroupIdentifier: appGroupIdentifier,
             fileManager: fileManager
@@ -363,36 +381,25 @@ public extension ChineseCalendarModelContainerFactory {
 
         ChineseCalendarLog.persistence.notice("Clearing downloaded seed store and restoring bundled base store")
 
-        try ChineseCalendarSeedStoreFiles.removeStoreFiles(
-            in: storeDirectory,
-            fileManager: fileManager
+        let container = try installBundledGeneration(
+            from: seedDirectory, in: storeDirectory, fileManager: fileManager
         )
 
-        let installedManifestURL = storeDirectory.appendingPathComponent(ChineseCalendarSeedStore.manifestFileName)
-        if fileManager.fileExists(atPath: installedManifestURL.path) {
-            try fileManager.removeItem(at: installedManifestURL)
+        do {
+            let downloadsDirectory = try downloadsDirectory(
+                appGroupIdentifier: appGroupIdentifier,
+                fileManager: fileManager
+            )
+            if fileManager.fileExists(atPath: downloadsDirectory.path) {
+                try fileManager.removeItem(at: downloadsDirectory)
+            }
+        } catch {
+            // 基础库已经提交；暂存回收失败不能让界面继续使用旧库并把本次切换报告为失败。
+            ChineseCalendarLog.persistence
+                .error("Failed to remove download staging files: \(error.localizedDescription)")
         }
 
-        try ChineseCalendarSeedStoreFiles.copyStoreFiles(
-            from: seedDirectory,
-            to: storeDirectory,
-            fileManager: fileManager
-        )
-        try copyManifestIfPresent(
-            from: seedDirectory,
-            to: storeDirectory,
-            fileManager: fileManager
-        )
-
-        let downloadsDirectory = try downloadsDirectory(
-            appGroupIdentifier: appGroupIdentifier,
-            fileManager: fileManager
-        )
-        if fileManager.fileExists(atPath: downloadsDirectory.path) {
-            try fileManager.removeItem(at: downloadsDirectory)
-        }
-
-        return storeDirectory.appendingPathComponent(ChineseCalendarSeedStore.storeFileName)
+        return container
     }
 }
 

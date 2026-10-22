@@ -8,6 +8,15 @@ import Testing
 @MainActor
 @Suite("导航树共享数据环境")
 struct CalendarStoreEnvironmentTests {
+    @Test func replacingTheSameArtifactChangesTheNavigationStoreIdentity() throws {
+        let first = try PreviewSampleData.makeModelContainer(includesSampleData: false)
+        let second = try PreviewSampleData.makeModelContainer(includesSampleData: false)
+        let store = ChineseCalendarStoreCoordinator(fullStoreConfiguration: nil)
+        let firstIdentity = store.storeIdentity(container: first, contentLevel: .base, identityToken: "same")
+        #expect(firstIdentity == store.storeIdentity(container: first, contentLevel: .base, identityToken: "same"))
+        #expect(firstIdentity != store.storeIdentity(container: second, contentLevel: .base, identityToken: "same"))
+    }
+
     @Test func rootAndModalShareStoreEnvironmentWhileKeepingTheirOwnPresentation() throws {
         let container = try PreviewSampleData.makeModelContainer()
         let expectedYears = try container.mainContext.fetch(FetchDescriptor<ChineseLunarYear>()).count

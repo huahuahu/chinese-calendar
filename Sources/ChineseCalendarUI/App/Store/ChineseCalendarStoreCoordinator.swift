@@ -13,6 +13,7 @@ public final class ChineseCalendarStoreCoordinator {
     private(set) var isClearingDownloadedData = false
 
     @ObservationIgnored private var fullStoreDownloadTask: Task<Void, Never>?
+    @ObservationIgnored private var fullStoreInstaller: ChineseCalendarFullSeedStoreInstaller?
     @ObservationIgnored private var clearCompletedDownloadTask: Task<Void, Never>?
 
     #if DEBUG
@@ -56,10 +57,8 @@ public final class ChineseCalendarStoreCoordinator {
 
     func prepareStore() {
         do {
-            let container = try ChineseCalendarModelContainerFactory.makeSharedContainer()
-            let contentLevel = try ChineseCalendarModelContainerFactory.installedStoreContentLevel() ?? .base
-            let identityToken = try ChineseCalendarModelContainerFactory.installedStoreIdentityToken()
-            state = .ready(container: container, contentLevel: contentLevel, identityToken: identityToken)
+            let container = try ChineseCalendarModelContainerFactory.makeSharedContainer(bundle: seedStoreBundle)
+            state = try readyState(container: container)
         } catch {
             ChineseCalendarLog.persistence.error("Failed to prepare SwiftData store: \(error.localizedDescription)")
             state = .failed(message: CalendarStoreErrorPresentation.message(for: error, operation: .prepare))
@@ -128,10 +127,11 @@ public final class ChineseCalendarStoreCoordinator {
     }
 
     func storeIdentity(
+        container: ModelContainer,
         contentLevel: ChineseCalendarSeedStoreContentLevel,
         identityToken: String?
     ) -> String {
-        "\(contentLevel.rawValue)-\(identityToken ?? "unknown")"
+        "\(contentLevel.rawValue)-\(identityToken ?? "unknown")-\(ObjectIdentifier(container))"
     }
 
     func clearDownloadedData() async throws {
@@ -146,27 +146,26 @@ public final class ChineseCalendarStoreCoordinator {
 
         let activeDownloadTask = fullStoreDownloadTask
         activeDownloadTask?.cancel()
+        await fullStoreInstaller?.cancelAndWait()
         await activeDownloadTask?.value
 
         clearCompletedDownloadTask?.cancel()
         clearCompletedDownloadTask = nil
         fullStoreDownloadTask = nil
+        fullStoreInstaller = nil
         fullStoreDownloadProgress = nil
 
-        let storeURL = try ChineseCalendarModelContainerFactory.clearDownloadedSeedStore(bundle: seedStoreBundle)
-        let container = try ChineseCalendarModelContainerFactory.makeContainer(
-            at: storeURL,
-            allowsSave: false
-        )
-        let contentLevel = try ChineseCalendarModelContainerFactory.installedStoreContentLevel() ?? .base
-        let identityToken = try ChineseCalendarModelContainerFactory.installedStoreIdentityToken()
-        state = .ready(container: container, contentLevel: contentLevel, identityToken: identityToken)
+        let container = try ChineseCalendarModelContainerFactory.clearDownloadedSeedStore(bundle: seedStoreBundle)
+        state = try readyState(container: container)
     }
 
     private func downloadAndInstallFullStore(
         configuration: FullSeedStoreConfig
     ) async {
+        guard !Task.isCancelled else { return }
         let installer = ChineseCalendarFullSeedStoreInstaller(configuration: configuration)
+        fullStoreInstaller = installer
+        defer { fullStoreInstaller = nil }
 
         do {
             for try await event in await installer.installEvents() {
@@ -179,12 +178,8 @@ public final class ChineseCalendarStoreCoordinator {
                     fullStoreDownloadProgress = .installing
                 case let .installed(result):
                     fullStoreDownloadProgress = .completed
-                    let container = try ChineseCalendarModelContainerFactory.makeContainer(
-                        at: result.storeURL,
-                        allowsSave: false
-                    )
                     state = .ready(
-                        container: container,
+                        container: result.container,
                         contentLevel: .full,
                         identityToken: result.manifest.artifactVersion ?? result.manifest.datasetVersion
                     )
@@ -247,16 +242,25 @@ public final class ChineseCalendarStoreCoordinator {
 
     private func showDownloadErrorIfStoreRecovers(_ message: LocalizedStringResource) {
         do {
-            let container = try ChineseCalendarModelContainerFactory.makeSharedContainer()
-            let contentLevel = try ChineseCalendarModelContainerFactory.installedStoreContentLevel() ?? .base
-            let identityToken = try ChineseCalendarModelContainerFactory.installedStoreIdentityToken()
-            state = .ready(container: container, contentLevel: contentLevel, identityToken: identityToken)
+            let container = try ChineseCalendarModelContainerFactory.makeSharedContainer(bundle: seedStoreBundle)
+            state = try readyState(container: container)
             downloadErrorMessage = message
         } catch {
             ChineseCalendarLog.persistence.error("Failed to recover SwiftData store: \(error.localizedDescription)")
             downloadErrorMessage = nil
             state = .failed(message: message)
         }
+    }
+
+    private func readyState(container: ModelContainer) throws -> CalendarStoreBootstrapState {
+        guard let storeURL = container.configurations.first?.url else {
+            throw ChineseCalendarStoreError.missingSeedStore(URL(filePath: "/"))
+        }
+        return try .ready(
+            container: container,
+            contentLevel: ChineseCalendarModelContainerFactory.storeContentLevel(at: storeURL) ?? .base,
+            identityToken: ChineseCalendarModelContainerFactory.storeIdentityToken(at: storeURL)
+        )
     }
 
     private func isCancellation(_ error: Error) -> Bool {

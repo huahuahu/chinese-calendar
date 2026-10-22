@@ -18,6 +18,7 @@ struct CalendarNavigationConfiguration<BottomStatusBar: View>: @MainActor Naviga
             destination: destination, bottomStatusBarIsPresented: bottomStatusBarIsPresented,
             bottomStatusBar: bottomStatusBar
         )
+        .calendarStoreContent(state: storeCoordinator?.state)
     }
 
     func confirmationContent(
