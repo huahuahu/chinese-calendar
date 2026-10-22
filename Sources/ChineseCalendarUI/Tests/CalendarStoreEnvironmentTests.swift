@@ -16,7 +16,7 @@ struct CalendarStoreEnvironmentTests {
         )
         let store = ChineseCalendarStoreCoordinator(fullStoreConfiguration: nil)
         let root = router.rootPresentation
-        #expect(root.present(.probe, rootDestinations: [.primary: .probe]))
+        #expect(root.present(.probe, rootDestinations: [.primary: .probe]) == .applied)
         let node = try #require(router.sheet)
         let modal = router.presentationContext(for: node)
         let recorder = StoreEnvironmentRecorder()
@@ -46,7 +46,7 @@ struct CalendarStoreEnvironmentTests {
             rootDestination: .root, selectedScope: .years, rootDestinations: [.years: .probe]
         )
         let root = router.rootPresentation
-        #expect(root.present(.probe, rootDestinations: [.primary: .probe]))
+        #expect(root.present(.probe, rootDestinations: [.primary: .probe]) == .applied)
         let node = try #require(router.sheet)
         let modal = router.presentationContext(for: node)
         let recorder = StoreEnvironmentRecorder()

@@ -111,16 +111,16 @@ struct NavigationCoordinationTests {
         router.presentSheet(.first)
         let parent = try #require(router.sheet)
         let parentContext = router.presentationContext(for: parent)
-        #expect(parentContext.present(.second))
+        #expect(parentContext.present(.second) == .applied)
         let child = try #require(parent.sheet)
         let childContext = router.presentationContext(for: child)
         let alertID = try beginAlert(childContext)
-        #expect(childContext.presentAlert(.message))
+        #expect(childContext.presentAlert(.message) == .queued)
 
         if allFirst { router.dismissAllPresentations() }
-        #expect(childContext.dismiss())
-        #expect(parentContext.dismiss())
-        #expect(childContext.dismiss())
+        #expect(childContext.dismiss() == .queued)
+        #expect(parentContext.dismiss() == .queued)
+        #expect(childContext.dismiss() == .queued)
         if !allFirst { router.dismissAllPresentations() }
         #expect(router.sheet === parent)
         #expect(parent.sheet === child)
@@ -151,7 +151,7 @@ struct NavigationCoordinationTests {
     }
 
     private func beginAlert(_ context: Presentation) throws -> UUID {
-        #expect(context.presentAlert(.message))
+        #expect(context.presentAlert(.message) == .applied)
         let id = try #require(context.presentedAlert).id
         #expect(context.alertWillPresent(id: id, isConfirmation: false))
         return id

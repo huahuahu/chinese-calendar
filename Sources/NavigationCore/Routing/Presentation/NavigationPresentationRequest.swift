@@ -22,9 +22,11 @@ nonisolated public enum NavigationPresentationRequest<
 }
 
 public extension NavigationPresentationContext {
-    /// 根据数据请求呈现页面或业务提示。已有 alert 时接受排队，返回 true 不代表已经显示。
+    /// 根据数据请求呈现页面或业务提示。已有 alert 时返回 queued，applied 也不代表显示动画完成。
     @discardableResult
-    func present(_ request: NavigationPresentationRequest<Scope, Destination, AlertRoute>) -> Bool {
+    func present(
+        _ request: NavigationPresentationRequest<Scope, Destination, AlertRoute>
+    ) -> NavigationPresentationResult {
         switch request {
         case let .sheet(destination, stack, roots, paths):
             present(destination, style: .sheet, initialStack: stack, rootDestinations: roots, paths: paths)

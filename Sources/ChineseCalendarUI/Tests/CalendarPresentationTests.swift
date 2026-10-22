@@ -1,5 +1,6 @@
 @testable import ChineseCalendarUI
 import Foundation
+@testable import NavigationCore
 import SwiftData
 import Testing
 
@@ -33,6 +34,8 @@ struct CalendarPresentationTests {
         #expect(coordinator.router.sheet === parent)
         #expect(parent.sheet == nil)
 
+        #expect(coordinator.yearPickerSessions[secondID] != nil)
+        coordinator.router.navigation.presentationContext(for: parent).presentationDidDismiss()
         coordinator.releaseDismissedContexts()
         #expect(coordinator.yearPickerSessions[secondID] == nil)
         coordinator.selectYear(2025, sessionID: firstID)
@@ -163,6 +166,7 @@ struct CalendarPresentationTests {
             #expect(parent.destination.providesNavigationContainer)
 
             try coordinator.router.dismissPresentation(id: #require(parent.sheet).id)
+            coordinator.router.navigation.presentationContext(for: parent).presentationDidDismiss()
             coordinator.releaseDismissedContexts()
             #expect(coordinator.downloadPreviewSessions[session.id] === session)
             coordinator.presentDownloadPreviewDetails(sessionID: session.id)

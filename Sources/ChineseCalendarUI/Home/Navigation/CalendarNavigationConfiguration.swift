@@ -35,8 +35,4 @@ struct CalendarNavigationConfiguration<BottomStatusBar: View>: @MainActor Naviga
     ) async {
         await coordinator.handleAlertAction(route, action: action, presentation: presentation, store: storeCoordinator)
     }
-
-    func presentationDidDismiss() {
-        coordinator.releaseDismissedContexts()
-    }
 }

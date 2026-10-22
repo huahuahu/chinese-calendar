@@ -51,6 +51,8 @@ final class NavigationLayer<
     var queuedPresentations: [NavigationPresentation<Scope, Destination, AlertRoute>] = []
     /// 系统已开始展示或正在关闭的 alert；业务动作处理完成后才释放这次会话。
     var alertSession: NavigationAlertSession?
+    /// 已从活动树移除、但界面仍在关闭的子树。真实关闭完成后释放，保留动画所需的会话身份。
+    var dismissingPresentation: NavigationPresentationNode<Scope, Destination, AlertRoute>?
 
     var presentation: NavigationPresentationNode<Scope, Destination, AlertRoute>? {
         get {
@@ -58,7 +60,10 @@ final class NavigationLayer<
             return node
         }
         set {
-            if presentation != nil, newValue == nil { isAwaitingDismissal = true }
+            if let presentation, newValue == nil {
+                dismissingPresentation = presentation
+                isAwaitingDismissal = true
+            }
             presentedContent = newValue.map(NavigationPresentation.page)
         }
     }
@@ -80,21 +85,34 @@ final class NavigationLayer<
         rootDestinations: [NavigationStackID<Scope>: Destination] = [:],
         paths: [NavigationStackID<Scope>: [Destination]] = [:]
     ) {
-        let roots: [NavigationStackID<Scope>: Destination]
-        if route.destination.providesNavigationContainer {
-            guard rootDestinations[initialStack] != nil,
-                  paths.keys.allSatisfy({ rootDestinations[$0] != nil }) else { return nil }
-            roots = rootDestinations
-        } else {
-            guard initialStack == .primary, rootDestinations.isEmpty,
-                  paths.keys.allSatisfy({ $0 == .primary }) else { return nil }
-            roots = [.primary: route.destination]
-        }
+        guard Self.validationRejection(
+            destination: route.destination, initialStack: initialStack,
+            rootDestinations: rootDestinations, paths: paths
+        ) == nil else { return nil }
+        let roots: [NavigationStackID<Scope>: Destination] = route.destination.providesNavigationContainer
+            ? rootDestinations : [.primary: route.destination]
         routeState = NavigationLayerRouteState(route: route)
         selectedStack = initialStack
         stacks = Dictionary(uniqueKeysWithValues: roots.map { id, root in
             (id, NavigationStackState(rootDestination: root, path: paths[id] ?? []))
         })
+    }
+
+    /// 与初始化共用校验规则，让呈现入口返回具体拒绝原因而不复制容器约束。
+    static func validationRejection(
+        destination: Destination,
+        initialStack: NavigationStackID<Scope>,
+        rootDestinations: [NavigationStackID<Scope>: Destination],
+        paths: [NavigationStackID<Scope>: [Destination]]
+    ) -> NavigationRejectionReason? {
+        if destination.providesNavigationContainer {
+            guard rootDestinations[initialStack] != nil,
+                  paths.keys.allSatisfy({ rootDestinations[$0] != nil }) else { return .missingRootDestination }
+        } else {
+            guard initialStack == .primary, rootDestinations.isEmpty,
+                  paths.keys.allSatisfy({ $0 == .primary }) else { return .incompatibleContainer }
+        }
+        return nil
     }
 
     /// 显式声明或替换栈根，并清空旧路径；仅获取 Context 不会创建栈。

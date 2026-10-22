@@ -6,7 +6,7 @@ extension CalendarHomeCoordinator {
     func presentDownloadError(_ message: LocalizedStringResource) -> Bool {
         let id = UUID()
         alertMessages[id] = message
-        if router.navigation.presentAlert(.downloadFailed(messageID: id)) { return true }
+        if router.navigation.presentAlert(.downloadFailed(messageID: id)).isAccepted { return true }
         alertMessages[id] = nil
         return false
     }
@@ -28,7 +28,7 @@ extension CalendarHomeCoordinator {
             } catch {
                 let id = UUID()
                 alertMessages[id] = CalendarStoreErrorPresentation.message(for: error, operation: .clear)
-                if !presentation.present(.alert(.clearDataFailed(messageID: id))) { alertMessages[id] = nil }
+                if !presentation.present(.alert(.clearDataFailed(messageID: id))).isAccepted { alertMessages[id] = nil }
             }
         #if DEBUG
             case .openHistory:

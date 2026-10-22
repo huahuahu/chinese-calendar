@@ -101,7 +101,7 @@ final class CalendarRouter {
     }
 
     @discardableResult
-    func dismissPresentation(id: UUID) -> Bool {
+    func dismissPresentation(id: UUID) -> NavigationPresentationResult {
         navigation.dismissPresentation(id: id)
     }
 

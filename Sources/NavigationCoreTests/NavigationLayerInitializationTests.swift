@@ -64,17 +64,17 @@ struct NavigationLayerInitializationTests {
 
     @Test func malformedPresentationsLeaveEveryExistingLayerUntouched() throws {
         let router = Router(rootDestination: .home, paths: [.primary: [.detail]])
-        #expect(router.rootPresentation.present(.detail, paths: [.primary: [.home]]))
+        #expect(router.rootPresentation.present(.detail, paths: [.primary: [.home]]) == .applied)
         let parent = try #require(router.sheet)
         let modal = router.presentationContext(for: parent)
-        #expect(!modal.present(.home, initialStack: .scope(.home)))
-        #expect(!modal.present(.home, rootDestinations: [.primary: .home]))
-        #expect(!modal.present(.home, paths: [.scope(.history): [.detail]]))
-        #expect(!modal.present(.tabs))
-        #expect(!modal.present(
+        #expect(modal.present(.home, initialStack: .scope(.home)) == .rejected(.incompatibleContainer))
+        #expect(modal.present(.home, rootDestinations: [.primary: .home]) == .rejected(.incompatibleContainer))
+        #expect(modal.present(.home, paths: [.scope(.history): [.detail]]) == .rejected(.incompatibleContainer))
+        #expect(modal.present(.tabs) == .rejected(.missingRootDestination))
+        #expect(modal.present(
             .tabs, initialStack: .scope(.home), rootDestinations: [.scope(.home): .home],
             paths: [.scope(.history): []]
-        ))
+        ) == .rejected(.missingRootDestination))
         #expect(router.sheet === parent)
         #expect(parent.presentation == nil)
         #expect(parent.layer.roots == [.primary: .detail])
@@ -90,18 +90,18 @@ struct NavigationLayerInitializationTests {
     @Test func replacingStackRootsKeepsNestedLayerEntriesAndOtherPaths() throws {
         let router = Router(rootDestination: .home)
         let rootStack = router.rootPresentation.context(for: .primary)
-        #expect(rootStack.setRootDestination(.detail))
-        #expect(rootStack.push(.tabs))
-        #expect(router.rootPresentation.present(.detail))
+        #expect(rootStack.setRootDestination(.detail) == .applied)
+        #expect(rootStack.push(.tabs) == .applied)
+        #expect(router.rootPresentation.present(.detail) == .applied)
         let parent = try #require(router.sheet)
         let modal = router.presentationContext(for: parent)
-        #expect(modal.context(for: .primary).setRootDestination(.tabs))
-        #expect(modal.context(for: .primary).push(.home))
+        #expect(modal.context(for: .primary).setRootDestination(.tabs) == .applied)
+        #expect(modal.context(for: .primary).push(.home) == .applied)
         #expect(modal.present(
             .tabs, style: .fullScreen, initialStack: .scope(.history),
             rootDestinations: [.scope(.home): .home, .scope(.history): .detail],
             paths: [.scope(.home): [.detail], .scope(.history): [.home, .tabs]]
-        ))
+        ) == .applied)
         let child = try #require(parent.fullScreen)
         let tabs = router.presentationContext(for: child)
         #expect(router.rootPresentation.destination == .home)
@@ -110,7 +110,7 @@ struct NavigationLayerInitializationTests {
         #expect(tabs.selectedStack == .scope(.history))
         #expect(tabs.context(for: .scope(.home)).path == [.detail])
         #expect(tabs.context(for: .scope(.history)).path == [.home, .tabs])
-        #expect(tabs.context(for: .scope(.history)).push(.detail))
+        #expect(tabs.context(for: .scope(.history)).push(.detail) == .applied)
         #expect(modal.context(for: .primary).rootDestination == .tabs)
         #expect(modal.context(for: .primary).path == [.home])
         #expect(rootStack.rootDestination == .detail)

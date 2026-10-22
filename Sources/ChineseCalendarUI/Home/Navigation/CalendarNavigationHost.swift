@@ -23,6 +23,7 @@ private struct CalendarNavigationHost<BottomStatusBar: View>: ViewModifier {
             )
             .environment(coordinator)
             .environment(storeCoordinator)
+            .modifier(CalendarNavigationSessionCleanup(coordinator: coordinator))
             .onChange(of: storeCoordinator?.navigationStoreIdentity, initial: true) {
                 coordinator.storeIdentityDidChange(storeCoordinator?.navigationStoreIdentity)
             }

@@ -73,12 +73,34 @@ public final class NavigationPresentationContext<
     /// 读取到某个栈 ID 并不代表 Context 仍然有效，需通过 isActive 判断。
     public var selectedStack: NavigationStackID<Scope> {
         get { layer?.selectedStack ?? .primary }
-        set {
-            guard canNavigate, layer?.stacks[newValue] != nil else { return }
-            // Core 提供的单栈只承载 primary，根层与模态层使用同一规则。
-            if layer?.route.destination.providesNavigationContainer == false, newValue != .primary { return }
-            layer?.selectedStack = newValue
+        set { setSelectedStack(newValue) }
+    }
+
+    /// 切换本层的选中栈，返回具体的事务或配置拒绝原因；重复选中仍表示操作已应用。
+    @discardableResult
+    public func setSelectedStack(_ stack: NavigationStackID<Scope>) -> NavigationMutationResult {
+        guard let router, let layer else {
+            return NavigationCoreLog.record(
+                NavigationMutationResult.rejected(.inactiveContext), operation: "setSelectedStack", layer: id
+            )
         }
+        if let reason = router.navigationRejection(in: layer) {
+            return NavigationCoreLog.record(
+                NavigationMutationResult.rejected(reason), operation: "setSelectedStack", layer: id
+            )
+        }
+        guard layer.route.destination.providesNavigationContainer || stack == .primary else {
+            return NavigationCoreLog.record(
+                NavigationMutationResult.rejected(.incompatibleContainer), operation: "setSelectedStack", layer: id
+            )
+        }
+        guard layer.stacks[stack] != nil else {
+            return NavigationCoreLog.record(
+                NavigationMutationResult.rejected(.undeclaredStack), operation: "setSelectedStack", layer: id
+            )
+        }
+        layer.selectedStack = stack
+        return NavigationCoreLog.record(NavigationMutationResult.applied, operation: "setSelectedStack", layer: id)
     }
 
     /// 从这一层直接打开的子模态。Context 失效后返回 nil，不会继续查找更深层的模态。
@@ -104,12 +126,6 @@ public final class NavigationPresentationContext<
         return router?.pendingConfirmation
     }
 
-    /// 这一层是否仍有效，且没有待确认请求、根模态关闭等待或活动 alert。
-    /// 选中栈等需要立即修改状态的操作使用此判断；present／dismiss 另行检查并处理排队。
-    var canNavigate: Bool {
-        router?.canNavigate(in: layer) == true
-    }
-
     /// 获取指定栈使用的 NavigationPresentationContext。同一有效栈多次获取会返回同一个对象。
     /// 它与本层其他 NavigationPresentationContext 共享状态，但只有这个栈被选中时才允许 present。
     /// NavigationScopeView 会自动把它放入页面环境。原 Context 失效后，调用此方法也不会重新连接新层。
@@ -131,7 +147,7 @@ public final class NavigationPresentationContext<
     public func context(for stack: NavigationStackID<Scope>) -> NavigationContext<Scope, Destination> {
         // 保留失效状态，避免旧页面通过相同 ID 找到新栈。
         guard let router, let layer, isActive else {
-            return NavigationContext(id: stack, state: nil, access: .inactive)
+            return NavigationContext(id: stack, state: nil, access: .inactive, layerID: id)
         }
         return router.context(in: layer, stack: stack)
     }
@@ -139,10 +155,10 @@ public final class NavigationPresentationContext<
     /// 从当前层打开一个模态，页面内容由 destination 路由数据构建。
     ///
     /// 如果 Context 指定了发起栈，只允许当前选中的栈打开模态。
-    /// 本层已有页面模态或该页面还在关闭时返回 false；已有 alert 时保存请求，等提示处理完再展示。
+    /// 本层已有页面模态或该页面还在关闭时返回具体拒绝原因；已有 alert 时保存请求，等提示处理完再展示。
     /// 普通模态使用默认的 initialStack；多 Tab 模态应指定初始 Tab 的 scope，
     /// 并让 providesNavigationContainer 返回 true，再由内容使用 NavigationScopeView 创建各 Tab 的栈。
-    /// - Returns: 接受请求时返回 true，包括已排队等待的请求，不代表页面已经显示。
+    /// - Returns: applied 表示已写入呈现数据，queued 表示已排队；均不代表页面显示动画完成。
     @discardableResult
     public func present(
         _ destination: Destination,
@@ -150,62 +166,118 @@ public final class NavigationPresentationContext<
         initialStack: NavigationStackID<Scope> = .primary,
         rootDestinations: [NavigationStackID<Scope>: Destination] = [:],
         paths: [NavigationStackID<Scope>: [Destination]] = [:]
-    ) -> Bool {
-        guard let router, isActive, let layer, layer.presentation == nil,
-              !layer.isAwaitingDismissal else { return false }
-        guard sourceStack == nil || sourceStack == layer.selectedStack else { return false }
+    ) -> NavigationPresentationResult {
+        guard let router, isActive, let layer else {
+            return NavigationCoreLog.record(
+                NavigationPresentationResult.rejected(.inactiveContext), operation: "present", layer: id
+            )
+        }
+        if let reason = presentationRejection(in: layer) {
+            return NavigationCoreLog.record(
+                NavigationPresentationResult.rejected(reason), operation: "present", layer: id
+            )
+        }
         guard let presentedLayer = NavigationLayer<Scope, Destination, AlertRoute>(
             route: .presentation(id: UUID(), destination: destination),
             initialStack: initialStack, rootDestinations: rootDestinations, paths: paths
-        ) else { return false }
+        ) else {
+            let reason = NavigationLayer<Scope, Destination, AlertRoute>.validationRejection(
+                destination: destination, initialStack: initialStack, rootDestinations: rootDestinations, paths: paths
+            ) ?? .incompatibleContainer
+            return NavigationCoreLog.record(
+                NavigationPresentationResult.rejected(reason), operation: "present", layer: id
+            )
+        }
         let node = NavigationPresentationNode(style: style, layer: presentedLayer)
         return router.enqueue(.page(node), in: layer)
     }
 
     /// 根据业务路由展示 alert。当前已有 alert 时排队，不替换用户尚未回答的提示。
     @discardableResult
-    public func presentAlert(_ destination: AlertRoute) -> Bool {
-        guard let router, let layer, isActive else { return false }
-        guard sourceStack == nil || sourceStack == layer.selectedStack else { return false }
-        return router.enqueue(.alert(NavigationAlertNode(destination: destination)), in: layer)
+    public func presentAlert(_ destination: AlertRoute) -> NavigationPresentationResult {
+        guard let router, let layer, isActive else {
+            return NavigationCoreLog.record(
+                NavigationPresentationResult.rejected(.inactiveContext), operation: "presentAlert", layer: id
+            )
+        }
+        guard sourceStack == nil || sourceStack == layer.selectedStack else {
+            return NavigationCoreLog.record(
+                NavigationPresentationResult.rejected(.sourceStackNotSelected), operation: "presentAlert", layer: id
+            )
+        }
+        return router.enqueue(
+            .alert(NavigationAlertNode(destination: destination)),
+            in: layer,
+            operation: "presentAlert"
+        )
     }
 
     /// 关闭当前所在的模态，以及从它继续打开的所有子模态，保留父层各栈的路径。
-    /// 根层或已失效的 Context 返回 false。要关闭本层打开的子模态，使用 dismissPresented。
+    /// 根层返回 noChange(.notPresented)，失效 Context 返回拒绝原因；关闭本层的子模态使用 dismissPresented。
     @discardableResult
-    public func dismiss() -> Bool {
-        guard isActive, case let .presentation(nodeID) = id else { return false }
-        return router?.dismissPresentation(id: nodeID) ?? false
+    public func dismiss() -> NavigationPresentationResult {
+        guard isActive, let router else {
+            return NavigationCoreLog.record(
+                NavigationPresentationResult.rejected(.inactiveContext), operation: "dismiss", layer: id
+            )
+        }
+        guard case let .presentation(nodeID) = id else {
+            return NavigationCoreLog.record(
+                NavigationPresentationResult.noChange(.notPresented), operation: "dismiss", layer: id
+            )
+        }
+        return router.dismissPresentation(id: nodeID)
     }
 
     /// 关闭本层直接打开的指定子模态，也会关闭它继续打开的模态。下滑关闭也使用这个方法。
     ///
     /// 只有 ID 与当前子模态一致时才关闭，避免旧页面的延迟回调误关新页面。
     /// 清空模态数据后，仍需等待界面容器的 onDismiss 通知，才允许这一层再次 present。
-    /// - Returns: 接受关闭请求时返回 true；有活动 alert 时先等待它结束，不会立即移除模态。
-    ///   Context 失效或 ID 不匹配时返回 false。
+    /// - Returns: applied 表示已移除模态数据；有活动 alert 时返回 queued，等待它及业务动作完成。
+    ///   失效 Context 返回拒绝原因，ID 不匹配返回 noChange(.presentationNotFound)。
     @discardableResult
-    public func dismissPresented(id nodeID: UUID) -> Bool {
-        guard isActive, layer?.presentation?.id == nodeID else { return false }
-        if router?.hasActiveAlert == true {
-            router?.coordinationState.deferDismissalUntilAlertEnds(id: nodeID)
-            return true
+    public func dismissPresented(id nodeID: UUID) -> NavigationPresentationResult {
+        guard isActive, let router, let layer else {
+            return NavigationCoreLog.record(
+                NavigationPresentationResult.rejected(.inactiveContext), operation: "dismissPresented", layer: id
+            )
         }
-        layer?.presentation = nil
-        return true
+        guard layer.presentation?.id == nodeID else {
+            return NavigationCoreLog.record(
+                NavigationPresentationResult.noChange(.presentationNotFound), operation: "dismissPresented", layer: id
+            )
+        }
+        if router.hasActiveAlert {
+            router.coordinationState.deferDismissalUntilAlertEnds(id: nodeID)
+            return NavigationCoreLog.record(
+                NavigationPresentationResult.queued, operation: "dismissPresented", layer: id
+            )
+        }
+        layer.presentation = nil
+        return NavigationCoreLog.record(NavigationPresentationResult.applied, operation: "dismissPresented", layer: id)
     }
 
     /// 同意执行指定导航请求。有模态时，根 Router 会先关闭模态，等关闭完成后再跳转。
-    /// 传入 confirmation 中的请求 ID；Context 失效或请求已被替换时，调用不会生效。
-    public func confirmNavigation(id: UUID) {
-        guard isActive else { return }
-        router?.confirmNavigation(id: id)
+    /// 传入 confirmation 中的请求 ID；返回拒绝或过期原因，接受后仍可能等待关闭。
+    @discardableResult
+    public func confirmNavigation(id: UUID) -> NavigationRequestResult {
+        guard isActive, let router else {
+            return NavigationCoreLog.record(
+                NavigationRequestResult.rejected(.inactiveContext), operation: "confirmNavigation", layer: self.id
+            )
+        }
+        return router.confirmNavigation(id: id)
     }
 
     /// 取消指定导航请求，保留当前页面和路径。过期 ID 不会取消后来收到的新请求。
-    public func cancelNavigation(id: UUID) {
-        guard isActive else { return }
-        router?.cancelConfirmation(id: id)
+    @discardableResult
+    public func cancelNavigation(id: UUID) -> NavigationMutationResult {
+        guard isActive, let router else {
+            return NavigationCoreLog.record(
+                NavigationMutationResult.rejected(.inactiveContext), operation: "cancelNavigation", layer: self.id
+            )
+        }
+        return router.cancelConfirmation(id: id)
     }
 
     func context(
@@ -218,8 +290,20 @@ public final class NavigationPresentationContext<
     /// 子模态关闭后，本层可以再次 present；只有根层收到通知时，才会执行等待中的全局跳转。
     func presentationDidDismiss() {
         guard isActive else { return }
-        if id != .root { layer?.isAwaitingDismissal = false }
+        if id != .root {
+            layer?.isAwaitingDismissal = false
+            layer?.dismissingPresentation = nil
+        }
         router?.presentationDidDismiss(isRoot: id == .root)
         router?.resumePresentations()
+    }
+
+    private func presentationRejection(
+        in layer: NavigationLayer<Scope, Destination, AlertRoute>
+    ) -> NavigationRejectionReason? {
+        guard layer.presentation == nil else { return .presentationAlreadyExists }
+        guard !layer.isAwaitingDismissal else { return .awaitingDismissal }
+        guard sourceStack == nil || sourceStack == layer.selectedStack else { return .sourceStackNotSelected }
+        return nil
     }
 }

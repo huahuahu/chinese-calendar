@@ -22,7 +22,7 @@ public final class NavigationRouter<
     var coordinationState = NavigationCoordinationState<Scope, Destination>()
     /// 已经接受、正在等待根模态关闭后执行的请求。等待期间，以最新接受的请求为准。
     public var deferredRequest: NavigationRequest<Scope, Destination>? {
-        coordinationState.deferredRequest
+        coordinationState.acceptedRequestWaitingForDismissal
     }
 
     /// 等待用户确认的请求。即使模态自行关闭，这条请求仍需用户批准后才能执行。
@@ -76,11 +76,7 @@ public final class NavigationRouter<
             guard case let .scope(scope) = rootLayer.selectedStack else { return nil }
             return scope
         }
-        set {
-            guard let newValue, rootLayer.route.destination.providesNavigationContainer,
-                  rootLayer.stacks[.scope(newValue)] != nil else { return }
-            rootLayer.selectedStack = .scope(newValue)
-        }
+        set { selectScope(newValue) }
     }
 
     /// 汇总 App 根层各命名栈的栈底页面 Destination，不包含 primary 栈或模态内部的数据。
@@ -102,10 +98,7 @@ public final class NavigationRouter<
                 return (scope, value)
             })
         }
-        set {
-            guard rootLayer.route.destination.providesNavigationContainer else { return }
-            rootLayer.paths = Dictionary(uniqueKeysWithValues: newValue.map { (.scope($0.key), $0.value) })
-        }
+        set { setPaths(newValue) }
     }
 
     /// App 根层直接打开的模态。它还可以继续持有自己的子模态。
@@ -147,38 +140,14 @@ public final class NavigationRouter<
         rootLayer.stacks[.scope(scope)]?.rootDestination
     }
 
-    /// 声明或替换 App 根层指定命名栈的栈底页面，并清空该栈的 push 路径。
-    /// 不切换选中的栈；空详情使用明确的空态 Destination。
-    public func setRootDestination(_ destination: Destination, for scope: Scope) {
-        guard rootLayer.route.destination.providesNavigationContainer else { return }
-        rootLayer.setRoot(destination, for: .scope(scope))
-    }
-
     /// 读取 App 根层指定命名栈已经 push 的页面列表；尚未记录路径时返回空数组。
     public func path(for scope: Scope) -> [Destination] {
         rootLayer.stacks[.scope(scope)]?.path ?? []
     }
 
-    /// 替换 App 根层指定命名栈的 push 路径，保留栈底页面、选中的栈和模态。
-    public func setPath(_ path: [Destination], for scope: Scope) {
-        guard rootLayer.route.destination.providesNavigationContainer else { return }
-        rootLayer.stacks[.scope(scope)]?.path = path
-    }
-
     /// 读取 App 根层指定命名栈的最后一个 push 页面；没有 push 页面时返回其栈底页面 Destination。
     public func currentDestination(on scope: Scope) -> Destination? {
         path(for: scope).last ?? rootDestination(for: scope)
-    }
-
-    /// 选中 App 根层的指定命名栈，再 push 一个页面；省略 scope 时在根层当前选中的栈中 push。
-    /// 当前选中的是 primary 栈时也可省略 scope，不要求根界面使用 TabView。
-    /// 此方法会保留已经打开的模态。需要先确认并关闭模态时，向 submit 提交 .push 请求。
-    public func push(_ destination: Destination, on scope: Scope? = nil) {
-        let targetStack = scope.map(NavigationStackID.scope) ?? rootLayer.selectedStack
-        guard rootLayer.route.destination.providesNavigationContainer || targetStack == .primary,
-              let state = rootLayer.stacks[targetStack] else { return }
-        rootLayer.selectedStack = targetStack
-        state.path.append(destination)
     }
 
     /// 从当前最上层模态继续打开 sheet；没有模态时从 App 根层打开。
@@ -189,7 +158,7 @@ public final class NavigationRouter<
         initialStack: NavigationStackID<Scope> = .primary,
         rootDestinations: [NavigationStackID<Scope>: Destination] = [:],
         paths: [NavigationStackID<Scope>: [Destination]] = [:]
-    ) -> Bool {
+    ) -> NavigationPresentationResult {
         let context = frontmostPresentationNode.map { presentationContext(for: $0) } ?? rootPresentation
         return context.present(
             destination, style: .sheet, initialStack: initialStack, rootDestinations: rootDestinations, paths: paths
@@ -204,7 +173,7 @@ public final class NavigationRouter<
         initialStack: NavigationStackID<Scope> = .primary,
         rootDestinations: [NavigationStackID<Scope>: Destination] = [:],
         paths: [NavigationStackID<Scope>: [Destination]] = [:]
-    ) -> Bool {
+    ) -> NavigationPresentationResult {
         let context = frontmostPresentationNode.map { presentationContext(for: $0) } ?? rootPresentation
         return context.present(
             destination, style: .fullScreen, initialStack: initialStack, rootDestinations: rootDestinations,
@@ -213,13 +182,25 @@ public final class NavigationRouter<
     }
 
     /// 根层直接打开的是 sheet 时，关闭它及所有子模态；其他情况不操作。
-    public func dismissSheet() {
-        if let sheet { rootPresentation.dismissPresented(id: sheet.id) }
+    @discardableResult
+    public func dismissSheet() -> NavigationPresentationResult {
+        guard let sheet else {
+            return NavigationCoreLog.record(
+                NavigationPresentationResult.noChange(.notPresented), operation: "dismissSheet", layer: .root
+            )
+        }
+        return rootPresentation.dismissPresented(id: sheet.id)
     }
 
     /// 根层直接打开的是全屏模态时，关闭它及所有子模态；其他情况不操作。
-    public func dismissFullScreen() {
-        if let fullScreen { rootPresentation.dismissPresented(id: fullScreen.id) }
+    @discardableResult
+    public func dismissFullScreen() -> NavigationPresentationResult {
+        guard let fullScreen else {
+            return NavigationCoreLog.record(
+                NavigationPresentationResult.noChange(.notPresented), operation: "dismissFullScreen", layer: .root
+            )
+        }
+        return rootPresentation.dismissPresented(id: fullScreen.id)
     }
 
     /// 提交一个根层导航请求，按需要依次等待用户确认、关闭模态，再执行跳转。
@@ -243,17 +224,22 @@ public final class NavigationRouter<
         confirmIfPresented: Bool = false
     ) -> NavigationRequestResult {
         if !rootLayer.route.destination.providesNavigationContainer {
-            guard request.stack == .primary else { return .rejected }
+            guard request.stack == .primary else { return recordRequest(
+                .rejected(.incompatibleContainer),
+                request: request
+            ) }
         }
         // 换根请求显式提供了根，可以声明新栈；其他请求不得创建无根栈。
         switch request {
         case .setRoot: break
         default:
-            guard rootLayer.stacks[request.stack] != nil else { return .rejected }
+            guard rootLayer.stacks[request.stack] != nil else {
+                return recordRequest(.rejected(.undeclaredStack), request: request)
+            }
         }
         let result = coordinationState.submit(
             request, confirmIfPresented: confirmIfPresented,
-            alert: hasBusinessAlert ? .business : (hasActiveAlert ? .confirmation : .none),
+            activeAlert: hasBusinessAlert ? .business : (hasActiveAlert ? .navigationConfirmation : .none),
             hasPresentation: hasActivePresentation || isAwaitingPresentationDismissal
         )
         switch result {
@@ -262,10 +248,10 @@ public final class NavigationRouter<
             dismissAllPresentations()
         case .applied:
             apply(request)
-        case .rejected, .awaitingConfirmation, .deferredUntilAlertDismisses:
+        case .rejected, .noChange, .awaitingConfirmation, .deferredUntilAlertDismisses:
             break
         }
-        return result
+        return recordRequest(result, request: request)
     }
 
     /// 根模态的关闭动画完成后，执行最后一条已接受、正在等待关闭的请求。
@@ -278,22 +264,35 @@ public final class NavigationRouter<
     @discardableResult
     public func applyDeferredRequestIfReady() -> NavigationRequest<Scope, Destination>? {
         guard isAwaitingPresentationDismissal, !hasActivePresentation else { return nil }
-        let request = coordinationState.presentationDidDismiss()
+        let request = coordinationState.takeAcceptedRequestAfterDismissal()
         rootLayer.isAwaitingDismissal = false
+        rootLayer.dismissingPresentation = nil
         guard let request else { return nil }
         apply(request)
+        NavigationCoreLog.record(
+            NavigationRequestResult.applied, operation: "applyDeferredRequest", layer: .root,
+            stack: String(describing: request.stack)
+        )
         return request
     }
 
     /// 关闭 App 根层打开的模态及其全部子模态，保留根层各栈的路径和待确认请求。
     /// 有活动 alert 时，先等提示关闭及按钮动作完成；模态数据清空后，仍需等待关闭动画完成。
-    public func dismissAllPresentations() {
+    @discardableResult
+    public func dismissAllPresentations() -> NavigationPresentationResult {
         if hasActiveAlert {
             coordinationState.deferAllDismissalsUntilAlertEnds()
-            return
+            return NavigationCoreLog.record(
+                NavigationPresentationResult.queued, operation: "dismissAllPresentations", layer: .root
+            )
         }
+        let hasContent = rootLayer.presentation != nil || !rootLayer.queuedPresentations.isEmpty
         rootLayer.queuedPresentations.removeAll()
         rootLayer.presentation = nil
+        return NavigationCoreLog.record(
+            hasContent ? NavigationPresentationResult.applied : .noChange(.notPresented),
+            operation: "dismissAllPresentations", layer: .root
+        )
     }
 
     /// 当前最上层的模态。继续打开模态或选择确认提示所在层时使用；没有模态时返回 nil。
@@ -314,5 +313,11 @@ public final class NavigationRouter<
         case let .push(destination, stack):
             rootLayer.stacks[stack]?.path.append(destination)
         }
+    }
+
+    private func recordRequest(
+        _ result: NavigationRequestResult, request: NavigationRequest<Scope, Destination>
+    ) -> NavigationRequestResult {
+        NavigationCoreLog.record(result, operation: "submit", layer: .root, stack: String(describing: request.stack))
     }
 }

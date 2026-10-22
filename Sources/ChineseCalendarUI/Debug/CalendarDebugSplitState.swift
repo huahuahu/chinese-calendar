@@ -27,7 +27,7 @@
             let accepted = keepsDetail
                 ? navigation.setPath(navigation.path)
                 : navigation.setRootDestination(.debugSplitEmpty)
-            guard accepted else { return false }
+            guard accepted.isApplied else { return false }
             self.category = category
             preferredCompactColumn = category == nil ? .sidebar : .content
             return true
@@ -41,7 +41,7 @@
             let accepted = changesItem || item == nil
                 ? navigation.setRootDestination(root)
                 : navigation.setPath(navigation.path)
-            guard accepted else { return false }
+            guard accepted.isApplied else { return false }
             if let item {
                 if changesItem { category = item.category }
                 preferredCompactColumn = .detail
@@ -50,7 +50,7 @@
         }
 
         func showDetail() {
-            guard item != nil, navigation.setPath(navigation.path) else { return }
+            guard item != nil, navigation.setPath(navigation.path).isApplied else { return }
             preferredCompactColumn = .detail
         }
     }

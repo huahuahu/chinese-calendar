@@ -1,0 +1,170 @@
+{
+  "baseCommit": "b347895eefe45d0b3ba539912ab2e7a4fe52fda6",
+  "state": "uncommitted working tree",
+  "files": [
+    {
+      "path": "Sources/ChineseCalendarUI/Debug/CalendarDebugSplitState.swift",
+      "sha256": "332f7057a658cd0480e3bf0e2ddc2da5181a9d9b0a28907b23cc8ef3a4491817"
+    },
+    {
+      "path": "Sources/ChineseCalendarUI/Home/CalendarHomeCoordinator.swift",
+      "sha256": "b96dbd0ecade8ea41167d868d27a94a8038abe6c648c7ba1c81e162a76422385"
+    },
+    {
+      "path": "Sources/ChineseCalendarUI/Home/Navigation/CalendarHomeCoordinator+Alerts.swift",
+      "sha256": "d15a81fcce0030d0b9a37a9157ff72e8f869025e543d2082e00403f39ea6bd9c"
+    },
+    {
+      "path": "Sources/ChineseCalendarUI/Home/Navigation/CalendarNavigationContext.swift",
+      "sha256": "0f33e3f727255546567f2df09584b63f16f066857d70e05a0698572a7b2048c5"
+    },
+    {
+      "path": "Sources/ChineseCalendarUI/Home/Navigation/CalendarRouter.swift",
+      "sha256": "2ced03e869a9a996c5e33964e3d534b570428df5593673cd26497f92ab9b0f2e"
+    },
+    {
+      "path": "Sources/ChineseCalendarUI/Tests/CalendarDebugSplitStateTests.swift",
+      "sha256": "f64089cfca6e4b1253b602e7ac3abb33054c83d54396cfdc5271b08e20ae3534"
+    },
+    {
+      "path": "Sources/ChineseCalendarUI/Tests/CalendarNavigationContextTests.swift",
+      "sha256": "4a0283ae9e0eb3dbc560469170654e72402bc53678ca1b6090a898b2c19a8bc1"
+    },
+    {
+      "path": "Sources/ChineseCalendarUI/Tests/CalendarPresentationRoutingTests.swift",
+      "sha256": "b1f65dc4a4c7e5d873edad1796774f49e40ed0ecfcc6bdc65ba26f7f8f0ba251"
+    },
+    {
+      "path": "Sources/ChineseCalendarUI/Tests/CalendarStoreEnvironmentTests.swift",
+      "sha256": "85fc6a69fbc0e1cb38d9d39ef3d5b5af5e3231e1929e42350a728d91b792eaa3"
+    },
+    {
+      "path": "Sources/NavigationCore/NavigationCoreLog.swift",
+      "sha256": "3c649b237f6f3d8a0ad4c95f54b13435a9bb348c401582c3e07eeb26b99bfab2"
+    },
+    {
+      "path": "Sources/NavigationCore/Routing/Alerts/NavigationPresentationContext+Alerts.swift",
+      "sha256": "3128fa67484ccb8628d9fdc006bd0dd24edf1221dd6091fbd63e8a19ad9bfd8d"
+    },
+    {
+      "path": "Sources/NavigationCore/Routing/Alerts/NavigationRouter+Alerts.swift",
+      "sha256": "41f32676495768c00ccbf75c27848733f950020f4d5978015434b8fe299b202f"
+    },
+    {
+      "path": "Sources/NavigationCore/Routing/Contexts/NavigationContext.swift",
+      "sha256": "e693b0019de89f5fadd1fb8c1d45b0822742428b337966df6df2f11816a9e256"
+    },
+    {
+      "path": "Sources/NavigationCore/Routing/Contexts/NavigationContextStore.swift",
+      "sha256": "93c5fb7b5bba768209e9db5130d0c8ae49ae3ec5cdd06ae3d27acebdba4e9fab"
+    },
+    {
+      "path": "Sources/NavigationCore/Routing/Coordination/NavigationMutationResult.swift",
+      "sha256": "5dd93c5fcaacefe2fa66a5da22d9f5bf77950c441ca4eac402e1adce82933400"
+    },
+    {
+      "path": "Sources/NavigationCore/Routing/Coordination/NavigationNoChangeReason.swift",
+      "sha256": "238db022c13bad426e8421e410919bc20c792fac6bfd62a2cea47bbeed0729ba"
+    },
+    {
+      "path": "Sources/NavigationCore/Routing/Coordination/NavigationRejectionReason.swift",
+      "sha256": "62bb599806601c3df76dcd0296e0bda3140d65e60493ad4f749ed1815ce274e5"
+    },
+    {
+      "path": "Sources/NavigationCore/Routing/Coordination/NavigationRequestResult.swift",
+      "sha256": "9c291281e63901ad0936f79af0dfa7fa487388929fdb9ec26badd6384719a365"
+    },
+    {
+      "path": "Sources/NavigationCore/Routing/Coordination/NavigationStackAccess.swift",
+      "sha256": "267f1938901f3d115da80ffed581ed673d754fcd9dca832b7f906d08c33bfa90"
+    },
+    {
+      "path": "Sources/NavigationCore/Routing/Presentation/NavigationPresentationContext.swift",
+      "sha256": "3c4eb92016d2a3eea66e41d6d28e82e7add64615acba126d313927fff4e3faed"
+    },
+    {
+      "path": "Sources/NavigationCore/Routing/Presentation/NavigationPresentationRequest.swift",
+      "sha256": "0292ffba79a06e0ca0a779f218f543f950be3465971f9a75ec923c31eb586dbd"
+    },
+    {
+      "path": "Sources/NavigationCore/Routing/Presentation/NavigationPresentationResult.swift",
+      "sha256": "fae06a3ca38743d7a7e9f2799580143d1d839cdcd73d34500a1f8e7d4f18563b"
+    },
+    {
+      "path": "Sources/NavigationCore/Routing/Router/NavigationRouter+Contexts.swift",
+      "sha256": "02c0183be41dadab53b77fc1a3a2c58dbc720605a8743da405753ead3621cf75"
+    },
+    {
+      "path": "Sources/NavigationCore/Routing/Router/NavigationRouter+Mutations.swift",
+      "sha256": "964e0cc283a05a29962b5282cc70eab3db3e2113afaa9c6922361dff3912149b"
+    },
+    {
+      "path": "Sources/NavigationCore/Routing/Router/NavigationRouter.swift",
+      "sha256": "1c5fbc068de49a501c011e2fbfe4afc49b9bfb92ca42534e99b863d4a209b695"
+    },
+    {
+      "path": "Sources/NavigationCore/State/Alerts/NavigationAlertSession.swift",
+      "sha256": "8d0ef866cf382a12e076e39fb0beb13331a8cd750160eac64f6cfe89c337dabe"
+    },
+    {
+      "path": "Sources/NavigationCore/State/Layer/NavigationLayer.swift",
+      "sha256": "8a2b49ba5b79bb15a62ba0dae577b86580a19c5a3bbdb73d2c8fea61eacd8df9"
+    },
+    {
+      "path": "Sources/NavigationCore/SwiftUI/Alerts/NavigationAlertHost.swift",
+      "sha256": "3d7f2beec08a6b91b23c5a5ab7023c7a507bb0838b19f0b6c447c4db6e31679c"
+    },
+    {
+      "path": "Sources/NavigationCoreTests/NavigationAlertSessionTests.swift",
+      "sha256": "169223495b837f7eeb616c88a8ce92545143f0096f8a00607c7d5f084b9353a8"
+    },
+    {
+      "path": "Sources/NavigationCoreTests/NavigationAlertTests.swift",
+      "sha256": "7bb28d08b85adf968cff1cda07054171d192e838de7d95aea1c41e94ad282771"
+    },
+    {
+      "path": "Sources/NavigationCoreTests/NavigationContextStoreTests.swift",
+      "sha256": "80b58ca6234c32a99629952239484afc39267c82535616feb27e08398892437e"
+    },
+    {
+      "path": "Sources/NavigationCoreTests/NavigationContextTests.swift",
+      "sha256": "5d746fe7cd92c3a4111cad4efeccb23e542daf50bde9aa337c3988d0df4ff1d2"
+    },
+    {
+      "path": "Sources/NavigationCoreTests/NavigationCoordinationTests.swift",
+      "sha256": "efe57dc9cc1badde7f1bfdd8d736d8b4646b2ac57aa0a6f77d7936eb0c96b153"
+    },
+    {
+      "path": "Sources/NavigationCoreTests/NavigationDestinationTests.swift",
+      "sha256": "5286e6bd2f957b4ca2677121ef502ee9cbc742fa750ae63930e300a1c1f09dc7"
+    },
+    {
+      "path": "Sources/NavigationCoreTests/NavigationHostTests.swift",
+      "sha256": "57af7bc34ea71d72c25927ea43a1e26dcc597527242f70f35ac209c973de6d70"
+    },
+    {
+      "path": "Sources/NavigationCoreTests/NavigationLayerInitializationTests.swift",
+      "sha256": "7a71ad7fde3e44acfc66975622055bb21f67450322fe85881f4a39e390632623"
+    },
+    {
+      "path": "Sources/NavigationCoreTests/NavigationOperationResultTests.swift",
+      "sha256": "99dffdbf32124329c1e5d9bf4967648c24dcfb072218fd75363b651f8ca3e0e5"
+    },
+    {
+      "path": "Sources/NavigationCoreTests/NavigationPresentationResultTests.swift",
+      "sha256": "650f03194e26cada0cf2291c49686134e1d7050aa9ee1f7295b877627442daca"
+    },
+    {
+      "path": "Sources/NavigationCoreTests/NavigationPresentationRouteTests.swift",
+      "sha256": "542a46388a4f739d961f6e3cdb1d8e406591def1511abdd5d7ca68810e59e386"
+    },
+    {
+      "path": "Sources/NavigationCoreTests/NavigationPrimaryLayerTests.swift",
+      "sha256": "0f3aa90e8a39e19dfd8066f0f90a5447890485e8c09a38cb6926aa4abbe577a6"
+    },
+    {
+      "path": "Sources/NavigationCoreTests/NavigationStackStateTests.swift",
+      "sha256": "0eff10d261837a12d20e7e7a1c9ec9111c03c7683f33831d1dc8c94944e8b3fc"
+    }
+  ]
+}

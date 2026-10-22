@@ -13,6 +13,7 @@
 | 你要做什么 | 阅读入口 |
 | --- | --- |
 | 查 push、换根、present、dismiss 应从哪里调用 | [操作入口速查](#操作入口速查) |
+| 判断操作已应用、已排队、无操作或被拒绝 | [操作结果与诊断](#操作结果与诊断) |
 | 打开 sheet／full-screen | [打开和关闭模态](#打开和关闭模态) |
 | 为多个 Tab 保留各自路径 | [每个 Tab 保留独立路径](#每个-tab-保留独立路径) |
 | 接入两栏／三栏布局 | [App 原生分栏组合](#app-原生分栏组合) |
@@ -134,12 +135,37 @@ struct DemoPage: View {
 | 切换栈底页面 | `navigation.setRootDestination(destination)` | 换根并清空当前栈 path |
 | 打开页面模态 | `presentation.present(.sheet(destination))`／`.fullScreen(destination)` | 创建新的导航层 |
 | 显示业务提示 | `presentation.present(.alert(route))` | 使用本层的统一提示宿主 |
-| 关闭当前模态 | `presentation.dismiss()` | 关闭所在模态及后代；根层返回 `false` |
-| 切换本层 Tab | 绑定 `presentation.selectedStack` | 各栈保留自己的根与 path |
+| 关闭当前模态 | `presentation.dismiss()` | 关闭所在模态及后代；根层返回 `.noChange(.notPresented)` |
+| 切换本层 Tab | `presentation.setSelectedStack(stack)` 或绑定 `selectedStack` | 各栈保留自己的根与 path；方法返回具体结果 |
 | 显式取得某个栈 | `presentation.context(for: stackID)` | 栈必须已声明；获取操作不会创建栈 |
 | 从外部链接跳转 | `router.submit(request, confirmIfPresented: true)` | 协调提示、离开确认与真实关闭，再应用请求 |
 
-栈修改、`present` 和 `dismiss` 返回是否接受操作；`submit` 返回请求处理阶段。**接受请求不等于界面已经显示或关闭。** 需要联动业务状态时，先检查返回结果；具体限制见[操作约束与生命周期](#操作约束与生命周期)。
+栈修改返回 `NavigationMutationResult`，`present` 和 `dismiss` 返回 `NavigationPresentationResult`，`submit` 返回 `NavigationRequestResult`。**接受请求不等于界面已经显示或关闭。** 需要联动业务状态时，按下面的结果语义处理；具体限制见[操作约束与生命周期](#操作约束与生命周期)。
+
+## 操作结果与诊断
+
+结果使用强类型枚举，调用方无需解析日志或数字错误码。命令保留 `@discardableResult`；只发起导航时可以忽略结果，需要同步业务状态或处理拒绝时则检查结果。
+
+| 操作类型 | 结果 | 调用方判断 |
+| --- | --- | --- |
+| 同步栈、根或选择修改；取消确认 | `NavigationMutationResult`：`.applied`、`.noChange(reason)`、`.rejected(reason)` | `isApplied` 仅在 `.applied` 时为 true |
+| 页面／alert 呈现或关闭 | `NavigationPresentationResult`：`.applied`、`.queued`、`.noChange(reason)`、`.rejected(reason)` | `isAccepted` 在 `.applied` 或 `.queued` 时为 true |
+| 根请求提交或批准确认 | `NavigationRequestResult`：应用、等待确认、两种延迟、`.noChange(reason)`、`.rejected(reason)` | 用 `switch` 区分处理阶段，见 [Deep Link 与离开确认](#deep-link-与离开确认) |
+
+`.applied` 表示导航数据已应用，SwiftUI 更新和呈现动画可能尚未结束。`.queued` 表示已排队，所属层失效后可能丢弃，不保证最终执行。同步返回值不提供最终界面完成通知，后续推进仍依赖宿主的真实关闭回调及业务动作完成。
+
+`.noChange` 表示正常无操作，例如栈底 `pop()` 返回 `.alreadyAtRoot`、根层 `dismiss()` 返回 `.notPresented`、指定模态不存在返回 `.presentationNotFound`、确认已经过期返回 `.staleConfirmation`。它与 `.rejected` 分开；`isApplied`／`isAccepted` 为 false 并不自动表示发生错误。重复写入相同的合法 path 或选中栈仍为 `.applied`，用于通过访问约束后同步业务布局。
+
+需要联动业务状态时，先应用导航数据，再更新业务值。例如：
+
+```swift
+guard navigation.setRootDestination(newRoot).isApplied else { return }
+selectedCategory = newCategory
+```
+
+`path`、`selectedStack` 等可写属性仍可用于 Binding，其 setter 转调对应命令并忽略返回值。业务代码需要获知结果时，直接调用 `setPath`、`setSelectedStack` 等方法。
+
+Core 使用共享日志模块的 `navigation` category，在命令决策处记录一次操作、结果和原因，转发入口不重复记录。非法栈或容器配置记录为 `notice`；正常应用、排队、无操作和生命周期／事务阻挡记录为 `debug`。查询 getter 与内部幂等回调不产生日志；动态层和栈身份使用 private 隐私标记，不输出业务 Destination。日志用于排查，业务分支依赖结果枚举。方案及验证入口见[导航操作结果与诊断](../../Docs/Tasks/task-2026-10-22-navigation-results/000-plan.md)。
 
 ## 常见组合
 
@@ -162,9 +188,9 @@ if presentation.isPresented {
 
 新模态自动使用同一份 `DemoConfiguration`，获得自己的 `.primary` 栈和 `NavigationPresentationContext`。模态里的 push 不改变下面页面的路径；继续 present 会从当前模态创建下一层。
 
-`pop()` 返回本栈上一页，`dismiss()` 关闭当前所在模态及其后代。根层没有自身模态，调用 `router.rootPresentation.dismiss()` 返回 `false`。父层需要关闭自己打开的子模态时，使用 `dismissPresented(id:)`。
+`pop()` 返回本栈上一页，`dismiss()` 关闭当前所在模态及其后代。根层没有自身模态，调用 `router.rootPresentation.dismiss()` 返回 `.noChange(.notPresented)`。父层需要关闭自己打开的子模态时，使用 `dismissPresented(id:)`。
 
-这些方法返回 `Bool` 表示是否接受操作。尤其 `present` 返回 `true` 时，请求可能还在等待当前 alert 结束，并不表示已经显示；见[操作约束与生命周期](#操作约束与生命周期)。
+呈现或关闭方法返回 `NavigationPresentationResult`。当前 alert 或业务动作尚未结束时，请求可能返回 `.queued`；`.applied` 也只表示数据已修改。需要判断是否接受请求时使用 `isAccepted`，不能据此认为动画已完成；见[操作结果与诊断](#操作结果与诊断)。
 
 ### 每个 Tab 保留独立路径
 
@@ -226,7 +252,7 @@ presentation.present(
 
 将 `style` 改为 `.fullScreen` 即使用全屏。新层拥有自己的选择和两个栈，`DemoTabs` 从环境取得新层的 `NavigationPresentationContext`，不捕获根层 Context。根界面和模态因此可以自由选择普通单栈或 Tab 容器。
 
-需要先构造呈现请求数据时，也能通过 `.sheet(.tabs, initialStack:rootDestinations:paths:)` 或 `.fullScreen` 传入同样的栈配置，再交给 `presentation.present(request)`。Router 的 `presentSheet`／`presentFullScreen` 便利方法接受相同配置，从最上层模态继续呈现；这些入口均返回是否接受操作。页面需要固定发起层时，仍使用环境中的 `NavigationPresentationContext`。
+需要先构造呈现请求数据时，也能通过 `.sheet(.tabs, initialStack:rootDestinations:paths:)` 或 `.fullScreen` 传入同样的栈配置，再交给 `presentation.present(request)`。Router 的 `presentSheet`／`presentFullScreen` 便利方法接受相同配置，从最上层模态继续呈现；这些入口均返回 `NavigationPresentationResult`。页面需要固定发起层时，仍使用环境中的 `NavigationPresentationContext`。
 
 ### 分清层入口、栈根和当前页面
 
@@ -278,7 +304,7 @@ App 的 NavigationSplitView
 | 切换分类 | App 明确决定保留当前详情及 path，或换成空态根 |
 | 从详情继续浏览 | `push` 追加 path，根保持不变 |
 
-只有栈操作返回 `true` 后，App 才同步修改分类或布局。重复选择、程序显示详情等只改变布局的动作，可以先用 `navigation.setPath(navigation.path)` 检查当前是否允许操作。这样等待离开确认或关闭时，前栏也不会提前改变界面。
+只有栈操作结果的 `isApplied` 为 true 后，App 才同步修改分类或布局。重复选择、程序显示详情等只改变布局的动作，可以先检查 `navigation.setPath(navigation.path).isApplied`。这样等待离开确认或关闭时，前栏也不会提前改变界面。
 
 完整接法见 [CalendarDebugSplitView](../ChineseCalendarUI/Debug/CalendarDebugSplitView.swift) 和 [CalendarDebugSplitState](../ChineseCalendarUI/Debug/CalendarDebugSplitState.swift)：前者声明两栏／三栏及列表 Binding，后者集中处理选择和布局。空态使用 `.debugSplitEmpty`，对象详情使用 `.debugSplitDetail(item:level: 0)`；它们由 App 的统一页面配置构建。
 
@@ -339,19 +365,22 @@ func confirmationContent(
 }
 ```
 
-| 当前情况 | `submit` 的结果与行为 |
+| 当前情况 | `submit`／`confirmNavigation` 的结果与行为 |
 | --- | --- |
 | 没有模态或待处理事务 | `.applied`：请求已应用到导航数据 |
 | 需要用户同意离开模态 | `.awaitingConfirmation`：保留原页面与路径，显示确认 |
 | 已获准，等待页面模态关闭 | `.deferredUntilPresentationDismisses`：真实关闭完成后才应用 |
 | 正在显示业务 alert 或处理按钮动作 | `.deferredUntilAlertDismisses`：先完成提示流程，再判断是否需要离开确认 |
-| 目标与根层栈结构不兼容 | `.rejected`：不修改状态 |
+| 目标与根层栈结构不兼容或栈未声明 | `.rejected(reason)`：不修改状态，原因如 `.incompatibleContainer`、`.undeclaredStack` |
+| `confirmNavigation` 的确认 ID 已过期或已处理 | `.noChange(.staleConfirmation)`：不影响后来的请求 |
 
 取消保留原状态；批准后先关闭模态树，再由根宿主的真实关闭回调触发跳转。App 的额外 selection 也应在请求实际应用时同步，不能在提交或仅获批准时提前修改。内置宿主负责关闭通知；自定义宿主需在真实根关闭完成后调用 `presentationDidDismiss(isRoot: true)`。
 
 `submit` 的 `confirmIfPresented` 默认为 `false`，用于业务已批准的导航；即使如此，仍会等待模态真实关闭。直接调用 Router 的根栈修改方法不会自动协调确认和关闭。
 
 业务需要先保存再决定离开时，可以自行处理 `presentation.confirmation`，用请求 ID 调用 `confirmNavigation(id:)`／`cancelNavigation(id:)`。此时不配置默认确认提示，同层容器只处理一次。默认 `confirmationContent` 返回 nil，所以选择确认流程时必须提供文案或自行处理请求，它不会自动获准。
+
+`confirmNavigation(id:)` 返回 `NavigationRequestResult`，批准后仍可能返回等待关闭或 alert 结束的阶段。`cancelNavigation(id:)` 及 Router 的 `cancelConfirmation(id:)` 返回 `NavigationMutationResult`；成功取消为 `.applied`，过期 ID 为 `.noChange(.staleConfirmation)`。通过失效的呈现 Context 调用确认或取消时，返回 `.rejected(.inactiveContext)`。
 
 ### alert、关闭与新请求如何排序
 
@@ -371,8 +400,8 @@ func confirmationContent(
 
 `NavigationContext` 绑定一个具体栈，`NavigationPresentationContext` 绑定一个具体层。页面应使用环境里所属作用域的入口；coordinator 需要操作某个栈时，可通过 `presentation.context(for: stackID)` 显式取得。
 
-- **先声明根，再取得 Context。** 获取 Context 不创建栈；未声明栈的 Context 无效，后来出现同 ID 栈也不会使它复活。外部容器应为所有要显示的栈提供根；初始化还会检查选中栈和所有带 path 的栈都有根。非法 Router 初始化触发前置条件失败，非法 `present` 返回 `false`。
-- **有效不等于此刻允许修改。** `isActive` 表示仍关联原来的层或栈。离开确认、活动 alert 或关闭事务期间，局部导航可能被拒绝。`setRootDestination`、`setPath`、`push`、`pop` 返回是否接受；需要同步 App 状态时检查结果。
+- **先声明根，再取得 Context。** 获取 Context 不创建栈；未声明栈的 Context 无效，后来出现同 ID 栈也不会使它复活。外部容器应为所有要显示的栈提供根；初始化还会检查选中栈和所有带 path 的栈都有根。非法 Router 初始化触发前置条件失败，非法 `present` 返回 `.rejected(.incompatibleContainer)` 或 `.rejected(.missingRootDestination)`。
+- **有效不等于此刻允许修改。** `isActive` 表示仍关联原来的层或栈。离开确认、活动 alert 或关闭事务期间，局部导航可能返回 `.rejected(.awaitingConfirmation)`、`.rejected(.alertInProgress)` 或 `.rejected(.awaitingDismissal)`。`setRootDestination`、`setPath`、`push`、`pop` 返回 `NavigationMutationResult`；需要同步 App 状态时检查 `isApplied`。
 - **页面模态从当前层继续打开。** 同层已有页面模态时，新的 `present` 被拒绝；用该模态内部的 `NavigationPresentationContext` 继续嵌套。业务 alert 期间可排队，接受不等于立即显示。
 - **关闭后旧入口失效。** Context 弱引用导航状态，持有旧 Context 不会保活 Router 或模态。模态从树中移除时 Context 立即失效；对象身份检查确保同 ID 的新层或新栈不能让旧 Context 重新有效。
 
@@ -400,7 +429,9 @@ Router 的 `selectedScope`、`paths`、`rootDestinations` 属性是**根层命�
 
 业务依赖可以保存在配置的值类型中；App 共享数据环境应在覆盖根呈现宿主的位置注入。某个页面的 selection、ModelContext、临时回调仍按发起页面传递，不把根页面的临时状态固定在配置中交给所有模态。日历 App 的年份选择器通过业务 session ID 找到发起页面的选择与回调。
 
-`presentationDidDismiss()` 是配置提供的业务清理回调，在任意层的子模态真实关闭、Core 处理状态后调用。用它释放会话，不重复执行已由 Router 协调的全局跳转。
+配置不提供模态关闭回调。Core 宿主自动处理真实关闭完成与延迟导航；业务层观察 `router.retainedPresentationRoutes`，按具体路由中的会话 ID 清理数据。该投影包含活动、排队和关闭动画中的模态，实际关闭完成或队列被丢弃后才移除相应身份。`router.retains(navigationContext)` 可判断原栈是否仍需保留业务缓存，`isActive` 则继续用于判断能否导航。
+
+清理宿主应覆盖导航树的生命周期，同时观察业务会话登记和 `alertRoutes`，避免同一轮界面更新前入队又被取消的会话残留。不得仅根据 `presentations` 变空或页面 `onDisappear` 提前释放动画仍需读取的数据。日历 App 的接法见 `CalendarNavigationSessionCleanup`。
 
 正式页面使用 `NavigationScopeView(stack:presentation:)`，让配置从根路由构建内容。带 `root` 闭包的初始化器供独立 Preview／测试覆盖显示内容，仍须声明栈根，覆盖内容不改变路由状态。独立 Preview 也要提供根 `navigationHost`；通常无需手动创建递归的 `NavigationPresentationNodeView`。
 

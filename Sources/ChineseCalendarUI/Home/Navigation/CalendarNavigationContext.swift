@@ -17,7 +17,7 @@ extension CalendarPresentationContext {
         style: NavigationPresentationStyle = .sheet,
         selectedTab: CalendarTab = .years,
         paths: [NavigationStackID<CalendarTab>: [CalendarDestination]] = [:]
-    ) -> Bool {
+    ) -> NavigationPresentationResult {
         present(
             .mainTabs, style: style, initialStack: .scope(selectedTab),
             rootDestinations: CalendarRouter.mainTabRoots, paths: paths
@@ -31,7 +31,7 @@ extension CalendarPresentationContext {
         @discardableResult
         func presentDebugSplit(
             layout: CalendarDebugSplitLayout, style: NavigationPresentationStyle = .sheet
-        ) -> Bool {
+        ) -> NavigationPresentationResult {
             present(.debugSplit(layout: layout), style: style, rootDestinations: [.primary: .debugSplitEmpty])
         }
 
@@ -39,7 +39,7 @@ extension CalendarPresentationContext {
         func presentDebugNavigationTabs(
             id: UUID = UUID(), style: NavigationPresentationStyle = .fullScreen,
             selectedTab: CalendarTab = .years
-        ) -> Bool {
+        ) -> NavigationPresentationResult {
             present(
                 .debugNavigationTabs(id: id), style: style, initialStack: .scope(selectedTab),
                 rootDestinations: [

@@ -52,10 +52,11 @@ final class CalendarHomeCoordinator {
             selection: selection, modelContext: modelContext, selectYear: selectYear
         )
         yearPickerSessions[session.id] = session
-        if let presentation {
-            if !presentation.present(.yearPicker(sessionID: session.id)) { yearPickerSessions[session.id] = nil }
-        } else {
-            router.presentSheet(.yearPicker(sessionID: session.id))
+        let entry = presentation ?? router.navigation.frontmostPresentationNode.map {
+            router.navigation.presentationContext(for: $0)
+        } ?? router.navigation.rootPresentation
+        if !entry.present(.yearPicker(sessionID: session.id)).isAccepted {
+            yearPickerSessions[session.id] = nil
         }
     }
 
@@ -80,7 +81,7 @@ final class CalendarHomeCoordinator {
         guard let node = router.presentations.first(where: { $0.destination == destination }) else {
             return false
         }
-        return router.dismissPresentation(id: node.id)
+        return router.dismissPresentation(id: node.id).isAccepted
     }
 
     func storeIdentityDidChange(_ identity: String?) {
@@ -98,17 +99,26 @@ final class CalendarHomeCoordinator {
         releaseDismissedContexts()
     }
 
+    /// 也观察业务登记，覆盖同一轮界面更新前就被丢弃、从未显示的排队会话。
+    var presentationSessionIDs: Set<UUID> {
+        var ids = Set(yearPickerSessions.keys).union(alertMessages.keys)
+        #if DEBUG
+            ids.formUnion(downloadPreviewSessions.keys)
+        #endif
+        return ids
+    }
+
     func releaseDismissedContexts() {
         let messageIDs = Set(router.navigation.alertRoutes.compactMap(\.messageID))
         alertMessages = alertMessages.filter { messageIDs.contains($0.key) }
-        let destinations = Set(router.presentations.map(\.destination))
+        let destinations = Set(router.navigation.retainedPresentationRoutes.map(\.destination))
         yearPickerSessions = yearPickerSessions.filter { destinations.contains(.yearPicker(sessionID: $0.key)) }
-        historyStates = historyStates.filter(\.value.navigation.isActive)
+        historyStates = historyStates.filter { router.navigation.retains($0.value.navigation) }
         #if DEBUG
             downloadPreviewSessions = downloadPreviewSessions.filter {
                 destinations.contains(.downloadPreview(sessionID: $0.key))
             }
-            debugSplitStates = debugSplitStates.filter(\.value.navigation.isActive)
+            debugSplitStates = debugSplitStates.filter { router.navigation.retains($0.value.navigation) }
         #endif
     }
 
@@ -146,7 +156,7 @@ final class CalendarHomeCoordinator {
                     .scope(.years): .downloadPreviewScenarios(sessionID: session.id),
                     .scope(.history): .downloadPreviewSwitch
                 ]
-            ) {
+            ).isAccepted {
                 downloadPreviewSessions[session.id] = nil
             }
         }

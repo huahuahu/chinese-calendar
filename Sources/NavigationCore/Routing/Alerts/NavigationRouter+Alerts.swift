@@ -3,7 +3,7 @@ import Foundation
 public extension NavigationRouter {
     /// 从当前最上层页面展示业务提示；页面自己的操作应优先使用环境中的 NavigationPresentationContext。
     @discardableResult
-    func presentAlert(_ destination: AlertRoute) -> Bool {
+    func presentAlert(_ destination: AlertRoute) -> NavigationPresentationResult {
         let context = frontmostPresentationNode.map { presentationContext(for: $0) } ?? rootPresentation
         return context.presentAlert(destination)
     }
@@ -39,18 +39,34 @@ extension NavigationRouter {
     /// 同层已有 alert 时保存数据，待系统关闭及业务动作完成后继续；已有页面模态时拒绝。
     func enqueue(
         _ content: NavigationPresentation<Scope, Destination, AlertRoute>,
-        in layer: NavigationLayer<Scope, Destination, AlertRoute>
-    ) -> Bool {
-        guard self.layer(id: layer.id) === layer, layer.presentation == nil else { return false }
+        in layer: NavigationLayer<Scope, Destination, AlertRoute>,
+        operation: String = "present"
+    ) -> NavigationPresentationResult {
+        guard self.layer(id: layer.id) === layer else {
+            return NavigationCoreLog.record(
+                NavigationPresentationResult.rejected(.inactiveContext), operation: operation, layer: layer.id
+            )
+        }
+        guard layer.presentation == nil else {
+            return NavigationCoreLog.record(
+                NavigationPresentationResult.rejected(.presentationAlreadyExists), operation: operation, layer: layer.id
+            )
+        }
         let mustWait = layer.alert != nil || layer.alertSession != nil || layer.isAwaitingDismissal ||
             isAwaitingPresentationDismissal || pendingConfirmation != nil
         if mustWait {
             layer.queuedPresentations.append(content)
-            return true
+            return NavigationCoreLog.record(
+                NavigationPresentationResult.queued, operation: operation, layer: layer.id
+            )
         }
-        guard pendingConfirmation == nil, !hasActiveAlert else { return false }
+        guard !hasActiveAlert else {
+            return NavigationCoreLog.record(
+                NavigationPresentationResult.rejected(.alertInProgress), operation: operation, layer: layer.id
+            )
+        }
         layer.presentedContent = content
-        return true
+        return NavigationCoreLog.record(NavigationPresentationResult.applied, operation: operation, layer: layer.id)
     }
 
     /// 尝试继续排队的操作；只要还有活动 alert（包括关闭动画和按钮动作）就返回。
@@ -71,10 +87,13 @@ extension NavigationRouter {
         for layer in layers.reversed() where layer.presentedContent == nil && !layer.isAwaitingDismissal {
             if !layer.queuedPresentations.isEmpty {
                 layer.presentedContent = layer.queuedPresentations.removeFirst()
+                NavigationCoreLog.record(
+                    NavigationPresentationResult.applied, operation: "resumePresentation", layer: layer.id
+                )
                 return
             }
         }
         guard let request = coordinationState.takeRequestAfterAlert() else { return }
-        _ = submit(request.request, confirmIfPresented: request.needsConfirmation)
+        _ = submit(request.request, confirmIfPresented: request.confirmIfPresented)
     }
 }
