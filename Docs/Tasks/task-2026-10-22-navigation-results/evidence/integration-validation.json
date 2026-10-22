@@ -1,0 +1,61 @@
+{
+  "testedSourceCommit": "aafdb5b3",
+  "baseCommit": "2d4f2649942ea63339f6b19f046e1c132df88f34",
+  "workspace": "navigation-results-pr/Chinese-date",
+  "tool": "mcp__xcode__RunAllTests",
+  "scheme": "ChineseCalendar-iOS",
+  "simulator": {
+    "name": "chinesedate iPhone 18 Pro Max (885f)",
+    "id": "16A9CAA7-45CE-46D5-8915-F61531FC617C",
+    "os": "iOS 27.0"
+  },
+  "result": "Passed",
+  "testDefinitions": 329,
+  "executedCases": 427,
+  "failed": 0,
+  "skipped": 0,
+  "expectedFailures": 0,
+  "runtimeWarnings": 0,
+  "nativeMCPReportedCounts": {
+    "expectedFailures": 0,
+    "failed": 0,
+    "notRun": 2,
+    "passed": 427,
+    "skipped": 0,
+    "total": 429
+  },
+  "reportingDiscrepancy": "MCP lists two stale UUID parameter labels for noticesKeepASingleAcknowledgement as No result. Raw xcresult device count is 427 passed; console explicitly confirms this test's three cases passed with the actual runtime UUIDs. This is not a skipped or failed test.",
+  "fullSummaryPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/RunAllTests/3C672F72-CB71-4FC8-B040-4BC2CB49F563.txt",
+  "fullConsoleLogsPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/RunAllTests/test-console-log-2026-10-22T21-31-19+08-00.txt",
+  "xcresultBundlePath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/RunAllTests/Test-ChineseCalendar-iOS-2026.10.22_21-31-19-+0800.xcresult",
+  "checks": {
+    "format": {
+      "passed": true,
+      "files": 316,
+      "changesNeeded": 0
+    },
+    "lint": {
+      "passed": true,
+      "files": 305,
+      "violations": 0
+    },
+    "localizedCopy": {
+      "passed": true,
+      "resourceKeys": 337
+    },
+    "dataSchema": {
+      "passed": true,
+      "records": 919377
+    },
+    "diffCheck": {
+      "passed": true
+    },
+    "relativeMarkdownLinks": {
+      "passed": true,
+      "links": 105
+    }
+  },
+  "manualSimulatorInteraction": "not performed",
+  "preview": "not performed",
+  "physicalDevice": "not performed"
+}

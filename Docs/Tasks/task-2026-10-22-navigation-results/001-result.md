@@ -2,7 +2,7 @@
 
 - 方案：[000-plan.md](000-plan.md)
 - 记录日期：2026-10-22
-- 代码状态：当前工作区未提交；受测源文件 SHA-256 与基线 commit 见 [source-manifest.json](evidence/source-manifest.json)
+- 代码状态：以下为首次实现验证快照；受测源文件 SHA-256 与基线 commit 见 [source-manifest.json](evidence/source-manifest.json)。完整提交范围及与最新主分支整合后的验证见 [002-integration.md](002-integration.md)。
 - 实现状态：已完成
 
 ## 实际结果与方案偏差
@@ -35,4 +35,4 @@
 
 ## 验证边界
 
-本轮未运行专项 review 流程、Preview、手动 Simulator 交互或真机验证。测试在指定 Simulator 执行，不能据此声称手动点击或呈现动画已验证。本任务未创建 commit、PR 或执行远程发布。
+首次实现验证未运行专项 review、Preview、手动 Simulator 交互或真机验证。测试在指定 Simulator 执行，不能据此声称手动点击或呈现动画已验证。后续提交、专项审查及整合验证状态统一记录在 [002-integration.md](002-integration.md)。
