@@ -1,0 +1,44 @@
+Launch Session: Chinese Calendar, ref: 79b9761680, PID: 68489, State: started
+
+2026-10-23 07:08:42.851732+0800 [68489:71562226] [persistence] Bundled seed store is already installed
+2026-10-23 07:09:52.951773+0800 [68489:71566251] [persistence] Starting full seed store download: offset=0, total=207097856
+2026-10-23 07:10:09.228790+0800 [68489:71566251] [persistence] Full seed store transfer completed: 207097856 bytes
+2026-10-23 07:10:09.229096+0800 [68489:71566251] [persistence] Validating downloaded full seed store
+2026-10-23 07:10:09.343137+0800 [68489:71566251] [persistence] Full seed store validation passed; installing
+2026-10-23 07:10:09.427515+0800 [68489:71566251] [persistence] Installed full SwiftData seed store
+2026-10-23 07:10:52.929071+0800 [68489:71562226] [navigation] operation=presentAlert outcome=applied reason=none layer=root stack=none
+2026-10-23 07:11:05.414602+0800 [68489:71562226] [navigation] operation=presentAlert outcome=applied reason=none layer=root stack=none
+2026-10-23 07:11:11.725646+0800 [68489:71562226] [persistence] Clearing downloaded seed store and restoring bundled base store
+2026-10-23 07:11:11.733737+0800 [68489:71562226] [navigation] operation=presentAlert outcome=queued reason=none layer=root stack=none
+2026-10-23 07:11:11.733930+0800 [68489:71562226] [navigation] operation=resumePresentation outcome=applied reason=none layer=root stack=none
+2026-10-23 07:11:54.450913+0800 [68489:71562226] [navigation] operation=presentAlert outcome=applied reason=none layer=root stack=none
+2026-10-23 07:12:00.924715+0800 [68489:71562226] [persistence] Clearing downloaded seed store and restoring bundled base store
+2026-10-23 07:12:00.934650+0800 [68489:71562226] [navigation] operation=presentAlert outcome=queued reason=none layer=root stack=none
+2026-10-23 07:12:00.934844+0800 [68489:71562226] [navigation] operation=resumePresentation outcome=applied reason=none layer=root stack=none
+2026-10-23 07:12:21.139575+0800 [68489:71573079] [persistence] Starting full seed store download: offset=0, total=207097856
+2026-10-23 07:12:27.411025+0800 [68489:71573077] [persistence] Full seed store transfer completed: 207097856 bytes
+2026-10-23 07:12:27.411360+0800 [68489:71573077] [persistence] Validating downloaded full seed store
+2026-10-23 07:12:27.526166+0800 [68489:71573077] [persistence] Full seed store validation passed; installing
+2026-10-23 07:12:27.540347+0800 [68489:71573077] [persistence] Installed full SwiftData seed store
+2026-10-23 07:14:18.227587+0800 [68489:71562226] [navigation] operation=presentAlert outcome=applied reason=none layer=presentation(NavigationCore.NavigationPresentationID(rawValue: <modal-A>)) stack=none
+2026-10-23 07:14:18.227700+0800 [68489:71562226] [navigation] operation=presentAlert outcome=queued reason=none layer=presentation(NavigationCore.NavigationPresentationID(rawValue: <modal-A>)) stack=none
+2026-10-23 07:14:26.559079+0800 [68489:71562226] [navigation] operation=resumePresentation outcome=applied reason=none layer=presentation(NavigationCore.NavigationPresentationID(rawValue: <modal-A>)) stack=none
+2026-10-23 07:16:38.892972+0800 [68489:71562226] [navigation] operation=presentAlert outcome=applied reason=none layer=presentation(NavigationCore.NavigationPresentationID(rawValue: <modal-A>)) stack=none
+2026-10-23 07:17:02.391869+0800 [68489:71562226] [persistence] Clearing downloaded seed store and restoring bundled base store
+2026-10-23 07:17:02.398866+0800 [68489:71562226] [navigation] operation=presentAlert outcome=queued reason=none layer=presentation(NavigationCore.NavigationPresentationID(rawValue: <modal-A>)) stack=none
+2026-10-23 07:17:02.399055+0800 [68489:71562226] [navigation] operation=resumePresentation outcome=applied reason=none layer=presentation(NavigationCore.NavigationPresentationID(rawValue: <modal-A>)) stack=none
+
+Critical pattern query: vnode unlinked|invalidated open fd|ModelContext.reset|Fatal error
+{
+  "launchSessionInfo": "Launch Session: Chinese Calendar, ref: 79b9761680, PID: 68489, State: started",
+  "totalCount": 0,
+  "truncated": false,
+  "units": []
+}
+
+Other observed framework warnings (from final capture):
+2026-10-23 07:09:53.776704+0800 [68489:71562226] [Invalid Configuration] onChange(of: Optional<FullStoreDownloadProgress>) action tried to update multiple times per frame.
+2026-10-23 07:09:53.777255+0800 [68489:71562226] [Invalid Configuration] Update NavigationRequestObserver tried to update multiple times per frame.
+2026-10-23 07:11:38.473915+0800 [68489:71562226] [Invalid Configuration] Update NavigationRequestObserver tried to update multiple times per frame.
+2026-10-23 07:12:27.642863+0800 [68489:71562226] [Invalid Configuration] Update NavigationRequestObserver tried to update multiple times per frame.
+2026-10-23 07:14:18.274123+0800 [68489:71562226] [Invalid Configuration] Update NavigationRequestObserver tried to update multiple times per frame.

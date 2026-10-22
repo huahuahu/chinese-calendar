@@ -1,0 +1,60 @@
+{
+  "revision": "c851e37260508ee22dfcaeb8995be4c140b4824f",
+  "date": "2026-10-23",
+  "environment": {
+    "scheme": "ChineseCalendar-iOS",
+    "workspace": "workspace-edAhOBzbKD",
+    "simulatorID": "16A9CAA7-45CE-46D5-8915-F61531FC617C",
+    "simulatorOS": "27.0",
+    "sdk": "iOS 27.1"
+  },
+  "buildForTesting": {
+    "result": "passed",
+    "log": "BuildProject-Log-20261023-070641.txt"
+  },
+  "tests": {
+    "definitions": 365,
+    "executions": 469,
+    "expectedFailures": 0,
+    "failed": 0,
+    "notRun": 0,
+    "passed": 469,
+    "skipped": 0,
+    "total": 469,
+    "summary": "469 tests: 469 passed, 0 failed, 0 skipped, 0 expected failures, 0 not run",
+    "xcresult": "Test-ChineseCalendar-iOS-2026.10.23_07-07-43-+0800.xcresult",
+    "export": "xcode-tests-final.json"
+  },
+  "format": {
+    "files": 337,
+    "requiresFormatting": 0
+  },
+  "strictLint": {
+    "files": 326,
+    "violations": 0
+  },
+  "compileBoundaries": {
+    "sourceRevision": "5fc6a1043eebd119d25bd068a234abdaf95a7be4",
+    "unchangedInRepair": true,
+    "positiveControls": 1,
+    "expectedFailures": 4,
+    "report": "compile-negative-summary.json"
+  },
+  "sourceReview": {
+    "typedActions": "no actionable findings in 30-file snapshot",
+    "storeRepair": "no actionable findings in 11-file snapshot",
+    "runtimeEvidence": "store-replacement/README.md"
+  },
+  "limitations": [
+    "No physical-device validation",
+    "Atomic pointer-write failure was source-traced, not fault injected",
+    "Installer cancellation/join ordering was source-traced; automated cancellation test exercises publication entry",
+    "Storage reader tracking covers only this process; future shared readers in other processes require cross-process coordination",
+    "Modal clearing while UI displayed downloading passed; installation logs preceded UI completion, so cancellation during network transfer was not demonstrated"
+  ],
+  "sourceSnapshot": {
+    "swiftFiles": 326,
+    "sha256": "1e178855c4269de3bbe28acad76c1c37ca5135b6f41eceefbef931263b3b72c9",
+    "algorithm": "Sorted Apps/ and Sources/ Swift paths excluding .build; path NUL bytes NUL"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "utc": "2026-10-22T23:17:47.430232+00:00",
+  "head": "c851e37260508ee22dfcaeb8995be4c140b4824f",
+  "swift_count": 326,
+  "combined_sha256": "1e178855c4269de3bbe28acad76c1c37ca5135b6f41eceefbef931263b3b72c9",
+  "files": {
+    "Sources/ChineseCalendarPersistence/ChineseCalendarFullSeedStoreInstaller.swift": "0a264bdf9196b371d6e227543d90c048be2e05adaac38964930f611523067427",
+    "Sources/ChineseCalendarPersistence/ChineseCalendarModelContainerFactory+Generations.swift": "1c77b5b4f28756de222d95402cca58602099de216c6c6f0dd00cdc4ba807330f",
+    "Sources/ChineseCalendarPersistence/ChineseCalendarStoreGenerations.swift": "3604ae5b573ece62a356cfa3a4feb6600579f5cc1c3bba89c09ff2837ed070c1",
+    "Sources/ChineseCalendarPersistence/SeededModelContainer.swift": "e8e81a2250b374aa6d5586b99c7abfd842fab5448580d97b4df3b626f42ed2f5",
+    "Sources/ChineseCalendarPersistence/Tests/StoreGenerationTests.swift": "9299caf765c58ce1a8ccacd1122a21e3f6b1f528e1994e1f6cf514dc9bb85927",
+    "Sources/ChineseCalendarUI/App/ChineseCalendarRootView.swift": "d1e9cd98cdfda6014938539fd6cb0adcd70d07b45cad701c2420e9d59b772110",
+    "Sources/ChineseCalendarUI/App/Store/CalendarStoreEnvironment.swift": "b940e8a64fb5e4a7c4910b16e74686053227cb3b0b5444075320dd3be2d1305a",
+    "Sources/ChineseCalendarUI/App/Store/ChineseCalendarStoreCoordinator.swift": "aed8602b634f4abf25d46c0f755fd7ab310ed2f73e44e6b3757e61da87dd586d",
+    "Sources/ChineseCalendarUI/Home/Navigation/CalendarNavigationConfiguration.swift": "03693990db5d26b11b5da1da2c1416996351cdf40a2d0895916997fc093507d0",
+    "Sources/ChineseCalendarUI/Home/Navigation/CalendarNavigationHost.swift": "e0630828b39929456ad52e7fe9dc06febb610834c65247fc534864acff7b958f",
+    "Sources/ChineseCalendarUI/Tests/CalendarStoreEnvironmentTests.swift": "531e4874826e5997e873b0d0aad633dbc9a413b2c9fe20696b821bd792e1590a"
+  },
+  "matches_review_snapshot": true
+}
