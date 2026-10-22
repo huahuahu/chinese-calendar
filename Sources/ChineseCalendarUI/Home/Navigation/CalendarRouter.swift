@@ -9,7 +9,7 @@ final class CalendarRouter {
 
     /// 主标签页在任意层中使用同一组初始栈根，替换后的栈根、选中项与路径由该层单独保存。
     static var mainTabRoots: [NavigationStackID<CalendarTab>: CalendarDestination] {
-        [.scope(.years): .calendarHome, .scope(.history): .historyHome, .scope(.settings): .settings]
+        [.scope(.years): .calendarHome, .scope(.history): .historyEmpty, .scope(.settings): .settings]
     }
 
     /// 根层选中的命名 Tab；使用 primary 栈时没有 Tab 选择。
@@ -128,9 +128,9 @@ final class CalendarRouter {
         case let .lunarYear(yearNumber, monthIndex):
             .replacePath([.lunarYear(yearNumber, monthIndex: monthIndex)], on: .years)
         case let .dynasty(orthodoxPeriodID):
-            .replacePath([.dynasty(orthodoxPeriodID: orthodoxPeriodID)], on: .history)
+            .setRoot(.historyDetail(orthodoxPeriodID: orthodoxPeriodID, section: nil), on: .history)
         case let .emperor(emperorID):
-            .replacePath([.emperor(emperorID)], on: .history)
+            .setRoot(.emperor(emperorID), on: .history)
         }
     }
 }

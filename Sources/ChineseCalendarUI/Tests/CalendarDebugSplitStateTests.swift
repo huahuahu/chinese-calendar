@@ -190,7 +190,8 @@
             #expect(original.path == [destination])
             split.router.rootPresentationDidDismiss()
             #expect(split.router.selectedTab == .history)
-            #expect(split.router.historyPath == [.emperor("ming-taizu")])
+            #expect(split.router.navigation.rootDestination(for: .history) == .emperor("ming-taizu"))
+            #expect(split.router.historyPath.isEmpty)
             #expect(split.router.yearsPath == [.lunarYear(2024)])
         }
 
@@ -385,7 +386,8 @@
         nonisolated static var debugDestinations: [CalendarDestination] {
             [
                 .debugSplit(layout: .twoColumn), .debugSplit(layout: .threeColumn),
-                .debugSplitEmpty, .debugSplitDetail(item: .first, level: 1), .debugNavigationTabs(id: UUID())
+                .debugSplitEmpty, .debugSplitDetail(item: .first, level: 1),
+                .debugNavigationTabs(id: UUID(uuid: (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1)))
             ]
         }
 

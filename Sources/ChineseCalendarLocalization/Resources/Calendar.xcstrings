@@ -2725,6 +2725,54 @@
         }
       }
     },
+    "history.split.chooseContentMessage": {
+      "comment": "历史分栏页面尚未选择资料入口时，引导用户选择要查看的资料类别。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "选择皇帝、年号或正统时间，查看详细内容。"
+          }
+        }
+      }
+    },
+    "history.split.chooseContentTitle": {
+      "comment": "历史分栏页面尚未选择资料入口时，详情栏的空状态标题。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "选择历史资料"
+          }
+        }
+      }
+    },
+    "history.split.chooseDynastyMessage": {
+      "comment": "历史分栏页面尚未选择朝代时，引导用户从正统时间线选择朝代。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "从正统时间线选择一个朝代，查看相关资料。"
+          }
+        }
+      }
+    },
+    "history.split.chooseDynastyTitle": {
+      "comment": "历史分栏页面尚未选择朝代时，资料入口栏的空状态标题。",
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "选择朝代"
+          }
+        }
+      }
+    },
     "history.timeline.empty.message": {
       "comment": "历史首页时间线为空时，解释当前存储没有默认正统传统的记录。",
       "extractionState": "manual",

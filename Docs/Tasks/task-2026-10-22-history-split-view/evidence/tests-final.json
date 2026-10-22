@@ -1,0 +1,20 @@
+{
+  "tool": "mcp__xcode__RunAllTests",
+  "date": "2026-10-22",
+  "workspace": "/Users/tigerguo/.codex/worktrees/e708/Chinese-date/ChineseCalendar.xcodeproj",
+  "scheme": "ChineseCalendar-iOS",
+  "simulator": "chinesedate iPhone 18 Pro Max (885f), iOS 27",
+  "sourceSnapshot": "source-snapshot-final.txt",
+  "counts": {
+    "expectedFailures": 0,
+    "failed": 0,
+    "notRun": 0,
+    "passed": 402,
+    "skipped": 0,
+    "total": 402
+  },
+  "summary": "402 tests: 402 passed, 0 failed, 0 skipped, 0 expected failures, 0 not run",
+  "fullSummaryPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/RunAllTests/E810F93C-B792-4B46-83BF-B00F759253E2.txt",
+  "fullConsoleLogsPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/RunAllTests/test-console-log-2026-10-22T18-26-40+08-00.txt",
+  "xcresultBundlePath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/RunAllTests/Test-ChineseCalendar-iOS-2026.10.22_18-26-40-+0800.xcresult"
+}

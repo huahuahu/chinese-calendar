@@ -129,9 +129,10 @@ import Testing
 
     #expect(coordinator.router.selectedTab == .history)
     #expect(
-        coordinator.router.historyPath
-            == [.dynasty(orthodoxPeriodID: "qin-period")]
+        coordinator.router.navigation.rootDestination(for: .history)
+            == .historyDetail(orthodoxPeriodID: "qin-period", section: nil)
     )
+    #expect(coordinator.router.historyPath.isEmpty)
 }
 
 @MainActor
@@ -141,7 +142,8 @@ import Testing
     coordinator.openColdLaunchDeepLink(.emperor("ming-taizu"))
 
     #expect(coordinator.router.selectedTab == .history)
-    #expect(coordinator.router.historyPath == [.emperor("ming-taizu")])
+    #expect(coordinator.router.navigation.rootDestination(for: .history) == .emperor("ming-taizu"))
+    #expect(coordinator.router.historyPath.isEmpty)
 }
 
 @Test func parserSupportsYearURLs() throws {

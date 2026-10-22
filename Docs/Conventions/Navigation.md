@@ -121,6 +121,6 @@ App 的选择动作必须明确根内容与路径的关系：
 
 业务 alert、嵌套模态与外部请求沿用 NAV-05 的串行协调和真实 dismiss 完成通知。App 不在请求提交、等待确认或仅收到批准时提前修改外部 selection；取消保留 selection、path 与原呈现状态，只有批准的请求实际应用时才修改 selection。详情根和 path 属于当前导航层的运行时状态，分类、保留策略、栏可见性及紧凑布局偏好仍归 App；当前不提供完整分栏界面的跨启动恢复。
 
-当前接入以固定小数据的 DEBUG 普通／两栏／三栏入口验证组合行为，正式历史 Tab 的产品布局不在本轮范围。宽窄切换、深 path 下的系统返回以及布局 Binding 写回必须取得交互证据，不能用源码、测试或构建结果代替。方案与九项验收见 [Issue #146](../Tasks/issue-146-navigation-containers/000-plan.md)。
+Issue #146 使用固定小数据的 DEBUG 普通／两栏／三栏入口验证组合行为。正式历史 Tab 在[历史三栏任务](../Tasks/task-2026-10-22-history-split-view/000-plan.md)中接入同一架构：前两栏为正统时间线与资料种类，最后一栏复用所在层的历史详情栈；时期与资料选择从稳定详情根路由投影。宽窄切换、深 path 下的系统返回以及布局 Binding 写回必须取得交互证据，不能用源码、测试或构建结果代替。基础组合方案与九项验收见 [Issue #146](../Tasks/issue-146-navigation-containers/000-plan.md)。
 
 栈根路由化、非可选路径及本轮验证见 [002：栈根统一使用 Destination](../Tasks/issue-146-navigation-containers/002-routed-stack-roots.md)。

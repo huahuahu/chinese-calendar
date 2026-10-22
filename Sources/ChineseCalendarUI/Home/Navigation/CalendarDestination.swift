@@ -5,6 +5,9 @@ enum CalendarDestination: NavigationDestination, Identifiable {
     case mainTabs
     case calendarHome
     case historyHome
+    case historyEmpty
+    case historyDetail(orthodoxPeriodID: String, section: CalendarHistorySection?)
+    case historyEmperor(orthodoxPeriodID: String, emperorID: String)
     case settings
     case lunarYear(Int, monthIndex: Int? = nil, dayIndex: Int? = nil)
     case dynasty(orthodoxPeriodID: String)
@@ -32,6 +35,11 @@ enum CalendarDestination: NavigationDestination, Identifiable {
         case .mainTabs: "main-tabs"
         case .calendarHome: "calendar-home"
         case .historyHome: "history-home"
+        case .historyEmpty: "history-empty"
+        case let .historyDetail(orthodoxPeriodID, section):
+            "history-detail-\(orthodoxPeriodID)-\(section?.rawValue ?? "none")"
+        case let .historyEmperor(orthodoxPeriodID, emperorID):
+            "history-emperor-\(orthodoxPeriodID)-\(emperorID)"
         case .settings: "settings"
         case let .lunarYear(yearNumber, monthIndex, dayIndex):
             "lunar-year-\(yearNumber)-\(monthIndex.map(String.init) ?? "none")-\(dayIndex.map(String.init) ?? "none")"
@@ -85,6 +93,7 @@ enum CalendarDestination: NavigationDestination, Identifiable {
 
     var providesNavigationContainer: Bool {
         if case .mainTabs = self { return true }
+        if case .historyHome = self { return true }
         #if DEBUG
             if case .downloadPreview = self { return true }
             if case .debugSplit = self { return true }

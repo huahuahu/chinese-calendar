@@ -131,7 +131,8 @@ struct CalendarPresentationTests {
         coordinator.rootPresentationDidDismiss()
 
         #expect(coordinator.router.selectedTab == .history)
-        #expect(coordinator.router.historyPath == [.emperor("ming-taizu")])
+        #expect(coordinator.router.navigation.rootDestination(for: .history) == .emperor("ming-taizu"))
+        #expect(coordinator.router.historyPath.isEmpty)
         #expect(coordinator.router.yearsPath.isEmpty)
     }
 
@@ -142,7 +143,8 @@ struct CalendarPresentationTests {
         coordinator.storeIdentityDidChange("full")
         coordinator.openColdLaunchDeepLink(.lunarYear(2025, monthIndex: nil))
         #expect(coordinator.router.selectedTab == .history)
-        #expect(coordinator.router.historyPath == [.emperor("ming-taizu")])
+        #expect(coordinator.router.navigation.rootDestination(for: .history) == .emperor("ming-taizu"))
+        #expect(coordinator.router.historyPath.isEmpty)
     }
 
     #if DEBUG
@@ -173,7 +175,8 @@ struct CalendarPresentationTests {
             #expect(coordinator.router.historyPath.isEmpty)
             coordinator.rootPresentationDidDismiss()
             #expect(coordinator.downloadPreviewSessions.isEmpty)
-            #expect(coordinator.router.historyPath == [.emperor("ming-taizu")])
+            #expect(coordinator.router.navigation.rootDestination(for: .history) == .emperor("ming-taizu"))
+            #expect(coordinator.router.historyPath.isEmpty)
 
             coordinator.presentDownloadPreview()
             let reopened = try #require(coordinator.downloadPreviewSessions.values.first)

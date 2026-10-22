@@ -13,6 +13,9 @@ final class CalendarHomeCoordinator {
     private(set) var yearPickerSessions: [UUID: CalendarYearPickerSession] = [:]
     private var didOpenColdLaunchDeepLink = false
     private var storeIdentity: String?
+    @ObservationIgnored private var historyStates: [
+        ObjectIdentifier: (navigation: CalendarNavigationContext, state: CalendarHistoryState)
+    ] = [:]
     #if DEBUG
         private(set) var downloadPreviewSessions: [UUID: FullStoreDownloadPreviewState] = [:]
         @ObservationIgnored private var debugSplitStates: [
@@ -100,12 +103,22 @@ final class CalendarHomeCoordinator {
         alertMessages = alertMessages.filter { messageIDs.contains($0.key) }
         let destinations = Set(router.presentations.map(\.destination))
         yearPickerSessions = yearPickerSessions.filter { destinations.contains(.yearPicker(sessionID: $0.key)) }
+        historyStates = historyStates.filter(\.value.navigation.isActive)
         #if DEBUG
             downloadPreviewSessions = downloadPreviewSessions.filter {
                 destinations.contains(.downloadPreview(sessionID: $0.key))
             }
             debugSplitStates = debugSplitStates.filter(\.value.navigation.isActive)
         #endif
+    }
+
+    /// 按详情栈身份保留历史栏布局；同名栈在不同模态中仍拥有独立状态。
+    func historyState(for navigation: CalendarNavigationContext) -> CalendarHistoryState {
+        let identity = ObjectIdentifier(navigation)
+        if let session = historyStates[identity] { return session.state }
+        let state = CalendarHistoryState(navigation: navigation)
+        if navigation.isActive { historyStates[identity] = (navigation, state) }
+        return state
     }
 
     #if DEBUG

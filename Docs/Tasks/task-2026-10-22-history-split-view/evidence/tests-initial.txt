@@ -1,0 +1,67 @@
+原生 Xcode MCP RunSomeTests，2026-10-22，配置 iPhone Simulator。
+59 个测试函数执行通过。初次结果表包含 2 个动态 UUID 参数的 No result；控制台两项参数化测试各 5 个 case 全部通过。随后将参数 fixture 改为稳定 UUID 后重跑。
+
+✔ Test hotDeepLinkConfirmsThenDismissesActivePresentationTreeBeforeRouting() passed after 0.007 seconds.
+✔ Test pushUpdatesSelectedTabPath() passed after 0.007 seconds.
+✔ Test targetedDismissalPreservesTheParentAndTabPaths() passed after 0.007 seconds.
+✔ Test historyPathPushPopAndTabRestorationKeepIndependentDestinations() passed after 0.007 seconds.
+✔ Test dismissalWithoutARequestAllowsReopening() passed after 0.006 seconds.
+✔ Test historyRoutePreservesOrthodoxPeriodIdentity() passed after 0.007 seconds.
+✔ Test replacingYearsPathChangesItsCurrentDestination() passed after 0.007 seconds.
+✔ Test dynastyDeepLinkSelectsHistoryTab() passed after 0.008 seconds.
+✔ Test coldLaunchDeepLinkAppliesImmediately() passed after 0.008 seconds.
+✔ Test emperorDeepLinkSelectsHistoryTab() passed after 0.008 seconds.
+✔ Test manualDismissalDefersTheLatestDeepLinkUntilTheHostFinishes() passed after 0.009 seconds.
+✔ Test tabPathsDoNotPolluteEachOther() passed after 0.008 seconds.
+✔ Test parserSupportsLaunchArguments() passed after 0.117 seconds.
+✔ Test parserSupportsYearURLs() passed after 0.118 seconds.
+✔ Test historyDestinationIDsIncludeEveryStableRecordID() passed after 0.122 seconds.
+✔ Test parserSupportsEmperorURLs() passed after 0.123 seconds.
+✔ Test parserSupportsDynastyURLs() passed after 0.124 seconds.
+​​​​​​​✔ Test activeAlertRejectsSelectionAndLayoutChangesIncludingRepeatedSelection() passed after 0.123 seconds.
+​✔ Test historyRoutesDeclareContainerAndStableIdentity() passed after 0.123 seconds.
+​✔ Test waitingEmperorLinkCannotResolveBeforeTheRequestApplies() passed after 0.123 seconds.
+​​​✔ Test dynastyLinkChangesSelectionOnlyAfterApprovedDismissalCompletes() passed after 0.123 seconds.
+✔ Test yearSelectionReturnsOnlyToItsOriginatingPage() passed after 0.122 seconds.
+​​​​​​​​​✔ Test upstreamSelectionClearsDependentSelectionAndPath() passed after 0.122 seconds.
+​​✔ Test storeChangeInvalidatesPickerButPreservesDownloadAndPaths() passed after 0.122 seconds.
+​​✔ Test rootIsTheOnlySelectionSourceAcrossTabAndStoreChanges() passed after 0.124 seconds.
+✔ Test repeatedSelectionPreservesPathAndChangingSectionClearsIt() passed after 0.122 seconds.
+✔ Test emperorRootResolvesItsParentWithoutAcceptingStaleResults() passed after 0.122 seconds.
+✔ Test activeAlertRejectsItemAndCategoryChangesWithoutChangingDetail() passed after 0.121 seconds.
+✔ Test closedModalRejectsStaleSelectionAndReopensWithIndependentState() passed after 0.121 seconds.
+✔ Test externalNavigationPreservesSelectionUntilConfirmedAndActuallyDismissed() passed after 0.121 seconds.
+✔ Test repeatedYearPickerActionKeepsTheOriginalSession() passed after 0.122 seconds.
+✔ Test modalTabsAndNestedSplitKeepIndependentSelectionAndPaths() passed after 0.126 seconds.
+✔ Test modalHistoryKeepsIndependentStateAndReleasesItAfterDismissal() passed after 0.122 seconds.
+✔ Test changingCategoryClearsDetailWhileRepeatingItKeepsThePath() passed after 0.125 seconds.
+✔ Test disappearingDownloadDoesNotDismissAnotherPresentation() passed after 0.127 seconds.
+✔ Test historyModalPushAndNestedPresentationPreserveTabNavigation() passed after 0.126 seconds.
+✔ Test storeChangeDoesNotLoseLatestDeferredDeepLink() passed after 0.127 seconds.
+✔ Test dismissalReleasesSplitStateAndReopeningCreatesIndependentState() passed after 0.124 seconds.
+✔ Test cancelledYearPickerCannotDeliverAStaleResult() passed after 0.130 seconds.
+✔ Test rootAndLocalOperationsUseTheSamePathForEveryTab(tab:) with 3 test cases passed after 0.129 seconds.
+✔ Test rebuildingDataPagesDoesNotReplayColdLaunchLink() passed after 0.130 seconds.
+✔ Test newSplitStateReadsDetailRootAndKeepsTheExistingPath(layout:) with 2 test cases passed after 0.127 seconds.
+✔ Test previewDetailsShareFeatureStateAndRemainInTheSameTree() passed after 0.130 seconds.
+✔ Test clearingItemAlwaysClearsItsPath(retainsDetail:) with 2 test cases passed after 0.129 seconds.
+✔ Test replacedRootAndModalTabRootsKeepIndependentPathsAndSelections() passed after 0.126 seconds.
+✔ Test debugRoutesCanStartCoreLayers(destination:) with 5 test cases passed after 0.129 seconds.
+✔ Test debugNavigationPushUsesTheSettingsStack() passed after 0.129 seconds.
+✔ Test debugRoutesAreAcceptedAtEveryEntry(destination:) with 5 test cases passed after 0.126 seconds.
+✔ Test detailUsesItsLayerStackAndOnlyNewItemsClearThePath(layout:) with 2 test cases passed after 0.126 seconds.
+✔ Test appRootAndTabRootsAreExplicit() passed after 0.130 seconds.
+✔ Test rootSelectionProjectsTheCurrentTabDestination() passed after 0.128 seconds.
+✔ Test navigationStateAcceptsAppDestinationsWithoutEntryAllowlist(destination:) with 4 test cases passed after 0.131 seconds.
+✔ Test retainedDetailDoesNotMoveTheCategoryBackWhenSelectedAgain() passed after 0.131 seconds.
+✔ Test primaryRootSelectionDoesNotInventATab() passed after 0.131 seconds.
+✔ Test storeReplacementKeepsMixedTabSplitStatesIndependent() passed after 0.131 seconds.
+✔ Test appDeepLinkCancelAndApprovalUseTheCoreTransaction() passed after 0.130 seconds.
+✔ Test storeReplacementKeepsSplitSelectionLayoutAndPath(layout:) with 2 test cases passed after 0.131 seconds.
+✔ Test mainTabsModalAndItsChildKeepRootSelectionsAndEveryTabPathIndependent() passed after 0.129 seconds.
+✔ Test backgroundPresentationDoesNotLeaveADebugSessionBehind() passed after 0.131 seconds.
+✔ Suite "历史三栏选择与详情导航" passed after 0.137 seconds.
+✔ Suite "页面 NavigationPresentationContext 与协调" passed after 0.136 seconds.
+✔ Suite "App 使用局部导航框架" passed after 0.138 seconds.
+✔ Suite "App SplitView 选择与 SDK 单栈" passed after 0.138 seconds.
+✔ Test run with 59 tests in 4 suites passed after 0.140 seconds.
