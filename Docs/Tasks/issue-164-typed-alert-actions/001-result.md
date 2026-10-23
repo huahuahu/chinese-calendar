@@ -60,3 +60,9 @@ UIKit 真实 dismissal completion 后先取得一次处理权，再等待按钮�
 - 下载失败和清理失败的提示由配置／业务自动测试覆盖，没有人为制造真实设备错误。
 - 第二轮调试菜单的“导航测试”入口按层级 hitPoint 重试仍未展开，保留为交互观察，未归因为本次修复缺陷。首轮离开确认已有完整通过证据；第二轮未重复该路径。
 - 未进行真机验证；构建、自动测试、源码审查及 Simulator 交互分别记录，不相互替代。
+
+## CI 本地化扫描补修
+
+[PR #169](https://github.com/huahuahu/chinese-calendar/pull/169) 首轮 CI 的格式检查、SwiftLint 和 Test job 均通过；`Lint and Format` job 在 `Verify localized copy` 步骤失败。原因是容器身份字符串新增 `ObjectIdentifier(container)` 后，扫描脚本仍使用旧的精确例外；缺失数据库时的诊断根路径 `/` 也被误判为界面文案。
+
+修复只同步该文件的两项技术字面量例外，不豁免整个文件，也不改动产品源码或本地化资源。本地重新核对 337 项资源、22 个生产 UI 字符串通过；已有 App 测试与交互证据继续对应同一份产品源码。远程检查结果以 PR 当前状态为准。
