@@ -1,8 +1,8 @@
 # Issue #165：发起方所有权与导航公开接口收敛结果
 
 - 方案：[000-plan.md](000-plan.md)
-- 关联：[Issue #165](https://github.com/huahuahu/chinese-calendar/issues/165)
-- 状态：实现已提交，本地全量回归、构建与静态检查通过；两轮 Simulator 交互已归档，准备 PR 交付，尚未合并。OWN-07／09 的具体覆盖边界见验收表。
+- 关联：[Issue #165](https://github.com/huahuahu/chinese-calendar/issues/165)、[PR #170](https://github.com/huahuahu/chinese-calendar/pull/170)
+- 状态：实现及证据已提交，本地全量回归、构建与静态检查通过；已创建 PR #170，尚未合并。OWN-07／09 的具体覆盖边界见验收表。
 - 记录日期：2026-10-23 至 2026-10-24
 - 代码状态：`codex/issue-165-presentation-ownership` 的实现提交 `edcf930e908a9bb9f5858fa23e52878da5d4adc0`，包含 126 个实现、测试与配置文件；提交 tree 为 `c4d7ffbbd74583560e603f42b20942e0c50bdb73`，与全量测试记录的代码快照一致。文档及 evidence 单独提交，不改变本次已验证代码。实施前基线为 `224b13aa38390c9f8f677ac9ab29a0980853655c`。
 
@@ -128,7 +128,7 @@ App 两条热 Deep Link 测试已经呈现真实 `UIAlertController`，但通过
 
 ## 交付状态与覆盖边界
 
-1. 实现提交已完成，本地验证通过；文档及 evidence 随后单独提交。当前准备创建 PR，尚未合并；本记录不代表远程 CI 或发布已完成。
+1. 实现、文档及 evidence 已分别提交并推送，已创建 [PR #170](https://github.com/huahuahu/chinese-calendar/pull/170)，尚未合并。远程 CI 状态以 PR 检查为准；本记录不代表发布已完成。
 2. OWN-07 的 store／context、旧文件安全及外部请求完成已有分层自动证据和真实清空交互，但没有活动 picker、设置清空与待处理系统热 URL 的合并端到端场景。
 3. OWN-09 已有状态／context 自动测试、容器源码核对及实际布局交互；两个生产容器内部 `@State` 的退出释放没有直接 weak 观测。没有穷举全部布局、宽度和历史目标，也没有动画帧率数据。
 4. 下载交互使用模拟进度及本地 fixture，不包含真实网络下载或数据库安装。本次结果整理不代表已执行 `review-changes` 专项审查。
