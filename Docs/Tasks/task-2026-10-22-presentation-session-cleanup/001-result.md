@@ -2,6 +2,7 @@
 
 - 方案：[000-plan.md](000-plan.md)
 - 日期：2026-10-22
+- 后续方案：[Issue #165](../issue-165-presentation-ownership/000-plan.md)已替代本文的保留路由观察与集中字典清理设计，并进入工作区实施；新合同的真实关闭验证仍在进行。下文证据仅对应旧实现，不证明新方案通过验收。
 - 代码状态：在已有未提交的导航结果及 alert 改动上增量实现；本次文件的 SHA-256 见 [source-manifest.json](evidence/source-manifest.json)，最终全量测试前后这些文件一致。
 
 ## 实际结果

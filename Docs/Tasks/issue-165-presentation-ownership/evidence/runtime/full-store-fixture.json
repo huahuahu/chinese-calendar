@@ -1,0 +1,21 @@
+{
+  "prepared_at": "2026-10-23T15:58:29.419198+00:00",
+  "source": "existing verified Simulator full-store cache; copied while target app stopped",
+  "sha256": "ba0490ac4b78bce947a64733a067e08bdba5d342ed8c1dd765fb8bba65215c77",
+  "quick_check": "ok",
+  "lunar_day_rows": 884256,
+  "generation": "0A2E166E-542E-464F-B694-75508564F641",
+  "source_manifest": {
+    "artifactVersion": "465fb388943cc8aeba67ee7e6b83807c8dc01ecf3606636eae2bfbbeb0f924a1",
+    "byteCount": 207097856,
+    "datasetVersion": "1374ae64f7958ab31f5b871eeca97f765526d7ae49c964091bf1709bf8afd10e",
+    "downloadURL": "http://127.0.0.1:8132/ChineseCalendar.sqlite",
+    "installedAt": "2026-10-06T10:56:57Z",
+    "schemaVersion": "1.4.0",
+    "seedStoreContentLevel": "full",
+    "seedStoreFormatVersion": 4,
+    "sha256": "ba0490ac4b78bce947a64733a067e08bdba5d342ed8c1dd765fb8bba65215c77",
+    "storeFileName": "ChineseCalendar.sqlite"
+  },
+  "boundary": "test fixture preparation only; does not prove network download or runtime store replacement"
+}

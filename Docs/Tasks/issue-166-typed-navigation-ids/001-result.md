@@ -27,7 +27,9 @@
 
 原生 MCP 摘要列出两条带发现阶段随机 ID 的 `No result` 标签；实际 xcresult 为 Passed、441 次执行、0 failure/skip，控制台明确记录 `noticesKeepASingleAcknowledgement(route:)` 三个参数全部通过。这两条为摘要匹配差异，不计为测试失败或跳过。
 
-复现编译边界检查：先用相同 Xcode scheme 构建 Debug Simulator 模块，再运行 `python3 Scripts/validate_navigation_identity_types.py <Build/Products/Debug-iphonesimulator> <iPhoneSimulator.sdk> arm64-apple-ios26.0-simulator`。脚本先要求正常调用编译成功，随后逐例校验失败类型；生成的不可编译文件仅在忽略的 `.output/` 下，不属于正常 target。
+以上编译证据记录的是本任务提交时的 API。其验证器 `Scripts/validate_navigation_identity_types.py` 已在 Issue #165 收窄公开 API 后退役；历史摘要保留原验证器名称和结果。当前 Core 身份属于内部实现，由 `NavigationIdentityTests.swift` 的 `@testable` 测试验证；App 旧会话身份已随资源所有权迁移移除。
+
+当前普通 `import NavigationCore` 的编译边界由 `Scripts/validate_navigation_public_api.py` 验证。先用相同 Xcode scheme 构建 Debug Simulator 模块，再运行 `python3 Scripts/validate_navigation_public_api.py <Build/Products/Debug-iphonesimulator> <iPhoneSimulator.sdk> arm64-apple-ios26.0-simulator`。脚本先要求支持的公开调用编译成功，随后逐例确认内部类型、事务和已移除投影不可访问；报告与不可编译样例仅生成在忽略的 `.output/navigation-public-api/` 下，不属于正常 target。
 
 ## 检查范围与剩余事项
 

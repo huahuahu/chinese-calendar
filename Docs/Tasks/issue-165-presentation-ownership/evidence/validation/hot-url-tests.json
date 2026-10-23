@@ -1,0 +1,41 @@
+{
+  "tool": "mcp__xcode__RunSomeTests",
+  "environment": {
+    "scheme": "ChineseCalendar-iOS",
+    "xcode": "27.1 (27A9275)",
+    "simulator": "chinesedate iPhone 18 Pro Max (885f)",
+    "runtime": "iOS 27.0",
+    "deviceID": "16A9CAA7-45CE-46D5-8915-F61531FC617C"
+  },
+  "counts": {
+    "expectedFailures": 0,
+    "failed": 0,
+    "notRun": 0,
+    "passed": 2,
+    "skipped": 0,
+    "total": 2
+  },
+  "fullConsoleLogsPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/RunSomeTests/test-console-log-2026-10-24T00-31-17+08-00.txt",
+  "fullSummaryPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/RunSomeTests/9D68B7E6-B09E-4E1B-85E6-8083CD642147.txt",
+  "results": [
+    {
+      "displayName": "testCancellingEmperorDeepLinkPreservesTheSheetAndSourceTabThenApprovalNavigates()",
+      "errorMessages": [],
+      "identifier": "CalendarDeepLinkUITests/testCancellingEmperorDeepLinkPreservesTheSheetAndSourceTabThenApprovalNavigates()",
+      "state": "Passed",
+      "targetName": "CalendarNavigationUIIntegrationTests"
+    },
+    {
+      "displayName": "testApprovingYearDeepLinkDismissesTheWholeModalTreeBeforeShowingCalendar()",
+      "errorMessages": [],
+      "identifier": "CalendarDeepLinkUITests/testApprovingYearDeepLinkDismissesTheWholeModalTreeBeforeShowingCalendar()",
+      "state": "Passed",
+      "targetName": "CalendarNavigationUIIntegrationTests"
+    }
+  ],
+  "schemeName": "ChineseCalendar-iOS",
+  "summary": "2 tests: 2 passed, 0 failed, 0 skipped, 0 expected failures, 0 not run",
+  "totalResults": 2,
+  "truncated": false,
+  "xcresultBundlePath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/RunSomeTests/Test-ChineseCalendar-iOS-2026.10.24_00-31-17-+0800.xcresult"
+}

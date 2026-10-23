@@ -1,0 +1,241 @@
+positive (exit 0)
+
+presentation_node (exit 1)
+/private/tmp/issue-165-public-api-final/samples/presentation_node.swift:5:12: error: cannot find type 'NavigationPresentationNode' in scope
+3 |
+4 | @MainActor func rejectedUsage(_ router: APIRouter) {
+5 |     let _: NavigationPresentationNode<APIScope, APIDestination, APIAlert>? = nil
+  |            `- error: cannot find type 'NavigationPresentationNode' in scope
+6 | }
+7 |
+
+presentation_id (exit 1)
+/private/tmp/issue-165-public-api-final/samples/presentation_id.swift:5:12: error: cannot find type 'NavigationPresentationID' in scope
+3 |
+4 | @MainActor func rejectedUsage(_ router: APIRouter) {
+5 |     let _: NavigationPresentationID? = nil
+  |            `- error: cannot find type 'NavigationPresentationID' in scope
+6 | }
+7 |
+
+alert_id (exit 1)
+/private/tmp/issue-165-public-api-final/samples/alert_id.swift:5:12: error: cannot find type 'NavigationAlertID' in scope
+3 |
+4 | @MainActor func rejectedUsage(_ router: APIRouter) {
+5 |     let _: NavigationAlertID? = nil
+  |            `- error: cannot find type 'NavigationAlertID' in scope
+6 | }
+7 |
+
+confirmation_id (exit 1)
+/private/tmp/issue-165-public-api-final/samples/confirmation_id.swift:5:12: error: cannot find type 'NavigationConfirmationID' in scope
+3 |
+4 | @MainActor func rejectedUsage(_ router: APIRouter) {
+5 |     let _: NavigationConfirmationID? = nil
+  |            `- error: cannot find type 'NavigationConfirmationID' in scope
+6 | }
+7 |
+
+layer_route (exit 1)
+/private/tmp/issue-165-public-api-final/samples/layer_route.swift:5:12: error: cannot find type 'NavigationLayerRoute' in scope
+3 |
+4 | @MainActor func rejectedUsage(_ router: APIRouter) {
+5 |     let _: NavigationLayerRoute<APIDestination>? = nil
+  |            `- error: cannot find type 'NavigationLayerRoute' in scope
+6 | }
+7 |
+
+node_view (exit 1)
+/private/tmp/issue-165-public-api-final/samples/node_view.swift:5:12: error: cannot find type 'NavigationPresentationNodeView' in scope
+3 |
+4 | @MainActor func rejectedUsage(_ router: APIRouter) {
+5 |     let _: NavigationPresentationNodeView<APIScope, APIDestination, APIAlert>? = nil
+  |            `- error: cannot find type 'NavigationPresentationNodeView' in scope
+6 | }
+7 |
+
+router_tree (exit 1)
+/private/tmp/issue-165-public-api-final/samples/router_tree.swift:5:16: error: 'presentedNode' is inaccessible due to 'internal' protection level
+3 |
+4 | @MainActor func rejectedUsage(_ router: APIRouter) {
+5 |     _ = router.presentedNode
+  |                `- error: 'presentedNode' is inaccessible due to 'internal' protection level
+6 | }
+7 |
+
+/Users/tigerguo/.codex/worktrees/ff47/Chinese-date/Sources/NavigationCore/Routing/Router/NavigationRouter.swift:112:9: note: 'presentedNode' declared here
+110 |
+111 |     /// App 根层直接打开的模态。它还可以继续持有自己的子模态。
+112 |     var presentedNode: NavigationPresentationNode<Scope, Destination, AlertRoute>? {
+    |         `- note: 'presentedNode' declared here
+113 |         rootLayer.presentation
+114 |     }
+
+frontmost_query (exit 1)
+/private/tmp/issue-165-public-api-final/samples/frontmost_query.swift:5:16: error: 'frontmostPresentationNode' is inaccessible due to 'internal' protection level
+3 |
+4 | @MainActor func rejectedUsage(_ router: APIRouter) {
+5 |     _ = router.frontmostPresentationNode
+  |                `- error: 'frontmostPresentationNode' is inaccessible due to 'internal' protection level
+6 | }
+7 |
+
+/Users/tigerguo/.codex/worktrees/ff47/Chinese-date/Sources/NavigationCore/Routing/Router/NavigationRouter.swift:332:9: note: 'frontmostPresentationNode' declared here
+330 |
+331 |     /// 当前最上层的模态。继续打开模态或选择确认提示所在层时使用；没有模态时返回 nil。
+332 |     var frontmostPresentationNode: NavigationPresentationNode<Scope, Destination, AlertRoute>? {
+    |         `- note: 'frontmostPresentationNode' declared here
+333 |         presentedNode?.frontmostPresentationNode
+334 |     }
+
+all_presentations (exit 1)
+/private/tmp/issue-165-public-api-final/samples/all_presentations.swift:5:16: error: 'presentations' is inaccessible due to 'internal' protection level
+3 |
+4 | @MainActor func rejectedUsage(_ router: APIRouter) {
+5 |     _ = router.presentations
+  |                `- error: 'presentations' is inaccessible due to 'internal' protection level
+6 | }
+7 |
+
+/Users/tigerguo/.codex/worktrees/ff47/Chinese-date/Sources/NavigationCore/Routing/Router/NavigationRouter+Contexts.swift:32:9: note: 'presentations' declared here
+ 30 |
+ 31 |     /// 当前所有模态，按从最底层到最上层的顺序排列，不包含 App 根界面。
+ 32 |     var presentations: [NavigationPresentationNode<Scope, Destination, AlertRoute>] {
+    |         `- note: 'presentations' declared here
+ 33 |         presentedNode?.descendantsIncludingSelf ?? []
+ 34 |     }
+
+pending_transaction (exit 1)
+/private/tmp/issue-165-public-api-final/samples/pending_transaction.swift:5:16: error: 'pendingConfirmation' is inaccessible due to 'internal' protection level
+3 |
+4 | @MainActor func rejectedUsage(_ router: APIRouter) {
+5 |     _ = router.pendingConfirmation
+  |                `- error: 'pendingConfirmation' is inaccessible due to 'internal' protection level
+6 | }
+7 |
+
+/Users/tigerguo/.codex/worktrees/ff47/Chinese-date/Sources/NavigationCore/Routing/Router/NavigationRouter.swift:29:9: note: 'pendingConfirmation' declared here
+ 27 |
+ 28 |     /// 等待用户确认的请求。即使模态自行关闭，这条请求仍需用户批准后才能执行。
+ 29 |     var pendingConfirmation: NavigationConfirmation<Scope, Destination>? {
+    |         `- note: 'pendingConfirmation' declared here
+ 30 |         coordinationState.pendingConfirmation
+ 31 |     }
+
+deferred_transaction (exit 1)
+/private/tmp/issue-165-public-api-final/samples/deferred_transaction.swift:5:16: error: 'deferredRequest' is inaccessible due to 'internal' protection level
+3 |
+4 | @MainActor func rejectedUsage(_ router: APIRouter) {
+5 |     _ = router.deferredRequest
+  |                `- error: 'deferredRequest' is inaccessible due to 'internal' protection level
+6 | }
+7 |
+
+/Users/tigerguo/.codex/worktrees/ff47/Chinese-date/Sources/NavigationCore/Routing/Router/NavigationRouter.swift:24:9: note: 'deferredRequest' declared here
+ 22 |     var coordinationState = NavigationCoordinationState<Scope, Destination>()
+ 23 |     /// 已经接受、正在等待根模态关闭后执行的请求。等待期间，以最新接受的请求为准。
+ 24 |     var deferredRequest: NavigationRequest<Scope, Destination>? {
+    |         `- note: 'deferredRequest' declared here
+ 25 |         coordinationState.acceptedRequestWaitingForDismissal
+ 26 |     }
+
+aggregate_setter (exit 1)
+/private/tmp/issue-165-public-api-final/samples/aggregate_setter.swift:5:12: error: 'paths' is inaccessible due to 'internal' protection level
+3 |
+4 | @MainActor func rejectedUsage(_ router: APIRouter) {
+5 |     router.paths = [:]
+  |            `- error: 'paths' is inaccessible due to 'internal' protection level
+6 | }
+7 |
+
+/Users/tigerguo/.codex/worktrees/ff47/Chinese-date/Sources/NavigationCore/Routing/Router/NavigationRouter.swift:101:9: note: 'paths' declared here
+ 99 |     /// Core 自动提供单栈时忽略赋值，操作 primary 路径应使用 rootPresentation.context(for: .primary)。
+100 |     /// 这是直接修改数据的入口，等待确认或关闭动画时也能写入；需要协调这些流程时使用 submit。
+101 |     var paths: [Scope: [Destination]] {
+    |         `- note: 'paths' declared here
+102 |         get {
+103 |             Dictionary(uniqueKeysWithValues: rootLayer.paths.compactMap { key, value in
+
+manual_completion (exit 1)
+/private/tmp/issue-165-public-api-final/samples/manual_completion.swift:5:29: error: 'presentationDidDismiss' is inaccessible due to 'internal' protection level
+3 |
+4 | @MainActor func rejectedUsage(_ router: APIRouter) {
+5 |     router.rootPresentation.presentationDidDismiss()
+  |                             `- error: 'presentationDidDismiss' is inaccessible due to 'internal' protection level
+6 | }
+7 |
+
+/Users/tigerguo/.codex/worktrees/ff47/Chinese-date/Sources/NavigationCore/Routing/Presentation/NavigationPresentationContext.swift:314:10: note: 'presentationDidDismiss()' declared here
+312 |
+313 |     /// 内部兼容入口；真实宿主总是携带它当次认领的 lifetime。
+314 |     func presentationDidDismiss() {
+    |          `- note: 'presentationDidDismiss()' declared here
+315 |         guard let lifetime = layer?.dismissingPresentation?.lifetime else { return }
+316 |         presentationDidDismiss(lifetime: lifetime)
+
+presentation_context_tree (exit 1)
+/private/tmp/issue-165-public-api-final/samples/presentation_context_tree.swift:5:33: error: 'presentedContent' is inaccessible due to 'internal' protection level
+3 |
+4 | @MainActor func rejectedUsage(_ router: APIRouter) {
+5 |     _ = router.rootPresentation.presentedContent
+  |                                 `- error: 'presentedContent' is inaccessible due to 'internal' protection level
+6 | }
+7 |
+
+/Users/tigerguo/.codex/worktrees/ff47/Chinese-date/Sources/NavigationCore/Routing/Presentation/NavigationPresentationContext.swift:118:9: note: 'presentedContent' declared here
+116 |
+117 |     /// 本层直接展示的内容，页面模态和业务 alert 只会有一个。
+118 |     var presentedContent: NavigationPresentation<Scope, Destination, AlertRoute>? {
+    |         `- note: 'presentedContent' declared here
+119 |         isActive ? layer?.presentedContent : nil
+120 |     }
+
+presentation_context_route (exit 1)
+/private/tmp/issue-165-public-api-final/samples/presentation_context_route.swift:5:33: error: 'route' is inaccessible due to 'internal' protection level
+3 |
+4 | @MainActor func rejectedUsage(_ router: APIRouter) {
+5 |     _ = router.rootPresentation.route
+  |                                 `- error: 'route' is inaccessible due to 'internal' protection level
+6 | }
+7 |
+
+/Users/tigerguo/.codex/worktrees/ff47/Chinese-date/Sources/NavigationCore/Routing/Presentation/NavigationPresentationContext.swift:60:9: note: 'route' declared here
+ 58 |     /// Context 失效或层释放后仍可读取；是否允许操作和渲染由 isActive 单独判断。
+ 59 |     /// 模态中的 push 不改变其入口。
+ 60 |     var route: NavigationLayerRoute<Destination> {
+    |         `- note: 'route' declared here
+ 61 |         routeState.route
+ 62 |     }
+
+handle_identity (exit 1)
+/private/tmp/issue-165-public-api-final/samples/handle_identity.swift:5:87: error: 'lifetime' is inaccessible due to 'private' protection level
+3 |
+4 | @MainActor func rejectedUsage(_ router: APIRouter) {
+5 |     let handle = router.rootPresentation.present(.sheet(.detail)).handle; _ = handle?.lifetime
+  |                                                                                       `- error: 'lifetime' is inaccessible due to 'private' protection level
+6 | }
+7 |
+
+NavigationCore.NavigationPresentationHandle.lifetime:2:24: note: 'lifetime' declared here
+1 | class NavigationPresentationHandle {
+2 | @MainActor private let lifetime: NavigationCore.NavigationPresentationLifetime}
+  |                        `- note: 'lifetime' declared here
+3 |
+
+removed_resource_projection (exit 1)
+/private/tmp/issue-165-public-api-final/samples/removed_resource_projection.swift:5:16: error: value of type 'APIRouter' (aka 'NavigationRouter<APIScope, APIDestination, APIAlert>') has no member 'retainedPresentationRoutes'
+3 |
+4 | @MainActor func rejectedUsage(_ router: APIRouter) {
+5 |     _ = router.retainedPresentationRoutes
+  |                `- error: value of type 'APIRouter' (aka 'NavigationRouter<APIScope, APIDestination, APIAlert>') has no member 'retainedPresentationRoutes'
+6 | }
+7 |
+
+removed_alert_projection (exit 1)
+/private/tmp/issue-165-public-api-final/samples/removed_alert_projection.swift:5:16: error: value of type 'APIRouter' (aka 'NavigationRouter<APIScope, APIDestination, APIAlert>') has no member 'alertRoutes'
+3 |
+4 | @MainActor func rejectedUsage(_ router: APIRouter) {
+5 |     _ = router.alertRoutes
+  |                `- error: value of type 'APIRouter' (aka 'NavigationRouter<APIScope, APIDestination, APIAlert>') has no member 'alertRoutes'
+6 | }
+7 |
