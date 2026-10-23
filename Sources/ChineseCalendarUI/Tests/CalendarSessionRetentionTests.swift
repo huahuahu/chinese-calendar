@@ -7,6 +7,25 @@ import Testing
 @MainActor
 @Suite("业务会话按呈现身份释放")
 struct CalendarSessionRetentionTests {
+    @Test func registrationSnapshotIncludesEachBusinessIdentityCategory() throws {
+        let coordinator = CalendarHomeCoordinator()
+        let container = try PreviewSampleData.makeModelContainer(includesSampleData: false)
+        coordinator.presentYearPicker(
+            selection: CalendarSelection(selectedDayIndex: 0), modelContext: container.mainContext
+        ) { _ in }
+        let pickerID = try #require(coordinator.yearPickerSessions.keys.first)
+        #expect(coordinator.presentDownloadError("Test download error"))
+        let messageID = try #require(coordinator.alertMessages.keys.first)
+        var expected: Set<CalendarPresentationSessionID> = [.yearPicker(pickerID), .alertMessage(messageID)]
+        #expect(coordinator.presentationSessionIDs == expected)
+        #if DEBUG
+            coordinator.presentDownloadPreview()
+            let previewID = try #require(coordinator.downloadPreviewSessions.keys.first)
+            expected.insert(.downloadPreview(previewID))
+            #expect(coordinator.presentationSessionIDs == expected)
+        #endif
+    }
+
     @Test func ancestorCompletionReleasesPickersButKeepsSessionsDuringAnimation() throws {
         let coordinator = CalendarHomeCoordinator()
         let container = try PreviewSampleData.makeModelContainer(includesSampleData: false)
@@ -30,7 +49,7 @@ struct CalendarSessionRetentionTests {
         let root = coordinator.router.navigation.rootPresentation
         root.presentAlert(.clearDataSucceeded)
         let alert = try #require(root.presentedAlert)
-        #expect(root.alertWillPresent(id: alert.id, isConfirmation: false))
+        #expect(root.alertWillPresent(id: .business(alert.id)))
         coordinator.presentYearPicker(
             selection: CalendarSelection(selectedDayIndex: 0), modelContext: container.mainContext
         ) { _ in }
@@ -38,9 +57,9 @@ struct CalendarSessionRetentionTests {
         #expect(coordinator.yearPickerSessions.count == 1)
         #expect(coordinator.router.sheet == nil)
         coordinator.router.navigation.dismissAllPresentations()
-        root.alertWillDismiss(id: alert.id)
-        #expect(root.beginAlertCompletion(id: alert.id))
-        root.alertDidDismiss(id: alert.id)
+        root.alertWillDismiss(id: .business(alert.id))
+        #expect(root.beginAlertCompletion(id: .business(alert.id)))
+        root.alertDidDismiss(id: .business(alert.id))
         coordinator.releaseDismissedContexts()
         #expect(coordinator.yearPickerSessions.isEmpty)
     }

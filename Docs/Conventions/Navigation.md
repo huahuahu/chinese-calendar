@@ -8,6 +8,8 @@
 
 每层以 `NavigationLayerRoute` 保存开始展示的 Destination，并投影纯身份 `NavigationLayerID`。节点的 destination/id 和 `NavigationPresentationContext` 的 route/destination 来自同一层状态，入口不随 push 或切换 Tab 改变；层身份不能包含 destination。
 
+模态、导航确认和业务提示分别使用 `NavigationPresentationID`、`NavigationConfirmationID`、`NavigationAlertID`；节点与其模态层共用模态身份。API、队列和生命周期回调保留所属身份类型，不转换成 UUID 混用。业务会话定义自己的身份，聚合登记通过带类别的枚举保留来源；系统提示宿主同样区分业务与确认身份。请求继续按内容去重。
+
 单个栈的根身份与 path 由独立 `NavigationStackState` 保存，根 Destination 必填，path 为非可选数组。层只组合这些栈对象和呈现状态，roots/paths 字典是值投影，不重复保存路径。根与 path 的运行时修改更新已有栈对象，保持其 Context 连接；移除原层或栈后，旧上下文失效。获取 Context 不创建无根栈，路径投影省略空 path，不区分缺失条目与显式空数组。App 原生分栏使用详情根 Destination 表达选中对象或空态，边界见 NAV-07。
 
 根据实际调用链判断是否是 App 页面。设置能打开的 DEBUG 下载演示属于本规则；文件位于 `PreviewSupport` 或用 `#if DEBUG` 包围不是豁免依据。

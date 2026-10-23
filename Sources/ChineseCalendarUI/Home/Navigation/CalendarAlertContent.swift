@@ -5,7 +5,7 @@ import NavigationCore
 /// 根据业务提示路由生成文案。Core 不理解清理数据或下载失败等业务含义。
 enum CalendarAlertContent {
     static func content(
-        for route: CalendarAlert, messages: [UUID: LocalizedStringResource]
+        for route: CalendarAlert, messages: [CalendarAlertMessageID: LocalizedStringResource]
     ) -> NavigationAlertContent<CalendarAlert.Action> {
         let acknowledge = NavigationAlertButton<CalendarAlert.Action>(
             CalendarStringKey.Common.Action.ok, action: .acknowledge

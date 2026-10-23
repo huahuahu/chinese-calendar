@@ -14,7 +14,7 @@ public final class NavigationPresentationNode<
     AlertRoute: NavigationAlertRoute
 >: Identifiable {
     /// 这一次打开模态的 ID，用于 SwiftUI 展示和指定关闭目标。
-    public var id: UUID {
+    public var id: NavigationPresentationID {
         guard case let .presentation(id) = layer.id else {
             preconditionFailure("A presentation node requires a presentation layer")
         }
@@ -32,7 +32,8 @@ public final class NavigationPresentationNode<
     let layer: NavigationLayer<Scope, Destination, AlertRoute>
 
     convenience init(
-        id: UUID = UUID(), destination: Destination, style: NavigationPresentationStyle = .sheet,
+        id: NavigationPresentationID = NavigationPresentationID(), destination: Destination,
+        style: NavigationPresentationStyle = .sheet,
         initialStack: NavigationStackID<Scope> = .primary,
         rootDestinations: [NavigationStackID<Scope>: Destination] = [:],
         paths: [NavigationStackID<Scope>: [Destination]] = [:]

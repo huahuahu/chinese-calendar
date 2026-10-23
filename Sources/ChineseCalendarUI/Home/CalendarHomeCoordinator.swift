@@ -9,15 +9,15 @@ import SwiftData
 @Observable
 final class CalendarHomeCoordinator {
     let router: CalendarRouter
-    var alertMessages: [UUID: LocalizedStringResource] = [:]
-    private(set) var yearPickerSessions: [UUID: CalendarYearPickerSession] = [:]
+    var alertMessages: [CalendarAlertMessageID: LocalizedStringResource] = [:]
+    private(set) var yearPickerSessions: [YearPickerSessionID: CalendarYearPickerSession] = [:]
     private var didOpenColdLaunchDeepLink = false
     private var storeIdentity: String?
     @ObservationIgnored private var historyStates: [
         ObjectIdentifier: (navigation: CalendarNavigationContext, state: CalendarHistoryState)
     ] = [:]
     #if DEBUG
-        private(set) var downloadPreviewSessions: [UUID: FullStoreDownloadPreviewState] = [:]
+        private(set) var downloadPreviewSessions: [DownloadPreviewSessionID: FullStoreDownloadPreviewState] = [:]
         @ObservationIgnored private var debugSplitStates: [
             ObjectIdentifier: (navigation: CalendarNavigationContext, state: CalendarDebugSplitState)
         ] = [:]
@@ -60,7 +60,7 @@ final class CalendarHomeCoordinator {
         }
     }
 
-    func selectYear(_ yearNumber: Int, sessionID: UUID) {
+    func selectYear(_ yearNumber: Int, sessionID: YearPickerSessionID) {
         guard let session = yearPickerSessions[sessionID],
               dismissPresentation(.yearPicker(sessionID: sessionID))
         else { return }
@@ -100,10 +100,11 @@ final class CalendarHomeCoordinator {
     }
 
     /// 也观察业务登记，覆盖同一轮界面更新前就被丢弃、从未显示的排队会话。
-    var presentationSessionIDs: Set<UUID> {
-        var ids = Set(yearPickerSessions.keys).union(alertMessages.keys)
+    var presentationSessionIDs: Set<CalendarPresentationSessionID> {
+        var ids = Set(yearPickerSessions.keys.map(CalendarPresentationSessionID.yearPicker))
+        ids.formUnion(alertMessages.keys.map(CalendarPresentationSessionID.alertMessage))
         #if DEBUG
-            ids.formUnion(downloadPreviewSessions.keys)
+            ids.formUnion(downloadPreviewSessions.keys.map(CalendarPresentationSessionID.downloadPreview))
         #endif
         return ids
     }
@@ -161,7 +162,7 @@ final class CalendarHomeCoordinator {
             }
         }
 
-        func presentDownloadPreviewDetails(sessionID: UUID) {
+        func presentDownloadPreviewDetails(sessionID: DownloadPreviewSessionID) {
             guard let parent = router.presentations.first(where: {
                 $0.destination == .downloadPreview(sessionID: sessionID)
             }), parent.sheet == nil else { return }

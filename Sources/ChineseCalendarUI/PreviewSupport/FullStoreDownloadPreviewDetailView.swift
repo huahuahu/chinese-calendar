@@ -2,7 +2,7 @@
     import SwiftUI
 
     struct FullStoreDownloadPreviewDetailView: View {
-        let sessionID: UUID
+        let sessionID: DownloadPreviewSessionID
         @Environment(CalendarHomeCoordinator.self) private var coordinator
 
         var body: some View {

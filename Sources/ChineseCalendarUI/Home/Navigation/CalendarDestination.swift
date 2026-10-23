@@ -16,7 +16,7 @@ enum CalendarDestination: NavigationDestination, Identifiable {
     case dynastySpan(orthodoxPeriodID: String)
     case reignEra(reignEraID: String)
     case emperor(String)
-    case yearPicker(sessionID: UUID)
+    case yearPicker(sessionID: YearPickerSessionID)
     case downloadDetails
     #if DEBUG
         case debugNavigation(id: UUID)
@@ -24,10 +24,10 @@ enum CalendarDestination: NavigationDestination, Identifiable {
         case debugSplitEmpty
         case debugSplitDetail(item: CalendarDebugSplitItem, level: Int)
         case debugNavigationTabs(id: UUID)
-        case downloadPreview(sessionID: UUID)
-        case downloadPreviewScenarios(sessionID: UUID)
+        case downloadPreview(sessionID: DownloadPreviewSessionID)
+        case downloadPreviewScenarios(sessionID: DownloadPreviewSessionID)
         case downloadPreviewSwitch
-        case downloadPreviewDetails(sessionID: UUID)
+        case downloadPreviewDetails(sessionID: DownloadPreviewSessionID)
     #endif
 
     var id: String {

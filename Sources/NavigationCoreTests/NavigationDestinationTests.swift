@@ -155,7 +155,7 @@ struct NavigationDestinationTests {
         #expect(router.rootPresentation.destination == .tabs)
     }
 
-    @Test func repeatedDestinationAndReusedUUIDNeverReviveOldContexts() throws {
+    @Test func repeatedDestinationAndReusedIDNeverReviveOldContexts() throws {
         let router = makeRouter()
         #expect(router.rootPresentation
             .present(.tabs, initialStack: .scope(.home), rootDestinations: tabRoots) == .applied)

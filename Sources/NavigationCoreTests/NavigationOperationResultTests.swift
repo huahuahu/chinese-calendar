@@ -117,7 +117,7 @@ struct NavigationOperationResultTests {
         #expect(router.dismissSheet() == .noChange(.notPresented))
         #expect(router.dismissFullScreen() == .noChange(.notPresented))
         #expect(router.dismissAllPresentations() == .noChange(.notPresented))
-        #expect(router.dismissPresentation(id: UUID()) == .noChange(.presentationNotFound))
+        #expect(router.dismissPresentation(id: NavigationPresentationID()) == .noChange(.presentationNotFound))
         #expect(router.presentAlert(.notice) == .applied)
         #expect(router.dismissAllPresentations() == .queued)
         #expect(router.rootPresentation.presentedAlert?.destination == .notice)

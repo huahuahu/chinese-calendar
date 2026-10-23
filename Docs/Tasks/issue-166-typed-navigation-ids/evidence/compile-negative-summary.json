@@ -1,0 +1,203 @@
+{
+  "issue": 166,
+  "generated_at": "2026-10-22T14:36:43.124172+00:00",
+  "verification": "Real Xcode-built modules; swiftc -typecheck; no replacement identity definitions",
+  "verifier": "Scripts/validate_navigation_identity_types.py",
+  "verifier_sha256": "afd5b2024bedc497e5022bd71274cc6d768f7b8a849535cb6bf0a7bb1e666995",
+  "compiler": "Apple Swift version 6.4 (swiftlang-6.4.0.34.1 clang-2100.3.34.1)\nTarget: arm64-apple-macosx27.0.0",
+  "sdk": "/Applications/Xcode-27.1.0-Release.Candidate.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator.sdk",
+  "target": "arm64-apple-ios26.0-simulator",
+  "build_products": "/Users/tigerguo/Library/Developer/Xcode/DerivedData/ChineseCalendar-beqeiniaicgsoebgjifgzptzlkyx/Build/Products/Debug-iphonesimulator",
+  "modules": [
+    {
+      "module": "NavigationCore",
+      "path": "/Users/tigerguo/Library/Developer/Xcode/DerivedData/ChineseCalendar-beqeiniaicgsoebgjifgzptzlkyx/Build/Products/Debug-iphonesimulator/NavigationCore.swiftmodule/arm64-apple-ios-simulator.swiftmodule",
+      "sha256": "bf84fdb9d54bf38a531d21663e4f7191853b40f9276b91fa04fb25d0b3aeafd5"
+    },
+    {
+      "module": "ChineseCalendarUI",
+      "path": "/Users/tigerguo/Library/Developer/Xcode/DerivedData/ChineseCalendar-beqeiniaicgsoebgjifgzptzlkyx/Build/Products/Debug-iphonesimulator/ChineseCalendarUI.swiftmodule/arm64-apple-ios-simulator.swiftmodule",
+      "sha256": "04da734d8e20029185245417f384fcfaed926df44adeb1cbf78f97442583b9be"
+    }
+  ],
+  "passed": true,
+  "positive_control": {
+    "passed": true,
+    "exit_code": 0,
+    "source_sha256": "f5478ece0f190bc8f1ba8e15a4d331267da2aaa8b4648820abd1ea9c28d32958",
+    "coverage": "Construct six identity types, require Hashable & Sendable, compare same-domain values, invoke each real API with its correct domain"
+  },
+  "negative_cases": {
+    "total": 45,
+    "passed": 45,
+    "comparison_count": 15,
+    "api_argument_count": 30,
+    "acceptance": "Nonzero compiler exit; every error is an exact type-mismatch diagnostic naming the expected two identity types; no import/SDK/other errors"
+  },
+  "rejected_comparison_pairs": [
+    [
+      "NavigationPresentationID",
+      "NavigationConfirmationID"
+    ],
+    [
+      "NavigationPresentationID",
+      "NavigationAlertID"
+    ],
+    [
+      "NavigationPresentationID",
+      "YearPickerSessionID"
+    ],
+    [
+      "NavigationPresentationID",
+      "DownloadPreviewSessionID"
+    ],
+    [
+      "NavigationPresentationID",
+      "CalendarAlertMessageID"
+    ],
+    [
+      "NavigationConfirmationID",
+      "NavigationAlertID"
+    ],
+    [
+      "NavigationConfirmationID",
+      "YearPickerSessionID"
+    ],
+    [
+      "NavigationConfirmationID",
+      "DownloadPreviewSessionID"
+    ],
+    [
+      "NavigationConfirmationID",
+      "CalendarAlertMessageID"
+    ],
+    [
+      "NavigationAlertID",
+      "YearPickerSessionID"
+    ],
+    [
+      "NavigationAlertID",
+      "DownloadPreviewSessionID"
+    ],
+    [
+      "NavigationAlertID",
+      "CalendarAlertMessageID"
+    ],
+    [
+      "YearPickerSessionID",
+      "DownloadPreviewSessionID"
+    ],
+    [
+      "YearPickerSessionID",
+      "CalendarAlertMessageID"
+    ],
+    [
+      "DownloadPreviewSessionID",
+      "CalendarAlertMessageID"
+    ]
+  ],
+  "rejected_api_arguments_by_expected_type": {
+    "NavigationPresentationID": [
+      "NavigationConfirmationID",
+      "NavigationAlertID",
+      "YearPickerSessionID",
+      "DownloadPreviewSessionID",
+      "CalendarAlertMessageID"
+    ],
+    "NavigationConfirmationID": [
+      "NavigationPresentationID",
+      "NavigationAlertID",
+      "YearPickerSessionID",
+      "DownloadPreviewSessionID",
+      "CalendarAlertMessageID"
+    ],
+    "NavigationAlertID": [
+      "NavigationPresentationID",
+      "NavigationConfirmationID",
+      "YearPickerSessionID",
+      "DownloadPreviewSessionID",
+      "CalendarAlertMessageID"
+    ],
+    "YearPickerSessionID": [
+      "NavigationPresentationID",
+      "NavigationConfirmationID",
+      "NavigationAlertID",
+      "DownloadPreviewSessionID",
+      "CalendarAlertMessageID"
+    ],
+    "DownloadPreviewSessionID": [
+      "NavigationPresentationID",
+      "NavigationConfirmationID",
+      "NavigationAlertID",
+      "YearPickerSessionID",
+      "CalendarAlertMessageID"
+    ],
+    "CalendarAlertMessageID": [
+      "NavigationPresentationID",
+      "NavigationConfirmationID",
+      "NavigationAlertID",
+      "YearPickerSessionID",
+      "DownloadPreviewSessionID"
+    ]
+  },
+  "diagnostic_examples": [
+    {
+      "case": "compare_presentation_with_confirmation",
+      "exit_code": 1,
+      "errors": [
+        "binary operator '==' cannot be applied to operands of type 'NavigationPresentationID' and 'NavigationConfirmationID'",
+        "binary operator '==' cannot be applied to operands of type 'NavigationPresentationID' and 'NavigationConfirmationID'"
+      ]
+    },
+    {
+      "case": "pass_confirmation_to_presentation_api",
+      "exit_code": 1,
+      "errors": [
+        "cannot convert value of type 'NavigationConfirmationID' to expected argument type 'NavigationPresentationID'",
+        "cannot convert value of type 'NavigationConfirmationID' to expected argument type 'NavigationPresentationID'"
+      ]
+    },
+    {
+      "case": "pass_presentation_to_confirmation_api",
+      "exit_code": 1,
+      "errors": [
+        "cannot convert value of type 'NavigationPresentationID' to expected argument type 'NavigationConfirmationID'",
+        "cannot convert value of type 'NavigationPresentationID' to expected argument type 'NavigationConfirmationID'"
+      ]
+    },
+    {
+      "case": "pass_presentation_to_alert_api",
+      "exit_code": 1,
+      "errors": [
+        "cannot convert value of type 'NavigationPresentationID' to expected argument type 'NavigationAlertID'",
+        "cannot convert value of type 'NavigationPresentationID' to expected argument type 'NavigationAlertID'"
+      ]
+    },
+    {
+      "case": "pass_presentation_to_year_picker_api",
+      "exit_code": 1,
+      "errors": [
+        "cannot convert value of type 'NavigationPresentationID' to expected argument type 'YearPickerSessionID'",
+        "cannot convert value of type 'NavigationPresentationID' to expected argument type 'YearPickerSessionID'"
+      ]
+    },
+    {
+      "case": "pass_presentation_to_download_preview_api",
+      "exit_code": 1,
+      "errors": [
+        "cannot convert value of type 'NavigationPresentationID' to expected argument type 'DownloadPreviewSessionID'",
+        "cannot convert value of type 'NavigationPresentationID' to expected argument type 'DownloadPreviewSessionID'"
+      ]
+    },
+    {
+      "case": "pass_presentation_to_alert_message_api",
+      "exit_code": 1,
+      "errors": [
+        "cannot convert value of type 'NavigationPresentationID' to expected argument type 'CalendarAlertMessageID'",
+        "cannot convert value of type 'NavigationPresentationID' to expected argument type 'CalendarAlertMessageID'"
+      ]
+    }
+  ],
+  "unexpected_failures": [],
+  "full_report_sha256": "b075dac20cb6d37dbc226f197fd7fc8793788d26d73f7fd7fe44ab603c1a628c"
+}

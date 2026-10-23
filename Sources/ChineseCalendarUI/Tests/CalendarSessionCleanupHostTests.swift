@@ -35,14 +35,14 @@ struct CalendarSessionCleanupHostTests {
         let root = coordinator.router.navigation.rootPresentation
         root.presentAlert(.clearDataSucceeded)
         let alert = try #require(root.presentedAlert)
-        #expect(root.alertWillPresent(id: alert.id, isConfirmation: false))
+        #expect(root.alertWillPresent(id: .business(alert.id)))
         coordinator.presentYearPicker(
             selection: CalendarSelection(selectedDayIndex: 0), modelContext: container.mainContext
         ) { _ in }
         coordinator.router.navigation.dismissAllPresentations()
-        root.alertWillDismiss(id: alert.id)
-        #expect(root.beginAlertCompletion(id: alert.id))
-        root.alertDidDismiss(id: alert.id)
+        root.alertWillDismiss(id: .business(alert.id))
+        #expect(root.beginAlertCompletion(id: .business(alert.id)))
+        root.alertDidDismiss(id: .business(alert.id))
         #expect(coordinator.router.navigation.retainedPresentationRoutes.isEmpty)
         #expect(coordinator.yearPickerSessions.count == 1)
         await waitForPickerCleanup(coordinator)

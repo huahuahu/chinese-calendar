@@ -14,8 +14,8 @@ struct CalendarAlertContentTests {
 
     @Test(arguments: [
         CalendarAlert.clearDataSucceeded,
-        .clearDataFailed(messageID: UUID()),
-        .downloadFailed(messageID: UUID())
+        .clearDataFailed(messageID: CalendarAlertMessageID()),
+        .downloadFailed(messageID: CalendarAlertMessageID())
     ])
     func noticesKeepASingleAcknowledgement(route: CalendarAlert) {
         let content = CalendarAlertContent.content(for: route, messages: [:])

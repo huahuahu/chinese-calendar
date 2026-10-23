@@ -4,6 +4,25 @@
 
 下面按需要改动的接口组织，目标都是当前 API。历史任务记录解释当时的决策和验证范围，其中的中间方案可能已经被后续设计替代。
 
+## 将 UUID 迁移为对应领域的身份
+
+直接修改保存身份的属性、字典键、集合、路由关联值和方法参数，不提供旧 UUID overload 或公开 raw-value 转换接口。
+
+| 原用途 | 当前类型 |
+| --- | --- |
+| `NavigationPresentationNode.id`、`NavigationLayerID.presentation`、模态查找和关闭 | `NavigationPresentationID` |
+| `NavigationConfirmation.id`、批准／取消导航确认 | `NavigationConfirmationID` |
+| `NavigationAlertNode.id` | `NavigationAlertID` |
+| App 年份选择会话 | `YearPickerSessionID` |
+| App DEBUG 下载演示会话 | `DownloadPreviewSessionID` |
+| App 提示临时文案 | `CalendarAlertMessageID` |
+
+Core 身份以 `NavigationPresentationID()` 等无参数初始化生成。更常见的做法是直接传递节点的 `id` 或 `pendingConfirmation.id`，不要把一个领域的 ID 当作另一个领域的凭证。App 的三种身份留在业务模块，不属于 NavigationCore 的 API。
+
+系统 alert 适配器的内部身份改为 `NavigationSystemAlertID`：业务为 `.business(node.id)`，框架确认为 `.confirmation(confirmation.id)`。`alertWillPresent` 不再接收 `isConfirmation`；present、willDismiss、beginCompletion 和 didDismiss 贯穿同一个带来源的身份。重复／过期／错误来源回调继续幂等。
+
+App 汇总登记从 `Set<UUID>` 迁移为 `Set<CalendarPresentationSessionID>`，分别包装 `.yearPicker`、`.downloadPreview` 和 `.alertMessage`。普通 DEBUG Destination 的 UUID 不属于这些会话身份，不需要机械替换。请求内容去重、结果枚举、日志与真实关闭时序保持不变。实现及编译失败验证见 [Issue #166](../../Docs/Tasks/issue-166-typed-navigation-ids/000-plan.md)。
+
 ## 将命令的 Bool／Void 返回值迁移为结果枚举
 
 本次直接迁移命令 API，不保留旧 Bool 包装。方法仍标记 `@discardableResult`，仅发起操作的调用可以继续忽略结果；读取结果的调用按下表更新。
