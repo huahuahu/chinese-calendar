@@ -13,14 +13,29 @@ final class NavigationPresentationEndpoint<
     private var records: [Record] = []
     private var isDetached = false
 
+    /// 立即更新所属层；返回任务只负责发起旧请求退出，真实完成仍由各自宿主决定。
+    @discardableResult
     func attach(
         context: NavigationPresentationContext<Scope, Destination, AlertRoute>,
         configuration: Configuration?
-    ) {
-        guard !isDetached, let layer = context.layer else { return }
+    ) -> Task<Void, Never>? {
+        guard !isDetached else { return nil }
+        let layer = context.layer
+        let previousRecords = layer == nil || self.layer !== layer ? records : []
+        if self.layer !== layer, self.layer?.presentationEndpoint === self {
+            self.layer?.presentationEndpoint = nil
+        }
         self.layer = layer
-        self.configuration = configuration
-        layer.presentationEndpoint = self
+        self.configuration = layer == nil ? nil : configuration
+        layer?.presentationEndpoint = self
+        guard !previousRecords.isEmpty else { return nil }
+        // 先完成归属切换，离开 SwiftUI 更新后再取消旧请求，避免 onFinish 在 body 内修改业务状态。
+        // 快照不含回调重入提交的新请求；已接手的旧请求仍由物理宿主等待真正关闭。
+        return Task { @MainActor in
+            for record in previousRecords {
+                record.tearDown()
+            }
+        }
     }
 
     func submit(
@@ -28,7 +43,8 @@ final class NavigationPresentationEndpoint<
         from context: NavigationPresentationContext<Scope, Destination, AlertRoute>,
         configuration: Configuration?, onFinish: @escaping @MainActor () -> Void
     ) -> NavigationPresentationSubmission {
-        guard !isDetached, let router = context.router,
+        guard !isDetached, let layer, context.layer === layer, layer.presentationEndpoint === self,
+              let router = context.router,
               let configuration = configuration ?? self.configuration
         else {
             return NavigationPresentationSubmission(result: .rejected(.hostUnavailable))

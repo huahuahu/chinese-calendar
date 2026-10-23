@@ -10,7 +10,8 @@ struct CalendarNavigationConfiguration<BottomStatusBar: View>: @MainActor Naviga
 
     let coordinator: CalendarHomeCoordinator
     let storeCoordinator: ChineseCalendarStoreCoordinator?
-    let bottomStatusBarIsPresented: Bool
+    /// 按次配置保留到模态结束，附件显隐仍在渲染时读取共享状态。
+    let bottomStatusBarIsPresented: () -> Bool
     let bottomStatusBar: () -> BottomStatusBar
 
     var yearFeature: CalendarYearFeature?

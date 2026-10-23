@@ -30,7 +30,7 @@ final class CalendarHomeCoordinator {
     ) -> some NavigationHostConfiguration<CalendarTab, CalendarDestination, CalendarAlert> {
         var configuration = CalendarNavigationConfiguration(
             coordinator: self, storeCoordinator: storeCoordinator,
-            bottomStatusBarIsPresented: false, bottomStatusBar: { EmptyView() }
+            bottomStatusBarIsPresented: { false }, bottomStatusBar: { EmptyView() }
         )
         configuration.yearFeature = feature
         configuration.yearPickerSession = session
@@ -43,7 +43,7 @@ final class CalendarHomeCoordinator {
         ) -> some NavigationHostConfiguration<CalendarTab, CalendarDestination, CalendarAlert> {
             var configuration = CalendarNavigationConfiguration(
                 coordinator: self, storeCoordinator: storeCoordinator,
-                bottomStatusBarIsPresented: false, bottomStatusBar: { EmptyView() }
+                bottomStatusBarIsPresented: { false }, bottomStatusBar: { EmptyView() }
             )
             configuration.downloadPreviewState = state
             return configuration

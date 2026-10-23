@@ -2,7 +2,7 @@
 
 - 方案：[000-plan.md](000-plan.md)
 - 关联：[Issue #165](https://github.com/huahuahu/chinese-calendar/issues/165)、[PR #170](https://github.com/huahuahu/chinese-calendar/pull/170)
-- 状态：原实现及宿主映射／签名补充各有本地 506 条通过证据；XcodeGen 2.45.3 遗漏 SettingPresets 的 CI 安装问题已在干净副本复现，完整安装修复后直接全量测试也通过 506 条实例。PR #170 尚未合并，远程 CI 状态以 PR 最新提交检查为准；OWN-07／09 的具体覆盖边界见验收表。
+- 状态：远端评论的两项 P2 已修复，本轮新增 16 个回归实例，完整 scheme 522 条及 App 构建通过；原实现及宿主映射／签名补充各有本地 506 条通过证据；XcodeGen 2.45.3 遗漏 SettingPresets 的 CI 安装问题已在干净副本复现，完整安装修复后直接全量测试也通过 506 条实例。PR #170 尚未合并，远程 CI 状态以 PR 最新提交检查为准；OWN-07／09 的具体覆盖边界见验收表。
 - 记录日期：2026-10-23 至 2026-10-24
 - 代码状态：`codex/issue-165-presentation-ownership` 的原实现提交 `edcf930e908a9bb9f5858fa23e52878da5d4adc0`，包含 126 个实现、测试与配置文件；提交 tree 为 `c4d7ffbbd74583560e603f42b20942e0c50bdb73`，对应下文 00:33 全量测试及原构建／静态检查证据。此后文档与 evidence 已单独提交；首轮 CI 的 head 为 `f2ebde6d56f5d164952313497d00ae56cc50823e`。宿主映射与 Simulator 签名补充的验证版本以该 `f2ebde6d` base 加 [ci-configuration.json](evidence/validation/ci-configuration.json) 中 `project.yml`／`Scripts/test.sh` 的 `configurationSHA256` 定位，已取得独立的全新 DerivedData 成功结果，随后提交为 `6cad5a9b13ce54a8f9077a62d20aa2a57dd6e449`。该轮使用本地完整安装的 XcodeGen 2.46，不能证明 CI 的 2.45.3 安装环境已修复。后续 SettingPresets 安装修复以 `6cad5a9b` base 加同一证据的 `xcodegenInstallationFix.workflowSHA256` 定位，已在 CI 同版 2.45.3、干净源码副本和全新 DerivedData 下完成直接全量回归。实施前基线为 `224b13aa38390c9f8f677ac9ab29a0980853655c`。
 
@@ -83,6 +83,19 @@ App 两条热 Deep Link 测试已经呈现真实 `UIAlertController`，但通过
 
 这轮直接测试于 2026-10-24 04:46:36 至 04:51:52（UTC+8，xcresult 时间）完成，命令退出码 0，输出 `TEST SUCCEEDED`；xcresult 确认 **506 passed、0 failed、0 skipped、0 expectedFailures**。[ci-configuration.json](evidence/validation/ci-configuration.json) 的 `xcodegenInstallationFix` 保存 base commit、workflow SHA256、release ZIP SHA256、31 份 preset 数量及修复前后的 warning／退出码／完整 summary。本轮 2.45.3 直接回归与前轮 2.46 的 signed 506 条测试分开记录；各自是本地运行证据，远程 CI 状态以 PR 最新提交检查为准。
 
+## 远端评论修复：宿主改绑与下载附件
+
+本轮以 `7fbbeac309afa02f2f89a7b92576a3f3def03774` 为基线，仅处理专项核验确认的两项 P2；源码 SHA256 与检查结果见 [remote-comment-fixes.json](evidence/validation/remote-comment-fixes.json)。
+
+- `endpoint-lifecycle-001`：同身份 `navigationHost` 改绑另一棵 Router 时，endpoint 立即按具体 layer 对象身份撤销旧关联并建立新关联。旧记录以快照在退出 SwiftUI 更新后发起 teardown，未接手请求直接结束，已接手请求继续等待真实物理关闭；record 的 teardown 幂等，旧回调重入或进一步改绑不会再次关闭已复用的 presenter。提交入口核对当前所属 layer 及其 backlink；同层 scoped／unscoped context 保持有效，失效 context 改绑也会撤销旧连接，之后仍可接入有效层。
+- `summary-claims-001`：`CalendarNavigationConfiguration` 保留附件显隐读取闭包，`.mainTabs` 渲染时才求值；生产 `ChineseCalendarRootView` 由该闭包读取当前 store 状态、内容层级和进度。每次呈现的配置和 session 身份仍保持稳定，不替换全部记录，不增加 App 集中缓存或公开内部状态。附件内容 builder 原本就实时读取 coordinator，此次保留该行为。
+
+新增回归覆盖 10 个 endpoint 实例、4 个真实 sheet／fullScreen 宿主改绑组合，以及 2 个真实主标签模态附件实例。后者在同一 presented controller 中验证 `false → true → false`、内容更新及一次结束通知；验证的是传入生产附件 modifier 的实时状态，未用 `onDisappear` 推断原生附件是否隐藏，也未新增手工像素检查。公开 `CalendarHomeView` 的 Bool 初始化参数保持值语义；仓库现有调用均使用默认 false，此次不把它扩展为任意外部客户端的动态输入接口。
+
+本轮 native Xcode MCP 定向运行 **16 passed**，随后完整 scheme 回归 **522 passed，0 failed／skipped／expectedFailures／notRun**；独立 `BuildProject` 成功、0 errors。完整回归于 2026-10-24 07:35 至 07:38（UTC+8）运行，使用本任务共享 Xcode／Simulator 配置；format、strict lint、本地化和 diff 检查均通过。专项修后审查已完成，未发现修复引入的实质回归，两项 finding 状态均为 `fixed-and-verified`。本轮源码状态由证据文件的 `sourceSHA256` 定位；最新提交的远程 CI 以 PR checks 为准，不混用前一提交的通过结果。
+
+原评审的同步 `.hostUnavailable` 主张仍按已接受合同排除；downloadFailure 回调早于子宿主就绪的真实 App 时序尚未复现，继续列为验证缺口，不加入重试机制，也不声称已修复。OWN-07／OWN-09 的原覆盖边界保持。
+
 ## 最终自动验证
 
 本节记录原实现提交 `edcf930e908a9bb9f5858fa23e52878da5d4adc0` 的本地验证；后续 CI 配置补充及其独立回归见上节。
@@ -149,4 +162,4 @@ App 两条热 Deep Link 测试已经呈现真实 `UIAlertController`，但通过
 1. 原实现、文档及 evidence 已分别提交并推送，已创建 [PR #170](https://github.com/huahuahu/chinese-calendar/pull/170)，尚未合并。宿主映射与 Simulator 签名补充后的远程 run 40021033420 失败记录保留；随后确认并修复 XcodeGen SettingPresets 安装缺失，在干净副本、CI 同版 2.45.3 和全新 DerivedData 下直接全量回归 506 条实例通过。各轮本地结果保持原环境边界，远程 CI 状态以 PR 最新提交检查为准，本记录不代表发布已完成。
 2. OWN-07 的 store／context、旧文件安全及外部请求完成已有分层自动证据和真实清空交互，但没有活动 picker、设置清空与待处理系统热 URL 的合并端到端场景。
 3. OWN-09 已有状态／context 自动测试、容器源码核对及实际布局交互；两个生产容器内部 `@State` 的退出释放没有直接 weak 观测。没有穷举全部布局、宽度和历史目标，也没有动画帧率数据。
-4. 下载交互使用模拟进度及本地 fixture，不包含真实网络下载或数据库安装。本次结果整理不代表已执行 `review-changes` 专项审查。
+4. 下载交互使用模拟进度及本地 fixture，不包含真实网络下载或数据库安装。后续已对远端评论及两项修复执行 `review-changes` 专项审查；未重做整份 PR 的所有验收。

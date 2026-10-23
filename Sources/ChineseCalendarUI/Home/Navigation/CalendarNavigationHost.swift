@@ -8,7 +8,7 @@ private struct CalendarNavigationHost<BottomStatusBar: View>: ViewModifier {
     let coordinator: CalendarHomeCoordinator
     let storeCoordinator: ChineseCalendarStoreCoordinator?
     let handlesExternalNavigation: Bool
-    let bottomStatusBarIsPresented: Bool
+    let bottomStatusBarIsPresented: () -> Bool
     let bottomStatusBar: () -> BottomStatusBar
 
     func body(content: Content) -> some View {
@@ -53,15 +53,16 @@ extension View {
     ) -> some View {
         calendarNavigationHost(
             coordinator: coordinator, storeCoordinator: storeCoordinator,
-            handlesExternalNavigation: handlesExternalNavigation, bottomStatusBarIsPresented: false
-        ) { EmptyView() }
+            handlesExternalNavigation: handlesExternalNavigation,
+            bottomStatusBarIsPresented: { false }, bottomStatusBar: { EmptyView() }
+        )
     }
 
     func calendarNavigationHost(
         coordinator: CalendarHomeCoordinator,
         storeCoordinator: ChineseCalendarStoreCoordinator? = nil,
         handlesExternalNavigation: Bool = false,
-        bottomStatusBarIsPresented: Bool,
+        bottomStatusBarIsPresented: @escaping () -> Bool,
         @ViewBuilder bottomStatusBar: @escaping () -> some View
     ) -> some View {
         modifier(CalendarNavigationHost(

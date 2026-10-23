@@ -58,7 +58,7 @@ struct CalendarAlertConfigurationTests {
     ) -> CalendarNavigationConfiguration<EmptyView> {
         CalendarNavigationConfiguration(
             coordinator: coordinator, storeCoordinator: store,
-            bottomStatusBarIsPresented: false, bottomStatusBar: { EmptyView() }
+            bottomStatusBarIsPresented: { false }, bottomStatusBar: { EmptyView() }
         )
     }
 }

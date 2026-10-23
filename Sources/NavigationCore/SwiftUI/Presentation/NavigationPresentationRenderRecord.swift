@@ -14,6 +14,7 @@ final class NavigationPresentationRenderRecord<
     private(set) var configuration: (any NavigationHostConfiguration<Scope, Destination, AlertRoute>)?
     private var onFinish: (@MainActor () -> Void)?
     private weak var endpoint: NavigationPresentationEndpoint<Scope, Destination, AlertRoute>?
+    private var teardownRequested = false
     var tearDownPresentation: (() -> Void)?
     var modalMount: NavigationModalMount?
     var cancelRequest: (() -> Void)?
@@ -52,6 +53,9 @@ final class NavigationPresentationRenderRecord<
     }
 
     func tearDown() {
+        // 旧请求可能仍在等待异步动作，重复切换宿主不能再次调用已经复用的 presenter。
+        guard !teardownRequested else { return }
+        teardownRequested = true
         cancelRequest?()
         guard !lifetime.finished else { return }
         if lifetime.hostClaimed {

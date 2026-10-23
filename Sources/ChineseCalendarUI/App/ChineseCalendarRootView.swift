@@ -43,12 +43,13 @@ public struct ChineseCalendarRootView: View {
             coordinator: homeCoordinator,
             storeCoordinator: coordinator,
             handlesExternalNavigation: true,
-            bottomStatusBarIsPresented: rootBottomStatusBarIsPresented
-        ) {
-            if case let .ready(_, contentLevel, _) = coordinator.state {
-                bottomStatusBar(contentLevel: contentLevel)
+            bottomStatusBarIsPresented: { rootBottomStatusBarIsPresented },
+            bottomStatusBar: {
+                if case let .ready(_, contentLevel, _) = coordinator.state {
+                    bottomStatusBar(contentLevel: contentLevel)
+                }
             }
-        }
+        )
         .calendarStoreEnvironment(state: coordinator.state)
     }
 

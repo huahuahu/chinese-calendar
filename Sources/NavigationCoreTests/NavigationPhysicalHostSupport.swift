@@ -122,13 +122,7 @@
             let windowLease = try await NavigationTestWindowLease.acquire()
             let host = PhysicalNavigationHost(windowLease: windowLease)
             host.router = router
-            try await host.mount(
-                NavigationRootView(context: router.rootPresentation)
-                    .navigationHost(
-                        context: router.rootPresentation,
-                        configuration: PhysicalHostConfiguration(name: "root", ledger: ledger)
-                    )
-            )
+            try await host.mount(navigationContent(router: router, ledger: ledger))
             return host
         }
 
@@ -140,7 +134,7 @@
         }
 
         private func mount(_ content: some View) async throws {
-            hosting.rootView = AnyView(content.onAppear { [weak self] in self?.appeared = true })
+            replaceContent(content)
             window.rootViewController = hosting
             window.makeKeyAndVisible()
             do {
@@ -152,6 +146,26 @@
                 removeFromWindow()
                 throw error
             }
+        }
+
+        private static func navigationContent(
+            router: NavigationPhysicalHostTests.Router, ledger: PhysicalHostLedger
+        ) -> some View {
+            NavigationRootView(context: router.rootPresentation)
+                .navigationHost(
+                    context: router.rootPresentation,
+                    configuration: PhysicalHostConfiguration(name: "root", ledger: ledger)
+                )
+        }
+
+        private func replaceContent(_ content: some View) {
+            hosting.rootView = AnyView(content.onAppear { [weak self] in self?.appeared = true })
+        }
+
+        /// 保持相同的 SwiftUI 结构，只替换宿主输入，测试另外核对 endpoint 对象没有重建。
+        func replaceRouter(_ router: NavigationPhysicalHostTests.Router, ledger: PhysicalHostLedger) {
+            self.router = router
+            replaceContent(Self.navigationContent(router: router, ledger: ledger))
         }
 
         func presentUIKitControl() async throws -> UIViewController {

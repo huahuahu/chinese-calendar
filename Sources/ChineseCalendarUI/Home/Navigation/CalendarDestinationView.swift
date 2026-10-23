@@ -6,7 +6,7 @@ import SwiftUI
 /// 供导航容器使用，将 CalendarDestination 分发到对应页面。
 struct CalendarDestinationView<BottomStatusBar: View>: View {
     let destination: CalendarDestination
-    let bottomStatusBarIsPresented: Bool
+    let bottomStatusBarIsPresented: () -> Bool
     let bottomStatusBar: () -> BottomStatusBar
     var yearFeature: CalendarYearFeature?
     var yearPickerSession: CalendarYearPickerSession?
@@ -23,7 +23,7 @@ struct CalendarDestinationView<BottomStatusBar: View>: View {
             switch destination {
             case .mainTabs:
                 CalendarHomeTabView(
-                    bottomStatusBarIsPresented: bottomStatusBarIsPresented,
+                    bottomStatusBarIsPresented: bottomStatusBarIsPresented(),
                     bottomStatusBar: bottomStatusBar
                 )
             case .calendarHome:

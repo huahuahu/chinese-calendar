@@ -411,4 +411,48 @@
             #expect(probe.finishes == 1)
         }
     }
+
+    extension NavigationPhysicalHostTests {
+        @Test(arguments: [NavigationPresentationStyle.sheet, .fullScreen], [false, true])
+        func sameHostRouterReplacementFinishesOldRequestAndKeepsNewLayerUsable(
+            style: NavigationPresentationStyle, afterPresentation: Bool
+        ) async throws {
+            let first = Router(rootDestination: .home)
+            let second = Router(rootDestination: .home)
+            let ledger = PhysicalHostLedger()
+            let host = try await PhysicalNavigationHost.show(router: first, ledger: ledger)
+            defer { host.removeFromWindow() }
+            let endpoint = try #require(first.rootLayer.presentationEndpoint)
+            var configuration: PhysicalHostConfiguration? = PhysicalHostConfiguration(
+                name: "replaced", ledger: ledger, resource: PhysicalHostResource()
+            )
+            weak var weakConfiguration = configuration
+            weak var weakResource = configuration?.resource
+            let observation = PhysicalDismissObservation()
+            let request: Request = style == .sheet ? .sheet(.first) : .fullScreen(.first)
+            let submission = first.rootPresentation.present(request, configuration: configuration) {
+                observation.recordFinish()
+            }
+            configuration = nil
+            #expect(submission.result == .applied)
+            if afterPresentation { observation.controller = try await host.waitForPresentation() }
+            host.replaceRouter(second, ledger: ledger)
+            try await host.waitUntil { observation.finishes == 1 && second.rootLayer.presentationEndpoint === endpoint }
+            if afterPresentation { #expect(observation.completedAfterPhysicalDismissal) }
+            try await host.waitUntil { weakConfiguration == nil && weakResource == nil }
+            #expect(first.rootLayer.presentationEndpoint == nil && host.presentedController == nil)
+            #expect(first.rootPresentation.present(.sheet(.second)).result == .rejected(.hostUnavailable))
+            var newFinishes = 0
+            let next: Request = style == .sheet ? .sheet(.second) : .fullScreen(.second)
+            let replacement = second.rootPresentation.present(next) { newFinishes += 1 }
+            #expect(replacement.result == .applied)
+            _ = try await host.waitForPresentation()
+            #expect(submission.handle?.dismiss() == .noChange(.notPresented))
+            #expect(newFinishes == 0 && observation.finishes == 1)
+            replacement.handle?.dismiss()
+            try await host.waitUntil { newFinishes == 1 }
+            await host.close()
+            #expect(observation.finishes == 1 && newFinishes == 1)
+        }
+    }
 #endif
