@@ -7,13 +7,8 @@ struct NavigationAlertHost<
     AlertRoute: NavigationAlertRoute
 >: ViewModifier {
     let context: NavigationPresentationContext<Scope, Destination, AlertRoute>
-    let alertContent: (AlertRoute) -> NavigationAlertContent<AlertRoute.Action>?
+    let alertDefinition: (AlertRoute) -> NavigationAlertDefinition?
     let confirmationContent: (NavigationRequest<Scope, Destination>) -> NavigationConfirmationContent?
-    let onAction: @MainActor (
-        AlertRoute,
-        AlertRoute.Action,
-        NavigationPresentationContext<Scope, Destination, AlertRoute>
-    ) async -> Void
 
     func body(content: Content) -> some View {
         content.background {
@@ -25,15 +20,12 @@ struct NavigationAlertHost<
     }
 
     private var alert: NavigationSystemAlert? {
-        if let node = context.presentedAlert, let copy = alertContent(node.destination) {
-            return makeAlert(id: .business(node.id), copy: copy) { action in
-                await onAction(node.destination, action, context)
-            }
+        if let node = context.presentedAlert, let definition = alertDefinition(node.destination) {
+            return NavigationSystemAlert(id: .business(node.id), definition: definition, context: context)
         }
         if let request = context.confirmation, let copy = confirmationContent(request.request) {
-            return makeAlert(
-                id: .confirmation(request.id),
-                copy: NavigationAlertContent(
+            let definition = NavigationAlertDefinition(
+                content: NavigationAlertContent(
                     title: copy.title, message: copy.message,
                     firstButton: NavigationAlertButton(copy.confirm, action: true),
                     cancelButton: NavigationAlertCancelButton(copy.cancel, action: false)
@@ -45,36 +37,8 @@ struct NavigationAlertHost<
                     context.cancelNavigation(id: request.id)
                 }
             }
+            return NavigationSystemAlert(id: .confirmation(request.id), definition: definition, context: context)
         }
         return nil
-    }
-
-    /// 两类提示共用系统展示与关闭生命周期，导航请求的批准和取消仍由 Router 处理。
-    private func makeAlert<Action: Hashable>(
-        id: NavigationSystemAlertID, copy: NavigationAlertContent<Action>,
-        action: @escaping @MainActor (Action) async -> Void
-    ) -> NavigationSystemAlert {
-        let buttons = copy.presentationButtons
-        return NavigationSystemAlert(
-            id: id, title: String(localized: copy.title), message: String(localized: copy.message),
-            buttons: buttons.map { button in
-                NavigationSystemAlert.Button(
-                    title: String(localized: button.title),
-                    isCancel: button.isCancel, isDestructive: button.isDestructive
-                )
-            },
-            willPresent: { context.alertWillPresent(id: id) },
-            willDismiss: { context.alertWillDismiss(id: id) },
-            didDismiss: { selection in
-                // 用独立 Task 等待按钮动作完成，再释放本次 alert 会话；页面重建不会取消这项任务。
-                Task { @MainActor in
-                    guard context.beginAlertCompletion(id: id) else { return }
-                    if let selection, buttons.indices.contains(selection) {
-                        await action(buttons[selection].action)
-                    }
-                    context.alertDidDismiss(id: id)
-                }
-            }
-        )
     }
 }

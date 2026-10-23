@@ -20,7 +20,7 @@ Router 保存“去哪里”的页面身份和导航结构。业务层负责 des
 
 `NavigationCore` 只理解泛型 scope、destination、path 和 presentation；不得依赖日历类型、SwiftData 模型、数据查询或业务页面。业务会话可以通过 ID 关联 `NavigationPresentationContext`，但不能成为第二套呈现状态源。
 
-所有 `present` 接收强类型路由数据，由宿主映射为页面或提示文案。业务适配器不接收或保存待展示的 View。业务 alert 定义独立 `AlertRoute` 与关联的 `Action` 类型，业务层处理按钮动作和异步工作。Core 统一保存待确认请求、排队的呈现、已批准的延迟请求和系统关闭事务，业务层不再另设关闭窗口或复制 presentation 树。
+所有 `present` 接收强类型路由数据，由宿主映射为页面或提示文案。业务适配器不接收或保存待展示的 View。业务 alert 定义独立 `AlertRoute`，各类提示使用自己的 Action；宿主配置通过 `NavigationAlertDefinition` 的泛型构造将内容与同类型异步 handler 绑定，再统一交给系统展示。Router 不保存 handler，不要求整树统一 Action，也不依赖运行时 route/action 配对。Core 统一保存待确认请求、排队的呈现、已批准的延迟请求和系统关闭事务，业务层不再另设关闭窗口或复制 presentation 树。
 
 ## NAV-03 — 发起作用域与生命周期
 
@@ -86,7 +86,7 @@ App 主 Tab 页面由 `.mainTabs` Destination 描述，根层选择它作为入�
 
 配置属于 View 宿主，不进入 Router 或两种操作 Context，不使用进程级注册。独立导航树可提供不同配置；同树的 Tab、模态及多 Tab 模态统一调用 `destination(for:)`，保留各自状态与 Context。栈只绑定 path、显示根页并调用页面构建方法，不根据所在层选择不同 builder，也不增加转调 builder 的包装 View。App 共享的数据上下文、数据完整度和 store coordinator 在覆盖根呈现宿主的位置统一注入；每个模态在入口获得本层 presentation，每个栈注入自己的 navigation 与发起栈信息。页面的 selection、业务会话 ModelContext 和回调仍按发起作用域传递，不能捕获根页固定业务上下文代替。
 
-业务配置提供页面和提示文案；容器归属由 Destination 声明，共享数据环境由 App 根部提供。`handleAlertAction` 处理业务动作，宿主等待它完成。配置不提供无参数的模态关闭回调，Core 自动处理实际关闭和延迟导航。业务根宿主观察 `retainedPresentationRoutes` 与 `alertRoutes`，按会话身份释放数据；前者包含活动、排队及关闭动画中的模态，栈缓存以 `router.retains(context)` 判断是否仍需保留。同步观察业务会话登记，覆盖同一轮界面更新前就被丢弃的队列。独立 Preview 也提供根配置；已经属于导航树的多 Tab 模态不再挂第二个根宿主。
+业务配置提供页面和提示文案；容器归属由 Destination 声明，共享数据环境由 App 根部提供。`alert(for:presentation:)` 将内容与对应业务 handler 配对，宿主在真实关闭后执行并等待完成。配置不提供无参数的模态关闭回调，Core 自动处理实际关闭和延迟导航。业务根宿主观察 `retainedPresentationRoutes` 与 `alertRoutes`，按会话身份释放数据；前者包含活动、排队及关闭动画中的模态，栈缓存以 `router.retains(context)` 判断是否仍需保留。同步观察业务会话登记，覆盖同一轮界面更新前就被丢弃的队列。独立 Preview 也提供根配置；已经属于导航树的多 Tab 模态不再挂第二个根宿主。
 
 Core 管理当前运行时的根、path、Tab 选择和递归模态，不提供完整导航树的公开快照、编码或恢复 API，App 也没有整树恢复适配。运行期间保留父层状态和各 Tab 路径，不等于跨启动恢复。新建 Router 和模态通过正常初始化建立；未来业务持久化需求需单独定义保存范围、数据校验和迁移策略，不能将临时会话、回调或 ModelContext 视为可保存的导航身份。
 

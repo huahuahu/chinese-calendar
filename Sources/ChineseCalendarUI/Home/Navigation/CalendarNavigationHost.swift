@@ -79,7 +79,7 @@ extension View {
 
 extension ChineseCalendarStoreCoordinator {
     var navigationStoreIdentity: String? {
-        guard case let .ready(_, contentLevel, identityToken) = state else { return nil }
-        return storeIdentity(contentLevel: contentLevel, identityToken: identityToken)
+        guard case let .ready(container, contentLevel, identityToken) = state else { return nil }
+        return storeIdentity(container: container, contentLevel: contentLevel, identityToken: identityToken)
     }
 }

@@ -1,0 +1,31 @@
+{
+  "revision": "5fc6a1043eebd119d25bd068a234abdaf95a7be4",
+  "time": "2026-10-23T06:55:17+08:00",
+  "thread": "com.apple.main-thread",
+  "source": "macOS DiagnosticReports crash report, selected frames only",
+  "frames": [
+    {
+      "symbol": "ChineseLunarMonth.days.getter",
+      "sourceFile": "@__swiftmacro_26ChineseCalendarPersistence0A10LunarMonthC4days18_PersistedPropertyfMa_.swift",
+      "sourceLine": 13
+    },
+    {
+      "symbol": "static ChineseCalendarRelationshipQueries.days(inMonth:)",
+      "sourceFile": "ChineseCalendarRelationshipQueries.swift",
+      "sourceLine": 7
+    },
+    {
+      "symbol": "LunarDayGrid.sortedDays.getter",
+      "sourceFile": "LunarDayGrid.swift",
+      "sourceLine": 23
+    },
+    {
+      "symbol": "LunarDayGrid.body.getter",
+      "sourceFile": "LunarDayGrid.swift",
+      "sourceLine": 27
+    },
+    {
+      "symbol": "GraphHost.flushTransactions()"
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "passed": true,
+  "command": [
+    "xcrun",
+    "swiftc",
+    "-typecheck",
+    "-swift-version",
+    "6",
+    "-sdk",
+    "/Applications/Xcode-27.1.0-Release.Candidate.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator.sdk",
+    "-target",
+    "arm64-apple-ios26.0-simulator",
+    "-I",
+    "/Users/tigerguo/Library/Developer/Xcode/DerivedData/ChineseCalendar-beqeiniaicgsoebgjifgzptzlkyx/Build/Products/Debug-iphonesimulator",
+    "-F",
+    "/Users/tigerguo/Library/Developer/Xcode/DerivedData/ChineseCalendar-beqeiniaicgsoebgjifgzptzlkyx/Build/Products/Debug-iphonesimulator/PackageFrameworks"
+  ],
+  "positive_count": 1,
+  "negative_count": 4,
+  "cases": [
+    {
+      "name": "positive",
+      "passed": true,
+      "exit_code": 0,
+      "diagnostics": ""
+    },
+    {
+      "name": "wrong_handler_first",
+      "passed": true,
+      "exit_code": 1,
+      "diagnostics": "/Users/tigerguo/.codex/worktrees/navigation-results-pr/Chinese-date/.output/issue-164-typecheck/wrong_handler_first.swift:26:74: error: cannot convert value of type '@MainActor @Sendable (SecondAction) async -> ()' to expected argument type '@MainActor @Sendable (FirstAction) async -> Void'\n   |                                                                          `- error: cannot convert value of type '@MainActor @Sendable (SecondAction) async -> ()' to expected argument type '@MainActor @Sendable (FirstAction) async -> Void'"
+    },
+    {
+      "name": "wrong_handler_second",
+      "passed": true,
+      "exit_code": 1,
+      "diagnostics": "/Users/tigerguo/.codex/worktrees/navigation-results-pr/Chinese-date/.output/issue-164-typecheck/wrong_handler_second.swift:26:75: error: cannot convert value of type '@MainActor @Sendable (FirstAction) async -> ()' to expected argument type '@MainActor @Sendable (SecondAction) async -> Void'\n   |                                                                           `- error: cannot convert value of type '@MainActor @Sendable (FirstAction) async -> ()' to expected argument type '@MainActor @Sendable (SecondAction) async -> Void'"
+    },
+    {
+      "name": "wrong_button",
+      "passed": true,
+      "exit_code": 1,
+      "diagnostics": "/Users/tigerguo/.codex/worktrees/navigation-results-pr/Chinese-date/.output/issue-164-typecheck/wrong_button.swift:27:78: error: cannot convert value of type 'SecondAction' to expected argument type 'FirstAction'\n   |                                                                              `- error: cannot convert value of type 'SecondAction' to expected argument type 'FirstAction'"
+    },
+    {
+      "name": "wrong_cancel_button",
+      "passed": true,
+      "exit_code": 1,
+      "diagnostics": "/Users/tigerguo/.codex/worktrees/navigation-results-pr/Chinese-date/.output/issue-164-typecheck/wrong_cancel_button.swift:27:84: error: cannot convert value of type 'SecondAction' to expected argument type 'FirstAction'\n   |                                                                                    `- error: cannot convert value of type 'SecondAction' to expected argument type 'FirstAction'"
+    }
+  ]
+}

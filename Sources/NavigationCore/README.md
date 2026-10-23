@@ -330,24 +330,48 @@ App 的 NavigationSplitView
 
 ```swift
 nonisolated enum AppAlert: NavigationAlertRoute {
-    case notice
-    enum Action: Hashable { case acknowledge }
+    case notice, openDetail
 }
+nonisolated enum NoticeAction: Hashable { case acknowledge }
+nonisolated enum DetailAction: Hashable { case open, cancel }
 ```
 
 在 `DemoConfiguration` 中增加提示映射：
 
 ```swift
-func alertContent(for route: AppAlert) -> NavigationAlertContent<AppAlert.Action>? {
-    NavigationAlertContent(
-        title: "提示",
-        message: "资料已更新。",
-        firstButton: NavigationAlertButton("知道了", action: .acknowledge)
-    )
+func alert(for route: AppAlert, presentation: AppPresentation) -> NavigationAlertDefinition? {
+    switch route {
+    case .notice:
+        NavigationAlertDefinition(
+            content: NavigationAlertContent(
+                title: "提示", message: "资料已更新。",
+                firstButton: NavigationAlertButton("知道了", action: NoticeAction.acknowledge)
+            )
+        ) { action in
+            switch action {
+            case .acknowledge: break
+            }
+        }
+    case .openDetail:
+        NavigationAlertDefinition(
+            content: NavigationAlertContent(
+                title: "查看资料？", message: "将打开资料页面。",
+                firstButton: NavigationAlertButton("查看", action: DetailAction.open),
+                cancelButton: NavigationAlertCancelButton("取消", action: .cancel)
+            )
+        ) { action in
+            switch action {
+            case .open: presentation.present(.detail(id: 42))
+            case .cancel: break
+            }
+        }
+    }
 }
 ```
 
-页面通过 `presentation.present(.alert(.notice))` 提交提示。需要执行保存、删除等业务动作时，在配置中实现 `handleAlertAction(_:action:presentation:) async`。宿主在系统提示真实关闭后调用它，并等待异步工作完成再处理后续导航。单纯关闭提示无需实现该方法。
+页面通过 `presentation.present(.alert(.notice))` 提交提示。`NavigationAlertDefinition` 的泛型初始化器同时绑定 content 和异步 handler：`NoticeAction` 的内容不能接 `DetailAction` 的 handler。每个 handler 完整处理自己的选项，不需要其他提示的 case 或 default；同类提示也可以复用一个 Action。
+
+具体 Action 在定义内部捕获为按钮动作，调用方无需强转或运行时 route/action 校验。Router 和队列只保存路由，definition 与 handler 由宿主配置构建。宿主在系统提示真实关闭后执行动作，并等待异步工作完成再处理后续导航；单纯关闭的提示也显式提供只处理自身 Action 的空操作。框架离开确认使用独立的内部动作类型，不并入业务 Action。
 
 提示必须至少有一个按钮：普通／危险按钮使用必填 `firstButton` 和可选 `additionalButtons`；取消按钮使用单独的 `cancelButton: NavigationAlertCancelButton<Action>`。只有取消按钮时，使用 `NavigationAlertContent(title:message:cancelButton:)`。
 
@@ -401,7 +425,7 @@ func confirmationContent(
 业务 alert 存在时，外部请求保留最新目标及其确认要求，按以下顺序推进：
 
 1. 当前提示实际关闭。
-2. `handleAlertAction` 的异步业务动作完成。
+2. `NavigationAlertDefinition` 所绑定的异步业务动作完成。
 3. 同层排队呈现按顺序处理；若排到页面模态，等待该页关闭后继续。
 4. 重新评估外部请求：仍有页面模态则显示离开确认，只有根 alert 的场景可直接导航。
 5. 获准后等待模态树真实关闭，再应用目标。

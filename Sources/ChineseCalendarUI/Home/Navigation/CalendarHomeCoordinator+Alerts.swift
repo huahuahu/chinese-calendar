@@ -11,29 +11,42 @@ extension CalendarHomeCoordinator {
         return false
     }
 
-    /// 宿主在 alert 真正关闭后调用；异步业务处理结束前，外部导航继续等待。
-    func handleAlertAction(
-        _ route: CalendarAlert, action: CalendarAlert.Action,
-        presentation: CalendarPresentationContext, store: ChineseCalendarStoreCoordinator?
+    /// 宿主在提示真正关闭后调用；清理结束并登记结果提示前，外部导航继续等待。
+    func handleClearDownloadedDataAction(
+        _ action: ClearDownloadedDataAction, presentation: CalendarPresentationContext,
+        clearDownloadedData: (@MainActor () async throws -> Void)?
     ) async {
-        if let id = route.messageID { alertMessages[id] = nil }
         switch action {
-        case .acknowledge, .cancel:
+        case .cancel:
             break
-        case .clearDownloadedData:
-            guard route == .clearDownloadedData, let store else { return }
+        case .clear:
+            guard let clearDownloadedData else { return }
             do {
-                try await store.clearDownloadedData()
+                try await clearDownloadedData()
                 presentation.present(.alert(.clearDataSucceeded))
             } catch {
                 let id = CalendarAlertMessageID()
                 alertMessages[id] = CalendarStoreErrorPresentation.message(for: error, operation: .clear)
                 if !presentation.present(.alert(.clearDataFailed(messageID: id))).isAccepted { alertMessages[id] = nil }
             }
-        #if DEBUG
-            case .openHistory:
-                router.navigation.submit(.push(.debugNavigation(id: UUID()), on: .history))
-        #endif
         }
     }
+
+    func handleNoticeAction(_ action: CalendarNoticeAction, messageID: CalendarAlertMessageID? = nil) {
+        switch action {
+        case .acknowledge:
+            if let messageID { alertMessages[messageID] = nil }
+        }
+    }
+
+    #if DEBUG
+        func handleDebugNavigationAction(_ action: CalendarDebugNavigationAction) {
+            switch action {
+            case .cancel:
+                break
+            case .openHistory:
+                router.navigation.submit(.push(.debugNavigation(id: UUID()), on: .history))
+            }
+        }
+    #endif
 }

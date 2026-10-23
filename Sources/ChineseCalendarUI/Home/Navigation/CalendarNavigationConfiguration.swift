@@ -18,6 +18,7 @@ struct CalendarNavigationConfiguration<BottomStatusBar: View>: @MainActor Naviga
             destination: destination, bottomStatusBarIsPresented: bottomStatusBarIsPresented,
             bottomStatusBar: bottomStatusBar
         )
+        .calendarStoreContent(state: storeCoordinator?.state)
     }
 
     func confirmationContent(
@@ -26,13 +27,45 @@ struct CalendarNavigationConfiguration<BottomStatusBar: View>: @MainActor Naviga
         CalendarNavigationConfirmation.content(for: request)
     }
 
-    func alertContent(for route: CalendarAlert) -> NavigationAlertContent<CalendarAlert.Action>? {
-        CalendarAlertContent.content(for: route, messages: coordinator.alertMessages)
-    }
-
-    func handleAlertAction(
-        _ route: CalendarAlert, action: CalendarAlert.Action, presentation: CalendarPresentationContext
-    ) async {
-        await coordinator.handleAlertAction(route, action: action, presentation: presentation, store: storeCoordinator)
+    func alert(for route: CalendarAlert, presentation: CalendarPresentationContext) -> NavigationAlertDefinition? {
+        switch route {
+        case .clearDownloadedData:
+            let clearDownloadedData: (@MainActor () async throws -> Void)? = if let store = storeCoordinator {
+                { try await store.clearDownloadedData() }
+            } else {
+                nil
+            }
+            return NavigationAlertDefinition(content: CalendarAlertContent.clearDownloadedData) { action in
+                await coordinator.handleClearDownloadedDataAction(
+                    action, presentation: presentation, clearDownloadedData: clearDownloadedData
+                )
+            }
+        case .clearDataSucceeded:
+            return NavigationAlertDefinition(content: CalendarAlertContent.clearDataSucceeded) { action in
+                coordinator.handleNoticeAction(action)
+            }
+        case let .clearDataFailed(id):
+            return NavigationAlertDefinition(
+                content: CalendarAlertContent.clearDataFailed(message: coordinator.alertMessages[id])
+            ) { action in
+                coordinator.handleNoticeAction(action, messageID: id)
+            }
+        case let .downloadFailed(id):
+            return NavigationAlertDefinition(
+                content: CalendarAlertContent.downloadFailed(message: coordinator.alertMessages[id])
+            ) { action in
+                coordinator.handleNoticeAction(action, messageID: id)
+            }
+        #if DEBUG
+            case let .debugNotice(number):
+                return NavigationAlertDefinition(content: CalendarAlertContent.debugNotice(number: number)) { action in
+                    coordinator.handleNoticeAction(action)
+                }
+            case .debugNavigationChoice:
+                return NavigationAlertDefinition(content: CalendarAlertContent.debugNavigationChoice) { action in
+                    coordinator.handleDebugNavigationAction(action)
+                }
+        #endif
+        }
     }
 }

@@ -1,0 +1,37 @@
+2026-10-23 06:49:57.150145+0800 [54802:71500169] [persistence] Keeping installed full seed store instead of reinstalling bundled base store
+2026-10-23 06:50:22.365833+0800 [54802:71500169] [navigation] operation=setSelectedStack outcome=applied reason=none layer=root stack=none
+2026-10-23 06:50:50.436089+0800 [54802:71500169] [navigation] operation=push outcome=applied reason=none layer=root stack=scope(ChineseCalendarUI.CalendarTab.settings)
+2026-10-23 06:50:58.779160+0800 [54802:71500169] [navigation] operation=presentAlert outcome=applied reason=none layer=root stack=none
+2026-10-23 06:51:14.560219+0800 [54802:71500169] [navigation] operation=presentAlert outcome=applied reason=none layer=root stack=none
+2026-10-23 06:51:14.560452+0800 [54802:71500169] [navigation] operation=presentAlert outcome=queued reason=none layer=root stack=none
+2026-10-23 06:51:22.769709+0800 [54802:71500169] [navigation] operation=resumePresentation outcome=applied reason=none layer=root stack=none
+2026-10-23 06:51:49.560324+0800 [54802:71500169] [navigation] operation=presentAlert outcome=applied reason=none layer=root stack=none
+2026-10-23 06:52:02.277239+0800 [54802:71500169] [navigation] operation=presentAlert outcome=applied reason=none layer=root stack=none
+2026-10-23 06:52:11.655553+0800 [54802:71500169] [navigation] operation=submit outcome=deferredUntilAlertDismisses reason=none layer=root stack=scope(ChineseCalendarUI.CalendarTab.history)
+2026-10-23 06:52:11.655879+0800 [54802:71500169] [navigation] operation=submit outcome=applied reason=none layer=root stack=scope(ChineseCalendarUI.CalendarTab.history)
+2026-10-23 06:52:11.716154+0800 [54802:71500169] [navigation] operation=setPath outcome=applied reason=none layer=root stack=scope(ChineseCalendarUI.CalendarTab.history)
+2026-10-23 06:52:11.816323+0800 [54802:71500169] [navigation] operation=setPath outcome=applied reason=none layer=root stack=scope(ChineseCalendarUI.CalendarTab.history)
+2026-10-23 06:52:19.562201+0800 [54802:71500169] [navigation] operation=present outcome=applied reason=none layer=root stack=none
+2026-10-23 06:52:42.200495+0800 [54802:71500169] [navigation] operation=presentAlert outcome=applied reason=none layer=presentation(<id>) stack=none
+2026-10-23 06:52:42.200841+0800 [54802:71500169] [navigation] operation=submit outcome=deferredUntilAlertDismisses reason=none layer=root stack=scope(ChineseCalendarUI.CalendarTab.history)
+2026-10-23 06:52:49.549004+0800 [54802:71500169] [navigation] operation=submit outcome=awaitingConfirmation reason=none layer=root stack=scope(ChineseCalendarUI.CalendarTab.history)
+2026-10-23 06:53:08.331950+0800 [54802:71500169] [navigation] operation=cancelConfirmation outcome=applied reason=none layer=root stack=none
+2026-10-23 06:53:32.910511+0800 [54802:71500169] [navigation] operation=presentAlert outcome=applied reason=none layer=presentation(<id>) stack=none
+2026-10-23 06:53:32.910801+0800 [54802:71500169] [navigation] operation=submit outcome=deferredUntilAlertDismisses reason=none layer=root stack=scope(ChineseCalendarUI.CalendarTab.history)
+2026-10-23 06:53:40.784420+0800 [54802:71500169] [navigation] operation=submit outcome=awaitingConfirmation reason=none layer=root stack=scope(ChineseCalendarUI.CalendarTab.history)
+2026-10-23 06:54:06.694056+0800 [54802:71500169] [navigation] operation=submit outcome=deferredUntilAlertDismisses reason=none layer=root stack=scope(ChineseCalendarUI.CalendarTab.history)
+2026-10-23 06:54:06.694386+0800 [54802:71500169] [navigation] operation=dismissAllPresentations outcome=applied reason=none layer=root stack=none
+2026-10-23 06:54:06.694413+0800 [54802:71500169] [navigation] operation=submit outcome=deferredUntilPresentationDismisses reason=none layer=root stack=scope(ChineseCalendarUI.CalendarTab.history)
+2026-10-23 06:54:07.308559+0800 [54802:71500169] [navigation] operation=dismissPresented outcome=noChange reason=presentationNotFound layer=root stack=none
+2026-10-23 06:54:07.308777+0800 [54802:71500169] [navigation] operation=applyDeferredRequest outcome=applied reason=none layer=root stack=scope(ChineseCalendarUI.CalendarTab.history)
+2026-10-23 06:54:32.979090+0800 [54802:71500169] [navigation] operation=setSelectedStack outcome=applied reason=none layer=root stack=none
+2026-10-23 06:54:41.177755+0800 [54802:71500169] [navigation] operation=setPath outcome=applied reason=none layer=root stack=scope(ChineseCalendarUI.CalendarTab.settings)
+2026-10-23 06:54:48.778738+0800 [54802:71500169] [navigation] operation=presentAlert outcome=applied reason=none layer=root stack=none
+2026-10-23 06:55:04.060980+0800 [54802:71500169] [navigation] operation=presentAlert outcome=applied reason=none layer=root stack=none
+2026-10-23 06:55:12.452863+0800 [54802:71500169] [persistence] Clearing downloaded seed store and restoring bundled base store
+2026-10-23 06:55:12.453459+0800 [54802:71517022] [logging] BUG IN CLIENT OF libsqlite3.dylib: database integrity compromised by API violation: vnode unlinked while in use: <Simulator AppGroup>/ChineseCalendarStore/ChineseCalendar.sqlite
+2026-10-23 06:55:12.453525+0800 [54802:71517022] [logging] invalidated open fd: 4 (0x11)
+2026-10-23 06:55:12.485137+0800 [54802:71500169] [navigation] operation=presentAlert outcome=queued reason=none layer=root stack=none
+2026-10-23 06:55:12.485308+0800 [54802:71500169] [navigation] operation=resumePresentation outcome=applied reason=none layer=root stack=none
+SwiftData/BackingData.swift:897: Fatal error: This model instance was destroyed by calling ModelContext.reset and is no longer usable. PersistentIdentifier(id: SwiftData.PersistentIdentifier.ID(backing: SwiftData.PersistentIdentifier.PersistentIdentifierBacking.managedObjectID(0xa4deb4fb50368a2b <x-coredata://8985B849-6549-494A-870C-8ED3E941B27F/ChineseLunarMonth/p29584>)))
+The connection to the application standard output has been closed.

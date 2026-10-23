@@ -1,0 +1,345 @@
+
+=== 05-full-calendar ===
+command: ''
+applicationState: Running
+Application, pid: 68489, label: 'Chinese Calendar'
+NavigationBar, {{0.0, 62.0}, {440.0, 106.3}}, identifier: '日历', hitPoint: {220.0, 115.2}
+StaticText, {{20.0, 116.0}, {72.0, 45.7}}, label: '日历', hitPoint: {56.0, 138.8}
+Button, {{86.0, 200.3}, {194.0, 58.3}}, label: '丙午年 九月大、2026/10/10 – 2026/11/8', hitPoint: {183.0, 229.5}
+StaticText, {{86.0, 200.3}, {154.3, 31.3}}, label: '丙午年 九月大', hitPoint: {163.2, 216.0}
+StaticText, {{32.0, 362.7}, {99.3, 31.3}}, label: '农历月格', hitPoint: {81.7, 378.3}
+Button, {{32.0, 406.0}, {88.0, 107.3}}, label: '初一，日干支，丁巳，10/10', hitPoint: {76.0, 459.7}
+Button, {{128.0, 752.0}, {88.0, 107.3}}, label: '十四，今天，日干支，庚午，10/23', Selected, hitPoint: {172.0, 805.7}
+Button, {{87.0, 877.0}, {94.0, 54.0}}, identifier: 'calendar', label: '日历', Selected, hitPoint: {134.0, 904.0}
+Button, {{173.0, 877.0}, {94.0, 54.0}}, identifier: 'timeline.selection', label: '朝代', hitPoint: {220.0, 904.0}
+Button, {{259.0, 877.0}, {94.0, 54.0}}, identifier: 'gearshape', label: '设置', hitPoint: {306.0, 904.0}
+
+=== 06-settings-full ===
+command: 't 306.0 904.0'
+applicationState: Running
+Application, pid: 68489, label: 'Chinese Calendar'
+NavigationBar, {{0.0, 62.0}, {440.0, 106.3}}, identifier: '设置', hitPoint: {220.0, 115.2}
+StaticText, {{20.0, 116.0}, {72.0, 45.7}}, label: '设置', hitPoint: {56.0, 138.8}
+StaticText, {{38.7, 352.0}, {226.3, 25.3}}, label: '已安装完整日期数据', hitPoint: {151.8, 364.7}
+StaticText, {{40.0, 383.3}, {326.3, 49.0}}, label: '清空后会回到基础数据，日级记录需要重新下载完整数据后才能浏览。', hitPoint: {203.2, 407.8}
+Button, {{20.0, 451.3}, {400.0, 56.3}}, label: '清空已下载数据', hitPoint: {220.0, 479.5}
+StaticText, {{41.3, 465.0}, {183.7, 29.3}}, label: '清空已下载数据', hitPoint: {133.2, 479.7}
+Button, {{87.0, 877.0}, {94.0, 54.0}}, identifier: 'calendar', label: '日历', hitPoint: {134.0, 904.0}
+Button, {{173.0, 877.0}, {94.0, 54.0}}, identifier: 'timeline.selection', label: '朝代', hitPoint: {220.0, 904.0}
+Button, {{259.0, 877.0}, {94.0, 54.0}}, identifier: 'gearshape', label: '设置', Selected, hitPoint: {306.0, 904.0}
+
+=== 07-clear-confirmation ===
+command: 't 220.0 479.5'
+applicationState: Running
+Application, pid: 68489, label: 'Chinese Calendar'
+Alert, {{60.0, 351.3}, {320.0, 281.3}}, label: '清空已下载数据？', hitPoint: {220.0, 492.0}
+StaticText, {{90.0, 382.3}, {260.0, 25.3}}, label: '清空已下载数据？', hitPoint: {220.0, 395.0}
+StaticText, {{90.0, 421.0}, {260.0, 71.0}}, label: '这会取消正在进行的完整数据下载，删除下载缓存，并恢复到内置基础日历数据。', hitPoint: {220.0, 456.5}
+Button, {{76.0, 512.7}, {288.0, 48.0}}, label: '清空已下载数据', hitPoint: {220.0, 536.7}
+Button, {{76.0, 568.7}, {288.0, 48.0}}, label: '取消', hitPoint: {220.0, 592.7}
+
+=== 08-clear-cancel ===
+command: 't 220.0 592.7'
+applicationState: Running
+Application, pid: 68489, label: 'Chinese Calendar'
+NavigationBar, {{0.0, 62.0}, {440.0, 106.3}}, identifier: '设置', hitPoint: {220.0, 115.2}
+StaticText, {{20.0, 116.0}, {72.0, 45.7}}, label: '设置', hitPoint: {56.0, 138.8}
+StaticText, {{38.7, 352.0}, {226.3, 25.3}}, label: '已安装完整日期数据', hitPoint: {151.8, 364.7}
+StaticText, {{40.0, 383.3}, {326.3, 49.0}}, label: '清空后会回到基础数据，日级记录需要重新下载完整数据后才能浏览。', hitPoint: {203.2, 407.8}
+Button, {{20.0, 451.3}, {400.0, 56.3}}, label: '清空已下载数据', hitPoint: {220.0, 479.5}
+StaticText, {{41.3, 465.0}, {183.7, 29.3}}, label: '清空已下载数据', hitPoint: {133.2, 479.7}
+Button, {{87.0, 877.0}, {94.0, 54.0}}, identifier: 'calendar', label: '日历', hitPoint: {134.0, 904.0}
+Button, {{173.0, 877.0}, {94.0, 54.0}}, identifier: 'timeline.selection', label: '朝代', hitPoint: {220.0, 904.0}
+Button, {{259.0, 877.0}, {94.0, 54.0}}, identifier: 'gearshape', label: '设置', Selected, hitPoint: {306.0, 904.0}
+
+=== 09-clear-confirm-again ===
+command: 't 220.0 479.5'
+applicationState: Running
+Application, pid: 68489, label: 'Chinese Calendar'
+Alert, {{60.0, 351.3}, {320.0, 281.3}}, label: '清空已下载数据？', hitPoint: {220.0, 492.0}
+StaticText, {{90.0, 382.3}, {260.0, 25.3}}, label: '清空已下载数据？', hitPoint: {220.0, 395.0}
+StaticText, {{90.0, 421.0}, {260.0, 71.0}}, label: '这会取消正在进行的完整数据下载，删除下载缓存，并恢复到内置基础日历数据。', hitPoint: {220.0, 456.5}
+Button, {{76.0, 512.7}, {288.0, 48.0}}, label: '清空已下载数据', hitPoint: {220.0, 536.7}
+Button, {{76.0, 568.7}, {288.0, 48.0}}, label: '取消', hitPoint: {220.0, 592.7}
+
+=== 11-clear-success-stable ===
+command: ''
+applicationState: Running
+Application, pid: 68489, label: 'Chinese Calendar'
+Alert, {{60.0, 391.3}, {320.0, 201.3}}, label: '已清空', hitPoint: {220.0, 492.0}
+StaticText, {{90.0, 422.3}, {260.0, 25.3}}, label: '已清空', hitPoint: {220.0, 435.0}
+StaticText, {{90.0, 461.0}, {260.0, 47.0}}, label: '已删除下载数据，并恢复到内置基础日历数据。', hitPoint: {220.0, 484.5}
+Button, {{76.0, 528.7}, {288.0, 48.0}}, label: '好', hitPoint: {220.0, 552.7}
+
+=== 12-clear-acknowledged ===
+command: 't 220.0 552.7'
+applicationState: Running
+Application, pid: 68489, label: 'Chinese Calendar'
+NavigationBar, {{0.0, 62.0}, {440.0, 106.3}}, identifier: '设置', hitPoint: {220.0, 115.2}
+StaticText, {{20.0, 116.0}, {72.0, 45.7}}, label: '设置', hitPoint: {56.0, 138.8}
+StaticText, {{38.0, 352.0}, {247.0, 25.3}}, label: '正在使用内置基础数据', hitPoint: {161.5, 364.7}
+StaticText, {{40.0, 383.3}, {345.7, 49.0}}, label: '没有已安装的完整日期数据；仍可清理未完成的下载缓存。', hitPoint: {212.8, 407.8}
+Button, {{20.0, 451.3}, {400.0, 56.3}}, label: '清空已下载数据', hitPoint: {220.0, 479.5}
+StaticText, {{41.3, 465.0}, {183.7, 29.3}}, label: '清空已下载数据', hitPoint: {133.2, 479.7}
+StaticText, {{38.7, 829.0}, {202.3, 24.0}}, label: '可下载完整日期数据', hitPoint: {139.8, 841.0}
+Button, {{25.0, 877.0}, {134.7, 54.0}}, identifier: 'calendar', label: '日历', hitPoint: {92.3, 904.0}
+Button, {{152.7, 877.0}, {134.7, 54.0}}, identifier: 'timeline.selection', label: '朝代', hitPoint: {220.0, 904.0}
+Button, {{280.3, 877.0}, {134.7, 54.0}}, identifier: 'gearshape', label: '设置', Selected, hitPoint: {347.7, 904.0}
+
+=== 13-base-calendar ===
+command: 't 92.3 904.0'
+applicationState: Running
+Application, pid: 68489, label: 'Chinese Calendar'
+NavigationBar, {{0.0, 62.0}, {440.0, 106.3}}, identifier: '日历', hitPoint: {220.0, 115.2}
+StaticText, {{20.0, 116.0}, {72.0, 45.7}}, label: '日历', hitPoint: {56.0, 138.8}
+StaticText, {{128.5, 236.3}, {183.0, 98.5}}, label: '需要完整日期数据', hitPoint: {220.0, 285.6}
+StaticText, {{103.3, 337.8}, {233.3, 88.7}}, label: '当前内置数据只有年份和月份。请先下载完整日期数据，再浏览日历。', hitPoint: {220.0, 382.2}
+StaticText, {{38.7, 829.0}, {202.3, 24.0}}, label: '可下载完整日期数据', hitPoint: {139.8, 841.0}
+Button, {{25.0, 877.0}, {134.7, 54.0}}, identifier: 'calendar', label: '日历', Selected, hitPoint: {92.3, 904.0}
+Button, {{152.7, 877.0}, {134.7, 54.0}}, identifier: 'timeline.selection', label: '朝代', hitPoint: {220.0, 904.0}
+Button, {{280.3, 877.0}, {134.7, 54.0}}, identifier: 'gearshape', label: '设置', hitPoint: {347.7, 904.0}
+
+=== 14-base-history ===
+command: 't 220.0 904.0'
+applicationState: Running
+Application, pid: 68489, label: 'Chinese Calendar'
+NavigationBar, {{0.0, 62.0}, {440.0, 106.3}}, identifier: '朝代', hitPoint: {220.0, 115.2}
+StaticText, {{20.0, 116.0}, {72.0, 45.7}}, label: '朝代', hitPoint: {56.0, 138.8}
+StaticText, {{38.7, 829.0}, {202.3, 24.0}}, label: '可下载完整日期数据', hitPoint: {139.8, 841.0}
+Button, {{25.0, 877.0}, {134.7, 54.0}}, identifier: 'calendar', label: '日历', hitPoint: {92.3, 904.0}
+Button, {{152.7, 877.0}, {134.7, 54.0}}, identifier: 'timeline.selection', label: '朝代', Selected, hitPoint: {220.0, 904.0}
+Button, {{280.3, 877.0}, {134.7, 54.0}}, identifier: 'gearshape', label: '设置', hitPoint: {347.7, 904.0}
+
+=== 15-base-settings ===
+command: 't 347.7 904.0'
+applicationState: Running
+Application, pid: 68489, label: 'Chinese Calendar'
+NavigationBar, {{0.0, 62.0}, {440.0, 106.3}}, identifier: '设置', hitPoint: {220.0, 115.2}
+StaticText, {{20.0, 116.0}, {72.0, 45.7}}, label: '设置', hitPoint: {56.0, 138.8}
+StaticText, {{38.0, 352.0}, {247.0, 25.3}}, label: '正在使用内置基础数据', hitPoint: {161.5, 364.7}
+StaticText, {{40.0, 383.3}, {345.7, 49.0}}, label: '没有已安装的完整日期数据；仍可清理未完成的下载缓存。', hitPoint: {212.8, 407.8}
+Button, {{20.0, 451.3}, {400.0, 56.3}}, label: '清空已下载数据', hitPoint: {220.0, 479.5}
+StaticText, {{41.3, 465.0}, {183.7, 29.3}}, label: '清空已下载数据', hitPoint: {133.2, 479.7}
+StaticText, {{38.7, 829.0}, {202.3, 24.0}}, label: '可下载完整日期数据', hitPoint: {139.8, 841.0}
+Button, {{25.0, 877.0}, {134.7, 54.0}}, identifier: 'calendar', label: '日历', hitPoint: {92.3, 904.0}
+Button, {{152.7, 877.0}, {134.7, 54.0}}, identifier: 'timeline.selection', label: '朝代', hitPoint: {220.0, 904.0}
+Button, {{280.3, 877.0}, {134.7, 54.0}}, identifier: 'gearshape', label: '设置', Selected, hitPoint: {347.7, 904.0}
+
+=== 16-repeat-confirm ===
+command: 't 220.0 479.5'
+applicationState: Running
+Application, pid: 68489, label: 'Chinese Calendar'
+Alert, {{60.0, 351.3}, {320.0, 281.3}}, label: '清空已下载数据？', hitPoint: {220.0, 492.0}
+StaticText, {{90.0, 382.3}, {260.0, 25.3}}, label: '清空已下载数据？', hitPoint: {220.0, 395.0}
+StaticText, {{90.0, 421.0}, {260.0, 71.0}}, label: '这会取消正在进行的完整数据下载，删除下载缓存，并恢复到内置基础日历数据。', hitPoint: {220.0, 456.5}
+Button, {{76.0, 512.7}, {288.0, 48.0}}, label: '清空已下载数据', hitPoint: {220.0, 536.7}
+Button, {{76.0, 568.7}, {288.0, 48.0}}, label: '取消', hitPoint: {220.0, 592.7}
+
+=== 18-repeat-success-stable ===
+command: ''
+applicationState: Running
+Application, pid: 68489, label: 'Chinese Calendar'
+Alert, {{60.0, 391.3}, {320.0, 201.3}}, label: '已清空', hitPoint: {220.0, 492.0}
+StaticText, {{90.0, 422.3}, {260.0, 25.3}}, label: '已清空', hitPoint: {220.0, 435.0}
+StaticText, {{90.0, 461.0}, {260.0, 47.0}}, label: '已删除下载数据，并恢复到内置基础日历数据。', hitPoint: {220.0, 484.5}
+Button, {{76.0, 528.7}, {288.0, 48.0}}, label: '好', hitPoint: {220.0, 552.7}
+
+=== 19-repeat-acknowledged ===
+command: 't 220.0 552.7'
+applicationState: Running
+Application, pid: 68489, label: 'Chinese Calendar'
+NavigationBar, {{0.0, 62.0}, {440.0, 106.3}}, identifier: '设置', hitPoint: {220.0, 115.2}
+StaticText, {{20.0, 116.0}, {72.0, 45.7}}, label: '设置', hitPoint: {56.0, 138.8}
+StaticText, {{38.0, 352.0}, {247.0, 25.3}}, label: '正在使用内置基础数据', hitPoint: {161.5, 364.7}
+StaticText, {{40.0, 383.3}, {345.7, 49.0}}, label: '没有已安装的完整日期数据；仍可清理未完成的下载缓存。', hitPoint: {212.8, 407.8}
+Button, {{20.0, 451.3}, {400.0, 56.3}}, label: '清空已下载数据', hitPoint: {220.0, 479.5}
+StaticText, {{41.3, 465.0}, {183.7, 29.3}}, label: '清空已下载数据', hitPoint: {133.2, 479.7}
+StaticText, {{38.7, 829.0}, {202.3, 24.0}}, label: '可下载完整日期数据', hitPoint: {139.8, 841.0}
+Button, {{25.0, 877.0}, {134.7, 54.0}}, identifier: 'calendar', label: '日历', hitPoint: {92.3, 904.0}
+Button, {{152.7, 877.0}, {134.7, 54.0}}, identifier: 'timeline.selection', label: '朝代', hitPoint: {220.0, 904.0}
+Button, {{280.3, 877.0}, {134.7, 54.0}}, identifier: 'gearshape', label: '设置', Selected, hitPoint: {347.7, 904.0}
+
+=== 23-main-tabs-sheet ===
+command: 't 165.0 386.5'
+applicationState: Running
+Application, pid: 68489, label: 'Chinese Calendar'
+NavigationBar, {{0.0, 82.0}, {440.0, 106.3}}, identifier: '设置', hitPoint: {220.0, 135.2}
+Button, {{24.0, 86.0}, {64.3, 36.0}}, label: '关闭', hitPoint: {56.2, 104.0}
+StaticText, {{20.0, 136.0}, {72.0, 45.7}}, label: '设置', hitPoint: {56.0, 158.8}
+StaticText, {{40.7, 371.0}, {184.3, 27.3}}, label: '完整数据下载中', hitPoint: {132.8, 384.7}
+StaticText, {{40.0, 403.3}, {345.7, 49.0}}, label: '清空会取消当前下载，并删除已经保存的临时文件。', hitPoint: {212.8, 427.8}
+Button, {{20.0, 471.3}, {400.0, 56.3}}, label: '清空已下载数据', hitPoint: {220.0, 499.5}
+StaticText, {{41.3, 485.0}, {183.7, 29.3}}, label: '清空已下载数据', hitPoint: {133.2, 499.7}
+Button, {{21.0, 819.0}, {398.0, 44.0}}, label: '第 2/5 步 · 下载文件', value: 文件已下载 12%。, hitPoint: {220.0, 841.0}
+StaticText, {{73.0, 825.0}, {173.0, 24.0}}, label: '第 2/5 步 · 下载文件', hitPoint: {159.5, 837.0}
+Button, {{25.0, 877.0}, {134.7, 54.0}}, identifier: 'calendar', label: '日历', hitPoint: {92.3, 904.0}
+Button, {{152.7, 877.0}, {134.7, 54.0}}, identifier: 'timeline.selection', label: '朝代', hitPoint: {220.0, 904.0}
+Button, {{280.3, 877.0}, {134.7, 54.0}}, identifier: 'gearshape', label: '设置', Selected, hitPoint: {347.7, 904.0}
+
+=== 28-modal-queue-first ===
+command: 't 165.0 557.2'
+applicationState: Running
+Application, pid: 68489, label: 'Chinese Calendar'
+Alert, {{60.0, 379.3}, {320.0, 225.3}}, label: '业务提示 1', hitPoint: {220.0, 492.0}
+StaticText, {{90.0, 410.3}, {260.0, 25.3}}, label: '业务提示 1', hitPoint: {220.0, 423.0}
+StaticText, {{90.0, 449.0}, {260.0, 71.0}}, label: '这是业务提示。关闭它后，才会处理等待中的提示或导航请求。', hitPoint: {220.0, 484.5}
+Button, {{76.0, 540.7}, {288.0, 48.0}}, label: '好', hitPoint: {220.0, 564.7}
+
+=== 30-modal-queue-second-stable ===
+command: ''
+applicationState: Running
+Application, pid: 68489, label: 'Chinese Calendar'
+Alert, {{60.0, 379.3}, {320.0, 225.3}}, label: '业务提示 2', hitPoint: {220.0, 492.0}
+StaticText, {{90.0, 410.3}, {260.0, 25.3}}, label: '业务提示 2', hitPoint: {220.0, 423.0}
+StaticText, {{90.0, 449.0}, {260.0, 71.0}}, label: '这是业务提示。关闭它后，才会处理等待中的提示或导航请求。', hitPoint: {220.0, 484.5}
+Button, {{76.0, 540.7}, {288.0, 48.0}}, label: '好', hitPoint: {220.0, 564.7}
+
+=== 31-modal-queue-completed ===
+command: 't 220.0 564.7'
+applicationState: Running
+Application, pid: 68489, label: 'Chinese Calendar'
+NavigationBar, {{0.0, 82.0}, {440.0, 106.3}}, identifier: '设置', hitPoint: {220.0, 135.2}
+Button, {{24.0, 86.0}, {64.3, 36.0}}, label: '关闭', hitPoint: {56.2, 104.0}
+StaticText, {{20.0, 136.0}, {72.0, 45.7}}, label: '设置', hitPoint: {56.0, 158.8}
+StaticText, {{40.7, 371.0}, {184.3, 27.3}}, label: '完整数据下载中', hitPoint: {132.8, 384.7}
+StaticText, {{40.0, 403.3}, {345.7, 49.0}}, label: '清空会取消当前下载，并删除已经保存的临时文件。', hitPoint: {212.8, 427.8}
+Button, {{20.0, 471.3}, {400.0, 56.3}}, label: '清空已下载数据', hitPoint: {220.0, 499.5}
+StaticText, {{41.3, 485.0}, {183.7, 29.3}}, label: '清空已下载数据', hitPoint: {133.2, 499.7}
+Button, {{21.0, 819.0}, {398.0, 44.0}}, label: '第 2/5 步 · 下载文件', value: 文件已下载 51%。, hitPoint: {220.0, 841.0}
+StaticText, {{73.0, 825.0}, {173.0, 24.0}}, label: '第 2/5 步 · 下载文件', hitPoint: {159.5, 837.0}
+Button, {{25.0, 877.0}, {134.7, 54.0}}, identifier: 'calendar', label: '日历', hitPoint: {92.3, 904.0}
+Button, {{152.7, 877.0}, {134.7, 54.0}}, identifier: 'timeline.selection', label: '朝代', hitPoint: {220.0, 904.0}
+Button, {{280.3, 877.0}, {134.7, 54.0}}, identifier: 'gearshape', label: '设置', Selected, hitPoint: {347.7, 904.0}
+
+=== 33-modal-nav-menu-reopen ===
+command: 't 165.0 545.8'
+applicationState: Running
+Application, pid: 68489, label: 'Chinese Calendar'
+Button, {{40.0, 520.7}, {250.0, 50.3}}, identifier: 'arrow.triangle.branch', label: '导航测试', hitPoint: {165.0, 545.8}
+
+=== 34-menu-recapture ===
+command: ''
+applicationState: Running
+Application, pid: 68489, label: 'Chinese Calendar'
+Button, {{40.0, 520.7}, {250.0, 50.3}}, identifier: 'arrow.triangle.branch', label: '导航测试', hitPoint: {165.0, 545.8}
+
+=== 35-menu-retry ===
+command: 't 165.0 545.8'
+applicationState: Running
+Application, pid: 68489, label: 'Chinese Calendar'
+Button, {{40.0, 520.7}, {250.0, 50.3}}, identifier: 'arrow.triangle.branch', label: '导航测试', hitPoint: {165.0, 545.8}
+
+=== 37-modal-before-clear ===
+command: ''
+applicationState: Running
+Application, pid: 68489, label: 'Chinese Calendar'
+NavigationBar, {{0.0, 82.0}, {440.0, 106.3}}, identifier: '设置', hitPoint: {220.0, 135.2}
+Button, {{24.0, 86.0}, {64.3, 36.0}}, label: '关闭', hitPoint: {56.2, 104.0}
+StaticText, {{20.0, 136.0}, {72.0, 45.7}}, label: '设置', hitPoint: {56.0, 158.8}
+StaticText, {{40.7, 371.0}, {184.3, 27.3}}, label: '完整数据下载中', hitPoint: {132.8, 384.7}
+StaticText, {{40.0, 403.3}, {345.7, 49.0}}, label: '清空会取消当前下载，并删除已经保存的临时文件。', hitPoint: {212.8, 427.8}
+Button, {{20.0, 471.3}, {400.0, 56.3}}, label: '清空已下载数据', hitPoint: {220.0, 499.5}
+StaticText, {{41.3, 485.0}, {183.7, 29.3}}, label: '清空已下载数据', hitPoint: {133.2, 499.7}
+Button, {{21.0, 819.0}, {398.0, 44.0}}, label: '第 2/5 步 · 下载文件', value: 文件已下载 88%。, hitPoint: {220.0, 841.0}
+StaticText, {{73.0, 825.0}, {173.0, 24.0}}, label: '第 2/5 步 · 下载文件', hitPoint: {159.5, 837.0}
+Button, {{25.0, 877.0}, {134.7, 54.0}}, identifier: 'calendar', label: '日历', hitPoint: {92.3, 904.0}
+Button, {{152.7, 877.0}, {134.7, 54.0}}, identifier: 'timeline.selection', label: '朝代', hitPoint: {220.0, 904.0}
+Button, {{280.3, 877.0}, {134.7, 54.0}}, identifier: 'gearshape', label: '设置', Selected, hitPoint: {347.7, 904.0}
+
+=== 38-modal-clear-confirmation ===
+command: 't 220.0 499.5'
+applicationState: Running
+Application, pid: 68489, label: 'Chinese Calendar'
+Alert, {{60.0, 351.3}, {320.0, 281.3}}, label: '清空已下载数据？', hitPoint: {220.0, 492.0}
+StaticText, {{90.0, 382.3}, {260.0, 25.3}}, label: '清空已下载数据？', hitPoint: {220.0, 395.0}
+StaticText, {{90.0, 421.0}, {260.0, 71.0}}, label: '这会取消正在进行的完整数据下载，删除下载缓存，并恢复到内置基础日历数据。', hitPoint: {220.0, 456.5}
+Button, {{76.0, 512.7}, {288.0, 48.0}}, label: '清空已下载数据', hitPoint: {220.0, 536.7}
+Button, {{76.0, 568.7}, {288.0, 48.0}}, label: '取消', hitPoint: {220.0, 592.7}
+
+=== 39-modal-clear-result ===
+command: 't 220.0 536.7'
+applicationState: Running
+Application, pid: 68489, label: 'Chinese Calendar'
+NavigationBar, {{0.0, 82.0}, {440.0, 106.3}}, identifier: '设置', hitPoint: {220.0, 135.2}
+Button, {{24.0, 86.0}, {64.3, 36.0}}, label: '关闭', hitPoint: {56.2, 104.0}
+StaticText, {{20.0, 136.0}, {72.0, 45.7}}, label: '设置', hitPoint: {56.0, 158.8}
+StaticText, {{40.7, 371.0}, {184.3, 27.3}}, label: '完整数据下载中', hitPoint: {132.8, 384.7}
+StaticText, {{40.0, 403.3}, {345.7, 49.0}}, label: '清空会取消当前下载，并删除已经保存的临时文件。', hitPoint: {212.8, 427.8}
+Button, {{20.0, 471.3}, {400.0, 56.3}}, label: '正在清空', Disabled, hitPoint: {220.0, 499.5}
+StaticText, {{42.3, 486.8}, {122.3, 25.3}}, label: '正在清空', Disabled, hitPoint: {103.5, 499.5}
+Button, {{21.0, 819.0}, {398.0, 44.0}}, label: '第 2/5 步 · 下载文件', value: 文件已下载 95%。, hitPoint: {220.0, 841.0}
+StaticText, {{73.0, 825.0}, {173.0, 24.0}}, label: '第 2/5 步 · 下载文件', hitPoint: {159.5, 837.0}
+Button, {{25.0, 877.0}, {134.7, 54.0}}, identifier: 'calendar', label: '日历', hitPoint: {92.3, 904.0}
+Button, {{152.7, 877.0}, {134.7, 54.0}}, identifier: 'timeline.selection', label: '朝代', hitPoint: {220.0, 904.0}
+Button, {{280.3, 877.0}, {134.7, 54.0}}, identifier: 'gearshape', label: '设置', Selected, hitPoint: {347.7, 904.0}
+
+=== 40-modal-clear-wait ===
+command: ''
+applicationState: Running
+Application, pid: 68489, label: 'Chinese Calendar'
+NavigationBar, {{0.0, 82.0}, {440.0, 106.3}}, identifier: '设置', hitPoint: {220.0, 135.2}
+Button, {{24.0, 86.0}, {64.3, 36.0}}, label: '关闭', hitPoint: {56.2, 104.0}
+StaticText, {{20.0, 136.0}, {72.0, 45.7}}, label: '设置', hitPoint: {56.0, 158.8}
+StaticText, {{40.7, 371.0}, {184.3, 27.3}}, label: '完整数据下载中', hitPoint: {132.8, 384.7}
+StaticText, {{40.0, 403.3}, {345.7, 49.0}}, label: '清空会取消当前下载，并删除已经保存的临时文件。', hitPoint: {212.8, 427.8}
+Button, {{20.0, 471.3}, {400.0, 56.3}}, label: '正在清空', Disabled, hitPoint: {220.0, 499.5}
+StaticText, {{42.3, 486.8}, {122.3, 25.3}}, label: '正在清空', Disabled, hitPoint: {103.5, 499.5}
+Button, {{21.0, 819.0}, {398.0, 44.0}}, label: '第 2/5 步 · 下载文件', value: 文件已下载 97%。, hitPoint: {220.0, 841.0}
+StaticText, {{73.0, 825.0}, {173.0, 24.0}}, label: '第 2/5 步 · 下载文件', hitPoint: {159.5, 837.0}
+Button, {{25.0, 877.0}, {134.7, 54.0}}, identifier: 'calendar', label: '日历', hitPoint: {92.3, 904.0}
+Button, {{152.7, 877.0}, {134.7, 54.0}}, identifier: 'timeline.selection', label: '朝代', hitPoint: {220.0, 904.0}
+Button, {{280.3, 877.0}, {134.7, 54.0}}, identifier: 'gearshape', label: '设置', Selected, hitPoint: {347.7, 904.0}
+
+=== 41-modal-clear-success ===
+command: ''
+applicationState: Running
+Application, pid: 68489, label: 'Chinese Calendar'
+Alert, {{60.0, 391.3}, {320.0, 201.3}}, label: '已清空', hitPoint: {220.0, 492.0}
+StaticText, {{90.0, 422.3}, {260.0, 25.3}}, label: '已清空', hitPoint: {220.0, 435.0}
+StaticText, {{90.0, 461.0}, {260.0, 47.0}}, label: '已删除下载数据，并恢复到内置基础日历数据。', hitPoint: {220.0, 484.5}
+Button, {{76.0, 528.7}, {288.0, 48.0}}, label: '好', hitPoint: {220.0, 552.7}
+
+=== 42-modal-clear-acknowledged ===
+command: 't 220.0 552.7'
+applicationState: Running
+Application, pid: 68489, label: 'Chinese Calendar'
+NavigationBar, {{0.0, 82.0}, {440.0, 106.3}}, identifier: '设置', hitPoint: {220.0, 135.2}
+Button, {{24.0, 86.0}, {64.3, 36.0}}, label: '关闭', hitPoint: {56.2, 104.0}
+StaticText, {{20.0, 136.0}, {72.0, 45.7}}, label: '设置', hitPoint: {56.0, 158.8}
+StaticText, {{38.0, 372.0}, {247.0, 25.3}}, label: '正在使用内置基础数据', hitPoint: {161.5, 384.7}
+StaticText, {{40.0, 403.3}, {345.7, 49.0}}, label: '没有已安装的完整日期数据；仍可清理未完成的下载缓存。', hitPoint: {212.8, 427.8}
+Button, {{20.0, 471.3}, {400.0, 56.3}}, label: '清空已下载数据', hitPoint: {220.0, 499.5}
+StaticText, {{41.3, 485.0}, {183.7, 29.3}}, label: '清空已下载数据', hitPoint: {133.2, 499.7}
+StaticText, {{38.7, 829.0}, {202.3, 24.0}}, label: '可下载完整日期数据', hitPoint: {139.8, 841.0}
+Button, {{25.0, 877.0}, {134.7, 54.0}}, identifier: 'calendar', label: '日历', hitPoint: {92.3, 904.0}
+Button, {{152.7, 877.0}, {134.7, 54.0}}, identifier: 'timeline.selection', label: '朝代', hitPoint: {220.0, 904.0}
+Button, {{280.3, 877.0}, {134.7, 54.0}}, identifier: 'gearshape', label: '设置', Selected, hitPoint: {347.7, 904.0}
+
+=== 43-modal-base-calendar ===
+command: 't 92.3 904.0'
+applicationState: Running
+Application, pid: 68489, label: 'Chinese Calendar'
+NavigationBar, {{0.0, 82.0}, {440.0, 106.3}}, identifier: '日历', hitPoint: {220.0, 135.2}
+Button, {{24.0, 86.0}, {64.3, 36.0}}, label: '关闭', hitPoint: {56.2, 104.0}
+StaticText, {{20.0, 136.0}, {72.0, 45.7}}, label: '日历', hitPoint: {56.0, 158.8}
+StaticText, {{128.5, 256.3}, {183.0, 98.5}}, label: '需要完整日期数据', hitPoint: {220.0, 305.6}
+StaticText, {{103.3, 357.8}, {233.3, 88.7}}, label: '当前内置数据只有年份和月份。请先下载完整日期数据，再浏览日历。', hitPoint: {220.0, 402.2}
+StaticText, {{38.7, 829.0}, {202.3, 24.0}}, label: '可下载完整日期数据', hitPoint: {139.8, 841.0}
+Button, {{25.0, 877.0}, {134.7, 54.0}}, identifier: 'calendar', label: '日历', Selected, hitPoint: {92.3, 904.0}
+Button, {{152.7, 877.0}, {134.7, 54.0}}, identifier: 'timeline.selection', label: '朝代', hitPoint: {220.0, 904.0}
+Button, {{280.3, 877.0}, {134.7, 54.0}}, identifier: 'gearshape', label: '设置', hitPoint: {347.7, 904.0}
+
+=== 44-modal-closed-root-settings ===
+command: 't 56.2 104.0'
+applicationState: Running
+Application, pid: 68489, label: 'Chinese Calendar'
+NavigationBar, {{0.0, 62.0}, {440.0, 106.3}}, identifier: '设置', hitPoint: {220.0, 115.2}
+StaticText, {{20.0, 116.0}, {72.0, 45.7}}, label: '设置', hitPoint: {56.0, 138.8}
+StaticText, {{38.0, 352.0}, {247.0, 25.3}}, label: '正在使用内置基础数据', hitPoint: {161.5, 364.7}
+StaticText, {{40.0, 383.3}, {345.7, 49.0}}, label: '没有已安装的完整日期数据；仍可清理未完成的下载缓存。', hitPoint: {212.8, 407.8}
+Button, {{20.0, 451.3}, {400.0, 56.3}}, label: '清空已下载数据', hitPoint: {220.0, 479.5}
+StaticText, {{41.3, 465.0}, {183.7, 29.3}}, label: '清空已下载数据', hitPoint: {133.2, 479.7}
+StaticText, {{38.7, 829.0}, {202.3, 24.0}}, label: '可下载完整日期数据', hitPoint: {139.8, 841.0}
+Button, {{25.0, 877.0}, {134.7, 54.0}}, identifier: 'calendar', label: '日历', hitPoint: {92.3, 904.0}
+Button, {{152.7, 877.0}, {134.7, 54.0}}, identifier: 'timeline.selection', label: '朝代', hitPoint: {220.0, 904.0}
+Button, {{280.3, 877.0}, {134.7, 54.0}}, identifier: 'gearshape', label: '设置', Selected, hitPoint: {347.7, 904.0}

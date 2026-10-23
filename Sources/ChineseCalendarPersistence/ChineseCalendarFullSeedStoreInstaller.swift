@@ -41,6 +41,7 @@ public struct FullSeedStoreManifest: Decodable, Sendable {
 public struct FullSeedStoreInstallResult: Sendable {
     public let manifest: FullSeedStoreManifest
     public let storeURL: URL
+    public let container: ModelContainer
 }
 
 public enum ChineseCalendarFullSeedStoreInstallEvent: Sendable {
@@ -100,6 +101,7 @@ public actor ChineseCalendarFullSeedStoreInstaller {
     private let session: URLSession
     private let fileManager: FileManager
     private let decoder = JSONDecoder()
+    private var installationTask: Task<Void, Never>?
 
     /// 注入下载配置和存储依赖，测试时可替换网络会话及文件管理器。
     public init(
@@ -117,6 +119,10 @@ public actor ChineseCalendarFullSeedStoreInstaller {
     /// 启动一次安装，通过事件流返回阶段进度和最终结果。
     public func installEvents() -> AsyncThrowingStream<ChineseCalendarFullSeedStoreInstallEvent, Error> {
         AsyncThrowingStream { continuation in
+            guard !Task.isCancelled else {
+                continuation.finish(throwing: CancellationError())
+                return
+            }
             let task = Task {
                 do {
                     let result = try await install { event in
@@ -128,12 +134,20 @@ public actor ChineseCalendarFullSeedStoreInstaller {
                     continuation.finish(throwing: error)
                 }
             }
+            installationTask = task
 
             // 内部 Task 不会随消费任务自动取消，在事件流终止时主动传递取消。
             continuation.onTermination = { _ in
                 task.cancel()
             }
         }
+    }
+
+    /// 清理数据必须等待实际安装任务退出，不能只等待事件流的消费者结束。
+    public func cancelAndWait() async {
+        let task = installationTask
+        task?.cancel()
+        await task?.value
     }
 
     /// 按下载、校验、替换存储的顺序执行完整安装。
@@ -170,7 +184,6 @@ public actor ChineseCalendarFullSeedStoreInstaller {
         eventHandler(.validating)
         ChineseCalendarLog.persistence.info("Validating downloaded full seed store")
         try validateDownloadedStore(at: temporaryDownloadURL, manifest: manifest)
-        try validateStoreCanOpen(at: temporaryDownloadURL)
 
         eventHandler(.installing)
         ChineseCalendarLog.persistence.info("Full seed store validation passed; installing")
@@ -178,21 +191,26 @@ public actor ChineseCalendarFullSeedStoreInstaller {
             appGroupIdentifier: appGroupIdentifier,
             fileManager: fileManager
         )
-        let storeURL = storeDirectory.appendingPathComponent(ChineseCalendarSeedStore.storeFileName)
-
-        // 移除旧存储文件，再放入已验证的新数据库并记录安装信息。
-        try ChineseCalendarSeedStoreFiles.removeStoreFiles(
-            in: storeDirectory,
-            fileManager: fileManager
-        )
-        try fileManager.moveItem(at: temporaryDownloadURL, to: storeURL)
-        try writeInstalledManifest(manifest, to: storeDirectory)
-        try excludeFromBackup(storeDirectory)
+        let generation = try ChineseCalendarStoreGenerations.prepare(in: storeDirectory, fileManager: fileManager)
+        let storeURL = generation.appendingPathComponent(ChineseCalendarSeedStore.storeFileName)
+        let container: ModelContainer
+        do {
+            try fileManager.moveItem(at: temporaryDownloadURL, to: storeURL)
+            try writeInstalledManifest(manifest, to: generation)
+            try excludeFromBackup(generation)
+            container = try validateStoreCanOpen(at: storeURL)
+            try Task.checkCancellation()
+            try ChineseCalendarStoreGenerations.activate(generation, in: storeDirectory, fileManager: fileManager)
+        } catch {
+            ChineseCalendarStoreGenerations.abandon(generation, in: storeDirectory, fileManager: fileManager)
+            throw error
+        }
+        try? ChineseCalendarStoreGenerations.collectRetired(in: storeDirectory, fileManager: fileManager)
         try? fileManager.removeItem(at: stagingDirectory)
         try? fileManager.removeItem(at: partialDirectory)
 
         ChineseCalendarLog.persistence.notice("Installed full SwiftData seed store")
-        return FullSeedStoreInstallResult(manifest: manifest, storeURL: storeURL)
+        return FullSeedStoreInstallResult(manifest: manifest, storeURL: storeURL, container: container)
     }
 
     /// 获取下载清单，读取文件地址、总大小和校验信息。
@@ -363,9 +381,10 @@ private extension ChineseCalendarFullSeedStoreInstaller {
     }
 
     /// 以禁止保存的配置打开下载数据库，并检查关键模型关系。
-    private func validateStoreCanOpen(at storeURL: URL) throws {
+    private func validateStoreCanOpen(at storeURL: URL) throws -> ModelContainer {
         let container = try ChineseCalendarModelContainerFactory.makeContainer(at: storeURL, allowsSave: false)
         try ChineseCalendarRelationshipValidation.validate(in: ModelContext(container))
+        return container
     }
 
     /// 记录已安装的版本和文件信息，供后续识别本地数据。

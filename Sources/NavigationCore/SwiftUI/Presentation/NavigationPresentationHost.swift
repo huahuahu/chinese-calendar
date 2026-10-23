@@ -27,11 +27,8 @@ private struct NavigationPresentationHost<
             )
             .modifier(NavigationAlertHost(
                 context: context,
-                alertContent: { configuration?.alertContent(for: $0) },
-                confirmationContent: { configuration?.confirmationContent(for: $0) },
-                onAction: { route, action, presentation in
-                    await configuration?.handleAlertAction(route, action: action, presentation: presentation)
-                }
+                alertDefinition: { configuration?.alert(for: $0, presentation: context) },
+                confirmationContent: { configuration?.confirmationContent(for: $0) }
             ))
             .environment(context)
     }

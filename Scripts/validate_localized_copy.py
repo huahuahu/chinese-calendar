@@ -21,7 +21,9 @@ TECHNICAL_FILES = {
 }
 TECHNICAL_LITERALS = {
     "App/Store/ChineseCalendarStoreCoordinator.swift": {
-        r'\(contentLevel.rawValue)-\(identityToken ?? "unknown")'
+        # 容器身份与缺失数据库时的诊断路径均不作为界面文案展示。
+        r'\(contentLevel.rawValue)-\(identityToken ?? "unknown")-\(ObjectIdentifier(container))',
+        "/",
     },
     "History/Shared/Models/HistoryBoundaryEventRepository.swift": {
         r'\(period.id)-start', r'\(period.id)-end'
