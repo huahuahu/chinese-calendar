@@ -71,7 +71,7 @@
         await coordinator.cancelSimulatedFullStoreDownload()
 
         #expect(coordinator.fullStoreDownloadProgress == nil)
-        #expect(coordinator.downloadErrorMessage == nil)
+        #expect(coordinator.downloadFailure == nil)
         #expect(coordinator.canStartSimulatedFullStoreDownload)
     }
 #endif

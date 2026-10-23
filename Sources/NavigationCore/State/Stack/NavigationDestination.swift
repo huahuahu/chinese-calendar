@@ -10,7 +10,7 @@ nonisolated public protocol NavigationDestination: Hashable {
 }
 
 public extension NavigationDestination {
-    var providesNavigationContainer: Bool {
+    nonisolated var providesNavigationContainer: Bool {
         false
     }
 }

@@ -9,7 +9,7 @@ struct NavigationLayerContent<
     @Environment(\.[navigation: NavigationConfigurationKey<Scope, Destination, AlertRoute>()]) private var configuration
 
     var body: some View {
-        if context.isActive {
+        if context.layer != nil {
             let destination = context.destination
             if let configuration {
                 if destination.providesNavigationContainer {

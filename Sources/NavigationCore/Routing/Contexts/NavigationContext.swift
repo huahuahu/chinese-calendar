@@ -32,7 +32,7 @@ public final class NavigationContext<Scope: NavigationScope, Destination: Naviga
 
     /// 这个 Context 是否仍可访问原来的栈。未选中的 Tab 也可以有效。
     /// 具体规则由创建方提供；原栈失效后，出现相同 ID 的新栈也不会让它重新生效。
-    public var isActive: Bool {
+    var isActive: Bool {
         state != nil && access.isActive()
     }
 
@@ -43,9 +43,9 @@ public final class NavigationContext<Scope: NavigationScope, Destination: Naviga
 
     /// 当前导航栈的栈底页面 Destination，不包含之后 push 的页面。
     /// 例如 .tabs 层中的首页栈可以从 .home 开始。
-    /// 每个有效栈都有根 Destination；未声明或已经失效的 Context 返回 nil。
+    /// 退出动画期间继续读取原栈；原栈释放或从未声明时返回 nil。
     public var rootDestination: Destination? {
-        isActive ? state?.rootDestination : nil
+        state?.rootDestination
     }
 
     /// 替换本栈的栈底页面并清空 push 路径，不改变打开整层时的 Destination 或其他栈。
@@ -60,9 +60,10 @@ public final class NavigationContext<Scope: NavigationScope, Destination: Naviga
     /// 这个栈中已经 push 的页面列表，不包含栈底页面。
     ///
     /// NavigationStack 绑定此属性后，返回手势、NavigationLink(value:) 和代码中的 push/pop
-    /// 都会读写同一份路径。Context 失效时读到空数组；不允许修改时忽略赋值。
+    /// 都会读写同一份路径。退出动画期间仍读取原栈；原栈释放后读到空数组。
+    /// Context 失效后仍禁止修改，避免关闭期间的绑定回写改变导航状态。
     public var path: [Destination] {
-        get { isActive ? state?.path ?? [] : [] }
+        get { state?.path ?? [] }
         set { setPath(newValue) }
     }
 

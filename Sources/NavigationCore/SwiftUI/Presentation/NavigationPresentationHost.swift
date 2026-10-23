@@ -1,63 +1,73 @@
 import SwiftUI
 
-/// 根据当前层的数据展示页面或 alert，并在系统关闭完成后通知该层。
-/// App 根界面挂载一次；框架会给每个模态继续添加这个容器，支持逐层打开模态。
+/// 每层唯一的物理宿主；请求记录随其生命周期释放，配置不进入 Router。
 private struct NavigationPresentationHost<
-    Scope: NavigationScope,
-    Destination: NavigationDestination, AlertRoute: NavigationAlertRoute
+    Scope: NavigationScope, Destination: NavigationDestination, AlertRoute: NavigationAlertRoute
 >: ViewModifier {
     let context: NavigationPresentationContext<Scope, Destination, AlertRoute>
     @Environment(\.[navigation: NavigationConfigurationKey<Scope, Destination, AlertRoute>()]) private var configuration
+    @State private var endpoint = NavigationPresentationEndpoint<Scope, Destination, AlertRoute>()
 
     func body(content: Content) -> some View {
-        content
+        endpoint.attach(context: context, configuration: configuration)
+        let sheetMount = mount(for: .sheet)
+        let fullScreenMount = mount(for: .fullScreen)
+        return content
             .sheet(
-                item: binding(for: .sheet),
-                onDismiss: didDismiss,
-                content: { node in
-                    presentation(node)
-                }
+                item: binding(for: .sheet), onDismiss: { sheetMount?.didDismiss() },
+                content: { node in presentation(node) }
             )
             .fullScreenCover(
-                item: binding(for: .fullScreen),
-                onDismiss: didDismiss,
-                content: { node in
-                    presentation(node)
-                }
+                item: binding(for: .fullScreen), onDismiss: { fullScreenMount?.didDismiss() },
+                content: { node in presentation(node) }
             )
             .modifier(NavigationAlertHost(
                 context: context,
-                alertDefinition: { configuration?.alert(for: $0, presentation: context) },
+                alertDefinition: { node in
+                    let configuration = endpoint.record(for: node.lifetime)?.configuration ?? configuration
+                    return configuration?.alert(for: node.destination, presentation: context)
+                },
+                renderLifetime: { endpoint.record(for: $0.lifetime) },
                 confirmationContent: { configuration?.confirmationContent(for: $0) }
             ))
+            .background {
+                NavigationHostLifetime { endpoint.detach() }
+                    .frame(width: 0, height: 0)
+                    .allowsHitTesting(false)
+                    .accessibilityHidden(true)
+            }
             .environment(context)
     }
 
     @ViewBuilder
     private func presentation(_ node: NavigationPresentationNode<Scope, Destination, AlertRoute>) -> some View {
         if let childContext = context.context(for: node) {
-            NavigationPresentationNodeView(node: node, context: childContext)
+            if let record = endpoint.record(for: node.lifetime), let configuration = record.configuration {
+                NavigationPresentationNodeView(node: node, context: childContext, record: record)
+                    .environment(
+                        \.[navigation: NavigationConfigurationKey<Scope, Destination, AlertRoute>()],
+                        configuration
+                    )
+            }
         }
+    }
+
+    private func mount(for style: NavigationPresentationStyle) -> NavigationModalMount? {
+        let node = context.layer?.dismissingPresentation ?? context.presentedNode
+        guard let node, node.style == style else { return nil }
+        return endpoint.record(for: node.lifetime)?.modalMount
     }
 
     private func binding(
         for style: NavigationPresentationStyle
     ) -> Binding<NavigationPresentationNode<Scope, Destination, AlertRoute>?> {
-        // sheet 和 fullScreenCover 读取同一个模态，只展示与自己样式匹配的节点。
-        // 记录本次绑定对应的节点 ID，防止旧关闭动画的回调误关后来打开的新模态。
         let node = context.presentedNode
         return Binding(
             get: { context.presentedNode?.style == style ? context.presentedNode : nil },
             set: { value in
-                // SwiftUI 写回 nil 表示关闭；只有记录的 ID 仍匹配当前模态时才会生效。
                 if value == nil, let node, node.style == style { context.dismissPresented(id: node.id) }
             }
         )
-    }
-
-    private func didDismiss() {
-        // 先通知框架关闭动画已完成，让本层可以重新展示，或执行等待中的根层跳转。
-        context.presentationDidDismiss()
     }
 }
 
@@ -65,9 +75,7 @@ extension View {
     /// 仅由根宿主和递归模态调用，业务内容不重复挂载本层呈现宿主。
     func navigationPresentations(
         context: NavigationPresentationContext<
-            some NavigationScope,
-            some NavigationDestination,
-            some NavigationAlertRoute
+            some NavigationScope, some NavigationDestination, some NavigationAlertRoute
         >
     ) -> some View {
         modifier(NavigationPresentationHost(context: context))

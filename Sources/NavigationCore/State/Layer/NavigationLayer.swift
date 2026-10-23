@@ -12,6 +12,8 @@ final class NavigationLayer<
     Destination: NavigationDestination,
     AlertRoute: NavigationAlertRoute
 > {
+    @ObservationIgnored weak var presentationEndpoint: NavigationPresentationEndpoint<Scope, Destination, AlertRoute>?
+
     let routeState: NavigationLayerRouteState<Destination>
 
     var route: NavigationLayerRoute<Destination> {

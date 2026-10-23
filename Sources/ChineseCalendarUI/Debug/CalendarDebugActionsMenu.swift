@@ -9,6 +9,8 @@
         let storeCoordinator: ChineseCalendarStoreCoordinator
         @Environment(CalendarHomeCoordinator.self) private var coordinator
 
+        @State private var downloadPreview = FullStoreDownloadPreviewFeature()
+
         var body: some View {
             Menu {
                 Menu {
@@ -24,7 +26,11 @@
                     }
                     .disabled(!storeCoordinator.canStartSimulatedFullStoreDownload)
                     Button(CalendarStringKey.Settings.Debug.downloadPreview) {
-                        coordinator.presentDownloadPreview(presentation: presentation)
+                        downloadPreview.present(
+                            from: presentation,
+                            coordinator: coordinator,
+                            storeCoordinator: storeCoordinator
+                        )
                     }
                 } label: {
                     Label(CalendarStringKey.Debug.downloadActions, systemSymbol: .arrowDownCircle)

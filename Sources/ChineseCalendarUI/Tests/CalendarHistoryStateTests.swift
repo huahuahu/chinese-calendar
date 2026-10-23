@@ -1,14 +1,14 @@
 @testable import ChineseCalendarUI
-@testable import NavigationCore
+import NavigationCore
 import SwiftUI
 import Testing
 
 @MainActor
-@Suite("历史三栏选择与详情导航")
+@Suite("历史三栏选择与详情导航", .serialized)
 struct CalendarHistoryStateTests {
     @Test func upstreamSelectionClearsDependentSelectionAndPath() {
         let router = CalendarRouter(selectedTab: .history)
-        let navigation = router.navigation.context(for: .history)
+        let navigation = router.navigation.rootPresentation.context(for: .scope(.history))
         let state = CalendarHistoryState(navigation: navigation)
         #expect(navigation.rootDestination == .historyEmpty)
         #expect(state.selectOrthodoxPeriod("ming-period"))
@@ -35,7 +35,7 @@ struct CalendarHistoryStateTests {
 
     @Test func repeatedSelectionPreservesPathAndChangingSectionClearsIt() {
         let router = CalendarRouter(selectedTab: .history)
-        let navigation = router.navigation.context(for: .history)
+        let navigation = router.navigation.rootPresentation.context(for: .scope(.history))
         let state = CalendarHistoryState(navigation: navigation)
         #expect(state.selectOrthodoxPeriod("ming-period"))
         #expect(state.selectSection(.emperors))
@@ -56,92 +56,12 @@ struct CalendarHistoryStateTests {
         #expect(state.section == nil)
         #expect(state.preferredCompactColumn == .content)
     }
-
-    @Test func rootIsTheOnlySelectionSourceAcrossTabAndStoreChanges() {
-        let coordinator = CalendarHomeCoordinator()
-        let navigation = coordinator.router.navigation.context(for: .history)
-        let state = coordinator.historyState(for: navigation)
-        #expect(state.selectOrthodoxPeriod("ming-period"))
-        #expect(state.selectSection(.reignEras))
-        #expect(navigation.push(.reignEra(reignEraID: "hongwu")) == .applied)
-        state.columnVisibility = .detailOnly
-        coordinator.router.selectedTab = .years
-        coordinator.storeIdentityDidChange("new-store")
-
-        let retainedState = coordinator.historyState(for: navigation)
-        #expect(retainedState === state)
-        #expect(retainedState.orthodoxPeriodID == "ming-period")
-        #expect(retainedState.section == .reignEras)
-        #expect(retainedState.columnVisibility == .detailOnly)
-        #expect(navigation.path == [.reignEra(reignEraID: "hongwu")])
-        let rebuiltState = CalendarHistoryState(navigation: navigation)
-        #expect(rebuiltState.orthodoxPeriodID == "ming-period")
-        #expect(rebuiltState.section == .reignEras)
-        #expect(rebuiltState.preferredCompactColumn == .detail)
-    }
-
-    @Test func activeAlertRejectsSelectionAndLayoutChangesIncludingRepeatedSelection() {
-        let router = CalendarRouter(selectedTab: .history)
-        let navigation = router.navigation.context(for: .history)
-        let state = CalendarHistoryState(navigation: navigation)
-        #expect(state.selectOrthodoxPeriod("ming-period"))
-        #expect(state.selectSection(.emperors))
-        #expect(navigation.push(.emperor("ming-taizu")) == .applied)
-        state.preferredCompactColumn = .sidebar
-        #expect(router.navigation.rootPresentation.presentAlert(.clearDownloadedData) == .applied)
-
-        #expect(!state.selectOrthodoxPeriod("ming-period"))
-        #expect(!state.selectOrthodoxPeriod("qing-period"))
-        #expect(!state.selectOrthodoxPeriod(nil))
-        #expect(!state.selectSection(.emperors))
-        #expect(!state.selectSection(.reignEras))
-        #expect(!state.synchronizeRoot())
-        #expect(state.preferredCompactColumn == .sidebar)
-        #expect(state.orthodoxPeriodID == "ming-period")
-        #expect(state.section == .emperors)
-        #expect(navigation.path == [.emperor("ming-taizu")])
-    }
 }
 
 extension CalendarHistoryStateTests {
-    @Test func dynastyLinkChangesSelectionOnlyAfterApprovedDismissalCompletes() throws {
-        let coordinator = CalendarHomeCoordinator()
-        let router = coordinator.router
-        let navigation = router.navigation.context(for: .history)
-        let state = coordinator.historyState(for: navigation)
-        #expect(state.selectOrthodoxPeriod("ming-period"))
-        #expect(state.selectSection(.emperors))
-        #expect(navigation.push(.emperor("ming-taizu")) == .applied)
-        router.presentSheet(.downloadDetails)
-        let original = try #require(router.sheet)
-
-        coordinator.openDeepLink(.dynasty(orthodoxPeriodID: "qing-period"))
-        let cancelled = try #require(router.navigation.pendingConfirmation)
-        #expect(!state.synchronizeRoot())
-        #expect(state.orthodoxPeriodID == "ming-period")
-        #expect(state.section == .emperors)
-        router.navigation.cancelConfirmation(id: cancelled.id)
-        #expect(router.sheet === original)
-        #expect(navigation.path == [.emperor("ming-taizu")])
-
-        coordinator.openDeepLink(.dynasty(orthodoxPeriodID: "qing-period"))
-        try router.navigation.confirmNavigation(id: #require(router.navigation.pendingConfirmation).id)
-        #expect(state.orthodoxPeriodID == "ming-period")
-        #expect(navigation.path == [.emperor("ming-taizu")])
-        #expect(!state.selectOrthodoxPeriod("tang-period"))
-        #expect(!state.synchronizeRoot())
-        coordinator.rootPresentationDidDismiss()
-        #expect(state.orthodoxPeriodID == "qing-period")
-        #expect(state.section == nil)
-        #expect(navigation.path.isEmpty)
-        #expect(state.synchronizeRoot())
-        #expect(state.preferredCompactColumn == .content)
-        #expect(router.selectedTab == .history)
-    }
-
     @Test func emperorRootResolvesItsParentWithoutAcceptingStaleResults() {
         let router = CalendarRouter()
-        let navigation = router.navigation.context(for: .history)
+        let navigation = router.navigation.rootPresentation.context(for: .scope(.history))
         let state = CalendarHistoryState(navigation: navigation)
         #expect(router.openDeepLink(.emperor("ming-taizu")) == .applied)
         #expect(navigation.rootDestination == .emperor("ming-taizu"))
@@ -165,28 +85,9 @@ extension CalendarHistoryStateTests {
         #expect(navigation.path.isEmpty)
     }
 
-    @Test func waitingEmperorLinkCannotResolveBeforeTheRequestApplies() throws {
-        let router = CalendarRouter()
-        let navigation = router.navigation.context(for: .history)
-        let state = CalendarHistoryState(navigation: navigation)
-        #expect(state.selectOrthodoxPeriod("qing-period"))
-        #expect(state.selectSection(.reignEras))
-        router.presentSheet(.downloadDetails)
-        #expect(router.openDeepLink(.emperor("ming-taizu"), confirmIfPresented: true) == .awaitingConfirmation)
-        #expect(!state.resolveEmperorRoot(emperorID: "ming-taizu", orthodoxPeriodID: "ming-period"))
-        try router.navigation.confirmNavigation(id: #require(router.navigation.pendingConfirmation).id)
-        #expect(!state.resolveEmperorRoot(emperorID: "ming-taizu", orthodoxPeriodID: "ming-period"))
-        #expect(state.orthodoxPeriodID == "qing-period")
-        router.rootPresentationDidDismiss()
-        #expect(state.resolveEmperorRoot(emperorID: "ming-taizu", orthodoxPeriodID: "ming-period"))
-        #expect(state.orthodoxPeriodID == "ming-period")
-        #expect(navigation.rootDestination == .historyEmperor(orthodoxPeriodID: "ming-period", emperorID: "ming-taizu"))
-        #expect(navigation.path.isEmpty)
-    }
-
     @Test func selectingEmperorsFromAnEmperorRootOpensTheList() {
         let router = CalendarRouter()
-        let navigation = router.navigation.context(for: .history)
+        let navigation = router.navigation.rootPresentation.context(for: .scope(.history))
         let state = CalendarHistoryState(navigation: navigation)
         #expect(router.openDeepLink(.emperor("xin_emperor_0000")) == .applied)
         #expect(state.resolveEmperorRoot(emperorID: "xin_emperor_0000", orthodoxPeriodID: "xin-period"))
@@ -202,90 +103,9 @@ extension CalendarHistoryStateTests {
         #expect(navigation.path.isEmpty)
         #expect(state.preferredCompactColumn == .detail)
     }
-
-    @Test func activeAlertRejectsResolvingTheCurrentEmperorRoot() {
-        let router = CalendarRouter()
-        let navigation = router.navigation.context(for: .history)
-        let state = CalendarHistoryState(navigation: navigation)
-        #expect(router.openDeepLink(.emperor("ming-taizu")) == .applied)
-        #expect(router.navigation.rootPresentation.presentAlert(.clearDownloadedData) == .applied)
-        #expect(!state.resolveEmperorRoot(emperorID: "ming-taizu", orthodoxPeriodID: "ming-period"))
-        #expect(navigation.rootDestination == .emperor("ming-taizu"))
-        #expect(navigation.path.isEmpty)
-        #expect(state.orthodoxPeriodID == nil)
-        #expect(state.section == nil)
-        #expect(state.preferredCompactColumn == .sidebar)
-    }
 }
 
 extension CalendarHistoryStateTests {
-    @Test func modalHistoryKeepsIndependentStateAndReleasesItAfterDismissal() throws {
-        let coordinator = CalendarHomeCoordinator()
-        let root = coordinator.router.navigation.context(for: .history)
-        let rootState = coordinator.historyState(for: root)
-        #expect(rootState.selectOrthodoxPeriod("ming-period"))
-        #expect(rootState.selectSection(.emperors))
-        #expect(coordinator.router.navigation.rootPresentation.presentHistory() == .applied)
-        let original = try #require(coordinator.router.sheet)
-        let presentation = coordinator.router.navigation.presentationContext(for: original)
-        let navigation = presentation.context(for: .primary)
-        weak let state = coordinator.historyState(for: navigation)
-        #expect(state?.selectOrthodoxPeriod("qing-period") == true)
-        #expect(state?.selectSection(.reignEras) == true)
-        #expect(navigation.push(.reignEra(reignEraID: "qing-era")) == .applied)
-        #expect(rootState.orthodoxPeriodID == "ming-period")
-        #expect(rootState.section == .emperors)
-        #expect(root.path.isEmpty)
-
-        #expect(presentation.dismiss() == .applied)
-        #expect(state?.orthodoxPeriodID == nil)
-        #expect(state?.selectOrthodoxPeriod("tang-period") == false)
-        #expect(coordinator.historyState(for: navigation) === state)
-        coordinator.rootPresentationDidDismiss()
-        #expect(state == nil)
-        #expect(coordinator.router.navigation.rootPresentation.presentHistory(style: .fullScreen) == .applied)
-        let reopened = try #require(coordinator.router.fullScreen)
-        let reopenedNavigation = coordinator.router.navigation.context(for: reopened)
-        let reopenedState = coordinator.historyState(for: reopenedNavigation)
-        #expect(reopenedNavigation !== navigation)
-        #expect(reopenedState.orthodoxPeriodID == nil)
-        #expect(navigation.setRootDestination(.historyDetail(orthodoxPeriodID: "tang-period", section: nil))
-            == .rejected(.inactiveContext))
-        #expect(reopenedNavigation.rootDestination == .historyEmpty)
-        #expect(rootState.orthodoxPeriodID == "ming-period")
-    }
-
-    @Test func cleanupDuringNestedDismissalKeepsHistoryStateUntilAncestorCompletes() throws {
-        let coordinator = CalendarHomeCoordinator()
-        let root = coordinator.router.navigation.rootPresentation
-        #expect(root.presentHistory() == .applied)
-        let parent = try #require(coordinator.router.sheet)
-        let presentation = coordinator.router.navigation.presentationContext(for: parent)
-        let navigation = presentation.context(for: .primary)
-        weak var state = coordinator.historyState(for: navigation)
-        #expect(state?.selectOrthodoxPeriod("ming-period") == true)
-        #expect(state?.selectSection(.emperors) == true)
-        state?.columnVisibility = .detailOnly
-        #expect(presentation.present(.downloadDetails) == .applied)
-
-        #expect(presentation.dismiss() == .applied)
-        coordinator.releaseDismissedContexts()
-        #expect(!navigation.isActive)
-        #expect(state != nil)
-        #expect(state?.columnVisibility == .detailOnly)
-        #expect(state?.preferredCompactColumn == .detail)
-        #expect(coordinator.historyState(for: navigation) === state)
-        presentation.presentationDidDismiss()
-        coordinator.releaseDismissedContexts()
-        #expect(state != nil)
-
-        root.presentationDidDismiss()
-        coordinator.releaseDismissedContexts()
-        #expect(state == nil)
-        weak var inactiveState = coordinator.historyState(for: navigation)
-        #expect(inactiveState == nil)
-    }
-
     @Test func historyRoutesDeclareContainerAndStableIdentity() {
         #expect(CalendarDestination.historyHome.providesNavigationContainer)
         #expect(!CalendarDestination.historyEmpty.providesNavigationContainer)
@@ -301,5 +121,91 @@ extension CalendarHistoryStateTests {
             != CalendarDestination.historyEmperor(orthodoxPeriodID: "other-period", emperorID: "ming-taizu").id)
         #expect(CalendarDestination.historyEmperor(orthodoxPeriodID: "ming-period", emperorID: "ming-taizu").id
             != CalendarDestination.historyEmperor(orthodoxPeriodID: "ming-period", emperorID: "ming-chengzu").id)
+    }
+}
+
+extension CalendarHistoryStateTests {
+    @Test func modalSelectionIsIndependentAndStaleStateCannotChangeAReopenedPage() async throws {
+        let router = CalendarRouter(selectedTab: .history)
+        let root = router.navigation.rootPresentation
+        let rootState = CalendarHistoryState(navigation: root.context(for: .scope(.history)))
+        #expect(rootState.selectOrthodoxPeriod("ming-period"))
+        let host = try await NavigationTestHost.show(router: router.navigation)
+        defer { host.removeFromWindow() }
+        var finishCount = 0
+        let first = root.present(.historyHome, rootDestinations: [.primary: .historyEmpty]) { finishCount += 1 }
+        #expect(first.result == .applied)
+        let context = try await host.context(for: .historyHome)
+        let navigation = context.context(for: .primary)
+        let state = CalendarHistoryState(navigation: navigation)
+        #expect(state.selectOrthodoxPeriod("qing-period"))
+        #expect(state.selectSection(.emperors))
+        #expect(navigation.push(.emperor("qing-shizu")) == .applied)
+        #expect(rootState.orthodoxPeriodID == "ming-period")
+        _ = try await host.waitForPresentation()
+        #expect(try #require(first.handle).dismiss().isAccepted)
+        #expect(!state.selectOrthodoxPeriod("other-period"))
+        try await host.waitUntil { finishCount == 1 }
+
+        let reopened = root.present(.historyHome, rootDestinations: [.primary: .historyEmpty])
+        #expect(reopened.result == .applied)
+        let nextContext = try await host.context(for: .historyHome, differentFrom: context)
+        let nextNavigation = nextContext.context(for: .primary)
+        let nextState = CalendarHistoryState(navigation: nextNavigation)
+        #expect(nextNavigation !== navigation)
+        #expect(nextState.orthodoxPeriodID == nil)
+        #expect(nextState.preferredCompactColumn == .sidebar)
+        #expect(nextState.selectOrthodoxPeriod("han-period"))
+        #expect(!state.selectSection(.reignEras))
+        #expect(nextState.orthodoxPeriodID == "han-period")
+        #expect(rootState.orthodoxPeriodID == "ming-period")
+        await host.close()
+    }
+
+    @Test func activeAlertRejectsSelectionWithoutChangingTheVisibleLayout() async throws {
+        let router = CalendarRouter(selectedTab: .history)
+        let root = router.navigation.rootPresentation
+        let navigation = root.context(for: .scope(.history))
+        let state = CalendarHistoryState(navigation: navigation)
+        #expect(state.selectOrthodoxPeriod("ming-period"))
+        #expect(state.selectSection(.emperors))
+        #expect(navigation.push(.emperor("ming-taizu")) == .applied)
+        state.columnVisibility = .detailOnly
+        let host = try await NavigationTestHost.show(router: router.navigation)
+        defer { host.removeFromWindow() }
+        #expect(root.presentAlert(.clearDataSucceeded).result == .applied)
+        _ = try await host.waitForAlert()
+
+        #expect(!state.selectOrthodoxPeriod("qing-period"))
+        #expect(!state.selectSection(.reignEras))
+        #expect(!state.synchronizeRoot())
+        #expect(state.orthodoxPeriodID == "ming-period")
+        #expect(state.section == .emperors)
+        #expect(state.columnVisibility == .detailOnly)
+        #expect(state.preferredCompactColumn == .detail)
+        #expect(navigation.path == [.emperor("ming-taizu")])
+        await host.close()
+    }
+
+    @Test func externalRootWaitsForTheActualModalDismissal() async throws {
+        let router = CalendarRouter(selectedTab: .history)
+        let root = router.navigation.rootPresentation
+        let navigation = root.context(for: .scope(.history))
+        let state = CalendarHistoryState(navigation: navigation)
+        #expect(state.selectOrthodoxPeriod("ming-period"))
+        let host = try await NavigationTestHost.show(router: router.navigation)
+        defer { host.removeFromWindow() }
+        var finishCount = 0
+        #expect(root.present(.settings, onFinish: { finishCount += 1 }).result == .applied)
+        _ = try await host.waitForPresentation()
+        #expect(router
+            .openDeepLink(.emperor("qing-shizu"), confirmIfPresented: false) == .deferredUntilPresentationDismisses)
+        #expect(state.orthodoxPeriodID == "ming-period")
+        #expect(finishCount == 0)
+        try await host.waitUntil { navigation.rootDestination == .emperor("qing-shizu") }
+        #expect(finishCount == 1)
+        #expect(state.synchronizeRoot())
+        #expect(state.preferredCompactColumn == .detail)
+        await host.close()
     }
 }

@@ -13,12 +13,21 @@ struct CalendarNavigationConfiguration<BottomStatusBar: View>: @MainActor Naviga
     let bottomStatusBarIsPresented: Bool
     let bottomStatusBar: () -> BottomStatusBar
 
+    var yearFeature: CalendarYearFeature?
+    var yearPickerSession: CalendarYearPickerSession?
+    #if DEBUG
+        var downloadPreviewState: FullStoreDownloadPreviewState?
+    #endif
+
     func destination(for destination: CalendarDestination) -> some View {
         CalendarDestinationView(
             destination: destination, bottomStatusBarIsPresented: bottomStatusBarIsPresented,
-            bottomStatusBar: bottomStatusBar
+            bottomStatusBar: bottomStatusBar,
+            yearFeature: yearFeature, yearPickerSession: yearPickerSession
         )
-        .calendarStoreContent(state: storeCoordinator?.state)
+        #if DEBUG
+        .environment(downloadPreviewState)
+        #endif
     }
 
     func confirmationContent(
@@ -44,17 +53,19 @@ struct CalendarNavigationConfiguration<BottomStatusBar: View>: @MainActor Naviga
             return NavigationAlertDefinition(content: CalendarAlertContent.clearDataSucceeded) { action in
                 coordinator.handleNoticeAction(action)
             }
-        case let .clearDataFailed(id):
+        case let .clearDataFailed(failure):
             return NavigationAlertDefinition(
-                content: CalendarAlertContent.clearDataFailed(message: coordinator.alertMessages[id])
+                content: CalendarAlertContent
+                    .clearDataFailed(message: CalendarStoreErrorPresentation.message(for: failure))
             ) { action in
-                coordinator.handleNoticeAction(action, messageID: id)
+                coordinator.handleNoticeAction(action)
             }
-        case let .downloadFailed(id):
+        case let .downloadFailed(failure):
             return NavigationAlertDefinition(
-                content: CalendarAlertContent.downloadFailed(message: coordinator.alertMessages[id])
+                content: CalendarAlertContent
+                    .downloadFailed(message: CalendarStoreErrorPresentation.message(for: failure))
             ) { action in
-                coordinator.handleNoticeAction(action, messageID: id)
+                coordinator.handleNoticeAction(action)
             }
         #if DEBUG
             case let .debugNotice(number):

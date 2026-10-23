@@ -58,7 +58,9 @@ private enum TestDestination: NavigationDestination {
     )
 
     sheetRouter.presentSheet(.first)
+    sheetRouter.frontmostPresentationNode?.lifetime.claimHost()
     fullScreenRouter.presentFullScreen(.second)
+    fullScreenRouter.frontmostPresentationNode?.lifetime.claimHost()
 
     #expect(sheetRouter.sheet?.destination == .first)
     #expect(sheetRouter.sheet?.path.isEmpty == true)
@@ -74,9 +76,12 @@ private enum TestDestination: NavigationDestination {
     )
     router.presentSheet(.first)
     let parent = try #require(router.sheet)
+    parent.lifetime.claimHost()
 
     router.presentFullScreen(.second)
+    router.frontmostPresentationNode?.lifetime.claimHost()
     router.presentSheet(.third)
+    router.frontmostPresentationNode?.lifetime.claimHost()
 
     #expect(router.fullScreen == nil)
     #expect(parent.fullScreen?.destination == .second)
@@ -90,8 +95,10 @@ private enum TestDestination: NavigationDestination {
         selectedScope: .primary, rootDestinations: [.primary: .first, .secondary: .second]
     )
     router.presentSheet(.first)
+    router.frontmostPresentationNode?.lifetime.claimHost()
 
     let sheet = try #require(router.sheet)
+    sheet.lifetime.claimHost()
     router.context(for: sheet).push(.second)
 
     #expect(sheet.path == [.second])
@@ -106,6 +113,7 @@ private enum TestDestination: NavigationDestination {
     )
     router.presentSheet(.first)
     let parent = try #require(router.sheet)
+    parent.lifetime.claimHost()
     router.presentationContext(for: parent).present(.second)
 
     try router.dismissPresentation(id: #require(parent.sheet).id)
@@ -147,6 +155,7 @@ private enum TestDestination: NavigationDestination {
     )
     router.presentSheet(.second)
     let sheet = try #require(router.sheet)
+    sheet.lifetime.claimHost()
     router.presentationContext(for: sheet).present(.third, style: .fullScreen)
 
     let result = router.submit(.setRoot(.second, on: .secondary))
@@ -176,6 +185,7 @@ private enum TestDestination: NavigationDestination {
         selectedScope: .primary, rootDestinations: [.primary: .first, .secondary: .second]
     )
     router.presentFullScreen(.first)
+    router.frontmostPresentationNode?.lifetime.claimHost()
 
     #expect(router.submit(.push(.second, on: .scope(.primary))) == .deferredUntilPresentationDismisses)
     #expect(router.submit(.replacePath([.third], on: .secondary)) == .deferredUntilPresentationDismisses)
@@ -195,6 +205,7 @@ private enum TestDestination: NavigationDestination {
         selectedScope: .primary, rootDestinations: [.primary: .first, .secondary: .second]
     )
     router.presentSheet(.first)
+    router.frontmostPresentationNode?.lifetime.claimHost()
     router.submit(.push(.second, on: .scope(.primary)))
 
     #expect(router.applyDeferredRequestIfReady() == .push(.second, on: .scope(.primary)))

@@ -9,7 +9,7 @@ import SwiftData
 public final class ChineseCalendarStoreCoordinator {
     private(set) var state: CalendarStoreBootstrapState = .starting
     private(set) var fullStoreDownloadProgress: FullStoreDownloadProgress?
-    private(set) var downloadErrorMessage: LocalizedStringResource?
+    private(set) var downloadFailure: CalendarStoreFailure?
     private(set) var isClearingDownloadedData = false
 
     @ObservationIgnored private var fullStoreDownloadTask: Task<Void, Never>?
@@ -74,7 +74,7 @@ public final class ChineseCalendarStoreCoordinator {
             return false
         }
 
-        downloadErrorMessage = nil
+        downloadFailure = nil
         clearCompletedDownloadTask?.cancel()
         fullStoreDownloadProgress = .preparingManifest
 
@@ -102,7 +102,7 @@ public final class ChineseCalendarStoreCoordinator {
                 return false
             }
 
-            downloadErrorMessage = nil
+            downloadFailure = nil
             clearCompletedDownloadTask?.cancel()
             isSimulatingFullStoreDownload = true
             fullStoreDownloadTask = Task {
@@ -123,7 +123,7 @@ public final class ChineseCalendarStoreCoordinator {
     #endif
 
     func dismissDownloadError() {
-        downloadErrorMessage = nil
+        downloadFailure = nil
     }
 
     func storeIdentity(
@@ -196,7 +196,7 @@ public final class ChineseCalendarStoreCoordinator {
 
             ChineseCalendarLog.persistence
                 .error("Failed to install full SwiftData store: \(error.localizedDescription)")
-            showDownloadErrorIfStoreRecovers(CalendarStoreErrorPresentation.message(for: error, operation: .download))
+            showDownloadErrorIfStoreRecovers(CalendarStoreErrorPresentation.failure(for: error, operation: .download))
         }
     }
 
@@ -217,7 +217,7 @@ public final class ChineseCalendarStoreCoordinator {
                     return
                 }
 
-                downloadErrorMessage = CalendarStoreErrorPresentation.message(for: error, operation: .download)
+                downloadFailure = CalendarStoreErrorPresentation.failure(for: error, operation: .download)
             }
         }
     #endif
@@ -240,15 +240,15 @@ public final class ChineseCalendarStoreCoordinator {
         }
     }
 
-    private func showDownloadErrorIfStoreRecovers(_ message: LocalizedStringResource) {
+    private func showDownloadErrorIfStoreRecovers(_ failure: CalendarStoreFailure) {
         do {
             let container = try ChineseCalendarModelContainerFactory.makeSharedContainer(bundle: seedStoreBundle)
             state = try readyState(container: container)
-            downloadErrorMessage = message
+            downloadFailure = failure
         } catch {
             ChineseCalendarLog.persistence.error("Failed to recover SwiftData store: \(error.localizedDescription)")
-            downloadErrorMessage = nil
-            state = .failed(message: message)
+            downloadFailure = nil
+            state = .failed(message: CalendarStoreErrorPresentation.message(for: failure))
         }
     }
 

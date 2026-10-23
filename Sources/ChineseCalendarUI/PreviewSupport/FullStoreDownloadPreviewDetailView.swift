@@ -2,14 +2,11 @@
     import SwiftUI
 
     struct FullStoreDownloadPreviewDetailView: View {
-        let sessionID: DownloadPreviewSessionID
-        @Environment(CalendarHomeCoordinator.self) private var coordinator
+        @Bindable var state: FullStoreDownloadPreviewState
 
         var body: some View {
-            if let state = coordinator.downloadPreviewSessions[sessionID] {
-                FullStoreDownloadDetailView(progress: state.stage.progress)
-                    .dynamicTypeSize(state.textSize)
-            }
+            FullStoreDownloadDetailView(progress: state.stage.progress)
+                .dynamicTypeSize(state.textSize)
         }
     }
 #endif

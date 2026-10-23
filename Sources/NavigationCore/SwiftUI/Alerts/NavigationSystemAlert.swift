@@ -16,6 +16,7 @@ struct NavigationSystemAlert {
     let willDismiss: () -> Void
     /// 同步启动动作处理，返回任务供需要等待处理结束的调用方使用；UIKit 宿主不等待它。
     let didDismiss: (Int?) -> Task<Void, Never>
+    let renderLifetime: (any NavigationAlertRenderLifetime)?
 
     /// 两类提示共用系统展示与关闭生命周期，业务动作在一次性完成权限取得后执行。
     init(
@@ -25,9 +26,11 @@ struct NavigationSystemAlert {
             some NavigationScope,
             some NavigationDestination,
             some NavigationAlertRoute
-        >
+        >,
+        renderLifetime: (any NavigationAlertRenderLifetime)? = nil
     ) {
         self.id = id
+        self.renderLifetime = renderLifetime
         title = String(localized: definition.title)
         message = String(localized: definition.message)
         buttons = definition.buttons.map { button in
@@ -36,16 +39,25 @@ struct NavigationSystemAlert {
                 isCancel: button.isCancel, isDestructive: button.isDestructive
             )
         }
-        willPresent = { context.alertWillPresent(id: id) }
-        willDismiss = { context.alertWillDismiss(id: id) }
+        var session: NavigationAlertSession?
+        willPresent = {
+            guard session == nil, let claimed = context.claimAlertSession(id: id) else { return false }
+            session = claimed
+            return true
+        }
+        willDismiss = {
+            session?.beginDismissal()
+            context.alertWillDismiss(id: id)
+        }
         didDismiss = { selection in
             // 用独立 Task 等待按钮动作完成，再释放本次 alert 会话；页面重建不会取消这项任务。
             Task { @MainActor in
-                guard context.beginAlertCompletion(id: id) else { return }
+                defer { withExtendedLifetime(renderLifetime) {} }
+                guard let session, session.beginCompletion() else { return }
                 if let selection, definition.buttons.indices.contains(selection) {
                     await definition.buttons[selection].perform()
                 }
-                context.alertDidDismiss(id: id)
+                context.completeAlertSession(session)
             }
         }
     }

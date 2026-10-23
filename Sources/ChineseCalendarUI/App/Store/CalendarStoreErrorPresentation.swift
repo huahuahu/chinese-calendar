@@ -11,67 +11,92 @@ enum CalendarStoreErrorPresentation {
     }
 
     static func message(for error: Error, operation: Operation) -> LocalizedStringResource {
+        message(for: failure(for: error, operation: operation))
+    }
+
+    // Each value maps directly to one localized recovery message.
+    // swiftlint:disable:next cyclomatic_complexity
+    static func message(for failure: CalendarStoreFailure) -> LocalizedStringResource {
+        switch failure {
+        case .prepare: CalendarStringKey.Store.Error.prepare
+        case .download: CalendarStringKey.Store.Error.download
+        case .clear: CalendarStringKey.Store.Error.clear
+        case .missingContainer: CalendarStringKey.Store.Error.missingContainer
+        case .missingResource: CalendarStringKey.Store.Error.missingResource
+        case .invalidManifest: CalendarStringKey.Store.Error.invalidManifest
+        case .timedOut: CalendarStringKey.Store.Error.timedOut
+        case .network: CalendarStringKey.Store.Error.network
+        case .storage: CalendarStringKey.Store.Error.storage
+        case .permission: CalendarStringKey.Store.Error.permission
+        case .incompatible: CalendarStringKey.Store.Error.incompatible
+        case .expiredDownload: CalendarStringKey.Store.Error.expiredDownload
+        case .invalidFile: CalendarStringKey.Store.Error.invalidFile
+        case let .server(status): CalendarStringKey.Store.Error.server(status: status)
+        }
+    }
+
+    static func failure(for error: Error, operation: Operation) -> CalendarStoreFailure {
         if let error = error as? ChineseCalendarFullSeedStoreInstallError {
-            return downloadMessage(for: error)
+            return downloadFailure(for: error)
         }
         if let error = error as? ChineseCalendarStoreError {
-            return storeMessage(for: error)
+            return storeFailure(for: error)
         }
         if error is DecodingError {
-            return CalendarStringKey.Store.Error.invalidManifest
+            return .invalidManifest
         }
         let nsError = error as NSError
         if nsError.domain == NSURLErrorDomain {
             return nsError.code == NSURLErrorTimedOut
-                ? CalendarStringKey.Store.Error.timedOut
-                : CalendarStringKey.Store.Error.network
+                ? .timedOut
+                : .network
         }
-        if let message = fileMessage(for: nsError) {
-            return message
+        if let failure = fileFailure(for: nsError) {
+            return failure
         }
         switch operation {
-        case .prepare: return CalendarStringKey.Store.Error.prepare
-        case .download: return CalendarStringKey.Store.Error.download
-        case .clear: return CalendarStringKey.Store.Error.clear
+        case .prepare: return .prepare
+        case .download: return .download
+        case .clear: return .clear
         }
     }
 
-    private static func storeMessage(for error: ChineseCalendarStoreError) -> LocalizedStringResource {
+    private static func storeFailure(for error: ChineseCalendarStoreError) -> CalendarStoreFailure {
         switch error {
         case .missingAppGroupContainer:
-            CalendarStringKey.Store.Error.missingContainer
+            .missingContainer
         case .missingSeedResource, .missingSeedStore:
-            CalendarStringKey.Store.Error.missingResource
+            .missingResource
         }
     }
 
-    private static func fileMessage(for error: NSError) -> LocalizedStringResource? {
+    private static func fileFailure(for error: NSError) -> CalendarStoreFailure? {
         guard error.domain == NSCocoaErrorDomain else { return nil }
         switch error.code {
         case NSFileWriteOutOfSpaceError:
-            return CalendarStringKey.Store.Error.storage
+            return .storage
         case NSFileReadNoPermissionError, NSFileWriteNoPermissionError:
-            return CalendarStringKey.Store.Error.permission
+            return .permission
         default:
             return nil
         }
     }
 
-    private static func downloadMessage(
+    private static func downloadFailure(
         for error: ChineseCalendarFullSeedStoreInstallError
-    ) -> LocalizedStringResource {
+    ) -> CalendarStoreFailure {
         switch error {
         case .unsupportedSchemaVersion:
-            CalendarStringKey.Store.Error.incompatible
+            .incompatible
         case .unsupportedContentLevel, .unsupportedStoreFileName,
              .invalidManifestByteCount, .invalidManifestChecksum:
-            CalendarStringKey.Store.Error.invalidManifest
+            .invalidManifest
         case .invalidContentRange, .rangeNotSatisfiable:
-            CalendarStringKey.Store.Error.expiredDownload
+            .expiredDownload
         case .invalidByteCount, .checksumMismatch, .missingDownloadedStore:
-            CalendarStringKey.Store.Error.invalidFile
+            .invalidFile
         case let .downloadFailed(status):
-            CalendarStringKey.Store.Error.server(status: status)
+            .server(status: status)
         }
     }
 }

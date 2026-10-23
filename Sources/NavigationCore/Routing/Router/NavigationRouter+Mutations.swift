@@ -1,4 +1,4 @@
-public extension NavigationRouter {
+extension NavigationRouter {
     /// 直接切换根层命名栈；nil 保持选择，事务协调仍由 submit 负责。
     @discardableResult
     func selectScope(_ scope: Scope?) -> NavigationMutationResult {

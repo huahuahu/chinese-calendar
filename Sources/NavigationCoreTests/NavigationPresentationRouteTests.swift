@@ -37,6 +37,9 @@ struct NavigationPresentationRouteTests {
         let router = Router(rootDestination: .home)
         #expect(router.rootPresentation.present(.home) == .applied)
         var node: Node? = try #require(router.presentedNode)
+        let lifetime = try #require(node?.lifetime)
+        // 本测试覆盖已交宿主的关闭阶段；未接手请求取消时应立即释放层。
+        lifetime.claimHost()
         weak var originalLayer = node?.layer
         let id = try #require(node?.id)
         let modal = try router.presentationContext(for: #require(node))
@@ -44,14 +47,17 @@ struct NavigationPresentationRouteTests {
         #expect(modal.dismiss() == .applied)
         node = nil
         #expect(originalLayer != nil)
+        #expect(!lifetime.finished)
         #expect(!modal.isActive)
         #expect(modal.route == .presentation(id: id, destination: .home))
         #expect(scoped.destination == .home)
-        router.rootPresentation.presentationDidDismiss()
+        router.rootPresentation.presentationDidDismiss(lifetime: lifetime)
         #expect(originalLayer == nil)
+        #expect(lifetime.finished)
 
         router.rootLayer.presentation = Node(id: id, destination: .detail)
         let current = try router.presentationContext(for: #require(router.presentedNode))
+        router.presentedNode?.lifetime.claimHost()
         #expect(current.id == modal.id)
         #expect(current.isActive)
         #expect(current.destination == .detail)

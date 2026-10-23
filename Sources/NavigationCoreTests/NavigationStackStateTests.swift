@@ -48,7 +48,7 @@ struct NavigationStackStateTests {
         policy.isActive = false
         policy.rejectionReason = nil
         #expect(!context.isActive)
-        #expect(context.path.isEmpty)
+        #expect(context.path == [.first])
         #expect(context.setPath([.third]) == .rejected(.inactiveContext))
         #expect(context.push(.second) == .rejected(.inactiveContext))
         #expect(state.path == [.first])
@@ -93,11 +93,13 @@ struct NavigationStackStateTests {
             paths: [.history: []]
         )
         router.presentSheet(.first)
+        router.frontmostPresentationNode?.lifetime.claimHost()
         let homeState = router.rootLayer.stacks[.scope(.home)]
         let historyState = router.rootLayer.stacks[.scope(.history)]
         _ = router.context(for: .home)
         _ = router.context(for: .history)
         let node = try #require(router.sheet)
+        node.lifetime.claimHost()
         let modalState = node.layer.stacks[.primary]
         _ = router.context(for: node)
         _ = router.presentationContext(for: node).context(for: .scope(.history))
@@ -141,6 +143,7 @@ struct NavigationStackStateTests {
         )
         let home = router.context(for: .home)
         router.presentSheet(.second)
+        router.frontmostPresentationNode?.lifetime.claimHost()
         router.submit(.replacePath([.third], on: .home), confirmIfPresented: true)
         let confirmation = try #require(router.pendingConfirmation)
         #expect(home.setPath([.second]) == .rejected(.awaitingConfirmation))

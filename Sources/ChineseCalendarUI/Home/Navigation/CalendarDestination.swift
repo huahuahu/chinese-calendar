@@ -16,7 +16,7 @@ enum CalendarDestination: NavigationDestination, Identifiable {
     case dynastySpan(orthodoxPeriodID: String)
     case reignEra(reignEraID: String)
     case emperor(String)
-    case yearPicker(sessionID: YearPickerSessionID)
+    case yearPicker
     case downloadDetails
     #if DEBUG
         case debugNavigation(id: UUID)
@@ -24,10 +24,10 @@ enum CalendarDestination: NavigationDestination, Identifiable {
         case debugSplitEmpty
         case debugSplitDetail(item: CalendarDebugSplitItem, level: Int)
         case debugNavigationTabs(id: UUID)
-        case downloadPreview(sessionID: DownloadPreviewSessionID)
-        case downloadPreviewScenarios(sessionID: DownloadPreviewSessionID)
+        case downloadPreview
+        case downloadPreviewScenarios
         case downloadPreviewSwitch
-        case downloadPreviewDetails(sessionID: DownloadPreviewSessionID)
+        case downloadPreviewDetails
     #endif
 
     var id: String {
@@ -55,8 +55,8 @@ enum CalendarDestination: NavigationDestination, Identifiable {
             "reign-era-\(reignEraID)"
         case let .emperor(emperorID):
             "emperor-\(emperorID)"
-        case let .yearPicker(sessionID):
-            "year-picker-\(sessionID)"
+        case .yearPicker:
+            "year-picker"
         case .downloadDetails:
             "download-details"
         #if DEBUG
@@ -70,14 +70,14 @@ enum CalendarDestination: NavigationDestination, Identifiable {
                 "debug-split-detail-\(item.rawValue)-\(level)"
             case let .debugNavigationTabs(id):
                 "debug-navigation-tabs-\(id)"
-            case let .downloadPreview(sessionID):
-                "download-preview-\(sessionID)"
-            case let .downloadPreviewScenarios(sessionID):
-                "download-preview-scenarios-\(sessionID)"
+            case .downloadPreview:
+                "download-preview"
+            case .downloadPreviewScenarios:
+                "download-preview-scenarios"
             case .downloadPreviewSwitch:
                 "download-preview-switch"
-            case let .downloadPreviewDetails(sessionID):
-                "download-preview-details-\(sessionID)"
+            case .downloadPreviewDetails:
+                "download-preview-details"
         #endif
         }
     }

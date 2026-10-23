@@ -31,6 +31,7 @@ struct NavigationCoordinationTests {
             rootDestinations: [.home: .first, .history: .second]
         )
         router.presentSheet(.first)
+        router.frontmostPresentationNode?.lifetime.claimHost()
         #expect(router.submit(.push(.second, on: .history)) == .deferredUntilPresentationDismisses)
         #expect(router.submit(.push(.third, on: .history), confirmIfPresented: true) == .awaitingConfirmation)
         let confirmation = try #require(router.pendingConfirmation)
@@ -71,6 +72,7 @@ struct NavigationCoordinationTests {
         )
         router.presentSheet(.first)
         let page = try #require(router.sheet)
+        page.lifetime.claimHost()
         let context = router.presentationContext(for: page)
         let alertID = try beginAlert(context)
         #expect(router.submit(
@@ -109,12 +111,14 @@ struct NavigationCoordinationTests {
         )
         router.presentSheet(.first)
         let parent = try #require(router.sheet)
+        parent.lifetime.claimHost()
         let parentContext = router.presentationContext(for: parent)
         #expect(parentContext.present(.second) == .applied)
         let child = try #require(parent.sheet)
+        child.lifetime.claimHost()
         let childContext = router.presentationContext(for: child)
         let alertID = try beginAlert(childContext)
-        #expect(childContext.presentAlert(.message) == .queued)
+        #expect(childContext.submitAlert(.message) == .queued)
 
         if allFirst { router.dismissAllPresentations() }
         #expect(childContext.dismiss() == .queued)
@@ -135,10 +139,12 @@ struct NavigationCoordinationTests {
 
         router.presentSheet(.third)
         let reopened = try #require(router.sheet)
+        reopened.lifetime.claimHost()
         childContext.alertDidDismiss(id: .business(alertID))
         router.resumePresentations()
         #expect(router.sheet === reopened)
-        #expect(router.alertRoutes.isEmpty)
+        #expect(!router.hasActiveAlert)
+        #expect(reopened.layer.queuedPresentations.isEmpty)
     }
 
     private func resolve(_ id: NavigationConfirmationID, on router: Router, approve: Bool) {
@@ -150,7 +156,7 @@ struct NavigationCoordinationTests {
     }
 
     private func beginAlert(_ context: Presentation) throws -> NavigationAlertID {
-        #expect(context.presentAlert(.message) == .applied)
+        #expect(context.submitAlert(.message) == .applied)
         let id = try #require(context.presentedAlert).id
         #expect(context.alertWillPresent(id: .business(id)))
         return id

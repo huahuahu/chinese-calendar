@@ -9,21 +9,24 @@ import SwiftUI
 struct LunarYearDestinationView: View {
     let landing: LunarCalendarLanding
 
-    @State private var selection = CalendarSelection()
-    @State private var today = CalendarToday()
+    @State private var feature = CalendarYearFeature()
+    @Environment(ChineseCalendarStoreCoordinator.self) private var storeCoordinator: ChineseCalendarStoreCoordinator?
 
     var body: some View {
         LunarYearSelectionHost(landing: landing)
-            .environment(selection)
-            .environment(today)
+            .calendarStoreContent(state: storeCoordinator?.state)
+            .environment(feature)
+            .environment(feature.selection)
+            .environment(feature.today)
     }
 }
 
 /// 隔离环境读取与日期刷新副作用，页面本身只表达选中日对应的内容。
 private struct LunarYearSelectionHost: View {
+    @Environment(CalendarYearFeature.self) private var feature
+    @Environment(ChineseCalendarStoreCoordinator.self) private var storeCoordinator: ChineseCalendarStoreCoordinator?
     @Environment(CalendarSelection.self) private var selection
     @Environment(CalendarToday.self) private var today
-    @Environment(\.calendarStoreContentLevel) private var storeContentLevel
     @Environment(\.modelContext) private var modelContext
     @Environment(\.scenePhase) private var scenePhase
 
@@ -31,7 +34,7 @@ private struct LunarYearSelectionHost: View {
 
     var body: some View {
         CalendarPageView(selectedDayIndex: selection.selectedDayIndex)
-            .task(id: storeContentLevel) {
+            .task(id: ObjectIdentifier(modelContext)) {
                 resolveInitialSelectionIfNeeded()
             }
             .onChange(of: scenePhase) {
@@ -61,6 +64,8 @@ private struct LunarYearSelectionHost: View {
     }
 
     private func resolveInitialSelectionIfNeeded() {
+        feature.connect(modelContext: modelContext, storeCoordinator: storeCoordinator)
+        guard feature.modelContext === modelContext else { return }
         let resolver = CalendarSelectionResolver(modelContext: modelContext)
 
         do {

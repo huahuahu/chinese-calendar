@@ -66,6 +66,7 @@ struct NavigationLayerInitializationTests {
         let router = Router(rootDestination: .home, paths: [.primary: [.detail]])
         #expect(router.rootPresentation.present(.detail, paths: [.primary: [.home]]) == .applied)
         let parent = try #require(router.sheet)
+        parent.lifetime.claimHost()
         let modal = router.presentationContext(for: parent)
         #expect(modal.present(.home, initialStack: .scope(.home)) == .rejected(.incompatibleContainer))
         #expect(modal.present(.home, rootDestinations: [.primary: .home]) == .rejected(.incompatibleContainer))
@@ -94,6 +95,7 @@ struct NavigationLayerInitializationTests {
         #expect(rootStack.push(.tabs) == .applied)
         #expect(router.rootPresentation.present(.detail) == .applied)
         let parent = try #require(router.sheet)
+        parent.lifetime.claimHost()
         let modal = router.presentationContext(for: parent)
         #expect(modal.context(for: .primary).setRootDestination(.tabs) == .applied)
         #expect(modal.context(for: .primary).push(.home) == .applied)
@@ -103,6 +105,7 @@ struct NavigationLayerInitializationTests {
             paths: [.scope(.home): [.detail], .scope(.history): [.home, .tabs]]
         ) == .applied)
         let child = try #require(parent.fullScreen)
+        child.lifetime.claimHost()
         let tabs = router.presentationContext(for: child)
         #expect(router.rootPresentation.destination == .home)
         #expect(modal.destination == .detail)

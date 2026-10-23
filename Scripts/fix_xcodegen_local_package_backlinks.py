@@ -15,6 +15,7 @@ from __future__ import annotations
 import posixpath
 import re
 import sys
+import xml.etree.ElementTree as ET
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -23,14 +24,13 @@ PBXPROJ = Path("ChineseCalendar.xcodeproj/project.pbxproj")
 PROJECT_YML = Path("project.yml")
 IOS_SCHEME = Path("ChineseCalendar.xcodeproj/xcshareddata/xcschemes/ChineseCalendar-iOS.xcscheme")
 PACKAGE_CONTAINER = "container:Sources"
-IOS_TEST_TARGETS = [
+IOS_PACKAGE_TEST_TARGETS = [
     "ChineseCalendarLocalizationTests",
     "ChineseCalendarCoreTests",
     "ChineseCalendarDataTests",
     "ChineseCalendarLoggingTests",
     "ChineseCalendarPersistenceTests",
     "NavigationCoreTests",
-    "ChineseCalendarUITests",
 ]
 
 
@@ -270,43 +270,51 @@ def testable_reference(target_name: str) -> list[str]:
 
 
 def patch_ios_scheme_testables(path: Path) -> bool:
+    """补充 package 测试，保留 XcodeGen 的 App 承载测试和独立 UI 测试引用。"""
     if not path.exists():
         print(f"warning: {path} does not exist; skipping iOS scheme testables", file=sys.stderr)
         return False
 
     original_text = path.read_text()
-    if all(f'BlueprintName = "{target}"' in original_text for target in IOS_TEST_TARGETS):
-        return False
-
-    lines = original_text.splitlines()
-    output: list[str] = []
-    index = 0
-    patched = False
-
-    while index < len(lines):
-        output.append(lines[index])
-        if lines[index].strip() != "<Testables>":
-            index += 1
-            continue
-
-        index += 1
-        while index < len(lines) and lines[index].strip() != "</Testables>":
-            index += 1
-
-        for target_name in IOS_TEST_TARGETS:
-            output.extend(testable_reference(target_name))
-
-        if index < len(lines):
-            output.append(lines[index])
-        patched = True
-        index += 1
-
-    if not patched:
+    section = re.search(r"<Testables>(?P<body>[\s\S]*?)(?P<closing>[ \t]*</Testables>)", original_text)
+    if section is None:
         print(f"warning: no Testables section found in {path}", file=sys.stderr)
         return False
 
-    trailing_newline = "\n" if original_text.endswith("\n") else ""
-    path.write_text("\n".join(output) + trailing_newline)
+    present_packages: set[str] = set()
+
+    def preserve_reference(match: re.Match[str]) -> str:
+        block = match.group(0)
+        reference = ET.fromstring(block).find("BuildableReference")
+        if reference is None or reference.get("ReferencedContainer") != PACKAGE_CONTAINER:
+            return block
+        target = reference.get("BlueprintName")
+        # 该名称已迁移到项目 target，仅移除它原来的 package 引用。
+        if target == "ChineseCalendarUITests":
+            return ""
+        if target not in IOS_PACKAGE_TEST_TARGETS:
+            return block
+        if target in present_packages:
+            return ""
+        present_packages.add(target)
+        return block
+
+    body = re.sub(
+        r"(?m)^[ \t]*<TestableReference\b[\s\S]*?</TestableReference>[ \t]*\n?",
+        preserve_reference,
+        section.group("body"),
+    )
+    missing = [target for target in IOS_PACKAGE_TEST_TARGETS if target not in present_packages]
+    if missing:
+        if not body.endswith("\n"):
+            body += "\n"
+        for target in missing:
+            body += "\n".join(testable_reference(target)) + "\n"
+
+    updated_text = original_text[:section.start("body")] + body + original_text[section.end("body"):]
+    if updated_text == original_text:
+        return False
+    path.write_text(updated_text)
     return True
 
 

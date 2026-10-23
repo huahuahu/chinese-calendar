@@ -1,196 +1,113 @@
 @testable import ChineseCalendarUI
-import Foundation
-@testable import NavigationCore
-import SwiftData
+import NavigationCore
+import SwiftUI
 import Testing
 
 @MainActor
-@Suite("页面 NavigationPresentationContext 与协调")
+@Suite("页面呈现与下载资源所有权", .serialized)
 struct CalendarPresentationTests {
-    @Test func yearSelectionReturnsOnlyToItsOriginatingPage() throws {
-        let coordinator = CalendarHomeCoordinator()
-        let firstContainer = try PreviewSampleData.makeModelContainer(includesSampleData: false)
-        let secondContainer = try PreviewSampleData.makeModelContainer(includesSampleData: false)
-        let firstSelection = CalendarSelection(selectedDayIndex: 101)
-        let secondSelection = CalendarSelection(selectedDayIndex: 202)
+    @Test(.timeLimit(.minutes(1)))
+    func rejectedAndSynchronouslyCancelledDetailsAllowANewRequest() async throws {
+        let feature = CalendarDownloadDetailsFeature()
+        let router = CalendarRouter().navigation
+        let root = router.rootPresentation
+        feature.present(from: root)
+        #expect(feature.request == nil)
 
-        coordinator.presentYearPicker(selection: firstSelection, modelContext: firstContainer.mainContext) {
-            firstSelection.select(dayIndex: $0)
-        }
-        let parent = try #require(coordinator.router.sheet)
-        let firstID = try sessionID(in: parent.destination)
-        coordinator.presentYearPicker(selection: secondSelection, modelContext: secondContainer.mainContext) {
-            secondSelection.select(dayIndex: $0)
-        }
-        let secondID = try sessionID(in: #require(parent.sheet).destination)
+        let host = try await NavigationTestHost.show(router: router)
+        defer { host.removeFromWindow() }
+        feature.present(from: root)
+        let first = try #require(feature.request)
+        feature.progressDidDisappear()
+        #expect(feature.request == nil)
+        #expect(host.presentedViewController() == nil)
 
-        #expect(coordinator.yearPickerSessions[firstID]?.selection === firstSelection)
-        #expect(coordinator.yearPickerSessions[firstID]?.modelContext === firstContainer.mainContext)
-        #expect(coordinator.yearPickerSessions[secondID]?.modelContext === secondContainer.mainContext)
-        coordinator.selectYear(2027, sessionID: secondID)
-        coordinator.selectYear(2028, sessionID: secondID)
-        #expect(secondSelection.selectedDayIndex == 2027)
-        #expect(firstSelection.selectedDayIndex == 101)
-        #expect(coordinator.router.sheet === parent)
-        #expect(parent.sheet == nil)
-
-        #expect(coordinator.yearPickerSessions[secondID] != nil)
-        coordinator.router.navigation.presentationContext(for: parent).presentationDidDismiss()
-        coordinator.releaseDismissedContexts()
-        #expect(coordinator.yearPickerSessions[secondID] == nil)
-        coordinator.selectYear(2025, sessionID: firstID)
-        #expect(firstSelection.selectedDayIndex == 2025)
-        coordinator.rootPresentationDidDismiss()
-        #expect(coordinator.yearPickerSessions.isEmpty)
+        feature.present(from: root)
+        let replacement = try #require(feature.request)
+        #expect(replacement !== first)
+        #expect(!first.dismiss().isAccepted)
+        #expect(feature.request === replacement)
+        feature.progressDidDisappear()
+        #expect(feature.request == nil)
+        await host.close()
     }
 
-    @Test func cancelledYearPickerCannotDeliverAStaleResult() throws {
+    @Test(.timeLimit(.minutes(1)))
+    func disappearingDownloadOnlyClosesItsOwnDetails() async throws {
         let coordinator = CalendarHomeCoordinator()
-        let container = try PreviewSampleData.makeModelContainer(includesSampleData: false)
-        let selection = CalendarSelection(selectedDayIndex: 100)
-        coordinator.presentYearPicker(selection: selection, modelContext: container.mainContext) {
-            selection.select(dayIndex: $0)
-        }
-        let id = try sessionID(in: #require(coordinator.router.sheet).destination)
+        let router = coordinator.router.navigation
+        let host = try await NavigationTestHost.show(router: router)
+        defer { host.removeFromWindow() }
+        let parent = router.rootPresentation.present(.sheet(.lunarYear(2025)))
+        let parentContext = try await host.context(for: .lunarYear(2025))
+        _ = try await host.waitForPresentation()
+        coordinator.downloadDetails.progressDidDisappear()
+        #expect(parentContext.isPresented)
 
-        // 模拟系统下滑对绑定的写回；动画结束前的旧回调也不能改变业务选择。
-        coordinator.router.dismissSheet()
-        coordinator.selectYear(2026, sessionID: id)
-        #expect(selection.selectedDayIndex == 100)
-        coordinator.rootPresentationDidDismiss()
-        #expect(coordinator.yearPickerSessions.isEmpty)
-
-        coordinator.presentYearPicker(selection: selection, modelContext: container.mainContext) { _ in }
-        #expect(coordinator.router.sheet != nil)
+        coordinator.downloadDetails.present(from: parentContext)
+        let request = try #require(coordinator.downloadDetails.request)
+        coordinator.downloadDetails.present(from: parentContext)
+        #expect(coordinator.downloadDetails.request === request)
+        _ = try await host.context(for: .downloadDetails)
+        _ = try await host.waitForPresentation()
+        coordinator.downloadDetails.progressDidDisappear()
+        #expect(coordinator.downloadDetails.request === request)
+        try await host.waitUntil { coordinator.downloadDetails.request == nil }
+        #expect(parentContext.isPresented)
+        parent.handle?.dismiss()
+        try await host.waitUntil { host.presentedViewController() == nil }
+        await host.close()
     }
 
-    @Test func repeatedYearPickerActionKeepsTheOriginalSession() throws {
+    @Test(.timeLimit(.minutes(1)))
+    func disappearingProgressCancelsAnUnshownRequest() async throws {
         let coordinator = CalendarHomeCoordinator()
-        let container = try PreviewSampleData.makeModelContainer(includesSampleData: false)
-        let selection = CalendarSelection(selectedDayIndex: 100)
-        coordinator.presentYearPicker(selection: selection, modelContext: container.mainContext) {
-            selection.select(dayIndex: $0)
-        }
-        let original = try #require(coordinator.router.sheet)
-        coordinator.presentYearPicker(selection: selection, modelContext: container.mainContext) { _ in
-            Issue.record("重复打开不能替换原回调")
-        }
-
-        #expect(coordinator.router.presentations.count == 1)
-        #expect(coordinator.yearPickerSessions.count == 1)
-        try coordinator.selectYear(2026, sessionID: sessionID(in: original.destination))
-        #expect(selection.selectedDayIndex == 2026)
-    }
-
-    @Test func storeChangeInvalidatesPickerButPreservesDownloadAndPaths() throws {
-        let coordinator = CalendarHomeCoordinator()
-        let container = try PreviewSampleData.makeModelContainer(includesSampleData: false)
-        let selection = CalendarSelection(selectedDayIndex: 100)
-        coordinator.storeIdentityDidChange("base")
-        coordinator.router.push(.dynasty(orthodoxPeriodID: "ming"), on: .history)
-        coordinator.presentDownloadDetails()
-        let download = try #require(coordinator.router.sheet)
-        coordinator.presentYearPicker(selection: selection, modelContext: container.mainContext) {
-            selection.select(dayIndex: $0)
-        }
-        let id = try sessionID(in: #require(download.sheet).destination)
-
-        coordinator.storeIdentityDidChange("full-v2")
-        coordinator.selectYear(2026, sessionID: id)
-
-        #expect(coordinator.yearPickerSessions.isEmpty)
-        #expect(selection.selectedDayIndex == 100)
-        #expect(download.sheet == nil)
-        #expect(coordinator.router.sheet === download)
-        #expect(coordinator.router.historyPath == [.dynasty(orthodoxPeriodID: "ming")])
-        coordinator.downloadProgressDidDisappear()
-        #expect(!coordinator.router.hasActivePresentation)
-    }
-
-    @Test func disappearingDownloadDoesNotDismissAnotherPresentation() throws {
-        let coordinator = CalendarHomeCoordinator()
-        coordinator.router.presentSheet(.lunarYear(2025))
-        let parent = try #require(coordinator.router.sheet)
-        coordinator.downloadProgressDidDisappear()
-        #expect(coordinator.router.sheet === parent)
-
-        coordinator.presentDownloadDetails()
-        coordinator.presentDownloadDetails()
-        #expect(coordinator.router.presentations.count == 2)
-        coordinator.downloadProgressDidDisappear()
-        #expect(coordinator.router.sheet === parent)
-        #expect(parent.sheet == nil)
-    }
-
-    @Test func storeChangeDoesNotLoseLatestDeferredDeepLink() throws {
-        let coordinator = CalendarHomeCoordinator()
-        coordinator.storeIdentityDidChange("base")
-        coordinator.presentDownloadDetails()
-        coordinator.openDeepLink(.lunarYear(2025, monthIndex: nil))
-        coordinator.storeIdentityDidChange("full")
-        coordinator.openDeepLink(.emperor("ming-taizu"))
-        let confirmation = try #require(coordinator.router.navigation.pendingConfirmation)
-        coordinator.router.navigation.confirmNavigation(id: confirmation.id)
-        coordinator.rootPresentationDidDismiss()
-
-        #expect(coordinator.router.selectedTab == .history)
-        #expect(coordinator.router.navigation.rootDestination(for: .history) == .emperor("ming-taizu"))
-        #expect(coordinator.router.historyPath.isEmpty)
-        #expect(coordinator.router.yearsPath.isEmpty)
+        let host = try await NavigationTestHost.show(router: coordinator.router.navigation)
+        defer { host.removeFromWindow() }
+        coordinator.downloadDetails.present(from: coordinator.router.navigation.rootPresentation)
+        #expect(coordinator.downloadDetails.request != nil)
+        coordinator.downloadDetails.progressDidDisappear()
+        #expect(coordinator.downloadDetails.request == nil)
+        #expect(host.presentedViewController() == nil)
+        await host.close()
     }
 
     @Test func rebuildingDataPagesDoesNotReplayColdLaunchLink() {
         let coordinator = CalendarHomeCoordinator()
         coordinator.openColdLaunchDeepLink(.lunarYear(2025, monthIndex: nil))
         coordinator.openDeepLink(.emperor("ming-taizu"))
-        coordinator.storeIdentityDidChange("full")
         coordinator.openColdLaunchDeepLink(.lunarYear(2025, monthIndex: nil))
         #expect(coordinator.router.selectedTab == .history)
-        #expect(coordinator.router.navigation.rootDestination(for: .history) == .emperor("ming-taizu"))
+        #expect(coordinator.router.navigation.rootPresentation.context(for: .scope(.history)).rootDestination
+            == .emperor("ming-taizu"))
         #expect(coordinator.router.historyPath.isEmpty)
     }
 
     #if DEBUG
-        @Test func previewDetailsShareFeatureStateAndRemainInTheSameTree() throws {
+        @Test(.timeLimit(.minutes(1)))
+        func previewOwnerReleasesAfterActualFullscreenDismissalAndCanReopen() async throws {
             let coordinator = CalendarHomeCoordinator()
-            coordinator.presentDownloadPreview()
-            let parent = try #require(coordinator.router.fullScreen)
-            let session = try #require(coordinator.downloadPreviewSessions.values.first)
-            coordinator.presentDownloadPreview()
-            #expect(coordinator.router.presentations.count == 1)
-            #expect(coordinator.downloadPreviewSessions.count == 1)
-            session.stage = .downloading
-            coordinator.presentDownloadPreviewDetails(sessionID: session.id)
-            #expect(parent.sheet?.destination == .downloadPreviewDetails(sessionID: session.id))
-            #expect(session.stage.progress.downloadFraction == 0.5)
-            #expect(parent.destination.providesNavigationContainer)
-
-            try coordinator.router.dismissPresentation(id: #require(parent.sheet).id)
-            coordinator.router.navigation.presentationContext(for: parent).presentationDidDismiss()
-            coordinator.releaseDismissedContexts()
-            #expect(coordinator.downloadPreviewSessions[session.id] === session)
-            coordinator.presentDownloadPreviewDetails(sessionID: session.id)
-            coordinator.openDeepLink(.lunarYear(2026, monthIndex: nil))
-            coordinator.openDeepLink(.emperor("ming-taizu"))
-            let confirmation = try #require(coordinator.router.navigation.pendingConfirmation)
-            #expect(coordinator.router.fullScreen === parent)
-            coordinator.router.navigation.confirmNavigation(id: confirmation.id)
-            #expect(coordinator.router.fullScreen == nil)
-            #expect(coordinator.router.historyPath.isEmpty)
-            coordinator.rootPresentationDidDismiss()
-            #expect(coordinator.downloadPreviewSessions.isEmpty)
-            #expect(coordinator.router.navigation.rootDestination(for: .history) == .emperor("ming-taizu"))
-            #expect(coordinator.router.historyPath.isEmpty)
-
-            coordinator.presentDownloadPreview()
-            let reopened = try #require(coordinator.downloadPreviewSessions.values.first)
-            #expect(reopened.id != session.id)
-            #expect(reopened.stage == .preparing)
+            let feature = FullStoreDownloadPreviewFeature()
+            let host = try await NavigationTestHost.show(router: coordinator.router.navigation)
+            defer { host.removeFromWindow() }
+            let root = coordinator.router.navigation.rootPresentation
+            feature.present(from: root, coordinator: coordinator)
+            weak var original = feature.session
+            #expect(original != nil)
+            feature.present(from: root, coordinator: coordinator)
+            #expect(feature.session === original)
+            original?.stage = .downloading
+            _ = try await host.waitForPresentation()
+            #expect(original?.stage.progress.downloadFraction == 0.5)
+            await host.dismissPresentedViewController()
+            try await host.waitUntil { feature.session == nil }
+            try await host.waitUntil { original == nil }
+            feature.present(from: root, coordinator: coordinator)
+            #expect(feature.session?.stage == .preparing)
+            _ = try await host.waitForPresentation()
+            await host.dismissPresentedViewController()
+            try await host.waitUntil { feature.session == nil }
+            await host.close()
         }
     #endif
-
-    private func sessionID(in destination: CalendarDestination) throws -> YearPickerSessionID {
-        let id: YearPickerSessionID? = if case let .yearPicker(sessionID) = destination { sessionID } else { nil }
-        return try #require(id)
-    }
 }

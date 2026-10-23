@@ -31,12 +31,13 @@ struct NavigationAlertSessionTests {
         )
         router.presentSheet(.first)
         let context = try router.presentationContext(for: #require(router.sheet))
+        router.sheet?.lifetime.claimHost()
         let id: NavigationSystemAlertID
         if isConfirmation {
             router.submit(.push(.second, on: .history), confirmIfPresented: true)
             id = try .confirmation(#require(context.confirmation).id)
         } else {
-            context.presentAlert(.first)
+            context.submitAlert(.first)
             id = try .business(#require(context.presentedAlert).id)
         }
         #expect(context.alertWillPresent(id: id))
@@ -77,7 +78,7 @@ struct NavigationAlertSessionTests {
         )
         let context = router.rootPresentation
         let id = try beginAlert(context)
-        context.presentAlert(.second)
+        context.submitAlert(.second)
         router.submit(.push(.second, on: .history))
         advance(context, id: id, to: state)
         let wrongID = NavigationAlertID()
@@ -111,7 +112,7 @@ struct NavigationAlertSessionTests {
         router.rootLayer.presentedContent = .alert(NavigationAlertNode(id: alertID, destination: .first))
         #expect(!context.alertWillPresent(id: wrongSource))
         #expect(context.alertWillPresent(id: .business(alertID)))
-        #expect(context.presentAlert(.second) == .queued)
+        #expect(context.submitAlert(.second) == .queued)
         #expect(router.submit(.push(.second, on: .history)) == .deferredUntilAlertDismisses)
         advance(context, id: alertID, to: state)
 
@@ -138,7 +139,7 @@ struct NavigationAlertSessionTests {
         )
         let context = router.rootPresentation
         let first = try beginAlert(context)
-        context.presentAlert(.second)
+        context.submitAlert(.second)
         router.submit(.push(.second, on: .history))
         advance(context, id: first, to: .handlingCompletion)
         context.alertDidDismiss(id: .business(first))
@@ -167,11 +168,13 @@ struct NavigationAlertSessionTests {
         )
         router.presentSheet(.first)
         let oldPage = try #require(router.sheet)
+        oldPage.lifetime.claimHost()
         let oldContext = router.presentationContext(for: oldPage)
         oldContext.dismiss()
         router.rootPresentation.presentationDidDismiss()
         router.rootLayer.presentation = NavigationPresentationNode(id: oldPage.id, destination: .first)
         let newPage = try #require(router.sheet)
+        newPage.lifetime.claimHost()
         let context = router.presentationContext(for: newPage)
         #expect(newPage.id == oldPage.id)
         #expect(!oldContext.isActive)
@@ -193,7 +196,7 @@ struct NavigationAlertSessionTests {
     }
 
     private func beginAlert(_ context: Presentation) throws -> NavigationAlertID {
-        #expect(context.presentAlert(.first) == .applied)
+        #expect(context.submitAlert(.first) == .applied)
         let id = try #require(context.presentedAlert).id
         #expect(context.alertWillPresent(id: .business(id)))
         return id

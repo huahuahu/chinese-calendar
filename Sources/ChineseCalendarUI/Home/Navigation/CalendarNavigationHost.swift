@@ -23,14 +23,10 @@ private struct CalendarNavigationHost<BottomStatusBar: View>: ViewModifier {
             )
             .environment(coordinator)
             .environment(storeCoordinator)
-            .modifier(CalendarNavigationSessionCleanup(coordinator: coordinator))
-            .onChange(of: storeCoordinator?.navigationStoreIdentity, initial: true) {
-                coordinator.storeIdentityDidChange(storeCoordinator?.navigationStoreIdentity)
-            }
             .onChange(of: storeCoordinator?.fullStoreDownloadProgress) { _, progress in
-                if progress == nil { coordinator.downloadProgressDidDisappear() }
+                if progress == nil { coordinator.downloadDetails.progressDidDisappear() }
             }
-            .onChange(of: storeCoordinator?.downloadErrorMessage, initial: true) { _, message in
+            .onChange(of: storeCoordinator?.downloadFailure, initial: true) { _, message in
                 if let message, coordinator.presentDownloadError(message) { storeCoordinator?.dismissDownloadError() }
             }
             .task {
