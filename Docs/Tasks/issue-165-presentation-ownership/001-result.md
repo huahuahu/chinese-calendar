@@ -2,9 +2,9 @@
 
 - 方案：[000-plan.md](000-plan.md)
 - 关联：[Issue #165](https://github.com/huahuahu/chinese-calendar/issues/165)、[PR #170](https://github.com/huahuahu/chinese-calendar/pull/170)
-- 状态：实现及证据已提交，本地全量回归、构建与静态检查通过；已创建 PR #170，尚未合并。OWN-07／09 的具体覆盖边界见验收表。
+- 状态：原实现的本地 506 条全量回归、构建与静态检查通过；首轮远程 CI 失败后的宿主映射与 Simulator 签名补充，也已通过全新 DerivedData 构建及 506 条测试实例回归。PR #170 尚未合并，远程 CI 待补充配置推送后重新验证；OWN-07／09 的具体覆盖边界见验收表。
 - 记录日期：2026-10-23 至 2026-10-24
-- 代码状态：`codex/issue-165-presentation-ownership` 的实现提交 `edcf930e908a9bb9f5858fa23e52878da5d4adc0`，包含 126 个实现、测试与配置文件；提交 tree 为 `c4d7ffbbd74583560e603f42b20942e0c50bdb73`，与全量测试记录的代码快照一致。文档及 evidence 单独提交，不改变本次已验证代码。实施前基线为 `224b13aa38390c9f8f677ac9ab29a0980853655c`。
+- 代码状态：`codex/issue-165-presentation-ownership` 的原实现提交 `edcf930e908a9bb9f5858fa23e52878da5d4adc0`，包含 126 个实现、测试与配置文件；提交 tree 为 `c4d7ffbbd74583560e603f42b20942e0c50bdb73`，对应下文 00:33 全量测试及原构建／静态检查证据。此后文档与 evidence 已单独提交；首轮 CI 的 head 为 `f2ebde6d56f5d164952313497d00ae56cc50823e`。宿主映射与 Simulator 签名补充的验证版本以该 `f2ebde6d` base 加 [ci-configuration.json](evidence/validation/ci-configuration.json) 中 `project.yml`／`Scripts/test.sh` 的 `configurationSHA256` 定位，已取得独立的全新 DerivedData 成功结果。实施前基线为 `224b13aa38390c9f8f677ac9ab29a0980853655c`。
 
 ## 已接入的实现
 
@@ -67,7 +67,19 @@ App 两条热 Deep Link 测试已经呈现真实 `UIAlertController`，但通过
 
 同时，[NavigationPhysicalHostTests](../../../Sources/NavigationCoreTests/NavigationPhysicalHostTests.swift) 中该场景曾用测试局部变量强持有 `alertPresenter`，它本身是模态内的 UIKit 子控制器，会延长整棵 SwiftUI 渲染树的寿命。测试现改为即时取得 presenter 发起动作，不把它保留到弱引用断言；等待动作期间资源存在、动作结束后释放的断言均保留。因此 `desiredAlert` 不是这一轮释放超时的唯一诊断，生产持有链与测试自身引用都需要核对。最终全量回归中的 `parentHostTeardownKeepsFeatureUntilDescendantAlertActionFinishes()` 以及 `routerDestructionWaitsForSuspendedDescendantAction(releaseBeforeDismissal:)` 的两个参数实例均通过，修复后的资源存活、结束门槛与释放结果见[逐项测试记录](evidence/validation/all-tests.tsv)。
 
+### CI 补充：宿主映射与 Simulator App Groups 权限
+
+[CI run 39989186408](https://github.com/huahuahu/chinese-calendar/actions/runs/39989186408) 在 head `f2ebde6d56f5d164952313497d00ae56cc50823e` 上于测试前报告 `Could not find test host`。`ChineseCalendarUITests` 已有 `TEST_HOST`／`BUNDLE_LOADER`，但缺少 XcodeGen 用来生成项目 `TestTargetID` 的 `TEST_TARGET_NAME`；生成逻辑见 [XcodeGen 2.45.3 源码](https://github.com/yonaskolb/XcodeGen/blob/90dfa9da31eeb3b95153e22f46dce676d9ebaba7/Sources/XcodeGenKit/PBXProjGenerator.swift#L542-L557)。[project.yml](../../../project.yml) 现补充 `TEST_TARGET_NAME: ChineseCalendar-iOS`，重新生成后两个项目测试 target 均具备宿主映射，scheme 的 8 个 testables 保留。
+
+补齐映射后，使用全新 DerivedData 及 CI 原有 `CODE_SIGNING_ALLOWED=NO`／`CODE_SIGNING_REQUIRED=NO` 运行，编译与其余 504 个测试实例通过，但两条系统热 URL XCUITest 都在 `launchApplication()` 等待设置 Tab 时失败。日志中的 `client is not entitled` 与 `Missing app group` 指向 App Groups 权限缺失；辅助功能层级确认 App 停在“无法打开日历数据／无法访问日历数据存储位置”错误页，尚未进入热 URL 场景。
+
+[Scripts/test.sh](../../../Scripts/test.sh) 现改用 `CODE_SIGN_IDENTITY=-`、`CODE_SIGNING_ALLOWED=YES`、`CODE_SIGNING_REQUIRED=YES`，通过 ad-hoc 签名保留 Simulator App Groups entitlements，无需开发者证书。第二个全新 DerivedData 的构建与全量测试已通过：2026-10-24 04:34:36.634 至 04:37:39.512（UTC+8，xcresult 时间），**506 passed、0 failed、0 skipped、0 expectedFailures**，8 个 testables 保留。该计数包含参数化实例；xcresult 顶层汇总为 393 个测试定义。构建复用已有 package source checkout，没有复用先前构建产品。
+
+本轮 XcodeBuildMCP `test_sim` 响应在 300 秒时传输超时，但底层 `xcodebuild` 已输出 `TEST EXECUTE SUCCEEDED`；成功状态和计数由完成的 xcresult 确认，不把工具超时当作测试失败或单凭超时推定成功。[ci-configuration.json](evidence/validation/ci-configuration.json) 保存 unsigned 504／2 与 ad-hoc signed 506／0 的原始 summary、配置 SHA256、实际签名与 simulated App Group；App 已成功打开共享数据库。该证据还记录 format、strict lint、本地化、3 条 seed-store Node 测试及 shell 语法检查通过。原 00:33 全量结果保留在下节，各轮独立计数；本地补充通过不代表远程 CI 已通过。
+
 ## 最终自动验证
+
+本节记录原实现提交 `edcf930e908a9bb9f5858fa23e52878da5d4adc0` 的本地验证；后续 CI 配置补充及其独立回归见上节。
 
 2026-10-24 00:33:41 至 00:36:54（UTC+8），native Xcode MCP `RunAllTests` 完成共享 scheme `ChineseCalendar-iOS` 的完整回归：**506 passed，0 failed、0 skipped、0 expectedFailures、0 notRun**。环境为 Xcode 27.1（27A9275）、iOS Simulator SDK 27.1、iOS 27.0 runtime，以及 `chinesedate iPhone 18 Pro Max (885f)`（`16A9CAA7-45CE-46D5-8915-F61531FC617C`）。[all-tests.json](evidence/validation/all-tests.json) 保存环境、计数及快照，[all-tests.tsv](evidence/validation/all-tests.tsv) 保存每个测试及参数实例的结果。
 
@@ -97,7 +109,7 @@ App 两条热 Deep Link 测试已经呈现真实 `UIAlertController`，但通过
 
 以下完整保留方案中的验收项。两轮实际交互的逐场景记录见 [Simulator 交互记录](evidence/runtime/runtime-results.md)，其中保存 10 张关键截图和 45 份 hierarchy。环境为共享 scheme `ChineseCalendar-iOS` 与 `chinesedate iPhone 18 Pro Max (885f)`（`16A9CAA7-45CE-46D5-8915-F61531FC617C`），由 native Xcode MCP 执行。第二轮在 App 停止时使用本地完整数据 fixture；随后在 App 内真实清空，使运行中的 store 恢复基础数据。这两步分别记录，fixture 准备不作为网络下载或运行中替换证据。交互完成后停在根设置页、基础数据、无活动模态，并由主流程结束交互 session，再运行自动测试。
 
-下表的自动测试结果均来自本次 506 条全量回归，具体参数实例见[逐项测试记录](evidence/validation/all-tests.tsv)；同一测试可能支撑多个验收项，不重复累计。资源释放、结束次数、父子顺序与旧结果失效由对应断言证明，不由页面状态推断。[源码边界记录](evidence/validation/source-boundary.md) 保存生产源码与配置的限定快照及调用链核对。“部分已验证”保留 OWN-07 的组合端到端场景及 OWN-09 的完整生产容器释放观测边界。
+下表的自动测试结果来自原实现提交的 00:33 本地 506 条全量回归，具体参数实例见[逐项测试记录](evidence/validation/all-tests.tsv)；同一测试可能支撑多个验收项，不重复累计。后续 CI 配置补充也已通过[独立全新 DerivedData 回归](evidence/validation/ci-configuration.json)，各轮证据保持独立，不扩大原验证快照。资源释放、结束次数、父子顺序与旧结果失效由对应断言证明，不由页面状态推断。[源码边界记录](evidence/validation/source-boundary.md) 保存生产源码与配置的限定快照及调用链核对。“部分已验证”保留 OWN-07 的组合端到端场景及 OWN-09 的完整生产容器释放观测边界。
 
 | 验收项 | 场景与预期行为 | 状态 | 验证证据与覆盖边界 |
 | --- | --- | --- | --- |
@@ -113,7 +125,7 @@ App 两条热 Deep Link 测试已经呈现真实 `UIAlertController`，但通过
 | OWN-10 | alert 独立 Action、串行队列、异步按钮、错误文案和 Deep Link 确认保持正确 | 通过（自动／交互） | [NavigationSystemAlertTests](../../../Sources/NavigationCoreTests/NavigationSystemAlertTests.swift)及 physical host 的独立 Action、异步 handler 挂起与 teardown 测试通过；alert FIFO、业务错误映射和清空结果提示通过。[首轮提示交互](evidence/runtime/runtime-results.md#首轮已完成)及两条系统热 URL XCUITest 补充真实连续提示、确认文案和取消／批准按钮。 |
 | API-01 | 正常 App 用普通 import 可完成 Tab、SplitView、push、呈现、取消和结果处理 | 通过（编译／自动） | [普通 import 正向控制](evidence/validation/public-api-report.json)通过；完整 iOS App BuildProject 成功，普通 `import NavigationCore` 的 App 集成测试通过，覆盖 Tab／分栏接入、push、嵌套呈现、取消和结果处理。正向样例本身不单独构造全部 UI 容器。 |
 | API-02 | 普通 import 无法访问 node、队列、事务、内部 ID、保留查询或伪造系统完成 | 通过（独立负向编译） | [API 报告](evidence/validation/public-api-report.json)与[诊断](evidence/validation/public-api-diagnostics.txt)确认正向控制成功后，18 个独立负向样例均按预期拒绝；检查的是目标符号缺失／保护级别，不将 SDK 或模块导入错误记作通过。 |
-| VAL-01 | Core / App 相关回归、iOS build、format 和 strict lint 通过 | 通过 | [最终自动验证](#最终自动验证)：506 passed，失败／跳过／预期失败／未运行均为 0；iOS BuildProject、API 正向及 18 负向、format、strict lint、本地化与 diff 检查通过，代码对应 `edcf930e908a9bb9f5858fa23e52878da5d4adc0`。 |
+| VAL-01 | Core / App 相关回归、iOS build、format 和 strict lint 通过 | 本地通过（含 CI 配置补充） | [最终自动验证](#最终自动验证)：506 passed，失败／跳过／预期失败／未运行均为 0；iOS BuildProject、API 正向及 18 负向、format、strict lint、本地化与 diff 检查通过，代码对应 `edcf930e908a9bb9f5858fa23e52878da5d4adc0`。后续宿主映射与 Simulator 签名补充也通过全新 DerivedData 构建、506 条测试实例及静态检查，独立证据见 [ci-configuration.json](evidence/validation/ci-configuration.json)；远程 CI 另行验证。 |
 
 当前验证入口：
 
@@ -128,7 +140,7 @@ App 两条热 Deep Link 测试已经呈现真实 `UIAlertController`，但通过
 
 ## 交付状态与覆盖边界
 
-1. 实现、文档及 evidence 已分别提交并推送，已创建 [PR #170](https://github.com/huahuahu/chinese-calendar/pull/170)，尚未合并。远程 CI 状态以 PR 检查为准；本记录不代表发布已完成。
+1. 原实现、文档及 evidence 已分别提交并推送，已创建 [PR #170](https://github.com/huahuahu/chinese-calendar/pull/170)，尚未合并。首轮远程 CI 失败后的宿主映射与 Simulator 签名补充已通过本地全新 DerivedData 构建和全量回归；远程 CI 待补充配置推送后验证，最新状态以 PR 检查为准，本记录不代表发布已完成。
 2. OWN-07 的 store／context、旧文件安全及外部请求完成已有分层自动证据和真实清空交互，但没有活动 picker、设置清空与待处理系统热 URL 的合并端到端场景。
 3. OWN-09 已有状态／context 自动测试、容器源码核对及实际布局交互；两个生产容器内部 `@State` 的退出释放没有直接 weak 观测。没有穷举全部布局、宽度和历史目标，也没有动画帧率数据。
 4. 下载交互使用模拟进度及本地 fixture，不包含真实网络下载或数据库安装。本次结果整理不代表已执行 `review-changes` 专项审查。

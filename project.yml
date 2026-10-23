@@ -113,6 +113,7 @@ targets:
         # 共享 UI 产品已包含传递依赖；测试只导入它们，避免再次静态链接。
         SWIFT_INCLUDE_PATHS: "$(inherited) $(BUILT_PRODUCTS_DIR)"
         TARGETED_DEVICE_FAMILY: 1,2
+        TEST_TARGET_NAME: ChineseCalendar-iOS
         TEST_HOST: "$(BUILT_PRODUCTS_DIR)/Chinese Calendar.app/Chinese Calendar"
         BUNDLE_LOADER: "$(TEST_HOST)"
 
