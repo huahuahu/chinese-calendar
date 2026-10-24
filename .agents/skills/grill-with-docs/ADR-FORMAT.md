@@ -1,8 +1,6 @@
 # ADR Format
 
-ADRs live in `docs/adr/` and use sequential numbering: `0001-slug.md`, `0002-slug.md`, etc.
-
-Create the `docs/adr/` directory lazily — only when the first ADR is needed.
+Use the repository's existing decision records. In Chinese-date, resolve paths from the repository root and follow `Docs/Tasks/README.md`: record rationale in the relevant task's plan/result or a numbered follow-up document when a separate record is useful. Do not create a parallel `docs/adr/` directory.
 
 ## Template
 
@@ -24,7 +22,7 @@ Only include these when they add genuine value. Most ADRs won't need them.
 
 ## Numbering
 
-Scan `docs/adr/` for the highest existing number and increment by one.
+For a separate follow-up, inspect the existing task directory and use its next document number. Preserve plan/result roles and cross-links. If the project has no task record and the decision warrants one, follow the task workflow's naming and creation rules rather than inventing an Issue number.
 
 ## When to offer an ADR
 
