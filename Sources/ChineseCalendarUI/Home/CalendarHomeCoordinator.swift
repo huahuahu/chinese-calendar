@@ -8,7 +8,6 @@ import SwiftUI
 final class CalendarHomeCoordinator {
     let router: CalendarRouter
     let downloadDetails = CalendarDownloadDetailsFeature()
-    private var didOpenColdLaunchDeepLink = false
 
     init(router: CalendarRouter = CalendarRouter()) {
         self.router = router
@@ -16,11 +15,5 @@ final class CalendarHomeCoordinator {
 
     func openDeepLink(_ deepLink: CalendarDeepLink) {
         _ = router.openDeepLink(deepLink, confirmIfPresented: true)
-    }
-
-    func openColdLaunchDeepLink(_ deepLink: CalendarDeepLink?) {
-        guard !didOpenColdLaunchDeepLink else { return }
-        didOpenColdLaunchDeepLink = true
-        _ = router.openColdLaunchDeepLink(deepLink)
     }
 }

@@ -1,0 +1,36 @@
+=== launch-repeat ===
+Application bundle identifier: com.tiger.suzhou.ChineseCalendar
+Application, pid: 17567, label: 'Chinese Calendar'
+NavigationBar, {{0.0, 62.0}, {440.0, 106.3}}, identifier: '日历', hitPoint: {220.0, 115.2}
+Button, {{20.0, 62.0}, {44.0, 44.0}}, identifier: 'BackButton', label: '日历', hitPoint: {42.0, 84.0}
+StaticText, {{128.5, 236.3}, {183.0, 98.5}}, label: '需要完整日期数据', hitPoint: {220.0, 285.6}
+Button, {{25.0, 877.0}, {134.7, 54.0}}, label: '日历', Selected, hitPoint: {92.3, 904.0}
+2026-10-24 19:58:33.489134+0800 [17567:77562514] [app] Launching iOS app
+2026-10-24 19:58:37.665111+0800 [17567:77562514] [navigation] operation=submit outcome=applied reason=none layer=root stack=scope(ChineseCalendarUI.CalendarTab.years)
+
+=== manual-back ===
+Application bundle identifier: com.tiger.suzhou.ChineseCalendar
+Application, pid: 17567, label: 'Chinese Calendar'
+NavigationBar, {{0.0, 62.0}, {440.0, 106.3}}, identifier: '日历', hitPoint: {220.0, 115.2}
+StaticText, {{128.5, 236.3}, {183.0, 98.5}}, label: '需要完整日期数据', hitPoint: {220.0, 285.6}
+Button, {{25.0, 877.0}, {134.7, 54.0}}, label: '日历', Selected, hitPoint: {92.3, 904.0}
+2026-10-24 19:58:33.489134+0800 [17567:77562514] [app] Launching iOS app
+2026-10-24 19:58:37.665111+0800 [17567:77562514] [navigation] operation=submit outcome=applied reason=none layer=root stack=scope(ChineseCalendarUI.CalendarTab.years)
+2026-10-24 19:59:51.620487+0800 [17567:77562514] [navigation] operation=setPath outcome=applied reason=none layer=root stack=scope(ChineseCalendarUI.CalendarTab.years)
+
+=== foreground ===
+Application bundle identifier: com.tiger.suzhou.ChineseCalendar
+Application, pid: 17567, label: 'Chinese Calendar'
+NavigationBar, {{0.0, 62.0}, {440.0, 106.3}}, identifier: '设置', hitPoint: {220.0, 115.2}
+Button, {{280.3, 877.0}, {134.7, 54.0}}, identifier: 'gearshape', label: '设置', Selected, hitPoint: {347.7, 904.0}
+2026-10-24 19:58:33.489134+0800 [17567:77562514] [app] Launching iOS app
+2026-10-24 19:58:37.665111+0800 [17567:77562514] [navigation] operation=submit outcome=applied reason=none layer=root stack=scope(ChineseCalendarUI.CalendarTab.years)
+2026-10-24 19:59:51.620487+0800 [17567:77562514] [navigation] operation=setPath outcome=applied reason=none layer=root stack=scope(ChineseCalendarUI.CalendarTab.years)
+2026-10-24 20:00:50.383672+0800 [17567:77562514] [navigation] operation=setSelectedStack outcome=applied reason=none layer=root stack=none
+
+=== launch-tang ===
+Application bundle identifier: com.apple.springboard
+Application, pid: 30146, label: ' '
+2026-10-24 20:02:49.435808+0800 [22877:77589813] [app] Launching iOS app
+2026-10-24 20:02:53.099010+0800 [22877:77589813] [navigation] operation=submit outcome=applied reason=none layer=root stack=scope(ChineseCalendarUI.CalendarTab.history)
+The connection to the application standard output has been closed.

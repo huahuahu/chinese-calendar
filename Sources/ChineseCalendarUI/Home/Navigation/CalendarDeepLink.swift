@@ -48,19 +48,6 @@ enum CalendarDeepLinkParser {
             return .lunarYear(yearNumber, monthIndex: monthIndex)
         }
     }
-
-    static func deepLink(from launchArguments: [String]) -> CalendarDeepLink? {
-        guard let deepLinkFlagIndex = launchArguments.firstIndex(of: "--deep-link") else {
-            return nil
-        }
-
-        let urlIndex = launchArguments.index(after: deepLinkFlagIndex)
-        guard launchArguments.indices.contains(urlIndex), let url = URL(string: launchArguments[urlIndex]) else {
-            return nil
-        }
-
-        return deepLink(from: url)
-    }
 }
 
 private extension URL {

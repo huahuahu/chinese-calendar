@@ -1,0 +1,2 @@
+2026-10-24 20:40:28.389011+0800 0x4a1d4cf  Debug       0x0                  47693  0    Chinese Calendar: (Chinese Calendar.debug.dylib) [com.tiger.suzhou.ChineseCalendar:navigation] operation=submit outcome=applied reason=none layer=root stack=scope(ChineseCalendarUI.CalendarTab.history)
+2026-10-24 20:40:28.438232+0800 0x4a1d4cf  Debug       0x0                  47693  0    Chinese Calendar: (Chinese Calendar.debug.dylib) [com.tiger.suzhou.ChineseCalendar:navigation] operation=setPath outcome=applied reason=none layer=root stack=scope(ChineseCalendarUI.CalendarTab.history)

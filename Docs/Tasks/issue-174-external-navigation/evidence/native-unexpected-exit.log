@@ -1,0 +1,29 @@
+2026-10-24 20:02:49.435808+0800 [22877:77589813] [app] Launching iOS app
+
+2026-10-24 20:02:52.958973+0800 [22877:77589813] [persistence] Opening shared SwiftData container
+
+2026-10-24 20:02:52.965686+0800 [22877:77589813] [persistence] Bundled seed store is already installed
+
+2026-10-24 20:02:52.966429+0800 [22877:77589813] [persistence] Creating model container at /Users/tigerguo/Library/Developer/CoreSimulator/Devices/16A9CAA7-45CE-46D5-8915-F61531FC617C/data/Containers/Shared/AppGroup/864A8ED1-A595-4CBD-80F2-264F3F98EB44/ChineseCalendarStore/generations/9C90982A-8EFD-41C2-831D-13E11E59B491/ChineseCalendar.sqlite, allowsSave: false
+
+2026-10-24 20:02:53.099010+0800 [22877:77589813] [navigation] operation=submit outcome=applied reason=none layer=root stack=scope(ChineseCalendarUI.CalendarTab.history)
+
+2026-10-24 20:02:53.841387+0800 [22877:77589813] [XPCErrors] non-launching port is incompatible with service identifier "com.apple.PointerUI.pointeruid.default-service"
+
+2026-10-24 20:02:53.859539+0800 [22877:77589813] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-24 20:02:53.859771+0800 [22877:77589813] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-24 20:02:53.863477+0800 [22877:77589813] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-24 20:02:53.863539+0800 [22877:77589813] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-24 20:02:53.863565+0800 [22877:77589813] [API] cannot add handler to 0 from 0 - dropping
+
+2026-10-24 20:02:54.276240+0800 [22877:77589813] [AXValidations] AX Safe category class 'SFBarButtonGroupContainerAccessibility' was not found!
+
+objc[22877]: Class UIAccessibilityLoaderWebShared is implemented in both /Library/Developer/CoreSimulator/Volumes/iOS_24A434/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 27.0.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebKit.axbundle/WebKit (0x103730398) and /Library/Developer/CoreSimulator/Volumes/iOS_24A434/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 27.0.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebCore.axbundle/WebCore (0x106298310). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
+
+2026-10-24 20:02:55.279602+0800 [22877:77589813] [AXValidations] AX Safe category class 'SLHighlightDisambiguationPillViewAccessibility' was not found!
+
+The connection to the application standard output has been closed.

@@ -1,7 +1,7 @@
 import NavigationCore
 import SwiftUI
 
-/// 显示在应用根视图中，负责组织日历主页、导航与平台布局。
+/// 日历根容器，负责组织页面并安装导航宿主。
 public struct CalendarHomeView: View {
     @State private var coordinator = CalendarHomeCoordinator()
     private let settingsCoordinator: ChineseCalendarStoreCoordinator?
@@ -14,8 +14,7 @@ public struct CalendarHomeView: View {
         NavigationRootView(context: coordinator.router.navigation.rootPresentation)
             .calendarNavigationHost(
                 coordinator: coordinator,
-                storeCoordinator: settingsCoordinator,
-                handlesExternalNavigation: true
+                storeCoordinator: settingsCoordinator
             )
     }
 }
