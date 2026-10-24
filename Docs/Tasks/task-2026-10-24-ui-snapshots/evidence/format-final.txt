@@ -1,0 +1,4 @@
+(lint mode - no files will be changed.)
+Reading config file at /Users/tigerguo/.codex/worktrees/63ec/Chinese-date/.swiftformat
+SwiftFormat completed in 0.41s.
+0/357 files require formatting, 103 files skipped.

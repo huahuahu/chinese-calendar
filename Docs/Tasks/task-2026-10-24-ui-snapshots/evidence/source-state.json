@@ -1,0 +1,14 @@
+{
+  "head": "eaa09912ab77817f688f5e5dde1ba3f00133d599",
+  "branch": "codex/ui-snapshot-baselines",
+  "sourceSHA256": {
+    "project.yml": "8a366f47c2cfcf6f07aef5844d5608db8209d6900f94c8aba738f1c9d8f13184",
+    "Scripts/test_snapshots.sh": "8fde1b98a2d880d415fdde585a921467ef807ac6452a9e4838219d0fc4497834",
+    ".github/workflows/ci.yml": "fba342f80dd32b331d722f55935f23f94a8721b76f5c931b58c9b441e939968e",
+    "Tests/Snapshots/CalendarSnapshotTests.swift": "205dc3ecd78bd6db4d77e2d8ded261637f7e24a5c982ee72010f61e482f0951b",
+    "Tests/Snapshots/SnapshotAppearance.swift": "0343ae2d9568ffbd7b2c991404245d0616a927d6b4cbf208d0a16c7cef75ae05",
+    "Tests/Snapshots/SnapshotRenderer.swift": "f173a784c14ec3f8895d1f50e94a7c424fa4beb9c792eaadf1abfddebcfede02",
+    "Tests/Snapshots/SnapshotSampleHost.swift": "bfd514e9c998459a60510b3848a48465d6190222edb7fe8229e288d6ad0490aa",
+    "Tests/Snapshots/SnapshotScene.swift": "dbd86632932a4f219ee3305983bf88033231c72903d005e185436d4c859c276f"
+  }
+}
