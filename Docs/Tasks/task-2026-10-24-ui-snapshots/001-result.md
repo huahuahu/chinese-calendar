@@ -1,5 +1,7 @@
 # 当前界面截图基准：结果
 
+本文保留首次自建渲染器实现及当时的验证结果。后续已改用 SnapshotTesting 原生 SwiftUI image 策略，调整与基准验证另见 [002-native-swiftui-strategy.md](002-native-swiftui-strategy.md)。
+
 - 方案：[000-plan.md](000-plan.md)
 - 记录日期：2026-10-24
 - 代码状态：验证时为 `codex/ui-snapshot-baselines` 未提交工作区；基础 HEAD 和已验证实现文件摘要见 [source-state.json](evidence/source-state.json)，提交前按摘要核对一致。

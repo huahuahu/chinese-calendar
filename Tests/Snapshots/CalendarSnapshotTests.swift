@@ -1,4 +1,5 @@
 import SnapshotTesting
+import SwiftUI
 import XCTest
 
 // 显式录制当前 UI；日常测试严格比较，不因缺少基准而自动生成图片。
@@ -36,18 +37,30 @@ nonisolated final class CalendarSnapshotTests: XCTestCase {
         file: StaticString = #filePath, line: UInt = #line
     ) async throws {
         try requireBaselineEnvironment()
-        let image = try await SnapshotRenderer.capture(SnapshotSampleHost(scene: scene), appearance: appearance)
-        XCTAssertEqual(image.size, appearance.size, "截图必须完整覆盖固定视口", file: file, line: line)
-        assertSnapshot(
-            of: image,
-            // 系统玻璃边缘跨进程有 1/255 的色阶波动；每个像素仍须通过感知比较。
-            as: .image(precision: 1, perceptualPrecision: 0.99, scale: 1),
-            named: appearance.rawValue,
-            record: ProcessInfo.processInfo.environment["SNAPSHOT_RECORD"] == "1" ? .all : .never,
-            file: file,
-            testName: scene.slug,
-            line: line
-        )
+        let view = try SnapshotSampleHost(scene: scene)
+            .environment(\.locale, Locale(identifier: "zh_Hans_CN"))
+            .environment(\.timeZone, TimeZone(identifier: "Asia/Shanghai") ?? .gmt)
+            .environment(\.colorScheme, appearance.colorScheme)
+            .environment(\.dynamicTypeSize, appearance.dynamicTypeSize)
+            .transaction { $0.animation = nil; $0.disablesAnimations = true }
+        XCTContext.runActivity(named: "\(scene.slug).\(appearance.rawValue)") { _ in
+            assertSnapshot(
+                of: view,
+                // 使用库的默认渲染方式检查内容与布局；每个像素都参与感知比较。
+                as: .image(
+                    drawHierarchyInKeyWindow: false,
+                    precision: 1,
+                    perceptualPrecision: 0.99,
+                    layout: appearance.layout,
+                    traits: appearance.traits
+                ),
+                named: appearance.rawValue,
+                record: ProcessInfo.processInfo.environment["SNAPSHOT_RECORD"] == "1" ? .all : .never,
+                file: file,
+                testName: scene.slug,
+                line: line
+            )
+        }
     }
 
     private func requireBaselineEnvironment() throws {

@@ -1,0 +1,37 @@
+{
+  "baseCommit": "242ad28214bdbe501baf21500039775e0e524b8b",
+  "sourceSHA256": {
+    "Tests/Snapshots/CalendarSnapshotTests.swift": "1206b07e58adbcfdd7466fe4416e27cd086b832734f7dbcc0ae608fb2ce63d6f",
+    "Tests/Snapshots/SnapshotAppearance.swift": "b66b8df71192c2db5bb601f7393287bab9cb0b3f3faf006969bf24fd4238600f",
+    "Tests/Snapshots/SnapshotSampleHost.swift": "bfd514e9c998459a60510b3848a48465d6190222edb7fe8229e288d6ad0490aa",
+    "Tests/Snapshots/SnapshotScene.swift": "dbd86632932a4f219ee3305983bf88033231c72903d005e185436d4c859c276f"
+  },
+  "baselineSHA256": {
+    "history-dynasty-span.phone.png": "5499f812a53443ed1512abefcd2d695aaf2c47daac30cabf168e1d856c6af37f",
+    "history-emperor.phone.png": "60ccb4a8b7065ecaa1876098dd616a30268b186100fe1b5f14afb873d6807c01",
+    "history-timeline.tablet.png": "d017e7779f83121b3014aab1a0b6f244f8f2d321b70f4e147b10796720fee2d9",
+    "calendar-before-common-era.phone.png": "9c1079bd41ddc2b5de9442f0cd781e6792581267261dfe3d5b3d0c9a65ad1a61",
+    "calendar-civil-era-boundary.phone.png": "5a90bb2097d8e89919264a384e032f98454675b68b5a330744263aef4329c090",
+    "calendar-empty.phone.png": "8540394a1653ed38022bcd45f7ac2be202bd211cd8d40ecdbd3d40376775a2fc",
+    "calendar-base-data.phone.png": "60fb5dc57fe67cf550d9bbcc54e8c78139bef1f303a560e833ee13fc24209f33",
+    "calendar-modern.tablet.png": "f44de8694fadad794cfc574985a01cab8be1d18db586b04a1e4b23daf87c7ca5",
+    "history-dynasty.phone.png": "7ccc72d689e2d48aa8bdde2cd166460c7689785a185bde57b25b29a2f5ce8eaa",
+    "history-timeline.phone.png": "ce4aa31c61ca88c8ff9182e129401cd16d837a42509c4137452ede1f7537f713",
+    "history-dynasty.tablet.png": "34a1dbeeafc0730d5d1bcc3dad811d1d5fadbe42e9843816803b1f534e94d73e",
+    "history-empty.phone.png": "aab2d331e6c4e53f936be2f9b8ddcbf9e0c0ce4534f0e573f631019e262314be",
+    "calendar-year-picker.phone.png": "66c0454db96e3a14cdcc4eb784d696257985aadd66553a31f0b71bb2649f88b6",
+    "calendar-common-era.phone.png": "d425a6552b854f428d11848b0c2e9a05f70031252fb549e0e68cd9dc98962ea4",
+    "calendar-post-ninth-month.phone.png": "29493d304fddd1912212c2384c3afd9d57243d22287f6243604c3e71b84932a1",
+    "calendar-modern.phone.png": "0794a4a0bdb506b6a8507dce4fbfbdd7be02b1f8971c2ef13047ee87eaae4b5b",
+    "calendar-modern.dark.png": "5dd48d29bb7dbc391f4d3d448e1f38566511265c2cf2c20e446dcf0d735b0276",
+    "history-reign-era.phone.png": "0f651d37708af824f16b38068e662268be31ef9eb6aa3c9233b16f612e3d1d85",
+    "history-selected.phone.png": "b34129918639f279723763ba3cd1258ff39b75de7daf9a46389cb53fa09cf5a9",
+    "history-selected.tablet.png": "e94efdc77b3ad822c566d243cbb859f766659b07c0604cdfdc45b90259584eca",
+    "settings-starting.phone.png": "5f3a7bd00fca7d6989bc9bd0bba11e77f4a56358ea15d5c3456a2f89881c900d",
+    "history-emperor.dark.png": "3ec3248fc719d3951414477e2e012ac121a70db22677e798681d3b119942ae7e",
+    "calendar-modern.accessibility.png": "d12fcf84d0a5a13e941883c808bd06092ecbfe95c70446b33168e08c2e03bb20"
+  },
+  "deletedSourceFiles": [
+    "Tests/Snapshots/SnapshotRenderer.swift"
+  ]
+}

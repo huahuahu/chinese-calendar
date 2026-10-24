@@ -4,7 +4,9 @@
 
 ## 当前界面截图基准
 
-`Tests/Snapshots` 中的 App 承载测试通过 Point-Free SnapshotTesting **1.19.7** 比较当前 SwiftUI 界面，基准 PNG 保存在 `Tests/Snapshots/__Snapshots__`，随代码提交。测试复用项目内存示例数据，固定日期、简体中文、上海时区、外观、字号和视口。iPhone 视口为 390 × 844 pt，iPad 横屏视口为 1366 × 1024 pt，均以 1× 渲染。宽屏场景在测试内部固定虚拟 iPad 尺寸，承载测试的 Simulator 始终使用下表中的 iPhone。
+`Tests/Snapshots` 中的 App 承载测试将 SwiftUI View 直接传给 Point-Free SnapshotTesting **1.19.7** 的 `.image(layout:traits:)` 策略，使用默认的 `drawHierarchyInKeyWindow: false`。截图关注页面内容、间距、换行和布局。基准 PNG 保存在 `Tests/Snapshots/__Snapshots__`，随代码提交。测试复用项目内存示例数据，固定日期、简体中文、上海时区、外观和字号。
+
+设备布局使用库内置的 `.device(config: .iPhone13)` 和 `.device(config: .iPadPro12_9)`，分别提供 390 × 844 pt 的 iPhone 视口和 1366 × 1024 pt 的 iPad 横屏视口，并通过额外 traits 固定 1× 输出比例。库为离屏截图创建独立窗口，窗口安全区、尺寸和设备 traits 跟随对应的设备布局配置。宽屏场景因此使用 iPad 配置进行布局，承载测试的 Simulator 始终使用下表中的 iPhone。
 
 | 项目 | 基准环境 |
 | --- | --- |
@@ -28,9 +30,9 @@
 | 深色 | 2 | 现代日历、皇帝详情 |
 | 辅助功能最大字号 | 1 | 现代日历 |
 
-页面经真实前台 `UIWindowScene` 渲染；连续稳定帧、正确视口和成功绘制均须满足才能截图。基准比较前按 PNG 解码统一色彩精度，使用 `precision: 1`、`perceptualPrecision: 0.99`：每个像素都参与比较，只允许很小的感知色差。最初两次逐像素比较发现系统玻璃按钮边缘有 14–43 个像素的单通道 1/255 波动，因此采用该容差；不允许忽略一块区域或容忍一定比例的任意错图。
+库负责创建 SwiftUI hosting controller 和独立窗口、配对执行 appearance 生命周期、布局，并通过 `view.layer.render(in:)` 绘制和清理宿主。测试代码不再自行管理 controller/window，不进行连续帧轮询或手工 PNG 解码归一化；截图时机和图像比较采用库原生策略。比较阈值保持 `precision: 1`、`perceptualPrecision: 0.99`：每个像素都参与比较，只允许很小的感知色差，不忽略指定区域，也不容忍一定比例的任意错图。原生策略迁移及基准验证记录见 [后续任务记录](../Docs/Tasks/task-2026-10-24-ui-snapshots/002-native-swiftui-strategy.md)。
 
-当前覆盖日历页面内容；完整 `CalendarHomeView` 内部仍会读取真实“今天”，尚未纳入固定日期基准。设置只覆盖未启动数据库准备的 `.starting` 状态。滚动页面固定初始视口，截图不表示已经覆盖视口外全部内容，也不证明交互或辅助功能布局符合预期。
+当前覆盖日历页面内容；完整 `CalendarHomeView` 内部仍会读取真实“今天”，尚未纳入固定日期基准。设置只覆盖未启动数据库准备的 `.starting` 状态。离屏 layer rendering 不保证真实屏幕上的模糊、玻璃等系统材质效果。滚动页面固定初始视口，截图不表示已经覆盖视口外全部内容，也不证明交互或辅助功能布局符合预期。
 
 ### 比较已有基准
 
