@@ -1,0 +1,211 @@
+{
+  "date": "2026-10-24",
+  "base": "2633da5af1eab55560acd0fd8b75e6fb27bf1025",
+  "testedCommit": "a5ef05a6e6e375c9af324183931f79b82e1f1522",
+  "scheme": "ChineseCalendar-iOS",
+  "simulator": "iPhone 18 Pro Max (iOS 27.0)",
+  "selectedTestIdentifiers": 24,
+  "counts": {
+    "expectedFailures": 0,
+    "failed": 0,
+    "notRun": 0,
+    "passed": 27,
+    "skipped": 0,
+    "total": 27
+  },
+  "format": "0/359 files require formatting",
+  "lint": "0 violations in 346 files",
+  "localization": "335 resources and 21 production strings checked",
+  "diffCheck": "passed",
+  "results": [
+    {
+      "displayName": "deepLinkWithoutPresentationAppliesImmediately()",
+      "errorMessages": [],
+      "identifier": "deepLinkWithoutPresentationAppliesImmediately()",
+      "state": "Passed",
+      "targetName": "ChineseCalendarUITests"
+    },
+    {
+      "displayName": "dismissalWithoutARequestAllowsReopening()",
+      "errorMessages": [],
+      "identifier": "dismissalWithoutARequestAllowsReopening()",
+      "state": "Passed",
+      "targetName": "ChineseCalendarUITests"
+    },
+    {
+      "displayName": "dynastyDeepLinkSelectsHistoryTab()",
+      "errorMessages": [],
+      "identifier": "dynastyDeepLinkSelectsHistoryTab()",
+      "state": "Passed",
+      "targetName": "ChineseCalendarUITests"
+    },
+    {
+      "displayName": "emperorDeepLinkSelectsHistoryTab()",
+      "errorMessages": [],
+      "identifier": "emperorDeepLinkSelectsHistoryTab()",
+      "state": "Passed",
+      "targetName": "ChineseCalendarUITests"
+    },
+    {
+      "displayName": "externalDeepLinkKeepsTheRootPathAndModalAliveWhileWaitingForConfirmation()",
+      "errorMessages": [],
+      "identifier": "externalDeepLinkKeepsTheRootPathAndModalAliveWhileWaitingForConfirmation()",
+      "state": "Passed",
+      "targetName": "ChineseCalendarUITests"
+    },
+    {
+      "displayName": "historyDestinationIDsIncludeEveryStableRecordID()",
+      "errorMessages": [],
+      "identifier": "historyDestinationIDsIncludeEveryStableRecordID()",
+      "state": "Passed",
+      "targetName": "ChineseCalendarUITests"
+    },
+    {
+      "displayName": "historyPathPushPopAndTabRestorationKeepIndependentDestinations()",
+      "errorMessages": [],
+      "identifier": "historyPathPushPopAndTabRestorationKeepIndependentDestinations()",
+      "state": "Passed",
+      "targetName": "ChineseCalendarUITests"
+    },
+    {
+      "displayName": "historyRoutePreservesOrthodoxPeriodIdentity()",
+      "errorMessages": [],
+      "identifier": "historyRoutePreservesOrthodoxPeriodIdentity()",
+      "state": "Passed",
+      "targetName": "ChineseCalendarUITests"
+    },
+    {
+      "displayName": "laterDeepLinkCanReturnToCalendarAfterHistoryNavigation()",
+      "errorMessages": [],
+      "identifier": "laterDeepLinkCanReturnToCalendarAfterHistoryNavigation()",
+      "state": "Passed",
+      "targetName": "ChineseCalendarUITests"
+    },
+    {
+      "displayName": "manualDismissalDefersTheLatestDeepLinkUntilTheHostFinishes()",
+      "errorMessages": [],
+      "identifier": "manualDismissalDefersTheLatestDeepLinkUntilTheHostFinishes()",
+      "state": "Passed",
+      "targetName": "ChineseCalendarUITests"
+    },
+    {
+      "displayName": "parserSupportsAlternateSchemeAndMonthQuery()",
+      "errorMessages": [],
+      "identifier": "parserSupportsAlternateSchemeAndMonthQuery()",
+      "state": "Passed",
+      "targetName": "ChineseCalendarUITests"
+    },
+    {
+      "displayName": "parserSupportsDynastyURLs()",
+      "errorMessages": [],
+      "identifier": "parserSupportsDynastyURLs()",
+      "state": "Passed",
+      "targetName": "ChineseCalendarUITests"
+    },
+    {
+      "displayName": "parserSupportsEmperorURLs()",
+      "errorMessages": [],
+      "identifier": "parserSupportsEmperorURLs()",
+      "state": "Passed",
+      "targetName": "ChineseCalendarUITests"
+    },
+    {
+      "displayName": "parserSupportsYearURLs()",
+      "errorMessages": [],
+      "identifier": "parserSupportsYearURLs()",
+      "state": "Passed",
+      "targetName": "ChineseCalendarUITests"
+    },
+    {
+      "displayName": "pushUpdatesSelectedTabPath()",
+      "errorMessages": [],
+      "identifier": "pushUpdatesSelectedTabPath()",
+      "state": "Passed",
+      "targetName": "ChineseCalendarUITests"
+    },
+    {
+      "displayName": "replacingYearsPathChangesItsCurrentDestination()",
+      "errorMessages": [],
+      "identifier": "replacingYearsPathChangesItsCurrentDestination()",
+      "state": "Passed",
+      "targetName": "ChineseCalendarUITests"
+    },
+    {
+      "displayName": "\"chinesecalendar://year/2026\"",
+      "errorMessages": [],
+      "identifier": "systemURLParsingOnlySubmitsSupportedLinks(urlString:)",
+      "state": "Passed",
+      "targetName": "ChineseCalendarUITests"
+    },
+    {
+      "displayName": "\"https://example.com/year/2026\"",
+      "errorMessages": [],
+      "identifier": "systemURLParsingOnlySubmitsSupportedLinks(urlString:)",
+      "state": "Passed",
+      "targetName": "ChineseCalendarUITests"
+    },
+    {
+      "displayName": "\"chinesecalendar://unsupported/2026\"",
+      "errorMessages": [],
+      "identifier": "systemURLParsingOnlySubmitsSupportedLinks(urlString:)",
+      "state": "Passed",
+      "targetName": "ChineseCalendarUITests"
+    },
+    {
+      "displayName": "\"chinesecalendar://year/not-a-year\"",
+      "errorMessages": [],
+      "identifier": "systemURLParsingOnlySubmitsSupportedLinks(urlString:)",
+      "state": "Passed",
+      "targetName": "ChineseCalendarUITests"
+    },
+    {
+      "displayName": "tabPathsDoNotPolluteEachOther()",
+      "errorMessages": [],
+      "identifier": "tabPathsDoNotPolluteEachOther()",
+      "state": "Passed",
+      "targetName": "ChineseCalendarUITests"
+    },
+    {
+      "displayName": "targetedDismissalPreservesTheParentAndTabPaths()",
+      "errorMessages": [],
+      "identifier": "targetedDismissalPreservesTheParentAndTabPaths()",
+      "state": "Passed",
+      "targetName": "ChineseCalendarUITests"
+    },
+    {
+      "displayName": "confirmationIsVisibleOnlyOnTopModalAndCancelKeepsTheTree()",
+      "errorMessages": [],
+      "identifier": "NavigationContextTests/confirmationIsVisibleOnlyOnTopModalAndCancelKeepsTheTree()",
+      "state": "Passed",
+      "targetName": "NavigationCoreTests"
+    },
+    {
+      "displayName": "approvalWaitsForRootDismissalAndRejectsChildCompletion()",
+      "errorMessages": [],
+      "identifier": "NavigationContextTests/approvalWaitsForRootDismissalAndRejectsChildCompletion()",
+      "state": "Passed",
+      "targetName": "NavigationCoreTests"
+    },
+    {
+      "displayName": "requestDuringApprovedDismissalRequiresItsOwnApproval()",
+      "errorMessages": [],
+      "identifier": "NavigationContextTests/requestDuringApprovedDismissalRequiresItsOwnApproval()",
+      "state": "Passed",
+      "targetName": "NavigationCoreTests"
+    },
+    {
+      "displayName": "coldRequestDoesNotRequireConfirmation()",
+      "errorMessages": [],
+      "identifier": "NavigationContextTests/coldRequestDoesNotRequireConfirmation()",
+      "state": "Passed",
+      "targetName": "NavigationCoreTests"
+    },
+    {
+      "displayName": "primaryDeepLinkCancellationAndApprovalWaitForTheRootDismissal()",
+      "errorMessages": [],
+      "identifier": "NavigationPrimaryLayerTests/primaryDeepLinkCancellationAndApprovalWaitForTheRootDismissal()",
+      "state": "Passed",
+      "targetName": "NavigationCoreTests"
+    }
+  ]
+}

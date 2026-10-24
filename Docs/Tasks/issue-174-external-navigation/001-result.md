@@ -1,9 +1,9 @@
 # 外部导航入口统一为系统 URL：结果
 
 - 方案：[000-plan.md](000-plan.md)
-- 关联：[Issue #174](https://github.com/huahuahu/chinese-calendar/issues/174)
+- 关联：[Issue #174](https://github.com/huahuahu/chinese-calendar/issues/174)、[PR #186](https://github.com/huahuahu/chinese-calendar/pull/186)
 - 记录日期：2026-10-24
-- 代码状态：`dc76f6b5` 上 `codex/issue-174-external-navigation` 的未提交修改。
+- 代码状态：已提交到 `codex/issue-174-external-navigation`；整合远端 `2633da5a` 后的实现提交为 `a5ef05a6`，下方复验及审查针对该提交。随后仅补充验证记录。
 - 最新决策：按用户后续反馈，删除自定义启动参数入口；该决定替代 Issue 初版保留启动参数一次消费的方案。
 
 ## 最终实现
@@ -37,4 +37,10 @@
 
 本轮不重跑 UI 交互：实际系统 URL 冷启动仍未验证；真实模态按钮的取消／批准也未验证。初版原生会话失效、共享 Simulator 并发和窗口点击失败的具体情况保留在历史记录中，不推断为本次产品缺陷。
 
-未运行专项 `review-changes`；未执行真机验证、全量 CI、提交或远端 PR 操作。
+## 创建 PR 前的整合、复验与审查
+
+- 将最新 `origin/main` 的 `2633da5a` 合入本分支。保留 #181 对废弃初始化方法及无用 import 的删除，也保留 #183 的 `CalendarDownloadAlerts.presentFailure` 调用；外部入口仍只有应用根 `.onOpenURL`。
+- 原生 Xcode MCP 在 `a5ef05a6` 上复跑相同 24 个测试标识，展开后 27 个用例全部通过；格式、严格 lint、本地化资源和 diff 检查均通过，见[合并前验证](evidence/premerge-validation.json)。临时 Simulator 配置已恢复。
+- 使用 `review-changes` 对 `2633da5a...a5ef05a6` 进行一条导航／SwiftUI 生命周期专项审查。主 Agent 核对报告及实际入口、宿主和保留的下载提示代码后，确认没有可执行缺陷或强制规范违规；无待修复 finding。数据／并发和独立视觉 lane 不适用本次删除入口的范围。
+- AC-01 至 AC-07 的源码与自动测试覆盖已核对；系统 URL 冷启动、当前提交的真实系统交付及模态按钮交互仍按上文保留为验证缺口，没有用历史参数启动截图代替。
+- PR #186 已创建。远端 CI 状态与最终合并结果以 GitHub 为准，本文不把本地 27 个相关用例等同于全量 CI。未执行真机验证。
