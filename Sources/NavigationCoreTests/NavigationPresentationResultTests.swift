@@ -24,27 +24,28 @@ struct NavigationPresentationResultTests {
     @Test func invalidConfigurationReportsItsCauseWithoutChangingTheLayer() {
         let router = Router(rootDestination: .home, paths: [.primary: [.detail]])
         let context = router.rootPresentation
-        #expect(context.present(.detail, initialStack: .scope(.home)) == .rejected(.incompatibleContainer))
-        #expect(context.present(.detail, rootDestinations: [.primary: .home]) == .rejected(.incompatibleContainer))
-        #expect(context.present(.tabs) == .rejected(.missingRootDestination))
-        #expect(context.present(
+        #expect(context.submitPresentation(.detail, initialStack: .scope(.home)) == .rejected(.incompatibleContainer))
+        #expect(context
+            .submitPresentation(.detail, rootDestinations: [.primary: .home]) == .rejected(.incompatibleContainer))
+        #expect(context.submitPresentation(.tabs) == .rejected(.missingRootDestination))
+        #expect(context.submitPresentation(
             .tabs, initialStack: .scope(.home), rootDestinations: [.scope(.home): .home],
             paths: [.scope(.history): []]
         ) == .rejected(.missingRootDestination))
         #expect(router.presentedNode == nil)
         #expect(router.rootLayer.queuedPresentations.isEmpty)
         #expect(router.rootLayer.paths == [.primary: [.detail]])
-        #expect(context.present(.detail) == .applied)
-        #expect(context.present(.home) == .rejected(.presentationAlreadyExists))
+        #expect(context.submitPresentation(.detail) == .applied)
+        #expect(context.submitPresentation(.home) == .rejected(.presentationAlreadyExists))
     }
 
     @Test func alertAndPageRequestsReportQueuedWithoutReplacingTheActiveAlert() throws {
         let router = Router(rootDestination: .home)
         let context = router.rootPresentation
-        #expect(context.present(.alert(.first), lifetime: NavigationPresentationLifetime()) == .applied)
+        #expect(context.submitPresentation(.alert(.first), lifetime: NavigationPresentationLifetime()) == .applied)
         let first = try #require(context.presentedAlert)
         #expect(context.submitAlert(.second) == .queued)
-        #expect(context.present(.detail) == .queued)
+        #expect(context.submitPresentation(.detail) == .queued)
         #expect(context.presentedAlert?.id == first.id)
         #expect(context.presentedNode == nil)
         #expect(router.rootLayer.queuedPresentations.count == 2)
@@ -55,13 +56,14 @@ struct NavigationPresentationResultTests {
         let router = Router(rootDestination: .home)
         let root = router.rootPresentation
         #expect(root.dismissPresented(id: NavigationPresentationID()) == .noChange(.presentationNotFound))
-        #expect(root.present(.detail) == .applied)
+        #expect(root.submitPresentation(.detail) == .applied)
         let page = try #require(root.presentedNode)
         page.lifetime.claimHost()
         let context = router.presentationContext(for: page)
         #expect(context.submitAlert(.first) == .applied)
         let alert = try #require(context.presentedAlert)
-        #expect(context.alertWillPresent(id: .business(alert.id)))
+        let session = try #require(context.claimAlertSession(id: .business(alert.id)))
+        #expect(context.layer?.alertSession === session)
         #expect(root.dismissPresented(id: NavigationPresentationID()) == .noChange(.presentationNotFound))
         #expect(context.dismiss() == .queued)
         #expect(root.dismissPresented(id: page.id) == .queued)
@@ -73,15 +75,15 @@ struct NavigationPresentationResultTests {
     @Test func dismissalInvalidatesOldOperationsAndSeparatesPageFromAlertWaiting() throws {
         let router = Router(rootDestination: .home)
         let root = router.rootPresentation
-        #expect(root.present(.detail) == .applied)
+        #expect(root.submitPresentation(.detail) == .applied)
         let context = try router.presentationContext(for: #require(root.presentedNode))
         root.presentedNode?.lifetime.claimHost()
         #expect(context.dismiss() == .applied)
-        #expect(context.present(.home) == .rejected(.inactiveContext))
+        #expect(context.submitPresentation(.home) == .rejected(.inactiveContext))
         #expect(context.submitAlert(.first) == .rejected(.inactiveContext))
         #expect(context.dismiss() == .rejected(.inactiveContext))
         #expect(context.setSelectedStack(.primary) == .rejected(.inactiveContext))
-        #expect(root.present(.home) == .rejected(.awaitingDismissal))
+        #expect(root.submitPresentation(.home) == .rejected(.awaitingDismissal))
         #expect(root.submitAlert(.first) == .queued)
         #expect(root.presentedContent == nil)
         root.presentationDidDismiss()
@@ -95,7 +97,7 @@ struct NavigationPresentationResultTests {
         )
         let root = router.rootPresentation
         let background = root.scoped(to: .scope(.history))
-        #expect(background.present(.detail) == .rejected(.sourceStackNotSelected))
+        #expect(background.submitPresentation(.detail) == .rejected(.sourceStackNotSelected))
         #expect(background.submitAlert(.first) == .rejected(.sourceStackNotSelected))
         #expect(root.setSelectedStack(.primary) == .rejected(.undeclaredStack))
         #expect(root.setSelectedStack(.scope(.history)) == .applied)
@@ -114,7 +116,7 @@ struct NavigationPresentationResultTests {
             rootDestinations: [.home: .home, .history: .detail]
         )
         let root = router.rootPresentation
-        #expect(root.present(.detail) == .applied)
+        #expect(root.submitPresentation(.detail) == .applied)
         root.presentedNode?.lifetime.claimHost()
         #expect(router.submit(.selectScope(.history), confirmIfPresented: true) == .awaitingConfirmation)
         #expect(root.setSelectedStack(.scope(.history)) == .rejected(.awaitingConfirmation))

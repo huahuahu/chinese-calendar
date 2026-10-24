@@ -196,7 +196,7 @@ extension CalendarHistoryStateTests {
         let host = try await NavigationTestHost.show(router: router.navigation)
         defer { host.removeFromWindow() }
         var finishCount = 0
-        #expect(root.present(.settings, onFinish: { finishCount += 1 }).result == .applied)
+        #expect(root.present(.settings, onDismiss: { finishCount += 1 }).result == .applied)
         _ = try await host.waitForPresentation()
         #expect(router
             .openDeepLink(.emperor("qing-shizu"), confirmIfPresented: false) == .deferredUntilPresentationDismisses)

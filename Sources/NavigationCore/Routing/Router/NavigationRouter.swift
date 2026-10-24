@@ -37,9 +37,6 @@ public final class NavigationRouter<
 
     /// Context 缓存属于这棵导航树，不参与界面状态观察。
     @ObservationIgnored let contextStore = NavigationContextStore<Scope, Destination, AlertRoute>()
-    @ObservationIgnored var presentationMutationDepth = 0
-    @ObservationIgnored var pendingPresentationFinishes: [NavigationPresentationLifetime] = []
-    @ObservationIgnored var isDeliveringPresentationFinishes = false
 
     /// 创建 App 根层。Core 自动提供 NavigationStack 时使用 primary 栈；
     /// 页面自带 TabView／SplitView 等容器时，由 App 指定各栈及初始选择。
@@ -55,10 +52,6 @@ public final class NavigationRouter<
             rootDestinations: rootDestinations, paths: paths
         ) else { preconditionFailure("Every selected or routed navigation stack requires a root Destination") }
         rootLayer = layer
-    }
-
-    isolated deinit {
-        finishUnhostedPresentationsForTeardown()
     }
 
     /// 自带命名栈容器的便利入口；普通单栈使用 initialStack 的默认 primary。
@@ -167,7 +160,7 @@ public final class NavigationRouter<
         paths: [NavigationStackID<Scope>: [Destination]] = [:]
     ) -> NavigationPresentationResult {
         let context = frontmostPresentationNode.map { presentationContext(for: $0) } ?? rootPresentation
-        return context.present(
+        return context.submitPresentation(
             destination, style: .sheet, initialStack: initialStack, rootDestinations: rootDestinations, paths: paths
         )
     }
@@ -182,7 +175,7 @@ public final class NavigationRouter<
         paths: [NavigationStackID<Scope>: [Destination]] = [:]
     ) -> NavigationPresentationResult {
         let context = frontmostPresentationNode.map { presentationContext(for: $0) } ?? rootPresentation
-        return context.present(
+        return context.submitPresentation(
             destination, style: .fullScreen, initialStack: initialStack, rootDestinations: rootDestinations,
             paths: paths
         )
@@ -223,16 +216,14 @@ public final class NavigationRouter<
     /// - Parameters:
     ///   - request: App 已解析好的导航请求，例如切换 Tab 或替换某个栈的路径。
     ///   - confirmIfPresented: 为 true 时，只要还有模态、关闭动画或待确认请求，就先等待用户确认。
-    ///     默认 false。处理外部链接通常传 true，并配置确认提示或由业务代码处理 pendingConfirmation。
+    ///     默认 false。处理外部链接通常传 true，并通过 NavigationHostConfiguration 提供确认文案。
     /// - Returns: 本次请求已执行，或正在等待 alert 处理完、用户确认、页面模态关闭。
     @discardableResult
     public func submit(
         _ request: NavigationRequest<Scope, Destination>,
         confirmIfPresented: Bool = false
     ) -> NavigationRequestResult {
-        withPresentationMutation {
-            submitRequest(request, confirmIfPresented: confirmIfPresented)
-        }
+        submitRequest(request, confirmIfPresented: confirmIfPresented)
     }
 
     private func submitRequest(
@@ -280,52 +271,48 @@ public final class NavigationRouter<
     /// - Returns: 本次执行的请求；尚未关闭完成或没有待执行请求时返回 nil。
     @discardableResult
     func applyDeferredRequestIfReady() -> NavigationRequest<Scope, Destination>? {
-        withPresentationMutation {
-            guard isAwaitingPresentationDismissal, !hasActivePresentation, !hasActiveAlert else { return nil }
-            let request = coordinationState.takeAcceptedRequestAfterDismissal()
-            let completedNode = rootLayer.dismissingPresentation
-            rootLayer.isAwaitingDismissal = false
-            rootLayer.dismissingPresentation = nil
-            if let completedNode { finish(.page(completedNode)) }
-            contextStore.removeInactiveContexts()
-            if let request {
-                apply(request)
-                NavigationCoreLog.record(
-                    NavigationRequestResult.applied, operation: "applyDeferredRequest", layer: .root,
-                    stack: String(describing: request.stack)
-                )
-            }
-            resumePresentations()
-            return request
+        guard isAwaitingPresentationDismissal, !hasActivePresentation, !hasActiveAlert else { return nil }
+        let request = coordinationState.takeAcceptedRequestAfterDismissal()
+        let completedNode = rootLayer.dismissingPresentation
+        rootLayer.isAwaitingDismissal = false
+        rootLayer.dismissingPresentation = nil
+        if let completedNode { finish(.page(completedNode)) }
+        contextStore.removeInactiveContexts()
+        if let request {
+            apply(request)
+            NavigationCoreLog.record(
+                NavigationRequestResult.applied, operation: "applyDeferredRequest", layer: .root,
+                stack: String(describing: request.stack)
+            )
         }
+        resumePresentations()
+        return request
     }
 
     /// 关闭 App 根层打开的模态及其全部子模态，保留根层各栈的路径和待确认请求。
     /// 有活动 alert 时，先等提示关闭及按钮动作完成；模态数据清空后，仍需等待关闭动画完成。
     @discardableResult
     public func dismissAllPresentations() -> NavigationPresentationResult {
-        withPresentationMutation {
-            let hasContent = rootLayer.presentedContent != nil || !rootLayer.queuedPresentations.isEmpty
-            discardQueuedPresentations(in: rootLayer)
-            if let node = rootLayer.presentation { discardUnhostedDescendants(in: node.layer) }
-            let unclaimedAlert = rootLayer.alert.flatMap { $0.lifetime.hostClaimed ? nil : $0 }
-            if let unclaimedAlert {
-                rootLayer.presentedContent = nil
-                finish(.alert(unclaimedAlert))
-            }
-            if hasActiveAlert {
-                coordinationState.deferAllDismissalsUntilAlertEnds()
-                return NavigationCoreLog.record(
-                    NavigationPresentationResult.queued, operation: "dismissAllPresentations", layer: .root
-                )
-            }
-            beginPresentationDismissal(in: rootLayer)
-            if unclaimedAlert != nil { resumePresentations() }
+        let hasContent = rootLayer.presentedContent != nil || !rootLayer.queuedPresentations.isEmpty
+        discardQueuedPresentations(in: rootLayer)
+        if let node = rootLayer.presentation { discardUnhostedDescendants(in: node.layer) }
+        let unclaimedAlert = rootLayer.alert.flatMap { $0.lifetime.hostClaimed ? nil : $0 }
+        if let unclaimedAlert {
+            rootLayer.presentedContent = nil
+            finish(.alert(unclaimedAlert))
+        }
+        if hasActiveAlert {
+            coordinationState.deferAllDismissalsUntilAlertEnds()
             return NavigationCoreLog.record(
-                hasContent ? NavigationPresentationResult.applied : .noChange(.notPresented),
-                operation: "dismissAllPresentations", layer: .root
+                NavigationPresentationResult.queued, operation: "dismissAllPresentations", layer: .root
             )
         }
+        beginPresentationDismissal(in: rootLayer)
+        if unclaimedAlert != nil { resumePresentations() }
+        return NavigationCoreLog.record(
+            hasContent ? NavigationPresentationResult.applied : .noChange(.notPresented),
+            operation: "dismissAllPresentations", layer: .root
+        )
     }
 
     /// 当前最上层的模态。继续打开模态或选择确认提示所在层时使用；没有模态时返回 nil。

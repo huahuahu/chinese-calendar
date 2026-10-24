@@ -122,7 +122,8 @@ struct NavigationOperationResultTests {
         #expect(router.dismissPresentation(id: NavigationPresentationID()) == .noChange(.presentationNotFound))
         #expect(router.submitAlert(.notice) == .applied)
         let alert = try #require(router.rootPresentation.presentedAlert)
-        #expect(router.rootPresentation.alertWillPresent(id: .business(alert.id)))
+        let session = try #require(router.rootPresentation.claimAlertSession(id: .business(alert.id)))
+        #expect(router.rootPresentation.layer?.alertSession === session)
         #expect(router.dismissAllPresentations() == .queued)
         #expect(router.rootPresentation.presentedAlert?.destination == .notice)
     }

@@ -54,7 +54,7 @@ extension NavigationRouter {
     /// 尝试继续排队的操作；只要还有活动 alert（包括关闭动画和按钮动作）就返回。
     /// 先执行延后的模态关闭，再展示排队内容，最后重新提交等待 alert 的导航请求。
     func resumePresentations() {
-        withPresentationMutation { resumeQueuedPresentations() }
+        resumeQueuedPresentations()
     }
 
     private func resumeQueuedPresentations() {

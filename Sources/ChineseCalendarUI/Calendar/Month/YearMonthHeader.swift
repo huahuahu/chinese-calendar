@@ -19,7 +19,6 @@ struct YearMonthHeader: View {
     }
 
     @Environment(CalendarPresentationContext.self) private var presentation
-    @Environment(CalendarHomeCoordinator.self) private var homeCoordinator
     @Environment(CalendarYearFeature.self) private var feature
     @Environment(ChineseCalendarStoreCoordinator.self) private var storeCoordinator: ChineseCalendarStoreCoordinator?
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -174,11 +173,7 @@ private extension YearMonthHeader {
     private var titleContent: some View {
         Button {
             feature.connect(modelContext: modelContext, storeCoordinator: storeCoordinator)
-            feature.presentYearPicker(presentation: presentation) { session in
-                homeCoordinator.yearPickerConfiguration(
-                    feature: feature, session: session, storeCoordinator: storeCoordinator
-                )
-            }
+            feature.presentYearPicker(presentation: presentation)
         } label: {
             VStack(alignment: .leading, spacing: Constants.titleSpacing) {
                 Text(monthNavigationTitle)

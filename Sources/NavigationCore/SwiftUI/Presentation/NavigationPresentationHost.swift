@@ -1,61 +1,53 @@
 import SwiftUI
 
-/// 每层唯一的物理宿主；请求记录随其生命周期释放，配置不进入 Router。
+/// 根与递归模态共用根配置，将原生关闭回调交给本次请求。
 private struct NavigationPresentationHost<
     Scope: NavigationScope, Destination: NavigationDestination, AlertRoute: NavigationAlertRoute
 >: ViewModifier {
     let context: NavigationPresentationContext<Scope, Destination, AlertRoute>
     @Environment(\.[navigation: NavigationConfigurationKey<Scope, Destination, AlertRoute>()]) private var configuration
-    @State private var endpoint = NavigationPresentationEndpoint<Scope, Destination, AlertRoute>()
 
     func body(content: Content) -> some View {
-        endpoint.attach(context: context, configuration: configuration)
-        let sheetMount = mount(for: .sheet)
-        let fullScreenMount = mount(for: .fullScreen)
+        let sheet = node(for: .sheet)
+        let fullScreen = node(for: .fullScreen)
         return content
             .sheet(
-                item: binding(for: .sheet), onDismiss: { sheetMount?.didDismiss() },
+                item: binding(for: .sheet), onDismiss: { didDismiss(sheet) },
                 content: { node in presentation(node) }
             )
             .fullScreenCover(
-                item: binding(for: .fullScreen), onDismiss: { fullScreenMount?.didDismiss() },
+                item: binding(for: .fullScreen), onDismiss: { didDismiss(fullScreen) },
                 content: { node in presentation(node) }
             )
             .modifier(NavigationAlertHost(
                 context: context,
-                alertDefinition: { node in
-                    let configuration = endpoint.record(for: node.lifetime)?.configuration ?? configuration
-                    return configuration?.alert(for: node.destination, presentation: context)
-                },
-                renderLifetime: { endpoint.record(for: $0.lifetime) },
+                alertDefinition: { configuration?.alert(for: $0.destination, presentation: context) },
                 confirmationContent: { configuration?.confirmationContent(for: $0) }
             ))
-            .background {
-                NavigationHostLifetime { endpoint.detach() }
-                    .frame(width: 0, height: 0)
-                    .allowsHitTesting(false)
-                    .accessibilityHidden(true)
-            }
             .environment(context)
     }
 
-    @ViewBuilder
     private func presentation(_ node: NavigationPresentationNode<Scope, Destination, AlertRoute>) -> some View {
-        if let childContext = context.context(for: node) {
-            if let record = endpoint.record(for: node.lifetime), let configuration = record.configuration {
-                NavigationPresentationNodeView(node: node, context: childContext, record: record)
-                    .environment(
-                        \.[navigation: NavigationConfigurationKey<Scope, Destination, AlertRoute>()],
-                        configuration
-                    )
+        node.lifetime.claimHost()
+        return Group {
+            if let childContext = context.context(for: node) {
+                NavigationPresentationNodeView(node: node, context: childContext)
             }
         }
     }
 
-    private func mount(for style: NavigationPresentationStyle) -> NavigationModalMount? {
-        let node = context.layer?.dismissingPresentation ?? context.presentedNode
-        guard let node, node.style == style else { return nil }
-        return endpoint.record(for: node.lifetime)?.modalMount
+    private func node(
+        for style: NavigationPresentationStyle
+    ) -> NavigationPresentationNode<Scope, Destination, AlertRoute>? {
+        let node = context.layer?.dismissingPresentation ?? context.layer?.presentation
+        return node?.style == style ? node : nil
+    }
+
+    private func didDismiss(_ node: NavigationPresentationNode<Scope, Destination, AlertRoute>?) {
+        guard let node else { return }
+        let completion = node.lifetime.takeOnDismiss()
+        context.presentationDidDismiss(lifetime: node.lifetime)
+        completion?()
     }
 
     private func binding(

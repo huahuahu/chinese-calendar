@@ -2,7 +2,8 @@ import NavigationCore
 import SwiftUI
 import UIKit
 
-/// 从 destination 自己的 UIKit 生命周期拆除宿主，观察真实入场与离窗，不驱动 Core completion。
+/// 在目标页面的 viewWillAppear 中触发测试操作（例如移除宿主），并记录控制器是否进入或离开窗口。
+/// 测试通过这些记录核对结束时机，不手动调用导航库的关闭完成方法。
 @MainActor
 final class NavigationEntryTeardownProbe {
     var onEntry: (() -> Void)?

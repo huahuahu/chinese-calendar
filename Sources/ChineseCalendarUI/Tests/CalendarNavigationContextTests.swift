@@ -115,7 +115,7 @@ struct CalendarNavigationContextTests {
         }
         #expect(accepted.result == .applied)
         let modal = try await host.context(for: destination)
-        #expect(host.contexts[destination] === modal)
+        #expect(host.contexts[destination.id] === modal)
         let expectedRoot: CalendarDestination = switch destination {
         case .mainTabs: .calendarHome
         case .historyHome: .historyEmpty
@@ -135,16 +135,16 @@ struct CalendarNavigationContextTests {
             let presentation = root.scoped(to: .scope(.settings))
             let host = try await NavigationTestHost.show(router: coordinator.router.navigation)
             defer { host.removeFromWindow() }
-            feature.present(from: presentation, coordinator: coordinator)
-            #expect(feature.session == nil)
+            feature.present(from: presentation)
+            #expect(feature.state == nil)
             #expect(host.presentedViewController() == nil)
 
             coordinator.router.selectedTab = .settings
-            feature.present(from: presentation, coordinator: coordinator)
-            #expect(feature.session != nil)
+            feature.present(from: presentation)
+            #expect(feature.state != nil)
             _ = try await host.waitForPresentation()
             #expect(coordinator.router.navigation.dismissAllPresentations().isAccepted)
-            try await host.waitUntil { feature.session == nil }
+            try await host.waitUntil { feature.state == nil }
             await host.close()
         }
 
@@ -175,7 +175,7 @@ extension CalendarNavigationContextTests {
             .result == .applied)
         let modal = try await host.context(for: .mainTabs)
         _ = try await host.waitForPresentation()
-        #expect(host.contexts[.mainTabs] === modal)
+        #expect(host.contexts[CalendarDestination.mainTabs.id] === modal)
         #expect(modal.selectedStack == .scope(.settings))
         #expect(modal.context(for: .scope(.settings)).rootDestination == .settings)
         #expect(modal.context(for: .scope(.history)).push(.emperor("qing-shizu")) == .applied)
@@ -228,7 +228,7 @@ extension CalendarNavigationContextTests {
         #expect(modalHistory.path == [.emperorList(dynastyID: "qing")])
         #expect(modal.selectedStack == .scope(.history))
         #expect(root.context(for: .scope(.settings)).rootDestination == .settings)
-        #expect(host.contexts[.mainTabs] === modal)
+        #expect(host.contexts[CalendarDestination.mainTabs.id] === modal)
         await host.close()
     }
 }

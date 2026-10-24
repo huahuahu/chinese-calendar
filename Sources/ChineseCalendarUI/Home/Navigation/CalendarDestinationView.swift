@@ -8,12 +8,6 @@ struct CalendarDestinationView<BottomStatusBar: View>: View {
     let destination: CalendarDestination
     let bottomStatusBarIsPresented: () -> Bool
     let bottomStatusBar: () -> BottomStatusBar
-    var yearFeature: CalendarYearFeature?
-    var yearPickerSession: CalendarYearPickerSession?
-    #if DEBUG
-        @Environment(FullStoreDownloadPreviewState
-            .self) private var downloadPreviewState: FullStoreDownloadPreviewState?
-    #endif
     @Environment(CalendarPresentationContext.self) private var presentation
     @Environment(CalendarNavigationContext.self) private var navigation: CalendarNavigationContext?
     @Environment(ChineseCalendarStoreCoordinator.self) private var storeCoordinator: ChineseCalendarStoreCoordinator?
@@ -78,10 +72,9 @@ struct CalendarDestinationView<BottomStatusBar: View>: View {
             case let .emperor(emperorID):
                 EmperorDetailView(emperorID: emperorID)
                     .calendarStoreContent(state: storeCoordinator?.state)
-            case .yearPicker:
-                if let yearFeature, let yearPickerSession {
-                    CalendarYearPickerDestinationView(feature: yearFeature, session: yearPickerSession)
-                }
+            case let .yearPicker(_, selection, modelContext):
+                CalendarYearPickerDestinationView(selection: selection)
+                    .environment(\.modelContext, modelContext)
             case .downloadDetails:
                 if let progress = storeCoordinator?.fullStoreDownloadProgress {
                     FullStoreDownloadDetailView(progress: progress)
@@ -101,18 +94,16 @@ struct CalendarDestinationView<BottomStatusBar: View>: View {
                     CalendarDebugSplitDetailView(item: item, level: level)
                 case .debugNavigationTabs:
                     CalendarDebugNavigationTabsView()
-                case .downloadPreview:
-                    if let state = downloadPreviewState { FullStoreDownloadPreview(state: state) }
-                case .downloadPreviewScenarios:
-                    if let state = downloadPreviewState {
-                        FullStoreDownloadPreviewScenariosView(state: state)
-                    }
+                case let .downloadPreview(_, state):
+                    FullStoreDownloadPreview(state: state)
+                case let .downloadPreviewScenarios(_, state):
+                    FullStoreDownloadPreviewScenariosView(state: state)
                 case .downloadPreviewSwitch:
                     Text(CalendarStringKey.Settings.Debug.DownloadPreview.switchMessage)
                         .padding()
                         .navigationTitle(CalendarStringKey.Settings.Debug.DownloadPreview.switchTab)
-                case .downloadPreviewDetails:
-                    if let state = downloadPreviewState { FullStoreDownloadPreviewDetailView(state: state) }
+                case let .downloadPreviewDetails(_, state):
+                    FullStoreDownloadPreviewDetailView(state: state)
             #endif
             }
         }

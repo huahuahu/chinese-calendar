@@ -9,7 +9,7 @@ import Testing
     let host = try await NavigationTestHost.show(router: router.navigation)
     defer { host.removeFromWindow() }
     var finishCount = 0
-    let submission = root.present(.lunarYear(2025), onFinish: { finishCount += 1 })
+    let submission = root.present(.lunarYear(2025), onDismiss: { finishCount += 1 })
     #expect(submission.result == .applied)
     _ = try await host.waitForPresentation()
     #expect(try #require(submission.handle).dismiss() == .applied)
@@ -67,11 +67,11 @@ import Testing
     #expect(parent.context(for: .primary).push(.lunarYear(2026)) == .applied)
     var childFinishes = 0
     var descendantFinishes = 0
-    let childSubmission = parent.present(.downloadDetails, onFinish: { childFinishes += 1 })
+    let childSubmission = parent.present(.downloadDetails, onDismiss: { childFinishes += 1 })
     #expect(childSubmission.result == .applied)
     let child = try await host.context(for: .downloadDetails)
     _ = try await host.waitForPresentation()
-    #expect(child.present(.lunarYear(2027), style: .fullScreen, onFinish: { descendantFinishes += 1 })
+    #expect(child.present(.lunarYear(2027), style: .fullScreen, onDismiss: { descendantFinishes += 1 })
         .result == .applied)
     let descendant = try await host.context(for: .lunarYear(2027))
     _ = try await host.waitForPresentation()

@@ -1,29 +1,27 @@
 import Foundation
 
-/// 记录系统提示的实际生命周期。宿主保留会话后，即使 Router 已释放也能完成已选择的动作。
+/// 记录 alert 是否已关闭、按钮操作是否已完成，并防止重复执行按钮操作。
+/// NavigationSystemAlert 的回调持有此 session，因此 Router 释放后仍能完成按钮操作并通知 session 结束。
 @MainActor
 final class NavigationAlertSession {
     enum State {
-        /// 会话已占用，不代表展示动画已经结束。
+        /// 已创建 session，准备显示 alert；展示动画可能尚未完成。
         case presented
-        /// 正在关闭，等待 UIKit completion。
+        /// 正在关闭 alert，等待 UIKit 的关闭完成回调。
         case dismissing
         /// 关闭已完成，正在处理回调及异步业务动作。
         case handlingCompletion
-        /// 系统关闭和业务动作均已完成，重复回调不再获得处理权。
+        /// alert 已关闭且按钮操作已完成，忽略后续重复回调。
         case finished
     }
 
     let id: NavigationSystemAlertID
     let lifetime: NavigationPresentationLifetime?
-    /// 导航确认同样可能阻塞祖先结束，因此无业务 lifetime 时也保留内部完成身份。
-    let completionLifetime: NavigationPresentationLifetime
     private(set) var state: State = .presented
 
     init(id: NavigationSystemAlertID, lifetime: NavigationPresentationLifetime? = nil) {
         self.id = id
         self.lifetime = lifetime
-        completionLifetime = lifetime ?? NavigationPresentationLifetime()
     }
 
     func beginDismissal() {
@@ -37,7 +35,7 @@ final class NavigationAlertSession {
         return true
     }
 
-    /// 此方法只结束处理状态；仍在 Router 中时，由 Router 事务统一通知 lifetime。
+    /// 只标记 session 已结束；结束通知和后续导航由 completeAlertSession 继续处理。
     func endCompletion() -> Bool {
         guard state == .handlingCompletion else { return false }
         state = .finished

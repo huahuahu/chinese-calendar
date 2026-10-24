@@ -20,17 +20,17 @@ func supportedPublicUsage() -> some View {
     _ = stack.setRootDestination(.home)
     _ = presentation.scoped(to: .primary).unscoped()
     _ = presentation.isPresented
-    let submission = presentation.present(.sheet(.detail), configuration: APIConfiguration(), onFinish: {})
+    let submission = presentation.present(.sheet(.detail), onDismiss: {})
     let result: NavigationPresentationResult = submission.result
     let handle: NavigationPresentationHandle? = submission.handle
     _ = result.isAccepted
     _ = handle?.dismiss()
-    _ = presentation.present(.detail, style: .fullScreen, onFinish: {})
-    _ = presentation.presentAlert(.notice, onFinish: {})
+    _ = presentation.present(.detail, style: .fullScreen, onDismiss: {})
+    _ = presentation.presentAlert(.notice, onDismiss: {})
     _ = presentation.dismiss()
     _ = router.submit(.push(.detail, on: .primary))
     _ = router.dismissAllPresentations()
-    _ = router.presentAlert(.notice, onFinish: {})
+    _ = router.presentAlert(.notice, onDismiss: {})
     return NavigationRootView(context: presentation)
         .navigationHost(context: presentation, configuration: APIConfiguration())
 }

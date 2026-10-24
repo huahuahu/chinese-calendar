@@ -14,7 +14,7 @@ import Observation
 /// App 根界面拥有根层；每次打开 sheet／full-screen 才会创建下一层及其自己的 NavigationPresentationContext。
 ///
 /// 这里只弱引用 Router 和所属层。即使旧页面仍持有 Context，也不会阻止它们释放。
-/// 独立保留共享的入口记录，让路由读取不依赖层是否仍有效。
+/// 路由参数由层持有，旧 Context 不延长业务资源的生命周期。
 @MainActor
 @Observable
 public final class NavigationPresentationContext<
@@ -26,7 +26,6 @@ public final class NavigationPresentationContext<
     let id: NavigationLayerID
     @ObservationIgnored weak var router: NavigationRouter<Scope, Destination, AlertRoute>?
     @ObservationIgnored weak var layer: NavigationLayer<Scope, Destination, AlertRoute>?
-    private let routeState: NavigationLayerRouteState<Destination>
     private let sourceStack: NavigationStackID<Scope>?
 
     init(
@@ -36,7 +35,6 @@ public final class NavigationPresentationContext<
     ) {
         self.router = router
         self.layer = layer
-        routeState = layer.routeState
         self.sourceStack = sourceStack
         id = layer.id
     }
@@ -48,22 +46,13 @@ public final class NavigationPresentationContext<
         return router?.layer(id: id) === layer
     }
 
-    /// 发起层仍有效时才允许进入该层宿主；旧 Context 不会借用后来创建的宿主。
-    var presentationEndpoint: NavigationPresentationEndpoint<Scope, Destination, AlertRoute>? {
-        guard isActive else { return nil }
-        return layer?.presentationEndpoint
+    /// 退出动画期间可读取原层入口；层释放后不保留带 Binding 的业务路由。
+    var route: NavigationLayerRoute<Destination>? {
+        layer?.route
     }
 
-    /// 构建整个根界面或打开当前模态时使用的路由，与所属层共享同一份记录。
-    /// Context 失效或层释放后仍可读取；是否允许操作和渲染由 isActive 单独判断。
-    /// 模态中的 push 不改变其入口。
-    var route: NavigationLayerRoute<Destination> {
-        routeState.route
-    }
-
-    /// 所关联层的入口页面；失效后保留原层最后的入口，不连接同 ID 的新层。
-    var destination: Destination {
-        route.destination
+    var destination: Destination? {
+        route?.destination
     }
 
     /// 这个 Context 是否属于一个仍有效的模态。
@@ -169,7 +158,7 @@ public final class NavigationPresentationContext<
     /// 并让 providesNavigationContainer 返回 true，再由内容使用 NavigationScopeView 创建各 Tab 的栈。
     /// - Returns: applied 表示已写入呈现数据，queued 表示已排队；均不代表页面显示动画完成。
     @discardableResult
-    func present(
+    func submitPresentation(
         _ destination: Destination,
         style: NavigationPresentationStyle = .sheet,
         initialStack: NavigationStackID<Scope> = .primary,
@@ -223,14 +212,12 @@ public final class NavigationPresentationContext<
                 NavigationPresentationResult.rejected(.inactiveContext), operation: operation, layer: id
             )
         }
-        return router.withPresentationMutation {
-            let result: NavigationPresentationResult = if isActive, let layer {
-                submission(router, layer)
-            } else {
-                .rejected(.inactiveContext)
-            }
-            return NavigationCoreLog.record(result, operation: operation, layer: id)
+        let result: NavigationPresentationResult = if isActive, let layer {
+            submission(router, layer)
+        } else {
+            .rejected(.inactiveContext)
         }
+        return NavigationCoreLog.record(result, operation: operation, layer: id)
     }
 
     /// 关闭当前所在的模态，以及从它继续打开的所有子模态，保留父层各栈的路径。
@@ -310,7 +297,8 @@ public final class NavigationPresentationContext<
         router.completePresentationDismissal(in: layer, lifetime: lifetime)
     }
 
-    /// 内部兼容入口；真实宿主总是携带它当次认领的 lifetime。
+    /// 保留给未传入 lifetime 的内部调用，从当前 layer 查找正在关闭的 presentation。
+    /// SwiftUI 的关闭回调直接传入本次 lifetime，避免迟到回调结束后来创建的 presentation。
     func presentationDidDismiss() {
         guard let lifetime = layer?.dismissingPresentation?.lifetime else { return }
         presentationDidDismiss(lifetime: lifetime)

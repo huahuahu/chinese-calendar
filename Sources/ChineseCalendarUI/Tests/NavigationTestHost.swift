@@ -14,7 +14,7 @@ final class NavigationTestHost {
         windowLease.window
     }
 
-    private(set) var contexts: [CalendarDestination: CalendarPresentationContext] = [:]
+    private(set) var contexts: [String: CalendarPresentationContext] = [:]
     private var appeared = false
 
     private init(windowLease: NavigationTestWindowLease) {
@@ -33,7 +33,7 @@ final class NavigationTestHost {
         let windowLease = try await NavigationTestWindowLease.acquire()
         let host = NavigationTestHost(windowLease: windowLease)
         let configuration = NavigationTestConfiguration { [weak host] destination, context in
-            host?.contexts[destination] = context
+            host?.contexts[destination.id] = context
         }
         try await host.mount(Color.clear.navigationHost(
             context: router.rootPresentation, configuration: configuration
@@ -41,23 +41,35 @@ final class NavigationTestHost {
         return host
     }
 
-    /// 保留真实业务 builder 的内容与依赖，只追加环境 Context 的观测探针。
-    func recording(
-        configuration: some NavigationHostConfiguration<CalendarTab, CalendarDestination, CalendarAlert>
-    ) -> some NavigationHostConfiguration<CalendarTab, CalendarDestination, CalendarAlert> {
-        NavigationRecordingConfiguration(configuration: configuration) { [weak self] destination, context in
-            self?.contexts[destination] = context
-        }
+    static func show(coordinator: CalendarHomeCoordinator) async throws -> NavigationTestHost {
+        let windowLease = try await NavigationTestWindowLease.acquire()
+        let host = NavigationTestHost(windowLease: windowLease)
+        let configuration = NavigationRecordingConfiguration(
+            configuration: CalendarNavigationConfiguration(
+                coordinator: coordinator, storeCoordinator: nil,
+                bottomStatusBarIsPresented: { false }, bottomStatusBar: { EmptyView() }
+            )
+        ) { [weak host] destination, context in host?.contexts[destination.id] = context }
+        try await host.mount(Color.clear.navigationHost(
+            context: coordinator.router.navigation.rootPresentation, configuration: configuration
+        ))
+        return host
+    }
+
+    func pickerContext(id: UUID) async throws -> CalendarPresentationContext {
+        let key = "year-picker-\(id)"
+        try await waitUntil { self.contexts[key] != nil }
+        return try #require(contexts[key])
     }
 
     func context(
         for destination: CalendarDestination, differentFrom previous: CalendarPresentationContext? = nil
     ) async throws -> CalendarPresentationContext {
         try await waitUntil {
-            guard let context = self.contexts[destination] else { return false }
+            guard let context = self.contexts[destination.id] else { return false }
             return context !== previous
         }
-        guard let context = contexts[destination] else { throw Failure.presentationMissing }
+        guard let context = contexts[destination.id] else { throw Failure.presentationMissing }
         return context
     }
 
@@ -84,7 +96,7 @@ final class NavigationTestHost {
         return alert
     }
 
-    /// UIKit 的真实 completion 是物理关闭证据，调用方仍可继续等业务 onFinish。
+    /// 等待 UIKit 报告关闭完成后返回；若按钮的异步操作仍未结束，调用方还需继续等待本次提示的动作完成回调。
     func dismissPresentedViewController(animated: Bool = true) async {
         guard let controller = presentedViewController() else { return }
         await dismiss(controller, animated: animated)

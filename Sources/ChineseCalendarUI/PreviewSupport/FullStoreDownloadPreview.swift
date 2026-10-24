@@ -31,7 +31,7 @@ import ChineseCalendarLocalization
             .tabBarMinimizeBehavior(.onScrollDown)
             .calendarTabViewBottomAccessory(isEnabled: true) {
                 FullStoreDownloadBottomProgressView(progress: state.stage.progress) {
-                    presentation.present(.downloadPreviewDetails)
+                    presentation.present(.downloadPreviewDetails(id: state.id, state: state))
                 }
             }
             .dynamicTypeSize(state.textSize)

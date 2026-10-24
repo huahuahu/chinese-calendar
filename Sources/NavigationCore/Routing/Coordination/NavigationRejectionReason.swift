@@ -2,7 +2,6 @@
 
 /// 导航命令未被接受的原因；调用方可以据此决策，不需要解析日志文字。
 nonisolated public enum NavigationRejectionReason: String, Equatable, Sendable {
-    case hostUnavailable
     case inactiveContext
     case undeclaredStack
     case incompatibleContainer

@@ -1,4 +1,4 @@
-/// 一次呈现的同步接收结果，以及只允许结束该请求的操作凭据。
+/// present 的返回值：presentation request 是否被接受，以及用于取消或关闭本次 request 的 handle。
 @MainActor
 public struct NavigationPresentationSubmission {
     public let result: NavigationPresentationResult

@@ -1,5 +1,7 @@
 # Issue #165：发起方所有权与导航公开接口收敛结果
 
+> 2026-10-24：按次配置、额外模态生命周期探测和通用结束通知已由[简化方案](002-native-dismissal.md)替代。本文保留此前设计或验证的历史，当前结果见[简化结果](003-native-dismissal-result.md)。
+
 - 方案：[000-plan.md](000-plan.md)
 - 关联：[Issue #165](https://github.com/huahuahu/chinese-calendar/issues/165)、[PR #170](https://github.com/huahuahu/chinese-calendar/pull/170)
 - 状态：远端评论的两项 P2 已修复，本轮新增 16 个回归实例，完整 scheme 522 条及 App 构建通过；原实现及宿主映射／签名补充各有本地 506 条通过证据；XcodeGen 2.45.3 遗漏 SettingPresets 的 CI 安装问题已在干净副本复现，完整安装修复后直接全量测试也通过 506 条实例。PR #170 尚未合并，远程 CI 状态以 PR 最新提交检查为准；OWN-07／09 的具体覆盖边界见验收表。

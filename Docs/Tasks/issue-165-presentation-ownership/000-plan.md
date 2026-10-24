@@ -1,5 +1,7 @@
 # Issue #165：发起方所有权与导航公开接口收敛
 
+> 2026-10-24：按次配置、额外模态生命周期探测和通用结束通知已由[简化方案](002-native-dismissal.md)替代。本文保留此前设计或验证的历史，当前结果见[简化结果](003-native-dismissal-result.md)。
+
 - 关联：[Issue #165](https://github.com/huahuahu/chinese-calendar/issues/165)
 - 状态：设计已实施，实现已提交，本地验证结果已归档；逐项验收、覆盖边界及 PR 交付状态统一见 [001-result.md](001-result.md)
 - 日期：2026-10-23 至 2026-10-24

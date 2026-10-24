@@ -104,7 +104,7 @@ struct NavigationHostTests {
             rootDestinations: [.home: .detail, .history: .detail]
         )
         let recorder = HostTestRecorder()
-        #expect(router.rootPresentation.present(
+        #expect(router.rootPresentation.submitPresentation(
             .tabs,
             initialStack: .scope(.home),
             rootDestinations: [.scope(.home): .detail, .scope(.history): .detail]
@@ -129,7 +129,7 @@ struct NavigationHostTests {
             selectedScope: .home,
             rootDestinations: [.home: .detail, .history: .detail]
         )
-        #expect(router.rootPresentation.present(
+        #expect(router.rootPresentation.submitPresentation(
             .tabs, initialStack: .scope(.home), rootDestinations: [.scope(.home): .detail]
         ) == .applied)
         let node = try #require(router.presentedNode)
@@ -169,7 +169,7 @@ struct NavigationHostTests {
         let configuration = HostTestConfiguration(name: "shared", recorder: HostTestRecorder())
         #expect(Route.tabs.providesNavigationContainer)
         #expect(!Route.detail.providesNavigationContainer)
-        #expect(router.rootPresentation.present(
+        #expect(router.rootPresentation.submitPresentation(
             .tabs,
             initialStack: .scope(.history),
             rootDestinations: [.scope(.home): .detail, .scope(.history): .detail]

@@ -11,8 +11,10 @@ struct CalendarPresentationTests {
         let feature = CalendarDownloadDetailsFeature()
         let router = CalendarRouter().navigation
         let root = router.rootPresentation
+        let occupied = root.present(.sheet(.settings))
         feature.present(from: root)
         #expect(feature.request == nil)
+        occupied.handle?.dismiss()
 
         let host = try await NavigationTestHost.show(router: router)
         defer { host.removeFromWindow() }
@@ -49,10 +51,10 @@ struct CalendarPresentationTests {
         coordinator.downloadDetails.present(from: parentContext)
         #expect(coordinator.downloadDetails.request === request)
         _ = try await host.context(for: .downloadDetails)
-        _ = try await host.waitForPresentation()
+        let detailsController = try await host.waitForPresentation()
         coordinator.downloadDetails.progressDidDisappear()
-        #expect(coordinator.downloadDetails.request === request)
-        try await host.waitUntil { coordinator.downloadDetails.request == nil }
+        #expect(coordinator.downloadDetails.request == nil)
+        try await host.waitUntil { host.presentedViewController() !== detailsController }
         #expect(parentContext.isPresented)
         parent.handle?.dismiss()
         try await host.waitUntil { host.presentedViewController() == nil }
@@ -91,22 +93,22 @@ struct CalendarPresentationTests {
             let host = try await NavigationTestHost.show(router: coordinator.router.navigation)
             defer { host.removeFromWindow() }
             let root = coordinator.router.navigation.rootPresentation
-            feature.present(from: root, coordinator: coordinator)
-            weak var original = feature.session
+            feature.present(from: root)
+            weak var original = feature.state
             #expect(original != nil)
-            feature.present(from: root, coordinator: coordinator)
-            #expect(feature.session === original)
+            feature.present(from: root)
+            #expect(feature.state === original)
             original?.stage = .downloading
             _ = try await host.waitForPresentation()
             #expect(original?.stage.progress.downloadFraction == 0.5)
             await host.dismissPresentedViewController()
-            try await host.waitUntil { feature.session == nil }
+            try await host.waitUntil { feature.state == nil }
             try await host.waitUntil { original == nil }
-            feature.present(from: root, coordinator: coordinator)
-            #expect(feature.session?.stage == .preparing)
+            feature.present(from: root)
+            #expect(feature.state?.stage == .preparing)
             _ = try await host.waitForPresentation()
             await host.dismissPresentedViewController()
-            try await host.waitUntil { feature.session == nil }
+            try await host.waitUntil { feature.state == nil }
             await host.close()
         }
     #endif

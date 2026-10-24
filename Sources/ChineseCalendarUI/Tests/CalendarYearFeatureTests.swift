@@ -1,138 +1,87 @@
 import ChineseCalendarPersistence
 @testable import ChineseCalendarUI
 import SwiftData
+import SwiftUI
 import Testing
 
 @MainActor
-@Suite("年份流程由发起日历页面持有")
+@Suite("年份 Binding 由发起页持有")
 struct CalendarYearFeatureTests {
-    @Test func independentPagesKeepTheirOwnSelectionAndContext() throws {
+    @Test func independentBindingsReturnOnlyToTheirOriginatingPage() throws {
         let firstContainer = try PreviewSampleData.makeModelContainer()
         let secondContainer = try PreviewSampleData.makeModelContainer()
-        let first = makeFeature(context: firstContainer.mainContext, selectedDayIndex: 315)
-        let second = makeFeature(context: secondContainer.mainContext, selectedDayIndex: 115)
-        let firstSession = try #require(first.beginYearPicker())
-        let secondSession = try #require(second.beginYearPicker())
-
-        #expect(firstSession.selection === first.selection)
-        #expect(secondSession.selection === second.selection)
-        #expect(firstSession.modelContext === firstContainer.mainContext)
-        #expect(secondSession.modelContext === secondContainer.mainContext)
-
-        first.selectYear(2025, session: firstSession)
+        let first = makeFeature(firstContainer.mainContext, day: 315)
+        let second = makeFeature(secondContainer.mainContext, day: 115)
+        let firstRoute = try #require(first.beginYearPicker())
+        let secondRoute = try #require(second.beginYearPicker())
+        guard case let .yearPicker(_, binding, context) = firstRoute,
+              case let .yearPicker(_, otherBinding, otherContext) = secondRoute
+        else {
+            Issue.record("应创建带参数的年份路由")
+            return
+        }
+        #expect(context === firstContainer.mainContext)
+        #expect(otherContext === secondContainer.mainContext)
+        let previousOtherYear = otherBinding.wrappedValue
+        binding.wrappedValue = 2025
         first.completeYearTransitionPreparation(3)
-
         #expect(first.selection.selectedDayIndex == 201)
         #expect(second.selection.selectedDayIndex == 115)
+        #expect(otherBinding.wrappedValue == previousOtherYear)
         #expect(second.pendingYearTransition == nil)
-        #expect(secondSession.acceptsResult)
     }
 
-    @Test func oneResultKeepsBoundaryMonthTransitionUntilPreparationCompletes() throws {
+    @Test func bindingConsumesOnlyOneResultAndPreservesBoundaryTransition() throws {
         let container = try PreviewSampleData.makeModelContainer()
-        let feature = makeFeature(context: container.mainContext, selectedDayIndex: 315)
-        let session = try #require(feature.beginYearPicker())
-
-        feature.selectYear(2025, session: session)
-        feature.selectYear(2027, session: session)
-
-        #expect(feature.selection.selectedDayIndex == 315)
+        let feature = makeFeature(container.mainContext, day: 315)
+        guard case let .yearPicker(_, binding, _) = try #require(feature.beginYearPicker()) else { return }
+        binding.wrappedValue = 2025
+        binding.wrappedValue = 2027
         #expect(feature.pendingYearTransition?.sourceMonthIndex == 3)
         #expect(feature.pendingYearTransition?.destinationMonthIndex == 2)
         #expect(feature.pendingYearTransition?.destinationYearNumber == 2025)
-        #expect(!session.acceptsResult)
-
+        #expect(feature.selection.selectedDayIndex == 315)
         feature.completeYearTransitionPreparation(5)
         #expect(feature.selection.selectedDayIndex == 315)
         feature.completeYearTransitionPreparation(3)
         #expect(feature.selection.selectedDayIndex == 201)
-        #expect(feature.pendingYearTransition == nil)
     }
 
-    @Test func repeatedOpeningWaitsForTheCurrentRequestToFinish() throws {
+    @Test func oldBindingAndOldDismissalCannotChangeReplacement() throws {
         let container = try PreviewSampleData.makeModelContainer()
-        let feature = makeFeature(context: container.mainContext, selectedDayIndex: 315)
-        let first = try #require(feature.beginYearPicker())
-
+        let feature = makeFeature(container.mainContext, day: 315)
+        guard case let .yearPicker(id, binding, _) = try #require(feature.beginYearPicker()) else { return }
         #expect(feature.beginYearPicker() == nil)
-        feature.selectYear(2025, session: first)
-        #expect(feature.beginYearPicker() == nil)
-
-        feature.finishYearPicker(session: first)
-        let second = try #require(feature.beginYearPicker())
-        #expect(second !== first)
-        feature.finishYearPicker(session: first)
-        #expect(feature.yearPickerSession === second)
-        #expect(second.acceptsResult)
-    }
-
-    @Test func replacedContextInvalidatesResultsAndPendingTransition() throws {
-        let firstContainer = try PreviewSampleData.makeModelContainer()
-        let secondContainer = try PreviewSampleData.makeModelContainer()
-        let feature = makeFeature(context: firstContainer.mainContext, selectedDayIndex: 315)
-        let oldSession = try #require(feature.beginYearPicker())
-        feature.selectYear(2025, session: oldSession)
-
-        feature.connect(modelContext: secondContainer.mainContext, storeCoordinator: nil)
-        feature.selectYear(2027, session: oldSession)
-        feature.completeYearTransitionPreparation(3)
-
-        #expect(feature.selection.selectedDayIndex == 315)
-        #expect(feature.pendingYearTransition == nil)
-        #expect(!oldSession.acceptsResult)
-        #expect(feature.yearPickerSession === oldSession)
-        feature.finishYearPicker(session: oldSession)
-        let newSession = try #require(feature.beginYearPicker())
-        #expect(newSession.modelContext === secondContainer.mainContext)
-        #expect(newSession.storeGeneration != oldSession.storeGeneration)
-    }
-
-    @Test func cancelledSessionCannotChangeSelectionOrClearAReplacement() throws {
-        let container = try PreviewSampleData.makeModelContainer()
-        let feature = makeFeature(context: container.mainContext, selectedDayIndex: 315)
-        let cancelled = try #require(feature.beginYearPicker())
-        feature.finishYearPicker(session: cancelled)
+        feature.finishYearPicker(id: id)
         let replacement = try #require(feature.beginYearPicker())
-
-        feature.selectYear(2025, session: cancelled)
-        feature.finishYearPicker(session: cancelled)
-
-        #expect(feature.selection.selectedDayIndex == 315)
+        let replacementID = feature.yearPickerID
+        binding.wrappedValue = 2025
+        feature.finishYearPicker(id: id)
+        #expect(feature.yearPickerID == replacementID)
+        #expect(replacementID != id)
         #expect(feature.pendingYearTransition == nil)
-        #expect(feature.yearPickerSession === replacement)
-    }
-
-    @Test func finishingReleasesOnlyThePickerResources() throws {
-        let container = try PreviewSampleData.makeModelContainer()
-        let feature = makeFeature(context: container.mainContext, selectedDayIndex: 315)
-        weak var releasedSession: CalendarYearPickerSession?
-        do {
-            let session = try #require(feature.beginYearPicker())
-            releasedSession = session
-            feature.finishYearPicker(session: session)
-        }
-
-        #expect(releasedSession == nil)
         #expect(feature.selection.selectedDayIndex == 315)
-        #expect(feature.modelContext === container.mainContext)
+        withExtendedLifetime(replacement) {}
     }
 
-    @Test func retainedSessionDoesNotKeepItsOriginatingFeatureAlive() throws {
-        let container = try PreviewSampleData.makeModelContainer()
-        weak var releasedFeature: CalendarYearFeature?
-        let session: CalendarYearPickerSession
-        do {
-            let feature = makeFeature(context: container.mainContext, selectedDayIndex: 315)
-            releasedFeature = feature
-            session = try #require(feature.beginYearPicker())
-        }
-
-        #expect(releasedFeature == nil)
-        #expect(session.selection.selectedDayIndex == 315)
+    @Test func replacingStoreInvalidatesOldBindingImmediately() throws {
+        let first = try PreviewSampleData.makeModelContainer()
+        let second = try PreviewSampleData.makeModelContainer()
+        let feature = makeFeature(first.mainContext, day: 315)
+        guard case let .yearPicker(_, binding, _) = try #require(feature.beginYearPicker()) else { return }
+        binding.wrappedValue = 2025
+        feature.connect(modelContext: second.mainContext, storeCoordinator: nil)
+        binding.wrappedValue = 2027
+        feature.completeYearTransitionPreparation(3)
+        #expect(feature.yearPickerID == nil)
+        #expect(feature.pendingYearTransition == nil)
+        #expect(feature.selection.selectedDayIndex == 315)
+        guard case let .yearPicker(_, _, context) = try #require(feature.beginYearPicker()) else { return }
+        #expect(context === second.mainContext)
     }
 
-    private func makeFeature(context: ModelContext, selectedDayIndex: Int) -> CalendarYearFeature {
-        let feature = CalendarYearFeature(selection: CalendarSelection(selectedDayIndex: selectedDayIndex))
+    private func makeFeature(_ context: ModelContext, day: Int) -> CalendarYearFeature {
+        let feature = CalendarYearFeature(selection: CalendarSelection(selectedDayIndex: day))
         feature.connect(modelContext: context, storeCoordinator: nil)
         return feature
     }

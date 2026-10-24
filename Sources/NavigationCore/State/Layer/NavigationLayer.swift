@@ -12,13 +12,7 @@ final class NavigationLayer<
     Destination: NavigationDestination,
     AlertRoute: NavigationAlertRoute
 > {
-    @ObservationIgnored weak var presentationEndpoint: NavigationPresentationEndpoint<Scope, Destination, AlertRoute>?
-
-    let routeState: NavigationLayerRouteState<Destination>
-
-    var route: NavigationLayerRoute<Destination> {
-        routeState.route
-    }
+    let route: NavigationLayerRoute<Destination>
 
     var id: NavigationLayerID {
         route.id
@@ -93,7 +87,7 @@ final class NavigationLayer<
         ) == nil else { return nil }
         let roots: [NavigationStackID<Scope>: Destination] = route.destination.providesNavigationContainer
             ? rootDestinations : [.primary: route.destination]
-        routeState = NavigationLayerRouteState(route: route)
+        self.route = route
         selectedStack = initialStack
         stacks = Dictionary(uniqueKeysWithValues: roots.map { id, root in
             (id, NavigationStackState(rootDestination: root, path: paths[id] ?? []))

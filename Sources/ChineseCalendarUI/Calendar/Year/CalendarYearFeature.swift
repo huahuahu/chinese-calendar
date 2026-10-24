@@ -4,6 +4,7 @@ import ChineseCalendarPersistence
 import NavigationCore
 import Observation
 import SwiftData
+import SwiftUI
 
 /// 一个日历页面拥有的日期选择、年份过渡和本次年份选择器资源。
 @MainActor
@@ -13,7 +14,8 @@ final class CalendarYearFeature {
     let today: CalendarToday
     let yearTransitionContext = LunarYearTransitionContext()
     private(set) var pendingYearTransition: LunarYearTransitionRequest?
-    private(set) var yearPickerSession: CalendarYearPickerSession?
+    private(set) var yearPickerID: UUID?
+    private var acceptsYearPickerResult = false
     private(set) var modelContext: ModelContext?
 
     @ObservationIgnored private var yearPickerHandle: NavigationPresentationHandle?
@@ -48,7 +50,8 @@ final class CalendarYearFeature {
         storeIdentity = storeCoordinator?.navigationStoreIdentity
         guard let storeCoordinator else { return }
 
-        // 来源 View 被数据 identity 替换后，呈现配置仍保留本 feature；订阅不能随来源 View 消失而停止。
+        // 数据库更换可能重建发起页，但选择器的 Binding 仍持有本 feature。
+        // 因此由 feature 持续观察数据库变化，避免订阅随发起页销毁而停止。
         storeObservation = Task { [weak self] in
             for await identity in Observations({ storeCoordinator.navigationStoreIdentity }) {
                 guard !Task.isCancelled, let self else { return }
@@ -57,60 +60,46 @@ final class CalendarYearFeature {
         }
     }
 
-    func presentYearPicker(
-        presentation: CalendarPresentationContext,
-        configuration: (CalendarYearPickerSession) -> some NavigationHostConfiguration<
-            CalendarTab,
-            CalendarDestination,
-            CalendarAlert
-        >
-    ) {
-        guard let session = beginYearPicker() else { return }
-        let submission = presentation.present(
-            .sheet(.yearPicker),
-            configuration: configuration(session),
-            onFinish: { [weak self, weak session] in
-                guard let session else { return }
-                self?.finishYearPicker(session: session)
-            }
-        )
+    func presentYearPicker(presentation: CalendarPresentationContext) {
+        guard let destination = beginYearPicker(), let id = yearPickerID else { return }
+        let submission = presentation.present(.sheet(destination), onDismiss: { [weak self] in
+            self?.finishYearPicker(id: id)
+        })
         if submission.result.isAccepted {
-            if yearPickerSession === session {
-                yearPickerHandle = submission.handle
-            } else {
-                submission.handle?.dismiss()
-            }
+            yearPickerHandle = submission.handle
         } else {
-            finishYearPicker(session: session)
+            finishYearPicker(id: id)
         }
     }
 
-    func beginYearPicker() -> CalendarYearPickerSession? {
+    /// 创建时固定身份和数据上下文；Binding 只把结果交回这个发起页。
+    func beginYearPicker() -> CalendarDestination? {
         synchronizeStoreIdentity()
-        guard yearPickerSession == nil, let modelContext else { return nil }
-        let session = CalendarYearPickerSession(
-            selection: selection, modelContext: modelContext, storeGeneration: storeGeneration
+        guard yearPickerID == nil, let modelContext else { return nil }
+        let id = UUID()
+        let generation = storeGeneration
+        yearPickerID = id
+        acceptsYearPickerResult = true
+        let binding = Binding<Int?>(
+            get: { try? CalendarSelectionResolver(modelContext: modelContext)
+                .yearNumber(forDayIndex: self.selection.selectedDayIndex)
+            },
+            set: { yearNumber in
+                self.synchronizeStoreIdentity()
+                guard let yearNumber, self.yearPickerID == id, self.acceptsYearPickerResult,
+                      self.storeGeneration == generation, self.modelContext === modelContext else { return }
+                self.acceptsYearPickerResult = false
+                self.prepareYearSelection(yearNumber)
+            }
         )
-        yearPickerSession = session
-        return session
+        return .yearPicker(id: id, selection: binding, modelContext: modelContext)
     }
 
-    func finishYearPicker(session: CalendarYearPickerSession) {
-        session.invalidate()
-        guard yearPickerSession === session else { return }
+    func finishYearPicker(id: UUID) {
+        guard yearPickerID == id else { return }
+        acceptsYearPickerResult = false
         yearPickerHandle = nil
-        yearPickerSession = nil
-    }
-
-    /// 模态已接受关闭后调用；结果只能消费一次，且不得跨数据容器提交。
-    func selectYear(_ yearNumber: Int, session: CalendarYearPickerSession) {
-        synchronizeStoreIdentity()
-        guard yearPickerSession === session,
-              session.storeGeneration == storeGeneration,
-              session.modelContext === modelContext,
-              session.consumeResult()
-        else { return }
-        prepareYearSelection(yearNumber)
+        yearPickerID = nil
     }
 
     func selectMonth(_ destinationMonth: ChineseLunarMonth?, from sourceMonth: ChineseLunarMonth) {
@@ -230,7 +219,8 @@ final class CalendarYearFeature {
     private func invalidateStoreResources() {
         storeGeneration += 1
         pendingYearTransition = nil
-        yearPickerSession?.invalidate()
+        acceptsYearPickerResult = false
         yearPickerHandle?.dismiss()
+        if let id = yearPickerID { finishYearPicker(id: id) }
     }
 }

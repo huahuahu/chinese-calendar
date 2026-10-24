@@ -215,11 +215,11 @@ extension NavigationStackStateTests {
 
     @Test func containersRejectMissingRootsBeforeChangingPresentation() {
         let router = Router(rootDestination: .first, paths: [.primary: [.second]])
-        #expect(router.rootPresentation.present(.root) == .rejected(.missingRootDestination))
-        #expect(router.rootPresentation.present(
+        #expect(router.rootPresentation.submitPresentation(.root) == .rejected(.missingRootDestination))
+        #expect(router.rootPresentation.submitPresentation(
             .root, initialStack: .scope(.history), rootDestinations: [.scope(.home): .first]
         ) == .rejected(.missingRootDestination))
-        #expect(router.rootPresentation.present(
+        #expect(router.rootPresentation.submitPresentation(
             .root, rootDestinations: [.primary: .first], paths: [.scope(.history): []]
         ) == .rejected(.missingRootDestination))
         #expect(router.rootPresentation.destination == .first)

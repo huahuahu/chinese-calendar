@@ -7,7 +7,7 @@ nonisolated public enum NavigationRequestResult: Equatable, Sendable {
     case rejected(NavigationRejectionReason)
     /// 确认已过期或已处理，不会影响后来的请求。
     case noChange(NavigationNoChangeReason)
-    /// 等待用户确认，当前页面和路径保持原样。提示容器或业务代码需处理 pendingConfirmation。
+    /// 等待用户确认，当前页面和路径保持原样；NavigationAlertHost 根据 pendingConfirmation 显示确认提示。
     case awaitingConfirmation
     /// 请求已写入根层导航数据，SwiftUI 会据此更新界面。
     case applied

@@ -16,7 +16,7 @@ public protocol NavigationHostConfiguration<Scope, Destination, AlertRoute> {
 
     func confirmationContent(for request: NavigationRequest<Scope, Destination>) -> NavigationConfirmationContent?
 
-    /// 为当前层配对具体提示内容与同类型异步动作，再交给统一系统宿主。
+    /// 根据业务路由提供 alert 文案、按钮及对应的异步操作，由 NavigationAlertPresenter 显示。
     /// 动作只在系统 alert 实际关闭后执行；异步动作完成前不推进等待中的导航。
     func alert(
         for route: AlertRoute,
@@ -40,7 +40,7 @@ public extension NavigationHostConfiguration {
 }
 
 extension NavigationHostConfiguration {
-    /// 在协议存在类型的调用边界擦除页面类型，不增加额外的 View 宿主。
+    /// 将不同配置返回的页面包装为 AnyView，供持有 any NavigationHostConfiguration 的代码统一调用。
     func page(for destination: Destination) -> AnyView {
         AnyView(self.destination(for: destination))
     }

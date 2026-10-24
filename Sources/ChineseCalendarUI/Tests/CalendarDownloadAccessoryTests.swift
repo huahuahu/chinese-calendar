@@ -27,7 +27,7 @@ struct CalendarDownloadAccessoryTests {
         var finishCount = 0
         let submission = coordinator.router.navigation.rootPresentation.present(
             .mainTabs, style: style, initialStack: .scope(.settings),
-            rootDestinations: CalendarRouter.mainTabRoots, onFinish: { finishCount += 1 }
+            rootDestinations: CalendarRouter.mainTabRoots, onDismiss: { finishCount += 1 }
         )
         try #require(submission.result == .applied)
         let modal = try await host.waitForPresentation()

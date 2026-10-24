@@ -154,7 +154,7 @@ struct DemoPage: View {
 | 当前模态或 handle 的关闭命令 | `NavigationPresentationResult`：`.applied`、`.queued`、`.noChange(reason)`、`.rejected(reason)` | `isAccepted` 判断命令是否接受，不表示动画完成 |
 | 根请求提交 | `NavigationRequestResult`：应用、等待确认、两种延迟、`.noChange(reason)`、`.rejected(reason)` | 用 `switch` 区分处理阶段，见 [Deep Link 与离开确认](#deep-link-与离开确认) |
 
-`.applied` 表示导航数据已应用，SwiftUI 更新和呈现动画可能尚未结束。`.queued` 表示已排队，所属层失效后可能丢弃，不保证最终执行。同步结果不表示最终界面完成。已接受请求的 `onFinish` 在本次请求真正结束后通知来源；未显示就取消时也会结束，业务 alert 还需等待按钮异步动作完成。拒绝不调用 `onFinish`，由来源同步回滚。
+`.applied` 表示导航数据已应用，SwiftUI 更新和呈现动画可能尚未结束。`.queued` 表示已排队，所属层失效后可能丢弃，不保证最终执行。同步结果不表示最终界面完成。页面的 `onDismiss` 来自 SwiftUI 原生关闭回调。拒绝、未展示取消、宿主拆除和 Router 销毁不补发通知；主动取消由来源同步清理。业务 alert 继续等待原生关闭及按钮异步动作完成。
 
 `.noChange` 表示正常无操作，例如栈底 `pop()` 返回 `.alreadyAtRoot`、根层 `dismiss()` 返回 `.notPresented`、已经结束的 handle 再次关闭返回 `.notPresented`。它与 `.rejected` 分开；`isApplied`／`isAccepted` 为 false 并不自动表示发生错误。重复写入相同的合法 path 或选中栈仍为 `.applied`，用于通过访问约束后同步业务布局。
 
@@ -175,7 +175,7 @@ App 自己声明的 `NavigationStackID`、Destination、栈根、path 和选中�
 
 模态、确认和业务提示在 Core 内部继续使用不同的强类型身份，保留 #166 的领域隔离。一次呈现另有内部 lifetime 与 View 侧 render record 直接配对；业务持有的 `NavigationPresentationHandle` 只能结束这次请求，不公开 ID、状态或节点查找。
 
-年份 session、下载演示和分栏布局由来源 owner 直接持有。提示路由携带结构化值，配置构建本地化文案；不再汇总会话 ID 或以内部导航身份查业务对象。迁移步骤见 [MIGRATION](MIGRATION.md#迁移到发起方所有权与单次结束通知)。
+年份选择状态、下载演示和分栏布局由来源 owner 直接持有。提示路由携带结构化值，配置构建本地化文案；不再汇总会话 ID 或以内部导航身份查业务对象。迁移步骤见 [MIGRATION](MIGRATION.md#迁移到发起方所有权与原生关闭回调)。
 
 ## 常见组合
 
@@ -200,16 +200,16 @@ if presentation.isPresented {
 
 `pop()` 返回本栈上一页，`dismiss()` 关闭当前所在模态及其后代。根层没有自身模态，调用 `router.rootPresentation.dismiss()` 返回 `.noChange(.notPresented)`。发起方需要关闭自己打开的请求时，保存提交回执中的 handle 并调用 `handle.dismiss()`。它也能取消尚未展示的请求。
 
-呈现返回 `NavigationPresentationSubmission`，关闭命令返回 `NavigationPresentationResult`。当前 alert 或业务动作尚未结束时，请求可能排队；`.applied` 也只表示数据已修改。需要回收本次资源时，在提交处绑定 `onFinish`：
+呈现返回 `NavigationPresentationSubmission`，关闭命令返回 `NavigationPresentationResult`。当前 alert 或业务动作尚未结束时，请求可能排队；`.applied` 也只表示数据已修改。需要回收本次资源时，在提交处绑定 `onDismiss`：
 
 ```swift
-let submission = presentation.present(.sheet(.detail(id: 3)), onFinish: {
+let submission = presentation.present(.sheet(.detail(id: 3)), onDismiss: {
     // 来源清理本次流程的资源；应核对资源身份，避免旧通知清空新流程。
 })
 if submission.result.isAccepted {
     // 来源保存 submission.handle，用于取消排队或关闭已展示的本次请求。
 } else {
-    // 未接受不触发 onFinish；来源在这里同步回滚刚准备的资源。
+    // 未接受不触发 onDismiss；来源在这里同步回滚刚准备的资源。
 }
 ```
 
@@ -446,7 +446,7 @@ func confirmationContent(
 
 - **先声明根，再取得 Context。** 获取 Context 不创建栈；未声明栈的 Context 无效，后来出现同 ID 栈也不会使它复活。外部容器应为所有要显示的栈提供根；初始化还会检查选中栈和所有带 path 的栈都有根。非法 Router 初始化触发前置条件失败，非法 `present` 的 `submission.result` 为 `.rejected(.incompatibleContainer)` 或 `.rejected(.missingRootDestination)`。
 - **有效不等于此刻允许修改。** 是否仍关联原层或栈由库内校验，不提供公开有效性查询。离开确认、活动 alert 或关闭事务期间，局部导航可能返回 `.rejected(.awaitingConfirmation)`、`.rejected(.alertInProgress)` 或 `.rejected(.awaitingDismissal)`。`setRootDestination`、`setPath`、`push`、`pop` 返回 `NavigationMutationResult`；需要同步 App 状态时检查 `isApplied`。
-- **呈现需要已挂载的宿主。** Context 尚未接入 `navigationHost` 时，提交结果为 `.rejected(.hostUnavailable)`；测试不能只构造 Router 就假装系统已接手。
+- **接受不代表已展示。** 命令可先写入导航状态，实际界面由 `navigationHost` 构建；未构建就取消不触发 `onDismiss`。真实呈现必须通过系统宿主验证。
 - **页面模态从当前层继续打开。** 同层已有页面模态时，新的 `present` 被拒绝；用该模态内部的 `NavigationPresentationContext` 继续嵌套。业务 alert 期间可排队，接受不等于立即显示。
 - **关闭后旧入口失效。** Context 弱引用导航状态，持有旧 Context 不会保活 Router 或模态。模态从树中移除时 Context 立即失效；对象身份检查确保同 ID 的新层或新栈不能让旧 Context 重新有效。
 
@@ -460,7 +460,7 @@ func confirmationContent(
 
 ### 只读取本页面需要的局部状态
 
-容器绑定当前层的 `presentation.selectedStack`，页面读取所属栈的 `rootDestination` 和 `path`；关闭按钮使用 `presentation.isPresented`，栈底判断使用 `navigation.path.isEmpty`。操作是否获准以命令结果为准，资源结束以单次 `onFinish` 为准。
+容器绑定当前层的 `presentation.selectedStack`，页面读取所属栈的 `rootDestination` 和 `path`；关闭按钮使用 `presentation.isPresented`，栈底判断使用 `navigation.path.isEmpty`。操作是否获准以命令结果为准，正常关闭用本次 `onDismiss` 清理；主动取消同步清理自己的状态。
 
 原 Router 的整树投影、节点查询、等待／确认状态，以及 Context 的内部层身份、route／destination 和 `isActive` 均不再对外开放。不要新增 App 包装来恢复这些查询，也不要把它们当成生命周期通知。
 
@@ -470,29 +470,19 @@ func confirmationContent(
 
 ## 配置与业务数据放在哪里
 
-`NavigationHostConfiguration.destination(for:)` 统一构建层入口、栈根和 push 页面。根宿主提供默认配置；`present(request, configuration:onFinish:)` 可提供本次流程的配置，该模态的栈根、push 和普通子模态继续继承它。子流程需要不同资源时再提供自己的配置，不修改父流程的配置。
+`NavigationHostConfiguration.destination(for:)` 在根部注入一次，用于层入口、栈根、push 和递归模态。`present` 只接收路由、展示参数和可选 `onDismiss`；独立窗口与 Preview 可以提供各自的根配置。
 
-业务依赖保存在配置的值类型中，配置直接引用这一次资源，不能仅在渲染时查询 `owner.currentSession`。App 共享 store 环境仍从根部注入；页面的 selection、ModelContext 和结果动作由对应来源 feature 提供。日历 App 的 `CalendarYearFeature` 持有本次 picker session，`CalendarHomeCoordinator.yearPickerConfiguration` 把 feature 与具体 session 交给原有 builder，不再按 session ID 回查字典。
+页面参数直接作为路由关联值传递。例如 App 使用 `.yearPicker(id:selection:modelContext:)`，builder 解包 Binding 和 ModelContext 交给选择器。包含 Binding 或引用的路由以创建时固定的 ID 比较和哈希，不读取可变绑定值。普通路由继续使用完整值语义；含 Binding 的临时路由不用于跨启动恢复或 Deep Link 编码。
 
-```text
-来源 feature ──拥有── 本次资源与 handle
-                   ↓ 直接传入
-View 宿主 → endpoint → render record → 本次配置 + onFinish
-                            ↑ weak observer
-Router 的结构请求／节点 → 内部 lifetime ← handle
-```
+发起页持有业务选择与流程状态；路由保留本次页面需要的引用，关闭后随节点释放。旧 Context 与 handle 只弱引用导航状态和请求，不保活路由参数。无需按次配置、业务注册表、endpoint 或 render record。
 
-`NavigationPresentationEndpoint` 由 SwiftUI 宿主持有，在提交结构请求前建立 `NavigationPresentationRenderRecord`。该记录保存具体配置和 `onFinish`，拒绝时立即撤回；Router 的节点及队列只保存结构数据与 lifetime。lifetime 弱引用 record observer，handle 弱引用 Router，因此这些操作入口不反向保活配置或业务 feature。
-
-页面接手由内部 `NavigationModalLifecycle` probe 在 `makeUIViewController` 创建控制器时同步完成 `claim`，不以业务 builder／sheet 内容闭包求值或 `onAppear` 代替。认领只表示宿主承担本次结束责任，不表示页面已显示完成。probe 记录真实 presenter／window 关联；已挂载页面等 UIKit dismiss／未取消的 transition completion，只有从未挂载的同一 probe 真实销毁才证明该次界面已被丢弃。dismantle 本身不报告物理完成，已结束请求也不接受晚到 probe。
-
-终止信号由 Core 决定；record 取走一次性回调并解除登记，以局部引用保留配置到回调返回。来源只清理本次资源，不能清空页面仍使用的 selection 或 ModelContext。来源/store 变化可立即撤销结果资格、取消自己的任务和 handle；真正关闭后再释放动画所需引用。`onFinish` 不提供关闭起点广播，也不能由 owner deinit、普通 `onDisappear` 或固定延时替代。
+sheet／fullScreenCover 的 `onDismiss` 先取走本次回调、完成导航结构收尾，再调用业务闭包。未展示取消、宿主拆除和 Router 销毁不补发通知；业务取消或 store 失效时立即清理自己的 active 字段和任务。没有额外 UIViewController 模态探针，普通 onDisappear 和固定延时也不作为关闭完成信号。业务 alert 保留原有原生关闭及异步按钮处理。
 
 配置协议没有无参数的全局关闭回调。`retainedPresentationRoutes`、`retains(context)`、`alertRoutes` 和 `CalendarNavigationSessionCleanup` 已移除，不建立替代注册表或扫描器。历史与 DEBUG 分栏的布局状态属于完整容器的 `@State`，数据查询子树的 identity 重建不重建布局 owner；纯值提示无需会话 owner。
 
 正式页面使用 `NavigationScopeView(stack:presentation:)`，让配置从根路由构建内容。带 `root` 闭包的初始化器供独立 Preview／测试覆盖显示内容，仍须声明栈根，覆盖内容不改变路由状态。独立 Preview 也提供根 `navigationHost`；递归节点宿主是 Core 内部实现。App 集成测试用普通 `import NavigationCore` 和真实宿主，测试探针只能观测，不伪造系统关闭完成。
 
-真实关闭、祖先退出、宿主拆除及资源释放的测试环境、运行结果和覆盖边界见 [Issue #165 结果记录](../../Docs/Tasks/issue-165-presentation-ownership/001-result.md)。
+本轮边界见 [呈现接口简化](../../Docs/Tasks/issue-165-presentation-ownership/002-native-dismissal.md)，当前验证见 [简化结果](../../Docs/Tasks/issue-165-presentation-ownership/003-native-dismissal-result.md)。
 
 ## 运行时状态与启动边界
 
@@ -526,7 +516,7 @@ Deep Link 继续由 App 解析稳定业务地址，再交给 Router 的请求协
 ### 沿着一次操作阅读
 
 - **push：** [NavigationContext](Routing/Contexts/NavigationContext.swift) 修改 [NavigationStackState](State/Stack/NavigationStackState.swift) 的 path → [NavigationScopeView](SwiftUI/Stack/NavigationScopeView.swift) 绑定 path → [NavigationHostConfiguration](SwiftUI/Hosting/NavigationHostConfiguration.swift) 构建目标页。
-- **present：** [公开提交命令](SwiftUI/Presentation/NavigationPresentationCommands.swift) → [Endpoint](SwiftUI/Presentation/NavigationPresentationEndpoint.swift) 建立 [RenderRecord](SwiftUI/Presentation/NavigationPresentationRenderRecord.swift) → Router 接受或排队结构请求 → [NavigationPresentationHost](SwiftUI/Presentation/NavigationPresentationHost.swift) 驱动系统呈现 → [NavigationPresentationNodeView](SwiftUI/Presentation/NavigationPresentationNodeView.swift) 使用本次配置接入新层。
+- **present：** [公开命令](SwiftUI/Presentation/NavigationPresentationCommands.swift) → Router 接受或排队 → [NavigationPresentationHost](SwiftUI/Presentation/NavigationPresentationHost.swift) 通过根配置驱动 SwiftUI 呈现及 onDismiss。
 - **外部跳转：** [NavigationRouter.submit](Routing/Router/NavigationRouter.swift) 接收请求 → [NavigationCoordinationState](State/Coordination/NavigationCoordinationState.swift) 保存确认与延迟意图 → 宿主报告真实关闭 → Router 应用目标。
 
 `NavigationRouter+Alerts` 同时负责业务提示与页面模态的排队，追踪呈现流程时也需要阅读它。离开确认的数据在 `Routing/Coordination`，对应提示界面在 `SwiftUI/Alerts`。
@@ -543,7 +533,7 @@ Deep Link 继续由 App 解析稳定业务地址，再交给 Router 的请求协
 | 三个 Tab 如何使用各自的栈 | [CalendarHomeTabView](../ChineseCalendarUI/Home/CalendarHomeTabView.swift) |
 | 页面路由如何变成 View | [CalendarNavigationConfiguration](../ChineseCalendarUI/Home/Navigation/CalendarNavigationConfiguration.swift)、[CalendarDestinationView](../ChineseCalendarUI/Home/Navigation/CalendarDestinationView.swift) |
 | 提示文案与异步业务动作 | [CalendarAlertContent](../ChineseCalendarUI/Home/Navigation/CalendarAlertContent.swift)、[CalendarHomeCoordinator+Alerts](../ChineseCalendarUI/Home/Navigation/CalendarHomeCoordinator+Alerts.swift) |
-| 业务 selection 和临时会话 | [CalendarYearFeature](../ChineseCalendarUI/Calendar/Year/CalendarYearFeature.swift)、[CalendarYearPickerSession](../ChineseCalendarUI/Calendar/Year/Picker/CalendarYearPickerSession.swift) |
+| 业务 selection 和页面参数 | [CalendarYearFeature](../ChineseCalendarUI/Calendar/Year/CalendarYearFeature.swift)、[CalendarDestination](../ChineseCalendarUI/Home/Navigation/CalendarDestination.swift) |
 | 下载演示与正式详情的来源 owner | [FullStoreDownloadPreviewFeature](../ChineseCalendarUI/PreviewSupport/FullStoreDownloadPreviewFeature.swift)、[CalendarDownloadDetailsFeature](../ChineseCalendarUI/App/Store/CalendarDownloadDetailsFeature.swift) |
 | 普通导航及外部请求的 DEBUG 示例 | [CalendarDebugNavigationView](../ChineseCalendarUI/Debug/CalendarDebugNavigationView.swift) |
 | 两栏／三栏的 DEBUG 示例 | [CalendarDebugSplitView](../ChineseCalendarUI/Debug/CalendarDebugSplitView.swift)、[CalendarDebugSplitState](../ChineseCalendarUI/Debug/CalendarDebugSplitState.swift) |

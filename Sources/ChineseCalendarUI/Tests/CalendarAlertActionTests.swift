@@ -32,7 +32,7 @@ struct CalendarAlertActionTests {
             clearCount += 1
         }
         #expect(clearCount == 1)
-        // 结果提示占用本层；后续页面按照公开呈现合同进入队列。
+        // 清理结果提示尚未关闭，此时请求打开设置页面应返回 queued，等待提示结束后再显示。
         let alert = try await host.waitForAlert()
         #expect(alert.actions.count == 1)
         #expect(alert.message == String(localized: CalendarStringKey.Settings.ClearData.successMessage))

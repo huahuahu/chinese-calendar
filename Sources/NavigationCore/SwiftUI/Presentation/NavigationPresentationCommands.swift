@@ -1,19 +1,23 @@
 public extension NavigationPresentationContext {
-    /// 提交一次呈现。配置省略时继承本层宿主；已接受的请求真正结束后执行一次 onFinish。
+    /// 页面沿用根宿主配置。onDismiss 由 SwiftUI 关闭回调触发；拒绝、未展示取消或宿主销毁不补发。
+    /// alert 继续等待原生关闭及按钮异步动作完成后通知。
     @discardableResult
     func present(
         _ request: NavigationPresentationRequest<Scope, Destination, AlertRoute>,
-        configuration: (any NavigationHostConfiguration<Scope, Destination, AlertRoute>)? = nil,
-        onFinish: @escaping @MainActor () -> Void = {}
+        onDismiss: @escaping @MainActor () -> Void = {}
     ) -> NavigationPresentationSubmission {
-        guard isActive else { return NavigationPresentationSubmission(result: .rejected(.inactiveContext)) }
-        guard let presentationEndpoint else {
-            return NavigationPresentationSubmission(result: .rejected(.hostUnavailable))
+        guard isActive, let router else {
+            return NavigationPresentationSubmission(result: .rejected(.inactiveContext))
         }
-        return presentationEndpoint.submit(request, from: self, configuration: configuration, onFinish: onFinish)
+        let lifetime = NavigationPresentationLifetime(onDismiss: onDismiss)
+        let result = submitPresentation(request, lifetime: lifetime)
+        guard result.isAccepted else { return NavigationPresentationSubmission(result: result) }
+        return NavigationPresentationSubmission(
+            result: result, handle: NavigationPresentationHandle(router: router, lifetime: lifetime)
+        )
     }
 
-    /// 单页面的便利入口，与值请求入口使用同一套生命周期。
+    /// 直接指定页面和展示方式，内部转换为 NavigationPresentationRequest 后交给上面的 present 方法。
     @discardableResult
     func present(
         _ destination: Destination,
@@ -21,8 +25,7 @@ public extension NavigationPresentationContext {
         initialStack: NavigationStackID<Scope> = .primary,
         rootDestinations: [NavigationStackID<Scope>: Destination] = [:],
         paths: [NavigationStackID<Scope>: [Destination]] = [:],
-        configuration: (any NavigationHostConfiguration<Scope, Destination, AlertRoute>)? = nil,
-        onFinish: @escaping @MainActor () -> Void = {}
+        onDismiss: @escaping @MainActor () -> Void = {}
     ) -> NavigationPresentationSubmission {
         let request: NavigationPresentationRequest<Scope, Destination, AlertRoute> = switch style {
         case .sheet: .sheet(destination, initialStack: initialStack, rootDestinations: rootDestinations, paths: paths)
@@ -33,24 +36,24 @@ public extension NavigationPresentationContext {
                 paths: paths
             )
         }
-        return present(request, configuration: configuration, onFinish: onFinish)
+        return present(request, onDismiss: onDismiss)
     }
 
     @discardableResult
     func presentAlert(
-        _ route: AlertRoute, onFinish: @escaping @MainActor () -> Void = {}
+        _ route: AlertRoute, onDismiss: @escaping @MainActor () -> Void = {}
     ) -> NavigationPresentationSubmission {
-        present(.alert(route), onFinish: onFinish)
+        present(.alert(route), onDismiss: onDismiss)
     }
 }
 
 public extension NavigationRouter {
-    /// 全局业务事件交由库内选择前台层；业务无需读取模态树。
+    /// 在最上层模态中显示业务提示；没有模态时使用根层，当前已有提示时按该层的规则排队。
     @discardableResult
     func presentAlert(
-        _ route: AlertRoute, onFinish: @escaping @MainActor () -> Void = {}
+        _ route: AlertRoute, onDismiss: @escaping @MainActor () -> Void = {}
     ) -> NavigationPresentationSubmission {
         let context = frontmostPresentationNode.map { presentationContext(for: $0) } ?? rootPresentation
-        return context.present(.alert(route), onFinish: onFinish)
+        return context.present(.alert(route), onDismiss: onDismiss)
     }
 }

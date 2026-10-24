@@ -23,30 +23,4 @@ final class CalendarHomeCoordinator {
         didOpenColdLaunchDeepLink = true
         _ = router.openColdLaunchDeepLink(deepLink)
     }
-
-    func yearPickerConfiguration(
-        feature: CalendarYearFeature, session: CalendarYearPickerSession,
-        storeCoordinator: ChineseCalendarStoreCoordinator?
-    ) -> some NavigationHostConfiguration<CalendarTab, CalendarDestination, CalendarAlert> {
-        var configuration = CalendarNavigationConfiguration(
-            coordinator: self, storeCoordinator: storeCoordinator,
-            bottomStatusBarIsPresented: { false }, bottomStatusBar: { EmptyView() }
-        )
-        configuration.yearFeature = feature
-        configuration.yearPickerSession = session
-        return configuration
-    }
-
-    #if DEBUG
-        func downloadPreviewConfiguration(
-            state: FullStoreDownloadPreviewState, storeCoordinator: ChineseCalendarStoreCoordinator?
-        ) -> some NavigationHostConfiguration<CalendarTab, CalendarDestination, CalendarAlert> {
-            var configuration = CalendarNavigationConfiguration(
-                coordinator: self, storeCoordinator: storeCoordinator,
-                bottomStatusBarIsPresented: { false }, bottomStatusBar: { EmptyView() }
-            )
-            configuration.downloadPreviewState = state
-            return configuration
-        }
-    #endif
 }

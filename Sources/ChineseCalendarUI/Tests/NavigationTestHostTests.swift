@@ -34,9 +34,9 @@ struct NavigationTestHostTests {
         let submission = router.rootPresentation.present(.settings) { finishCount += 1 }
         #expect(submission.result == .queued)
         #expect(try #require(submission.handle).dismiss().isAccepted)
-        #expect(finishCount == 1)
-        #expect(host.contexts[.settings] == nil)
+        #expect(finishCount == 0)
+        #expect(host.contexts[CalendarDestination.settings.id] == nil)
         await host.close()
-        #expect(finishCount == 1)
+        #expect(finishCount == 0)
     }
 }

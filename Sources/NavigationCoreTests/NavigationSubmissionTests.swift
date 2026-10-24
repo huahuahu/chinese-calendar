@@ -17,21 +17,16 @@ struct NavigationSubmissionTests {
     private typealias Router = NavigationRouter<Tab, Route, NoNavigationAlert>
 
     @Test(arguments: [false, true])
-    func rejectedPublicSubmissionReleasesConfigurationAndClosureWithoutFinishing(hasExistingPage: Bool) {
+    func rejectedPublicSubmissionReleasesClosureWithoutDismissal(hasExistingPage: Bool) {
         let router = Router(rootDestination: .home)
-        let endpoint = NavigationPresentationEndpoint<Tab, Route, NoNavigationAlert>()
-        endpoint.attach(context: router.rootPresentation, configuration: SubmissionTestConfiguration())
         let accepted = hasExistingPage ? router.rootPresentation.present(.sheet(.detail)) : nil
-        weak var weakConfiguration: SubmissionTestConfiguration?
         weak var weakCapture: FinishCapture?
         var finishes = 0
         do {
-            let configuration = SubmissionTestConfiguration()
             let capture = FinishCapture()
-            weakConfiguration = configuration
             weakCapture = capture
             let rejected = router.rootPresentation.present(
-                .sheet(.tabs), configuration: configuration, onFinish: {
+                .sheet(.tabs), onDismiss: {
                     capture.finished = true
                     finishes += 1
                 }
@@ -42,7 +37,6 @@ struct NavigationSubmissionTests {
             #expect(rejected.handle == nil)
             #expect(!capture.finished)
         }
-        #expect(weakConfiguration == nil)
         #expect(weakCapture == nil)
         #expect(finishes == 0)
         #expect(router.rootLayer.queuedPresentations.isEmpty)
@@ -52,23 +46,11 @@ struct NavigationSubmissionTests {
         } else {
             #expect(router.presentedNode == nil)
         }
-        endpoint.detach()
         #expect(finishes == 0)
     }
 
     @MainActor
     private final class FinishCapture {
         var finished = false
-    }
-}
-
-@MainActor
-private final class SubmissionTestConfiguration: @MainActor NavigationHostConfiguration {
-    typealias Scope = NavigationSubmissionTests.Tab
-    typealias Destination = NavigationSubmissionTests.Route
-    typealias AlertRoute = NoNavigationAlert
-
-    func destination(for destination: Destination) -> some View {
-        Text(String(describing: destination))
     }
 }

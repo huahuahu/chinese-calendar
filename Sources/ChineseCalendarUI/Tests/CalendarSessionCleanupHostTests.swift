@@ -14,9 +14,9 @@ struct CalendarSessionCleanupHostTests {
         var resource: Resource? = Resource()
         weak var retained = resource
         var finishes = 0
-        let submission = try router.rootPresentation.present(
-            .sheet(.downloadDetails), configuration: Configuration(resource: #require(resource))
-        ) { finishes += 1 }
+        let submission = router.rootPresentation.present(.sheet(.downloadDetails)) { [capture = resource] in
+            withExtendedLifetime(capture) { finishes += 1 }
+        }
         resource = nil
         _ = try await host.waitForPresentation()
         #expect(retained != nil)
@@ -31,19 +31,19 @@ struct CalendarSessionCleanupHostTests {
     }
 
     @Test(.timeLimit(.minutes(1)))
-    func hostCompletesSameTurnCancellationWithoutAView() async throws {
+    func sameTurnCancellationReleasesCaptureWithoutNotifyingDismissal() async throws {
         let router = CalendarRouter().navigation
         let host = try await NavigationTestHost.show(router: router)
         defer { host.removeFromWindow() }
         var resource: Resource? = Resource()
         weak var retained = resource
         var finishes = 0
-        let submission = try router.rootPresentation.present(
-            .sheet(.downloadDetails), configuration: Configuration(resource: #require(resource))
-        ) { finishes += 1 }
+        let submission = router.rootPresentation.present(.sheet(.downloadDetails)) { [capture = resource] in
+            withExtendedLifetime(capture) { finishes += 1 }
+        }
         resource = nil
         submission.handle?.dismiss()
-        #expect(finishes == 1)
+        #expect(finishes == 0)
         #expect(retained == nil)
         #expect(host.presentedViewController() == nil)
         await host.close()
@@ -52,14 +52,3 @@ struct CalendarSessionCleanupHostTests {
 
 @MainActor
 private final class Resource {}
-
-private struct Configuration: @MainActor NavigationHostConfiguration {
-    typealias Scope = CalendarTab
-    typealias Destination = CalendarDestination
-    typealias AlertRoute = CalendarAlert
-    let resource: Resource
-
-    func destination(for destination: CalendarDestination) -> some View {
-        Text("Resource page").onAppear { withExtendedLifetime(resource) {} }
-    }
-}

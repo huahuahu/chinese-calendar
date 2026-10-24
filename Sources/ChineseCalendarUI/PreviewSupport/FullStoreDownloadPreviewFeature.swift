@@ -6,43 +6,38 @@
     @MainActor
     @Observable
     final class FullStoreDownloadPreviewFeature {
-        private(set) var session: FullStoreDownloadPreviewState?
+        private(set) var state: FullStoreDownloadPreviewState?
         private var request: NavigationPresentationHandle?
 
         func present(
-            from presentation: CalendarPresentationContext, coordinator: CalendarHomeCoordinator,
-            storeCoordinator: ChineseCalendarStoreCoordinator? = nil
+            from presentation: CalendarPresentationContext
         ) {
-            guard session == nil else { return }
-            let session = FullStoreDownloadPreviewState()
-            self.session = session
+            guard state == nil else { return }
+            let state = FullStoreDownloadPreviewState()
+            self.state = state
             let submission = presentation.present(
                 .fullScreen(
-                    .downloadPreview, initialStack: .scope(.years),
+                    .downloadPreview(id: state.id, state: state), initialStack: .scope(.years),
                     rootDestinations: [
-                        .scope(.years): .downloadPreviewScenarios,
+                        .scope(.years): .downloadPreviewScenarios(id: state.id, state: state),
                         .scope(.history): .downloadPreviewSwitch
                     ]
-                ),
-                configuration: coordinator.downloadPreviewConfiguration(
-                    state: session,
-                    storeCoordinator: storeCoordinator
                 )
-            ) { [weak self] in self?.finish(session) }
+            ) { [weak self] in self?.finish(state) }
             if submission.result.isAccepted {
-                if self.session === session {
+                if self.state === state {
                     request = submission.handle
                 } else {
                     submission.handle?.dismiss()
                 }
             } else {
-                finish(session)
+                finish(state)
             }
         }
 
-        private func finish(_ session: FullStoreDownloadPreviewState) {
-            guard self.session === session else { return }
-            self.session = nil
+        private func finish(_ state: FullStoreDownloadPreviewState) {
+            guard self.state === state else { return }
+            self.state = nil
             request = nil
         }
     }

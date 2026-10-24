@@ -31,7 +31,7 @@ final class NavigationPresentationNode<
     let style: NavigationPresentationStyle
     let layer: NavigationLayer<Scope, Destination, AlertRoute>
     let lifetime: NavigationPresentationLifetime
-    /// 页面已实际关闭，但后代 alert 动作可能仍需完成后才能释放整棵子树。
+    /// 页面关闭动画已经完成；若子页面的 alert 按钮操作仍在执行，暂不释放本 node 及子 node。
     var didCompletePhysicalDismissal = false
 
     convenience init(

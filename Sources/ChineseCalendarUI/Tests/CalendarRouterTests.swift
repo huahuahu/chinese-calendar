@@ -89,7 +89,7 @@ import Testing
     let host = try await NavigationTestHost.show(router: router.navigation)
     defer { host.removeFromWindow() }
     var finishCount = 0
-    #expect(router.navigation.rootPresentation.present(.lunarYear(2025), onFinish: { finishCount += 1 })
+    #expect(router.navigation.rootPresentation.present(.lunarYear(2025), onDismiss: { finishCount += 1 })
         .result == .applied)
     let modal = try await host.context(for: .lunarYear(2025))
     let controller = try await host.waitForPresentation()

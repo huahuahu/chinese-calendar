@@ -1,6 +1,8 @@
 extension NavigationPresentationContext {
-    /// UIKit 接手时认领会话；来源及 ID 必须匹配本层业务提示或导航确认。
-    /// 宿主强持返回对象后，原层离树不会丢失这次系统关闭和业务动作的完成权限。
+    /// 显示 alert 前，检查 ID 是否匹配当前 layer 的业务 alert 或 confirmation，并创建 NavigationAlertSession。
+    /// context 已失效、ID 不匹配或已有 session 时，返回 nil。
+    /// 调用方保留返回的 session，等 alert 关闭且按钮的异步操作完成后，再调用 completeAlertSession。
+    /// 即使原 layer 已被移除，仍可通过该 session 完成本次 presentation 的结束通知。
     func claimAlertSession(id: NavigationSystemAlertID) -> NavigationAlertSession? {
         guard isActive, let layer, layer.alertSession == nil else { return nil }
         let lifetime: NavigationPresentationLifetime?
@@ -18,32 +20,28 @@ extension NavigationPresentationContext {
         return session
     }
 
-    func alertWillPresent(id: NavigationSystemAlertID) -> Bool {
-        claimAlertSession(id: id) != nil
-    }
-
     func alertWillDismiss(id: NavigationSystemAlertID) {
         guard let layer, let session = layer.alertSession, session.id == id else { return }
         session.beginDismissal()
         if case let .business(alertID) = id, layer.alert?.id == alertID { layer.presentedContent = nil }
     }
 
-    /// 必须等 UIKit 关闭和业务异步动作完成；旧会话不会释放后来创建的新会话。
+    /// alert 关闭且按钮的异步操作完成后调用；只结束传入的 session，不清除后来创建的新 session。
     func completeAlertSession(_ session: NavigationAlertSession) {
         guard session.endCompletion() else { return }
+        let completion = session.lifetime?.takeOnDismiss()
+        defer { completion?() }
         guard let router, let layer, layer.alertSession === session else {
-            session.completionLifetime.finish()
+            session.lifetime?.finish()
             return
         }
-        router.withPresentationMutation {
-            if case let .business(alertID) = session.id, layer.alert?.id == alertID { layer.presentedContent = nil }
-            layer.alertSession = nil
-            router.scheduleFinish(session.completionLifetime)
-            if !router.completePendingPresentationDismissals() { router.resumePresentations() }
-        }
+        if case let .business(alertID) = session.id, layer.alert?.id == alertID { layer.presentedContent = nil }
+        layer.alertSession = nil
+        session.lifetime?.finish()
+        if !router.completePendingPresentationDismissals() { router.resumePresentations() }
     }
 
-    /// 内部兼容入口；真实宿主持有明确的 session，不依赖 Context 再查找完成权限。
+    /// 保留给按 ID 通知关闭的内部调用；NavigationSystemAlert 直接将保存的 session 传给 completeAlertSession。
     func alertDidDismiss(id: NavigationSystemAlertID) {
         guard let session = layer?.alertSession, session.id == id else { return }
         completeAlertSession(session)

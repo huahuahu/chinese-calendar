@@ -207,7 +207,7 @@
                 destination, initialStack: initialStack(for: destination), rootDestinations: roots(for: destination)
             ).result == .applied)
             let modal = try await host.context(for: destination)
-            #expect(host.contexts[destination] === modal)
+            #expect(host.contexts[destination.id] === modal)
             #expect(modal.selectedStack == initialStack(for: destination))
             let expectedRoots = destination
                 .providesNavigationContainer ? roots(for: destination) : [.primary: destination]

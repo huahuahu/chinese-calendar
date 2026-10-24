@@ -7,6 +7,7 @@
     @MainActor
     @Observable
     final class FullStoreDownloadPreviewState {
+        let id = UUID()
         var stage = Stage.preparing
         var textSize = DynamicTypeSize.large
 

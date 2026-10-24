@@ -117,12 +117,12 @@
         }
 
         static func show(
-            router: NavigationPhysicalHostTests.Router, ledger: PhysicalHostLedger
+            router: NavigationPhysicalHostTests.Router, ledger: PhysicalHostLedger, gate: PhysicalActionGate? = nil
         ) async throws -> PhysicalNavigationHost {
             let windowLease = try await NavigationTestWindowLease.acquire()
             let host = PhysicalNavigationHost(windowLease: windowLease)
             host.router = router
-            try await host.mount(navigationContent(router: router, ledger: ledger))
+            try await host.mount(navigationContent(router: router, ledger: ledger, gate: gate))
             return host
         }
 
@@ -149,12 +149,12 @@
         }
 
         private static func navigationContent(
-            router: NavigationPhysicalHostTests.Router, ledger: PhysicalHostLedger
+            router: NavigationPhysicalHostTests.Router, ledger: PhysicalHostLedger, gate: PhysicalActionGate? = nil
         ) -> some View {
             NavigationRootView(context: router.rootPresentation)
                 .navigationHost(
                     context: router.rootPresentation,
-                    configuration: PhysicalHostConfiguration(name: "root", ledger: ledger)
+                    configuration: PhysicalHostConfiguration(name: "root", ledger: ledger, gate: gate)
                 )
         }
 
@@ -162,7 +162,7 @@
             hosting.rootView = AnyView(content.onAppear { [weak self] in self?.appeared = true })
         }
 
-        /// 保持相同的 SwiftUI 结构，只替换宿主输入，测试另外核对 endpoint 对象没有重建。
+        /// 保持相同的 SwiftUI 结构，只替换宿主输入。
         func replaceRouter(_ router: NavigationPhysicalHostTests.Router, ledger: PhysicalHostLedger) {
             self.router = router
             replaceContent(Self.navigationContent(router: router, ledger: ledger))

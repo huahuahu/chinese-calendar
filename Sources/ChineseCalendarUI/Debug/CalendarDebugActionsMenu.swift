@@ -26,11 +26,7 @@
                     }
                     .disabled(!storeCoordinator.canStartSimulatedFullStoreDownload)
                     Button(CalendarStringKey.Settings.Debug.downloadPreview) {
-                        downloadPreview.present(
-                            from: presentation,
-                            coordinator: coordinator,
-                            storeCoordinator: storeCoordinator
-                        )
+                        downloadPreview.present(from: presentation)
                     }
                 } label: {
                     Label(CalendarStringKey.Debug.downloadActions, systemSymbol: .arrowDownCircle)

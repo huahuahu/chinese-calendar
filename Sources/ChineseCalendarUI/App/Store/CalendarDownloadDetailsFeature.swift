@@ -1,7 +1,8 @@
 import NavigationCore
 import Observation
 
-/// 由覆盖下载流程的应用 owner 持有，进度附件消失后仍能关闭自己发起的详情。
+/// 由 CalendarHomeCoordinator 持有，保存本次下载详情的 handle。
+/// 即使底部进度附件已消失，仍能关闭从该附件打开的详情页。
 @MainActor
 @Observable
 final class CalendarDownloadDetailsFeature {
@@ -16,11 +17,6 @@ final class CalendarDownloadDetailsFeature {
             guard let activeRequest else { return }
             self?.finish(activeRequest)
         }
-        // 完成通知可能在 present 返回前同步到达，旧请求不能重新写回或覆盖后来打开的详情。
-        guard self.activeRequest === activeRequest else {
-            submission.handle?.dismiss()
-            return
-        }
         if submission.result.isAccepted {
             request = submission.handle
         } else {
@@ -30,6 +26,7 @@ final class CalendarDownloadDetailsFeature {
 
     func progressDidDisappear() {
         request?.dismiss()
+        if let activeRequest { finish(activeRequest) }
     }
 
     private func finish(_ activeRequest: Request) {

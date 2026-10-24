@@ -11,7 +11,7 @@
         var body: some View {
             Color.clear
                 .calendarNavigationHost(coordinator: coordinator)
-                .task { feature.present(from: coordinator.router.navigation.rootPresentation, coordinator: coordinator)
+                .task { feature.present(from: coordinator.router.navigation.rootPresentation)
                 }
         }
     }

@@ -10,7 +10,7 @@ struct NavigationPresentationRouteTests {
     private typealias Router = NavigationRouter<Scope, Route, NoNavigationAlert>
     private typealias Node = NavigationPresentationNode<Scope, Route, NoNavigationAlert>
 
-    @Test func rootRoutesRemainReadableAfterRelease() throws {
+    @Test func expiredContextsDoNotRetainRootRoute() throws {
         var router: Router? = Router(rootDestination: .home)
         weak var originalRouter = router
         weak var originalLayer = router?.rootLayer
@@ -26,16 +26,16 @@ struct NavigationPresentationRouteTests {
         #expect(originalLayer == nil)
         #expect(!root.isActive)
         #expect(!scoped.isActive)
-        #expect(root.route == .root(destination: .home))
-        #expect(scoped.destination == .home)
-        #expect(root.present(.detail) == .rejected(.inactiveContext))
-        #expect(scoped.present(.detail) == .rejected(.inactiveContext))
+        #expect(root.route == nil)
+        #expect(scoped.destination == nil)
+        #expect(root.submitPresentation(.detail) == .rejected(.inactiveContext))
+        #expect(scoped.submitPresentation(.detail) == .rejected(.inactiveContext))
         #expect(!root.context(for: .primary).isActive)
     }
 
-    @Test func dismissedRouteOutlivesItsLayerWithoutFollowingReusedIdentity() throws {
+    @Test func dismissedRouteReleasesWithItsLayerAndDoesNotFollowReusedIdentity() throws {
         let router = Router(rootDestination: .home)
-        #expect(router.rootPresentation.present(.home) == .applied)
+        #expect(router.rootPresentation.submitPresentation(.home) == .applied)
         var node: Node? = try #require(router.presentedNode)
         let lifetime = try #require(node?.lifetime)
         // 本测试覆盖已交宿主的关闭阶段；未接手请求取消时应立即释放层。
@@ -61,11 +61,11 @@ struct NavigationPresentationRouteTests {
         #expect(current.id == modal.id)
         #expect(current.isActive)
         #expect(current.destination == .detail)
-        #expect(modal.destination == .home)
-        #expect(scoped.destination == .home)
-        #expect(modal.present(.detail) == .rejected(.inactiveContext))
+        #expect(modal.destination == nil)
+        #expect(scoped.destination == nil)
+        #expect(modal.submitPresentation(.detail) == .rejected(.inactiveContext))
         #expect(modal.dismiss() == .rejected(.inactiveContext))
-        #expect(scoped.present(.detail) == .rejected(.inactiveContext))
+        #expect(scoped.submitPresentation(.detail) == .rejected(.inactiveContext))
         #expect(modal.context(for: .primary).push(.detail) == .rejected(.inactiveContext))
         #expect(current.isActive)
     }

@@ -4,36 +4,27 @@
 
 下面按需要改动的接口组织，目标都是当前 API。历史任务记录解释当时的决策和验证范围，其中的中间方案可能已经被后续设计替代。
 
-## 迁移到发起方所有权与单次结束通知
+## 迁移到发起方所有权与原生关闭回调
 
-Issue #165 将业务资源所有权归还发起方，并以本次呈现的结束通知替代全局导航扫描。下面列出调用方的迁移方式；测试环境、运行结果和覆盖边界统一记录在[结果记录](../../Docs/Tasks/issue-165-presentation-ownership/001-result.md)。
+当前接入以 [2026-10-24 简化方案](../../Docs/Tasks/issue-165-presentation-ownership/002-native-dismissal.md) 为准，替代按次配置和所有终止情况都通知的中间方案。
 
 | 旧接法 | 当前接法 |
 | --- | --- |
-| `present`／`presentAlert` 直接返回呈现结果 | 返回 `NavigationPresentationSubmission`；判断改为 `.result.isAccepted`，接受时保存可选 `handle` |
-| 从节点 ID 查找并关闭本次页面 | 保存本次 `NavigationPresentationHandle`，调用 `dismiss()`；该方法仍返回 `NavigationPresentationResult` |
-| 全树配置按 sessionID 回查业务字典 | 在提交时传 `configuration:`，直接引用具体 feature／session，仍由既有 `destination(for:)` 构建 |
-| 根宿主扫描保留路由、alert 路由及会话登记 | 提交时绑定本次 `onFinish`；拒绝按同步结果回滚，接受后由回调最终清理 |
-| 用 `isActive`、节点消失、`onDisappear` 推算业务释放 | 导航可否修改看命令结果，资源何时结束看本次 `onFinish` |
-| App 测试手动通知系统关闭完成 | 普通 `import NavigationCore`，App-hosted 测试目标中的实际 builder + 真实前台 scene／宿主 + 释放探针 |
+| `present(request, configuration:onDismiss:)` | `present(request, onDismiss:)`，页面参数直接放入路由 |
+| 按 sessionID 查表或创建按次配置 | 路由关联值携带 Binding、ModelContext 或业务 state；根 builder 直接解包 |
+| 可变状态参与路由比较 | 创建时固定 ID 用于参数路由的相等比较和哈希；普通值路由仍比较完整关联值 |
+| 所有取消／销毁都保证 onDismiss | 页面仅转发 SwiftUI onDismiss；主动取消同步清理发起方状态 |
+| 持有内部节点、ID 或查询树 | 保存返回的 handle，使用 dismiss() 定点取消／关闭；内部状态保持不可访问 |
 
-先由来源 feature 准备并持有资源，再提交；例如年份流程调用 `CalendarYearFeature.presentYearPicker`，本次配置由 `CalendarHomeCoordinator.yearPickerConfiguration` 构造。配置捕获具体 session 和正确来源 feature，不动态查全局 `currentSession`。Session 不保存强捕获 feature 的结果闭包。
+根部仅安装一次 `navigationHost(context:configuration:)`。独立窗口与 Preview 可以各自配置；当前树的根、栈根、push、嵌套模态全部继承根配置。
 
-`onFinish` 为 `@MainActor () -> Void`，属于单次请求，不加入根配置协议。拒绝不回调；已接受请求恰好结束一次；排队或系统尚未接手的请求取消后直接结束；已接手请求等真实关闭，alert 还需等按钮异步 handler 完成。来源的清理方法核对本次资源，避免旧回调清空新流程。handle 只提供 `dismiss()`，不暴露 ID、节点或状态，不保活 Router；释放 handle 不等于取消。
+`present` 返回 NavigationPresentationSubmission，以 result.isAccepted 判断接受；接受仅表示写入状态或排队。未呈现取消不需要等待系统回调。handle 弱引用 Router 和请求，旧 Context 不保留路由参数。释放 handle 本身不取消请求。
 
-按次配置与 `onFinish` 保存在 SwiftUI 宿主的 `NavigationPresentationRenderRecord`；`NavigationPresentationEndpoint` 先配对记录再提交结构请求，拒绝时撤回。节点／队列和 handle 共享内部 lifetime，lifetime 只通过 weak observer 通知 record。Router 不保存业务配置、View 或闭包。record 在回调期间保留配置，完成后解除引用。
+CalendarYearFeature 通过年份 Binding 回传结果，校验本次 ID、一次消费和 store generation。来源取消或 store 变化时撤销结果资格并清理自己的 active 状态；路由为退出动画保留具体数据。下载演示的父子页面通过关联值共享 state。业务 alert 保留原生关闭后的异步动作及串行导航协调。
 
-内部页面接手点在生命周期 probe 的 `makeUIViewController`：控制器初始化同步调用 `NavigationModalMount.claim`，随后用真实 presenter／window 关联和关闭 completion 完成收尾。业务 builder、sheet 内容闭包求值和 `onAppear` 不作为接手或完成信号。只有从未挂载的同一 probe 真实销毁才能证明请求被丢弃；已挂载请求不能用 dismantle 或 Router 销毁提前完成。调用方无需也不能手动报告这些内部事件。
+NavigationPresentationEndpoint、NavigationPresentationRenderRecord、NavigationModalMount 和模态 UIKit 生命周期探针已删除。App 不建立集中字典、弱寻址表、节点扫描器或全局清理回调。节点、队列、内部身份、有效性查询和手动系统完成通知继续只在 Core 内使用。
 
-真实呈现测试从独立 SwiftPM test target 移到 `project.yml` 的 App-hosted `ChineseCalendarUITests`，通过 `TEST_HOST`／`BUNDLE_LOADER` 使用 App。全部 App 测试和 Core 的两个 physical host 文件共用 `NavigationTestWindowLease`，在前台 scene 上以 `UIWindow(windowScene:)` 创建串行测试窗口。没有 connected scene 的 runner 无法仅凭 `makeKeyAndVisible()`／`onAppear` 验证真实呈现；scheme MacroExpansion 也不会替代 App host 配置。纯 Core 状态测试仍留在 SwiftPM，实际手势与布局交互仍需单独验收。
-
-来源或 store 变化立即撤销旧结果资格、取消本次请求或任务，动画资源等真实结束后释放。年份结果必须先获得当前模态 `dismiss()` 接受，再通过 session 一次消费及 store generation 校验。历史和 DEBUG 分栏使用完整容器的 `@State`，数据查询子树可重建，布局 owner 保持稳定。错误提示改为携带 `CalendarStoreFailure` 等结构化值，由配置本地化，不再保存 messageID。
-
-删除 `CalendarNavigationSessionCleanup`、`presentationSessionIDs`、`releaseDismissedContexts()` 及其集中业务字典；不建立弱寻址表、节点扫描器或全局关闭回调替代。`retainedPresentationRoutes`、`retains(context)`、`alertRoutes` 已删除。节点、内部 ID、队列、等待／确认状态、Context 的内部 route／destination 和 `isActive`、手动生命周期通知不再公开；按内部 ID 的关闭、确认与 Context 查找也由库内处理。
-
-页面通过所在层 Context 取得栈并执行导航，外部请求走 `router.submit`。全局下载错误可用 `router.presentAlert`，前台层由库内选择。未挂载 `navigationHost` 的呈现返回 `.rejected(.hostUnavailable)`，不再把仅构造 Router 的测试视为真实呈现。
-
-方案与完整合同见 [Issue #165](../../Docs/Tasks/issue-165-presentation-ownership/000-plan.md)，实际证据与覆盖边界见[结果记录](../../Docs/Tasks/issue-165-presentation-ownership/001-result.md)。原[集中观察清理任务](../../Docs/Tasks/task-2026-10-22-presentation-session-cleanup/000-plan.md)保留历史证据，已被此设计替代。
+App 集成测试通过普通 import、根配置与真实系统宿主验证；只记录稳定 ID，不能用带 Binding 的路由作为长期测试字典 key 而保活业务资源。纯结构测试仍在 Core 内部；实际手势与布局验收单独记录。
 
 ## 每类业务 alert 使用自己的 Action
 
@@ -58,7 +49,7 @@ func alert(
 
 #166 将模态、确认和业务提示身份分别改为 `NavigationPresentationID`、`NavigationConfirmationID`、`NavigationAlertID`，系统适配器用不同 case 保留来源。#165 保留这种内部隔离，同时收回节点和身份查询；业务不再从节点取 ID 或直接批准／取消内部确认。
 
-App 只保留有独立业务用途的稳定身份。旧 `YearPickerSessionID`、`DownloadPreviewSessionID`、`CalendarAlertMessageID` 和 `CalendarPresentationSessionID` 的集中查表用途已移除，不必为新的 owner 再创建一组替代 ID。普通 DEBUG Destination 的 UUID 仍由具体页面身份用途决定，不机械删除。
+旧 YearPickerSessionID、DownloadPreviewSessionID、CalendarAlertMessageID 和 CalendarPresentationSessionID 的集中查表用途已移除。携带 Binding 或业务引用的临时路由仍需在创建时生成稳定 ID，用于相等比较与哈希；这个 ID 不用于查找业务字典。普通 DEBUG Destination 的 UUID 保留其页面身份用途。
 
 内部强类型迁移的历史依据见 [Issue #166](../../Docs/Tasks/issue-166-typed-navigation-ids/000-plan.md)；当前外部 API 按本文第一节迁移。
 
@@ -99,7 +90,7 @@ selectedCategory = category
 
 栈宿主默认注入记录发起栈的 `NavigationPresentationContext`。同层多个实例共享状态，不能依靠对象是否相同判断是否属于同一层。Tab 公共控件使用层级入口；同时可交互的分栏可显式使用 `unscoped()` 或 `restrictsPresentationToSelectedStack: false`。
 
-`presentation.route`／`destination` 和 `isActive` 已收回库内。业务不通过路由 nil 或有效性查询判断生命周期；是否允许修改看操作返回值，资源结束使用单次 `onFinish`。同 ID 的新层不会使旧 Context 重新有效。
+`presentation.route`／`destination` 和 `isActive` 已收回库内。业务不通过路由 nil 或有效性查询判断生命周期；是否允许修改看操作返回值，资源结束使用单次 `onDismiss`。同 ID 的新层不会使旧 Context 重新有效。
 
 三类 Context 缓存统一由每个 Router 独立持有的内部 `NavigationContextStore` 管理；公开的 `context(for:)`、`rootPresentation`、`scoped(to:)` 和 `unscoped()` 接法不变。模态从树中移除时入口立即失效，真实 dismiss 完成后统一清理缓存。Context 与访问闭包继续弱引用原运行时状态。
 
@@ -115,9 +106,9 @@ selectedCategory = category
 
 递归呈现宿主由 Core 创建，业务 Tab 或多 Tab 模态不重复挂 `navigationHost`。独立导航树和独立 Preview 各自提供根配置。
 
-原模态 builder 中用于全 App 的数据注入应移到根呈现宿主外。发起页面自己的 selection、ModelContext、回调仍按会话传递，不能用根页面固定上下文替代。
+原模态 builder 中用于全 App 的数据注入应移到根呈现宿主外。发起页面自己的 selection、ModelContext、回调仍通过路由参数传递，不能用根页面固定上下文替代。
 
-配置协议的 `presentationDidDismiss()` 已移除；删除实现及手动转调。当前资源回收使用提交处的 `onFinish`，配置只负责页面和提示构建。先前过渡方案中的保留路由投影和集中扫描清理也已删除，详见[发起方所有权迁移](#迁移到发起方所有权与单次结束通知)。
+配置协议的 `presentationDidDismiss()` 已移除；删除实现及手动转调。当前资源回收使用提交处的 `onDismiss`，配置只负责页面和提示构建。先前过渡方案中的保留路由投影和集中扫描清理也已删除，详见[发起方所有权迁移](#迁移到发起方所有权与原生关闭回调)。
 
 ## 容器声明改由 Destination 提供
 

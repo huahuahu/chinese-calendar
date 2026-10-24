@@ -114,7 +114,7 @@ private enum TestDestination: NavigationDestination {
     router.presentSheet(.first)
     let parent = try #require(router.sheet)
     parent.lifetime.claimHost()
-    router.presentationContext(for: parent).present(.second)
+    router.presentationContext(for: parent).submitPresentation(.second)
 
     try router.dismissPresentation(id: #require(parent.sheet).id)
 
@@ -156,7 +156,7 @@ private enum TestDestination: NavigationDestination {
     router.presentSheet(.second)
     let sheet = try #require(router.sheet)
     sheet.lifetime.claimHost()
-    router.presentationContext(for: sheet).present(.third, style: .fullScreen)
+    router.presentationContext(for: sheet).submitPresentation(.third, style: .fullScreen)
 
     let result = router.submit(.setRoot(.second, on: .secondary))
 

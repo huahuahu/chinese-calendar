@@ -1,5 +1,7 @@
 import Foundation
 import NavigationCore
+import SwiftData
+import SwiftUI
 
 enum CalendarDestination: NavigationDestination, Identifiable {
     case mainTabs
@@ -16,7 +18,7 @@ enum CalendarDestination: NavigationDestination, Identifiable {
     case dynastySpan(orthodoxPeriodID: String)
     case reignEra(reignEraID: String)
     case emperor(String)
-    case yearPicker
+    case yearPicker(id: UUID, selection: Binding<Int?>, modelContext: ModelContext)
     case downloadDetails
     #if DEBUG
         case debugNavigation(id: UUID)
@@ -24,13 +26,13 @@ enum CalendarDestination: NavigationDestination, Identifiable {
         case debugSplitEmpty
         case debugSplitDetail(item: CalendarDebugSplitItem, level: Int)
         case debugNavigationTabs(id: UUID)
-        case downloadPreview
-        case downloadPreviewScenarios
+        case downloadPreview(id: UUID, state: FullStoreDownloadPreviewState)
+        case downloadPreviewScenarios(id: UUID, state: FullStoreDownloadPreviewState)
         case downloadPreviewSwitch
-        case downloadPreviewDetails
+        case downloadPreviewDetails(id: UUID, state: FullStoreDownloadPreviewState)
     #endif
 
-    var id: String {
+    nonisolated var id: String {
         switch self {
         case .mainTabs: "main-tabs"
         case .calendarHome: "calendar-home"
@@ -55,8 +57,8 @@ enum CalendarDestination: NavigationDestination, Identifiable {
             "reign-era-\(reignEraID)"
         case let .emperor(emperorID):
             "emperor-\(emperorID)"
-        case .yearPicker:
-            "year-picker"
+        case let .yearPicker(id, _, _):
+            "year-picker-\(id)"
         case .downloadDetails:
             "download-details"
         #if DEBUG
@@ -70,16 +72,72 @@ enum CalendarDestination: NavigationDestination, Identifiable {
                 "debug-split-detail-\(item.rawValue)-\(level)"
             case let .debugNavigationTabs(id):
                 "debug-navigation-tabs-\(id)"
-            case .downloadPreview:
-                "download-preview"
-            case .downloadPreviewScenarios:
-                "download-preview-scenarios"
+            case let .downloadPreview(id, _):
+                "download-preview-\(id)"
+            case let .downloadPreviewScenarios(id, _):
+                "download-preview-scenarios-\(id)"
             case .downloadPreviewSwitch:
                 "download-preview-switch"
-            case .downloadPreviewDetails:
-                "download-preview-details"
+            case let .downloadPreviewDetails(id, _):
+                "download-preview-details-\(id)"
         #endif
         }
+    }
+
+    // 普通路由逐项比较完整关联值，参数路由仅比较固定 ID；不以拼接字符串代替值相等。
+    // swiftlint:disable:next cyclomatic_complexity
+    nonisolated static func == (lhs: Self, rhs: Self) -> Bool {
+        switch (lhs, rhs) {
+        case (.mainTabs, .mainTabs): true
+        case (.calendarHome, .calendarHome): true
+        case (.historyHome, .historyHome): true
+        case (.historyEmpty, .historyEmpty): true
+        case let (.historyDetail(a0, a1), .historyDetail(b0, b1)):
+            a0 == b0 && a1 == b1
+        case let (.historyEmperor(a0, a1), .historyEmperor(b0, b1)):
+            a0 == b0 && a1 == b1
+        case (.settings, .settings): true
+        case let (.lunarYear(a0, a1, a2), .lunarYear(b0, b1, b2)):
+            a0 == b0 && a1 == b1 && a2 == b2
+        case let (.dynasty(a0), .dynasty(b0)):
+            a0 == b0
+        case let (.emperorList(a0), .emperorList(b0)):
+            a0 == b0
+        case let (.reignEraList(a0), .reignEraList(b0)):
+            a0 == b0
+        case let (.dynastySpan(a0), .dynastySpan(b0)):
+            a0 == b0
+        case let (.reignEra(a0), .reignEra(b0)):
+            a0 == b0
+        case let (.emperor(a0), .emperor(b0)):
+            a0 == b0
+        case let (.yearPicker(a0, _, _), .yearPicker(b0, _, _)):
+            a0 == b0
+        case (.downloadDetails, .downloadDetails): true
+        #if DEBUG
+            case let (.debugNavigation(a0), .debugNavigation(b0)):
+                a0 == b0
+            case let (.debugSplit(a0), .debugSplit(b0)):
+                a0 == b0
+            case (.debugSplitEmpty, .debugSplitEmpty): true
+            case let (.debugSplitDetail(a0, a1), .debugSplitDetail(b0, b1)):
+                a0 == b0 && a1 == b1
+            case let (.debugNavigationTabs(a0), .debugNavigationTabs(b0)):
+                a0 == b0
+            case let (.downloadPreview(a0, _), .downloadPreview(b0, _)):
+                a0 == b0
+            case let (.downloadPreviewScenarios(a0, _), .downloadPreviewScenarios(b0, _)):
+                a0 == b0
+            case (.downloadPreviewSwitch, .downloadPreviewSwitch): true
+            case let (.downloadPreviewDetails(a0, _), .downloadPreviewDetails(b0, _)):
+                a0 == b0
+        #endif
+        default: false
+        }
+    }
+
+    nonisolated func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
     }
 
     var lunarYearNumber: Int? {

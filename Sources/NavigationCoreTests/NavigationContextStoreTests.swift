@@ -31,7 +31,7 @@ struct NavigationContextStoreTests {
         #expect(home.setPath([.second]) == .applied)
         router.paths = [:]
         router.selectedScope = .history
-        #expect(source.present(.first) == .rejected(.sourceStackNotSelected))
+        #expect(source.submitPresentation(.first) == .rejected(.sourceStackNotSelected))
         router.presentationDidDismiss(isRoot: false)
         #expect(home.isActive && history.isActive)
         #expect(home === router.context(for: .home))
@@ -42,7 +42,7 @@ struct NavigationContextStoreTests {
         #expect(other.context(for: .home) !== home)
         #expect(other.rootPresentation !== root)
         #expect(other.rootPresentation.scoped(to: .scope(.home)) !== source)
-        #expect(root.present(.first) == .applied)
+        #expect(root.submitPresentation(.first) == .applied)
         let node = try #require(router.presentedNode)
         node.lifetime.claimHost()
         #expect(router.context(for: node) !== home)
@@ -51,7 +51,7 @@ struct NavigationContextStoreTests {
 
     @Test func dismissalInvalidatesImmediatelyAndCompletionReleasesAllThreeCaches() throws {
         let router = makeRouter()
-        #expect(router.rootPresentation.present(.first) == .applied)
+        #expect(router.rootPresentation.submitPresentation(.first) == .applied)
         let node = try #require(router.presentedNode)
         node.lifetime.claimHost()
         let probe = Probe(router: router, node: node)
@@ -61,7 +61,7 @@ struct NavigationContextStoreTests {
         #expect(probe.presentation?.isActive == false)
         #expect(probe.scoped?.isActive == false)
         #expect(probe.navigation?.push(.second) == .rejected(.inactiveContext))
-        #expect(probe.scoped?.present(.second) == .rejected(.inactiveContext))
+        #expect(probe.scoped?.submitPresentation(.second) == .rejected(.inactiveContext))
         // 节点仍被测试持有，缓存持有关系只在真实关闭完成后解除。
         #expect(probe.navigation != nil && probe.presentation != nil && probe.scoped != nil)
         router.rootPresentation.presentationDidDismiss()
@@ -71,12 +71,12 @@ struct NavigationContextStoreTests {
 
     @Test func parentDismissalReleasesNestedCachesEvenWhenOldLayerContextIsRetained() throws {
         let router = makeRouter()
-        router.rootPresentation.present(.first)
+        router.rootPresentation.submitPresentation(.first)
         let parent = try #require(router.presentedNode)
         parent.lifetime.claimHost()
         let parentProbe = Probe(router: router, node: parent)
         let retainedParentContext = router.presentationContext(for: parent)
-        retainedParentContext.present(.second)
+        retainedParentContext.submitPresentation(.second)
         let child = try #require(parent.presentation)
         child.lifetime.claimHost()
         let childProbe = Probe(router: router, node: child)
@@ -95,12 +95,12 @@ struct NavigationContextStoreTests {
         let router = makeRouter()
         let root = router.rootPresentation
         let home = router.context(for: .home)
-        root.present(.first)
+        root.submitPresentation(.first)
         let parent = try #require(router.presentedNode)
         parent.lifetime.claimHost()
         let parentProbe = Probe(router: router, node: parent)
         let parentContext = router.presentationContext(for: parent)
-        parentContext.present(.second)
+        parentContext.submitPresentation(.second)
         let child = try #require(parent.presentation)
         child.lifetime.claimHost()
         let childProbe = Probe(router: router, node: child)
@@ -116,7 +116,7 @@ struct NavigationContextStoreTests {
 
     @Test func staleEntriesCannotReplaceCachesForNewObjectsWithTheSameID() throws {
         let router = makeRouter()
-        router.rootPresentation.present(.first)
+        router.rootPresentation.submitPresentation(.first)
         let oldNode = try #require(router.presentedNode)
         oldNode.lifetime.claimHost()
         let oldStack = router.context(for: oldNode)
@@ -154,7 +154,7 @@ struct NavigationContextStoreTests {
         let rootNavigation = try #require(router?.context(for: .home))
         let rootPresentation = try #require(router?.rootPresentation)
         let rootScoped = rootPresentation.scoped(to: .scope(.home))
-        rootScoped.present(.first)
+        rootScoped.submitPresentation(.first)
         weak var modalNode = router?.presentedNode
         weak var modalLayer = modalNode?.layer
         weak var modalState = modalLayer?.stacks[.primary]
@@ -168,14 +168,14 @@ struct NavigationContextStoreTests {
         #expect(!rootNavigation.isActive && !modalNavigation.isActive)
         #expect(!rootPresentation.isActive && !rootScoped.isActive)
         #expect(!modalPresentation.isActive && !modalScoped.isActive)
-        #expect(modalScoped.present(.second) == .rejected(.inactiveContext))
-        #expect(modalPresentation.destination == .first)
+        #expect(modalScoped.submitPresentation(.second) == .rejected(.inactiveContext))
+        #expect(modalPresentation.destination == nil)
     }
 
     @Test func closingLayerKeepsOriginalReadStateUntilItsNodeIsReleased() throws {
         let router = makeRouter()
         let root = router.rootPresentation
-        root.present(.first, paths: [.primary: [.second]])
+        root.submitPresentation(.first, paths: [.primary: [.second]])
         let lifetime = try #require(router.presentedNode?.lifetime)
         lifetime.claimHost()
         weak var node = router.presentedNode

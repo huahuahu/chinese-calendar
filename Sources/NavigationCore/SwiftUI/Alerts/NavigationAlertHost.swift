@@ -8,7 +8,6 @@ struct NavigationAlertHost<
 >: ViewModifier {
     let context: NavigationPresentationContext<Scope, Destination, AlertRoute>
     let alertDefinition: (NavigationAlertNode<AlertRoute>) -> NavigationAlertDefinition?
-    let renderLifetime: (NavigationAlertNode<AlertRoute>) -> (any NavigationAlertRenderLifetime)?
     let confirmationContent: (NavigationRequest<Scope, Destination>) -> NavigationConfirmationContent?
 
     func body(content: Content) -> some View {
@@ -23,7 +22,7 @@ struct NavigationAlertHost<
     private var alert: NavigationSystemAlert? {
         if let node = context.presentedAlert, let definition = alertDefinition(node) {
             return NavigationSystemAlert(
-                id: .business(node.id), definition: definition, context: context, renderLifetime: renderLifetime(node)
+                id: .business(node.id), definition: definition, context: context
             )
         }
         if let request = context.confirmation, let copy = confirmationContent(request.request) {

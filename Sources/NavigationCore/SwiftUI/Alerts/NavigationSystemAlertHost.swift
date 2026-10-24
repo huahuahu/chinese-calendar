@@ -56,7 +56,6 @@ import SwiftUI
             guard viewIfLoaded?.window != nil, presentedViewController == nil,
                   let alert = desiredAlert, alert.willPresent() else { return }
             currentAlert = alert
-            alert.renderLifetime?.tearDownPresentation = { [weak self] in self?.dismissCurrent(selection: nil) }
             let controller = UIAlertController(title: alert.title, message: alert.message, preferredStyle: .alert)
             self.controller = controller
             for (index, button) in alert.buttons.enumerated() {
