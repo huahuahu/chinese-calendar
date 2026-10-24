@@ -53,22 +53,6 @@ public extension CalendarStringKey.Navigation {
         )
     }
 
-    static var openSheet: LocalizedStringResource {
-        CalendarStringKey.resource(
-            "navigation.openSheet",
-            defaultValue: "在弹窗中打开",
-            comment: "历史资料入口的上下文菜单，使用独立模态流程浏览资料。"
-        )
-    }
-
-    static var openFullScreen: LocalizedStringResource {
-        CalendarStringKey.resource(
-            "navigation.openFullScreen",
-            defaultValue: "全屏打开",
-            comment: "历史资料入口的上下文菜单，以全屏模态流程浏览资料。"
-        )
-    }
-
     static func confirmMessage(target: String) -> LocalizedStringResource {
         CalendarStringKey.resource(
             "navigation.confirmMessage",
