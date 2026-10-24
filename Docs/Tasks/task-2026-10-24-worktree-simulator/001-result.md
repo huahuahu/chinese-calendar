@@ -2,7 +2,7 @@
 
 - 方案：[000-plan.md](000-plan.md)
 - 记录日期：2026-10-24
-- 代码状态：基于 `537c6e9b7a82f8266c46cdb25f2a26a6bf57aa4a` 的当前未提交工作区改动
+- 代码状态：原实现已通过 [PR #187](https://github.com/huahuahu/chinese-calendar/pull/187) 合并为 `0183c047feeb99ae7414e9a7d9b823bd2368d8f2`。固定型号补充基于该 main，脚本和测试内容与本地已验证的 `b44346fa51e1363cba02b6ae12fc9e98ae87dd24` 一致。
 
 ## 实际结果
 
@@ -23,9 +23,10 @@
 | AC-04 | 已验证 | Python 四进程同 worktree 仅创建一次；两个 worktree 并发获得不同 UUID，并重新读取引用以避免多建；本轮实测发现的全部 8 份工作区配置散列不变 |
 | AC-05 | 已验证 | 模板初始化和保留额外字段的集成测试通过；`git ls-files -- .xcodebuildmcp/config.yaml` 为空，`git check-ignore` 命中规则，本机文件仍存在 |
 | AC-06 | 已验证 | 修改的 Bash 脚本通过 `bash -n`；本地 `resolve_ios_simulator_destination` 实际返回新 UUID；CI 分支和显式 snapshot override 经源码检查 |
-| AC-07 | 本地已验证，远程 CI 未运行 | 新建隔离虚拟环境，按 requirements 安装后运行 23 项测试全部通过；缺 PyYAML 的 `-I -S` 测试确认明确报错、无 Traceback、配置不变且不调用 xcrun；工作流 YAML 和依赖安装顺序检查通过 |
+| AC-07 | 本地及原实现远程 CI 已验证 | 新建隔离虚拟环境按 requirements 安装后通过测试；缺 PyYAML 的 `-I -S` 测试确认明确报错、无 Traceback、配置不变且不调用 xcrun。PR #187 的 `90af830` 在 Python 3.12 的 Test job 通过；固定策略补充须单独验证 |
+| AC-08 | 本地已验证，补充 PR 的 CI 待完成 | `b44346fa` 的 29 项隔离测试全部通过，验证错误型号和版本拒绝、按固定组合查找及缺少 27.0 时失败；专项审查无未解决问题 |
 
-Python 迁移后验证环境为本机 Python 3.14.7 / PyYAML 6.0.3。`python3 Scripts/tests/test_ensure_worktree_simulator.py -v`：23 个隔离集成测试全部通过；在新建的 `.output/python-ci-validation` 虚拟环境中安装依赖后再次运行，23 项通过。测试使用临时真实 Git 仓库及 fake `xcrun`。`git diff --check`、索引差异检查、Bash 语法和 Python 3.9 语法兼容检查通过。本地未安装 Python 3.12，工作流指定版本的实际执行仍待远程 CI。
+初次 Python 迁移的验证环境为本机 Python 3.14.7 / PyYAML 6.0.3。`python3 Scripts/tests/test_ensure_worktree_simulator.py -v`：当时的 23 个隔离集成测试全部通过；在新建的 `.output/python-ci-validation` 虚拟环境中安装依赖后再次运行，23 项通过。测试使用临时真实 Git 仓库及 fake `xcrun`。`git diff --check`、索引差异检查、Bash 语法和 Python 3.9 语法兼容检查通过。后续审查修复及固定策略将测试扩展为 29 项；原实现的 Python 3.12 验证已由 PR #187 的 CI 完成。
 
 初版实际分配后曾通过 XcodeBuildMCP `list_sims` 回读：新设备可用且为 Shutdown，原共享设备仍为 Booted。此项记录为初版分配时的证据；本轮 Python 迁移实测仅查询库存并复用已有设备，不将旧设备状态当作本轮启动验证。
 
@@ -35,18 +36,19 @@ Python 迁移后验证环境为本机 Python 3.14.7 / PyYAML 6.0.3。`python3 Sc
 
 - AC-08 已验证：分配器固定为 iPhone 18 Pro Max / iOS 27.0，与现有截图入口一致。显式 UUID 的型号或 runtime 不符时失败；新建和同名选择不随已安装的新版本改变。
 - 针对固定设备约束，执行 `python3 -B Scripts/tests/test_ensure_worktree_simulator.py -v`，29 项隔离测试全部通过，包含新增的版本和型号约束，以及已有截图 shell 入口回归测试。测试使用临时 Git 仓库和 fake Xcode 工具，没有创建真实模拟器或运行真实截图对比。
-- `bash -n Scripts/test_snapshots.sh Scripts/ios_simulator.sh`、Python 3.9 语法解析和 `git diff --check` 通过。该记录为本地验证；用户已确认将本补充纳入 PR #187，远程 CI 需在包含本补充的最新提交上重新通过。
+- `bash -n Scripts/test_snapshots.sh Scripts/ios_simulator.sh`、Python 3.9 语法解析和 `git diff --check` 通过。该记录为本地验证；用户已确认交付本补充，远程 CI 需在补充 PR 的最新提交上重新通过。
 
 ## 合并前审查与交付
 
 - 关联：[PR #187](https://github.com/huahuahu/chinese-calendar/pull/187)，基于更新后的 `main` 提交 `2633da5af1eab55560acd0fd8b75e6fb27bf1025`。
 - 使用 `review-changes` 的 allocator 和 integration 专项完成审查；确认并修复两项 P2。`integration-001`：截图入口保留分配器返回的 UUID，避免合法带注释/flow YAML 被正则漏读后选错设备。`allocator-001`：fake 工具改用正确引用解释器路径的 shell launcher，支持虚拟环境路径含空格。
 - PR 范围内的 26 项隔离集成测试通过，新增真实 shell 入口回归覆盖截图 UUID、显式覆盖和 CI 设备选择。SwiftFormat 359 个文件中 0 个需修改；严格 SwiftLint 346 个文件、0 违规。
-- 用户已确认将固定 iPhone 18 Pro Max / iOS 27.0 的改动纳入同一 PR。当前配置继续决定 UUID，分配器同时验证设备必须符合固定型号和系统要求；其他配置字段保留。最终隔离集成测试共 29 项。
-- 本文件记录提交时的本地验证。远程 CI 及合并结果以 PR 最新提交的检查和最终状态为准；不将此前本地验证等同于远程通过。
+- 用户已确认交付固定 iPhone 18 Pro Max / iOS 27.0 的改动。当前配置继续决定 UUID，分配器同时验证设备必须符合固定型号和系统要求；其他配置字段保留。最终隔离集成测试共 29 项，普通 Python 和路径含空格的虚拟环境均通过。固定策略专项审查绑定 `90af830` → `b44346fa`，无新的可操作问题，原两项修复保持关闭。
+- 远端回读确认 PR #187 已于 2026-10-24 14:50:52 UTC 合并，head 为 `90af8304364998e827af0088b6c161de1a73371c`；[CI run 40103545304](https://github.com/huahuahu/chinese-calendar/actions/runs/40103545304) 的 Lint and Format、Test，以及 GitGuardian 均通过。固定策略补充当时尚未纳入，因此基于合并后的 main 单独交付并重新等待 CI。
+- 本文件记录提交时的验证。补充 PR 的最终 CI 及合并结果以该 PR 最新提交的检查和状态为准；旧 head 的通过不能替代新提交验证。
 
 ## 验证边界
 
-- 本次未修改 App/Swift 代码，未运行完整 iOS 构建、App 测试、截图对比、Preview 或真机交互；上述证据仅验证设备分配及脚本接入。
+- 本次未修改 App/Swift 代码。本地隔离测试仅验证设备分配及脚本接入，没有执行完整 iOS 构建、App 测试、截图对比、Preview 或真机交互；PR #187 的远程 Test job 已执行项目测试、截图对比及 App 构建，补充 PR 仍需独立通过。
 - 合并前专项审查和提交已进行；远程 CI、合并状态见关联 PR。未进行额外真机交互验证。
 - 检测范围是同一 Git 仓库登记的 worktree 配置；独立 clone、其他仓库和绕过配置的手动设备使用不在检测范围内。
