@@ -37,3 +37,5 @@ PR 和合并后的 main CI 都在 iPhone 截图组出现 SwiftUI Observation 布
 | 格式与 strict lint | 0/356 文件需格式化；343 文件 0 violations |
 
 精简测试结果见 [native-swiftui-validation.json](evidence/native-swiftui-validation.json)。本次未修改生产代码，未重新运行普通业务测试、远程 CI、交互测试或真机测试；本地通过不能证明远程 CI 已恢复。未运行专项 code review。
+
+创建 PR 前已同步 main 的 `dc76f6b5`（包含 #175），并在提交 `8c8453bd` 上重新执行完整截图比较：4/4 组、23 张图全部通过，基准摘要未变。见 [同步 main 后验证](evidence/native-after-main-sync.json)。
