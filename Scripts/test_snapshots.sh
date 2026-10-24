@@ -52,17 +52,17 @@ xcodebuild -sdk iphonesimulator -version SDKVersion > "$OUTPUT_DIR/sdk-version.t
     || fail "截图基准要求 iPhoneSimulator SDK 27.1。"
 # 显式指定设备时沿用调用者选择；其余本地运行先分配，再读取最新设备清单。
 if [[ "${CI:-}" != "true" && "${GITHUB_ACTIONS:-}" != "true" && -z "${SNAPSHOT_SIMULATOR_ID:-}" ]]; then
-    python3 "$SCRIPT_DIR/ensure_worktree_simulator.py" --worktree "$REPO_ROOT" >/dev/null \
+    SNAPSHOT_SIMULATOR_ID="$(python3 "$SCRIPT_DIR/ensure_worktree_simulator.py" --worktree "$REPO_ROOT")" \
         || fail "无法分配工作区专属 Simulator。"
+    export SNAPSHOT_SIMULATOR_ID
 fi
 xcrun simctl list --json > "$OUTPUT_DIR/simulators.json"
 
 # CI 使用 runner 自身的设备；本地优先使用共享上下文中的 Simulator。
-SIMULATOR_ID="$(python3 - "$OUTPUT_DIR/simulators.json" "$REPO_ROOT/.xcodebuildmcp/config.yaml" <<'PY'
+SIMULATOR_ID="$(python3 - "$OUTPUT_DIR/simulators.json" <<'PY'
 import json
 import os
 from pathlib import Path
-import re
 import subprocess
 import sys
 
@@ -95,20 +95,6 @@ identifier = os.environ.get("SNAPSHOT_SIMULATOR_ID")
 if identifier:
     print(validate(identifier, "SNAPSHOT_SIMULATOR_ID"))
     sys.exit(0)
-
-config = Path(sys.argv[2])
-if os.environ.get("CI") != "true" and os.environ.get("GITHUB_ACTIONS") != "true" and config.exists():
-    in_defaults = False
-    for line in config.read_text().splitlines():
-        if line == "sessionDefaults:":
-            in_defaults = True
-            continue
-        if in_defaults and line and not line[0].isspace() and not line.startswith("#"):
-            break
-        match = re.match(r"\s+simulatorId:\s*['\"]?([A-Fa-f0-9-]+)['\"]?\s*(?:#.*)?$", line)
-        if in_defaults and match:
-            print(validate(match.group(1), "sessionDefaults.simulatorId"))
-            sys.exit(0)
 
 device = next((item for item in devices if matches(item)), None)
 if device:

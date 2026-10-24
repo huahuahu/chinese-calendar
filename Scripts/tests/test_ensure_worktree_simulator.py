@@ -4,6 +4,7 @@
 import copy
 import json
 import os
+import shlex
 from pathlib import Path
 import subprocess
 import sys
@@ -23,6 +24,7 @@ DEVICE_NAME = "Calendar simulator"
 DEVICE_TYPE = "com.apple.CoreSimulator.SimDeviceType.iPhone-18-Pro-Max"
 RUNTIME = "com.apple.CoreSimulator.SimRuntime.iOS-26-0"
 NEWER_RUNTIME = "com.apple.CoreSimulator.SimRuntime.iOS-27-0"
+SNAPSHOT_RUNTIME = "com.apple.CoreSimulator.SimRuntime.iOS-27-0"
 
 
 # fake xcrun 自己使用文件锁，防止测试库存损坏；分配脚本仍须保护读取配置到写回的整个事务。
@@ -77,6 +79,26 @@ with state_path.with_suffix(".lock").open("a") as lock:
 '''
 
 
+# 只接受截图入口需要的命令，意外调用使测试失败。
+FAKE_XCODEBUILD = r'''import json
+import os
+from pathlib import Path
+import sys
+
+arguments = sys.argv[1:]
+with Path(os.environ["SNAPSHOT_TEST_XCODEBUILD_LOG"]).open("a") as log:
+    log.write(json.dumps(arguments) + "\n")
+if arguments == ["-version"]:
+    print("Xcode 27.1\nBuild version 18B00")
+elif arguments == ["-sdk", "iphonesimulator", "-version", "SDKVersion"]:
+    print("27.1")
+elif arguments and arguments[-1] == "test" and "-destination" in arguments:
+    print("Fake snapshot tests passed")
+else:
+    sys.exit("Unexpected xcodebuild invocation: " + repr(arguments))
+'''
+
+
 class WorktreeSimulatorTests(unittest.TestCase):
     def setUp(self):
         self.temporary = tempfile.TemporaryDirectory(prefix="simulator allocation tests ")
@@ -87,9 +109,7 @@ class WorktreeSimulatorTests(unittest.TestCase):
         self.state_path = self.base / "simulator state.json"
         self.bin_path = self.base / "fake tools"
         self.bin_path.mkdir()
-        fake = self.bin_path / "xcrun"
-        fake.write_text("#!" + sys.executable + "\n" + FAKE_XCRUN)
-        fake.chmod(0o755)
+        self.write_fake_python_tool("xcrun", FAKE_XCRUN)
         self.env = os.environ.copy()
         self.env.update({
             "PATH": str(self.bin_path) + os.pathsep + self.env.get("PATH", ""),
@@ -201,6 +221,98 @@ class WorktreeSimulatorTests(unittest.TestCase):
         self.write_config()
         return other
 
+    def write_fake_python_tool(self, name, source):
+        payload = self.bin_path / (name + ".py")
+        payload.write_text(source)
+        launcher = self.bin_path / name
+        # shebang 无法引用含空格的解释器路径；用 shell 的 exec 精确启动工具载荷。
+        launcher.write_text("#!/bin/sh\nexec " + shlex.quote(sys.executable) + " "
+                            + shlex.quote(str(payload)) + ' "$@"\n')
+        launcher.chmod(0o755)
+
+    def prepare_snapshot_entrypoint(self):
+        scripts = self.root / "Scripts"
+        scripts.mkdir()
+        for source in (SCRIPT, SCRIPT.with_name("test_snapshots.sh")):
+            (scripts / source.name).write_bytes(source.read_bytes())
+        (self.root / "ChineseCalendar.xcodeproj").mkdir()
+        fake_sources = {
+            "uname": "import sys\nassert sys.argv[1:] == ['-m']\nprint('arm64')\n",
+            "xcodebuild": FAKE_XCODEBUILD,
+        }
+        for name, source in fake_sources.items():
+            self.write_fake_python_tool(name, source)
+        # shell 中的 python3 与测试进程共用解释器和已经安装的 PyYAML。
+        python = self.bin_path / "python3"
+        python.write_text("#!/bin/sh\nexec " + shlex.quote(sys.executable) + ' "$@"\n')
+        python.chmod(0o755)
+        state = self.state()
+        state["devices"] = {SNAPSHOT_RUNTIME: [
+            self.device(ORIGINAL_ID, "First inventory simulator"),
+            self.device(OTHER_ID, DEVICE_NAME),
+        ]}
+        self.save_state(state)
+
+    def run_snapshot_entrypoint(self, overrides=None):
+        env = self.env.copy()
+        for key in ("CI", "GITHUB_ACTIONS", "SNAPSHOT_SIMULATOR_ID", "SNAPSHOT_RECORD"):
+            env.pop(key, None)
+        env.update(overrides or {})
+        log = self.base / "snapshot xcodebuild calls.jsonl"
+        log.write_text("")
+        env["SNAPSHOT_TEST_XCODEBUILD_LOG"] = str(log)
+        result = subprocess.run(["bash", str(self.root / "Scripts/test_snapshots.sh")],
+                                env=env, cwd=self.root, capture_output=True, text=True, timeout=20)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        commands = [json.loads(line) for line in log.read_text().splitlines()]
+        tests = [arguments for arguments in commands if arguments[-1] == "test"]
+        self.assertEqual(len(tests), 1, commands)
+        arguments = tests[0]
+        return arguments[arguments.index("-destination") + 1]
+
+    def test_snapshot_entrypoint_uses_configured_uuid_with_commented_or_flow_yaml(self):
+        self.prepare_snapshot_entrypoint()
+        config = copy.deepcopy(self.config)
+        config["sessionDefaults"]["simulatorId"] = OTHER_ID
+        path = self.write_config(config=config)
+        sources = {
+            "commented": textwrap.dedent(f"""\
+                schemaVersion: 1
+                sessionDefaults: # 工作区默认配置
+                  simulatorId: {OTHER_ID}
+                  simulatorName: {DEVICE_NAME}
+                  scheme: ChineseCalendar-iOS
+            """),
+            "flow": json.dumps(config),
+        }
+        for name, source in sources.items():
+            with self.subTest(format=name):
+                path.write_text(source)
+                destination = self.run_snapshot_entrypoint()
+                self.assertEqual(destination, f"platform=iOS Simulator,id={OTHER_ID},arch=arm64")
+                self.assertEqual(path.read_text(), source)
+                self.assertEqual(self.state()["create_attempts"], 0)
+
+    def test_snapshot_explicit_uuid_bypasses_local_allocator(self):
+        self.prepare_snapshot_entrypoint()
+        path = self.write_config()
+        source = "sessionDefaults: [无效配置\n"
+        path.write_text(source)
+        destination = self.run_snapshot_entrypoint({"SNAPSHOT_SIMULATOR_ID": OTHER_ID})
+        self.assertEqual(destination, f"platform=iOS Simulator,id={OTHER_ID},arch=arm64")
+        self.assertEqual(path.read_text(), source)
+        self.assertEqual(self.state()["calls"], [["simctl", "list", "--json"]])
+
+    def test_snapshot_ci_uses_runner_inventory_without_reading_local_config(self):
+        self.prepare_snapshot_entrypoint()
+        path = self.write_config()
+        source = "sessionDefaults: [无效配置\n"
+        path.write_text(source)
+        destination = self.run_snapshot_entrypoint({"CI": "true", "GITHUB_ACTIONS": "true"})
+        self.assertEqual(destination, f"platform=iOS Simulator,id={ORIGINAL_ID},arch=arm64")
+        self.assertEqual(path.read_text(), source)
+        self.assertEqual(self.state()["calls"], [["simctl", "list", "--json"]])
+
     def test_missing_pyyaml_reports_dependency_without_changing_configuration(self):
         path = self.write_config()
         before = path.read_bytes()
@@ -232,6 +344,7 @@ class WorktreeSimulatorTests(unittest.TestCase):
         self.assert_selected(self.run_allocator(), ORIGINAL_ID)
         self.assertEqual(path.read_text(), source)
         self.assertEqual(self.state()["create_attempts"], 0)
+        self.assertEqual(self.state()["calls"], [["simctl", "list", "--json"]])
 
     def test_shared_uuid_creates_same_type_and_runtime_only_for_current_worktree(self):
         other = self.shared_device()

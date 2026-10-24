@@ -31,8 +31,16 @@ Python 迁移后验证环境为本机 Python 3.14.7 / PyYAML 6.0.3。`python3 Sc
 
 本轮本地操作记录位于已忽略的 `.output/worktree-simulator/python-validation.json` 和 `python-allocation.log`；初版记录仍为 `validation.json` 和 `allocation.log`。机器 UUID 不进入共享配置模板。
 
+## 合并前审查与交付
+
+- 关联：[PR #187](https://github.com/huahuahu/chinese-calendar/pull/187)，基于更新后的 `main` 提交 `2633da5af1eab55560acd0fd8b75e6fb27bf1025`。
+- 使用 `review-changes` 的 allocator 和 integration 专项完成审查；确认并修复两项 P2。`integration-001`：截图入口保留分配器返回的 UUID，避免合法带注释/flow YAML 被正则漏读后选错设备。`allocator-001`：fake 工具改用正确引用解释器路径的 shell launcher，支持虚拟环境路径含空格。
+- PR 范围内的 26 项隔离集成测试通过，新增真实 shell 入口回归覆盖截图 UUID、显式覆盖和 CI 设备选择。SwiftFormat 359 个文件中 0 个需修改；严格 SwiftLint 346 个文件、0 违规。
+- 另有并发写入的“固定型号和 runtime”改动保留在本机工作区，未纳入本 PR；本 PR 的分配器继续依据当前配置，在冲突时使用原设备的型号和 runtime。
+- 本文件记录提交时的本地验证。远程 CI 及合并结果以 PR 最新提交的检查和最终状态为准；不将此前本地验证等同于远程通过。
+
 ## 验证边界
 
 - 本次未修改 App/Swift 代码，未运行完整 iOS 构建、App 测试、截图对比、Preview 或真机交互；上述证据仅验证设备分配及脚本接入。
-- 未运行独立 review 流程、远程 CI、提交或推送。
+- 合并前专项审查和提交已进行；远程 CI、合并状态见关联 PR。未进行额外真机交互验证。
 - 检测范围是同一 Git 仓库登记的 worktree 配置；独立 clone、其他仓库和绕过配置的手动设备使用不在检测范围内。
