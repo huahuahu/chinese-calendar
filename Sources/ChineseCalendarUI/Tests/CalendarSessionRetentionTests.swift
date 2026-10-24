@@ -1,107 +1,83 @@
 @testable import ChineseCalendarUI
 import Foundation
-@testable import NavigationCore
+import NavigationCore
 import SwiftData
 import Testing
 
 @MainActor
-@Suite("业务会话按呈现身份释放")
+@Suite("路由参数跟随页面释放", .serialized)
 struct CalendarSessionRetentionTests {
-    @Test func registrationSnapshotIncludesEachBusinessIdentityCategory() throws {
+    @Test func oldContextDoesNotRetainBindingAfterDismissal() async throws {
         let coordinator = CalendarHomeCoordinator()
-        let container = try PreviewSampleData.makeModelContainer(includesSampleData: false)
-        coordinator.presentYearPicker(
-            selection: CalendarSelection(selectedDayIndex: 0), modelContext: container.mainContext
-        ) { _ in }
-        let pickerID = try #require(coordinator.yearPickerSessions.keys.first)
-        #expect(coordinator.presentDownloadError("Test download error"))
-        let messageID = try #require(coordinator.alertMessages.keys.first)
-        var expected: Set<CalendarPresentationSessionID> = [.yearPicker(pickerID), .alertMessage(messageID)]
-        #expect(coordinator.presentationSessionIDs == expected)
-        #if DEBUG
-            coordinator.presentDownloadPreview()
-            let previewID = try #require(coordinator.downloadPreviewSessions.keys.first)
-            expected.insert(.downloadPreview(previewID))
-            #expect(coordinator.presentationSessionIDs == expected)
-        #endif
+        let host = try await NavigationTestHost.show(coordinator: coordinator)
+        defer { host.removeFromWindow() }
+        let container = try PreviewSampleData.makeModelContainer()
+        let resources = try presentDetachedFeature(
+            from: coordinator.router.navigation.rootPresentation, modelContext: container.mainContext
+        )
+        let context = try await host.pickerContext(id: resources.id)
+        _ = try await host.waitForPresentation()
+        #expect(resources.feature != nil)
+        #expect(context.dismiss().isAccepted)
+        #expect(resources.feature != nil)
+        try await host.waitUntil { resources.feature == nil }
+        #expect(context.dismiss() == .rejected(.inactiveContext))
+        await host.close()
     }
 
-    @Test func ancestorCompletionReleasesPickersButKeepsSessionsDuringAnimation() throws {
+    @Test func ancestorDismissalReleasesNestedBindingCaptures() async throws {
         let coordinator = CalendarHomeCoordinator()
-        let container = try PreviewSampleData.makeModelContainer(includesSampleData: false)
-        for index in 0 ..< 2 {
-            coordinator.presentYearPicker(
-                selection: CalendarSelection(selectedDayIndex: index), modelContext: container.mainContext
-            ) { _ in }
-        }
-        #expect(coordinator.yearPickerSessions.count == 2)
-        coordinator.router.dismissSheet()
-        coordinator.releaseDismissedContexts()
-        #expect(coordinator.yearPickerSessions.count == 2)
-        coordinator.router.navigation.rootPresentation.presentationDidDismiss()
-        coordinator.releaseDismissedContexts()
-        #expect(coordinator.yearPickerSessions.isEmpty)
+        let host = try await NavigationTestHost.show(coordinator: coordinator)
+        defer { host.removeFromWindow() }
+        let container = try PreviewSampleData.makeModelContainer()
+        let parent = try presentDetachedFeature(
+            from: coordinator.router.navigation.rootPresentation, modelContext: container.mainContext
+        )
+        let parentContext = try await host.pickerContext(id: parent.id)
+        _ = try await host.waitForPresentation()
+        let child = try presentDetachedFeature(from: parentContext, modelContext: container.mainContext)
+        let childContext = try await host.pickerContext(id: child.id)
+        _ = try await host.waitForPresentation()
+        #expect(parentContext.dismiss().isAccepted)
+        try await host.waitUntil { parent.feature == nil && child.feature == nil }
+        #expect(childContext.dismiss() == .rejected(.inactiveContext))
+        await host.close()
     }
 
-    @Test func queuedPickerIsKeptUntilTheQueueIsDiscarded() throws {
+    @Test func queuedCancellationReleasesBindingWithoutBuildingPage() async throws {
         let coordinator = CalendarHomeCoordinator()
-        let container = try PreviewSampleData.makeModelContainer(includesSampleData: false)
+        let host = try await NavigationTestHost.show(coordinator: coordinator)
+        defer { host.removeFromWindow() }
         let root = coordinator.router.navigation.rootPresentation
-        root.presentAlert(.clearDataSucceeded)
-        let alert = try #require(root.presentedAlert)
-        #expect(root.alertWillPresent(id: .business(alert.id)))
-        coordinator.presentYearPicker(
-            selection: CalendarSelection(selectedDayIndex: 0), modelContext: container.mainContext
-        ) { _ in }
-        coordinator.releaseDismissedContexts()
-        #expect(coordinator.yearPickerSessions.count == 1)
-        #expect(coordinator.router.sheet == nil)
-        coordinator.router.navigation.dismissAllPresentations()
-        root.alertWillDismiss(id: .business(alert.id))
-        #expect(root.beginAlertCompletion(id: .business(alert.id)))
-        root.alertDidDismiss(id: .business(alert.id))
-        coordinator.releaseDismissedContexts()
-        #expect(coordinator.yearPickerSessions.isEmpty)
+        #expect(root.presentAlert(.clearDataSucceeded).result == .applied)
+        _ = try await host.waitForAlert()
+        let first = try PreviewSampleData.makeModelContainer()
+        let second = try PreviewSampleData.makeModelContainer()
+        let resources = try presentDetachedFeature(from: root, modelContext: first.mainContext)
+        #expect(resources.feature != nil)
+        resources.feature?.connect(modelContext: second.mainContext, storeCoordinator: nil)
+        #expect(resources.feature == nil)
+        #expect(host.contexts["year-picker-\(resources.id)"] == nil)
+        await host.close()
     }
 
-    @Test func rejectedPickerDoesNotLeaveABusinessSession() throws {
-        let coordinator = CalendarHomeCoordinator()
-        let container = try PreviewSampleData.makeModelContainer(includesSampleData: false)
-        coordinator.router.presentSheet(.calendarHome)
-        let parent = try #require(coordinator.router.sheet)
-        let context = coordinator.router.navigation.presentationContext(for: parent)
-        context.present(.settings)
-        try context.dismissPresented(id: #require(parent.presentation).id)
-        // 默认入口此时是仍在等待子页关闭的父层；拒绝后不得留下刚创建的年份会话。
-        coordinator.presentYearPicker(
-            selection: CalendarSelection(selectedDayIndex: 0), modelContext: container.mainContext
-        ) { _ in }
-        #expect(coordinator.yearPickerSessions.isEmpty)
+    private func presentDetachedFeature(
+        from presentation: CalendarPresentationContext, modelContext: ModelContext
+    ) throws -> YearResources {
+        let feature = CalendarYearFeature(selection: CalendarSelection(selectedDayIndex: 315))
+        feature.connect(modelContext: modelContext, storeCoordinator: nil)
+        feature.presentYearPicker(presentation: presentation)
+        return try YearResources(id: #require(feature.yearPickerID), feature: feature)
     }
+}
 
-    #if DEBUG
-        @Test func cleanupDuringNestedDismissalKeepsSplitStateUntilAncestorCompletes() throws {
-            let coordinator = CalendarHomeCoordinator()
-            let root = coordinator.router.navigation.rootPresentation
-            root.presentDebugSplit(layout: .twoColumn)
-            let parent = try #require(coordinator.router.sheet)
-            let context = coordinator.router.navigation.presentationContext(for: parent)
-            let navigation = context.context(for: .primary)
-            weak var state = coordinator.debugSplitState(for: navigation)
-            coordinator.presentDownloadPreview(presentation: context)
-            #expect(coordinator.downloadPreviewSessions.count == 1)
-            context.dismiss()
-            coordinator.releaseDismissedContexts()
-            #expect(state != nil)
-            #expect(coordinator.downloadPreviewSessions.count == 1)
-            context.presentationDidDismiss()
-            coordinator.releaseDismissedContexts()
-            #expect(state != nil)
-            #expect(coordinator.downloadPreviewSessions.count == 1)
-            root.presentationDidDismiss()
-            coordinator.releaseDismissedContexts()
-            #expect(state == nil)
-            #expect(coordinator.downloadPreviewSessions.isEmpty)
-        }
-    #endif
+@MainActor
+private final class YearResources {
+    let id: UUID
+    weak var feature: CalendarYearFeature?
+
+    init(id: UUID, feature: CalendarYearFeature) {
+        self.id = id
+        self.feature = feature
+    }
 }

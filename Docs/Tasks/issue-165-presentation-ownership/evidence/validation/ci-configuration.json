@@ -1,0 +1,233 @@
+{
+  "baseCommit": "f2ebde6d56f5d164952313497d00ae56cc50823e",
+  "configurationSHA256": {
+    "project.yml": "0757c2fd8767cac15921fba5f202c65f39188fcd260ce14b639a10e622fa0270",
+    "Scripts/test.sh": "09aeb20593739caa964079209b264904917372e29d4b7d7931e28c5bddc4496b"
+  },
+  "tool": "XcodeBuildMCP test_sim with new DerivedData; existing package source checkout reused, no previous build products",
+  "environment": {
+    "xcode": "27.1 (27A9275)",
+    "scheme": "ChineseCalendar-iOS",
+    "simulator": "chinesedate iPhone 18 Pro Max (885f)",
+    "simulatorId": "16A9CAA7-45CE-46D5-8915-F61531FC617C",
+    "runtime": "iOS 27.0"
+  },
+  "failedRemoteRun": "https://github.com/huahuahu/chinese-calendar/actions/runs/39989186408",
+  "generatedProject": {
+    "testableReferences": 8,
+    "projectTestTargetsWithAppTestTargetID": 2
+  },
+  "runs": {
+    "unsigned": {
+      "resultBundle": "/Users/tigerguo/Library/Developer/XcodeBuildMCP/workspaces/Chinese-date-393207ee9080/result-bundles/test_sim_2026-10-23T20-26-51-342Z_pid72784_d2d92dd1.xcresult",
+      "summary": {
+        "devicesAndConfigurations": [
+          {
+            "device": {
+              "architecture": "arm64",
+              "deviceId": "16A9CAA7-45CE-46D5-8915-F61531FC617C",
+              "deviceName": "chinesedate iPhone 18 Pro Max (885f)",
+              "modelName": "iPhone 18 Pro Max",
+              "osBuildNumber": "24A434",
+              "osVersion": "27.0",
+              "platform": "iOS Simulator"
+            },
+            "expectedFailures": 0,
+            "failedTests": 2,
+            "passedTests": 504,
+            "skippedTests": 0,
+            "testPlanConfiguration": {
+              "configurationId": "1",
+              "configurationName": "Test Scheme Action"
+            }
+          }
+        ],
+        "environmentDescription": "ChineseCalendar-iOS · Built with macOS 27.0.1",
+        "expectedFailures": 0,
+        "failedTests": 2,
+        "finishTime": 1792787430.231,
+        "passedTests": 391,
+        "result": "Failed",
+        "runtimeWarnings": [],
+        "skippedTests": 0,
+        "startTime": 1792787263.874,
+        "statistics": [
+          {
+            "subtitle": "176 test runs",
+            "title": "63 tests ran with dynamic parameters"
+          }
+        ],
+        "testFailures": [
+          {
+            "failureText": "XCTAssertTrue failed",
+            "targetName": "CalendarNavigationUIIntegrationTests",
+            "testIdentifier": 169,
+            "testIdentifierString": "CalendarDeepLinkUITests/testApprovingYearDeepLinkDismissesTheWholeModalTreeBeforeShowingCalendar()",
+            "testIdentifierURL": "test://com.apple.xcode/ChineseCalendar/CalendarNavigationUIIntegrationTests/CalendarDeepLinkUITests/testApprovingYearDeepLinkDismissesTheWholeModalTreeBeforeShowingCalendar",
+            "testName": "testApprovingYearDeepLinkDismissesTheWholeModalTreeBeforeShowingCalendar()"
+          },
+          {
+            "failureText": "XCTAssertTrue failed",
+            "targetName": "CalendarNavigationUIIntegrationTests",
+            "testIdentifier": 170,
+            "testIdentifierString": "CalendarDeepLinkUITests/testCancellingEmperorDeepLinkPreservesTheSheetAndSourceTabThenApprovalNavigates()",
+            "testIdentifierURL": "test://com.apple.xcode/ChineseCalendar/CalendarNavigationUIIntegrationTests/CalendarDeepLinkUITests/testCancellingEmperorDeepLinkPreservesTheSheetAndSourceTabThenApprovalNavigates",
+            "testName": "testCancellingEmperorDeepLinkPreservesTheSheetAndSourceTabThenApprovalNavigates()"
+          }
+        ],
+        "title": "Test - ChineseCalendar-iOS",
+        "topInsights": [
+          {
+            "category": "Longest Test Runs",
+            "impact": "21% of duration",
+            "text": "6 longest test runs with outlier durations exceeding 2.35s (three standard deviations)"
+          }
+        ],
+        "totalTestCount": 393
+      },
+      "diagnosis": "App had no simulated App Group entitlement; client is not entitled, Missing app group, then bootstrap error page; both UI tests failed before reaching hot URL scenarios."
+    },
+    "adhocSigned": {
+      "resultBundle": "/Users/tigerguo/Library/Developer/XcodeBuildMCP/workspaces/Chinese-date-393207ee9080/result-bundles/test_sim_2026-10-23T20-32-25-609Z_pid72784_bf96f31e.xcresult",
+      "summary": {
+        "devicesAndConfigurations": [
+          {
+            "device": {
+              "architecture": "arm64",
+              "deviceId": "16A9CAA7-45CE-46D5-8915-F61531FC617C",
+              "deviceName": "chinesedate iPhone 18 Pro Max (885f)",
+              "modelName": "iPhone 18 Pro Max",
+              "osBuildNumber": "24A434",
+              "osVersion": "27.0",
+              "platform": "iOS Simulator"
+            },
+            "expectedFailures": 0,
+            "failedTests": 0,
+            "passedTests": 506,
+            "skippedTests": 0,
+            "testPlanConfiguration": {
+              "configurationId": "1",
+              "configurationName": "Test Scheme Action"
+            }
+          }
+        ],
+        "environmentDescription": "ChineseCalendar-iOS · Built with macOS 27.0.1",
+        "expectedFailures": 0,
+        "failedTests": 0,
+        "finishTime": 1792787859.512,
+        "passedTests": 393,
+        "result": "Passed",
+        "runtimeWarnings": [],
+        "skippedTests": 0,
+        "startTime": 1792787676.634,
+        "statistics": [
+          {
+            "subtitle": "176 test runs",
+            "title": "63 tests ran with dynamic parameters"
+          }
+        ],
+        "testFailures": [],
+        "title": "Test - ChineseCalendar-iOS",
+        "topInsights": [
+          {
+            "category": "Longest Test Runs",
+            "impact": "21% of duration",
+            "text": "6 longest test runs with outlier durations exceeding 2.35s (three standard deviations)"
+          }
+        ],
+        "totalTestCount": 393
+      },
+      "signing": {
+        "CODE_SIGN_IDENTITY": "-",
+        "CODE_SIGNING_ALLOWED": "YES",
+        "CODE_SIGNING_REQUIRED": "YES",
+        "actualSignature": "adhoc",
+        "simulatedAppGroup": "group.com.tiger.suzhou.ChineseCalendar"
+      },
+      "toolTransport": "MCP response timed out at 300 seconds; underlying xcodebuild completed with TEST EXECUTE SUCCEEDED. Counts were recovered from completed xcresult.",
+      "runtime": "App successfully opened its Shared/AppGroup database; no missing App Group error."
+    }
+  },
+  "staticChecks": {
+    "format": "passed: 0/356 require formatting",
+    "lint": "passed: 0 violations in 343 files",
+    "localization": "passed: 337 resources and 21 production strings",
+    "nodeSeedStoreTests": "3 passed, 0 failed",
+    "shellSyntax": "passed"
+  },
+  "xcodegenInstallationFix": {
+    "baseCommit": "6cad5a9b13ce54a8f9077a62d20aa2a57dd6e449",
+    "workflowSHA256": "a2abb53e6a7258b3f589ea6557ee7b3cad4462974394a65a9d9491389ce829eb",
+    "xcodegenVersion": "2.45.3",
+    "releaseZIP_SHA256": "0c90f4d28ca57335f9fa78cf5bf6dabfe20a232036dabe36de2eef79cb7c0878",
+    "presetFilesVerified": 31,
+    "failedRemoteRun": "https://github.com/huahuahu/chinese-calendar/actions/runs/40021033420",
+    "reproduction": "git archive of baseCommit in a separate source directory never opened by Xcode; same release ZIP and direct xcodebuild test, new DerivedData; existing package source checkout reused.",
+    "before": {
+      "installation": "binary only, matching CI",
+      "generationWarnings": [
+        "No \"base\" settings found",
+        "No \"debug config\" settings found",
+        "No \"release config\" settings found",
+        "No \"iOS\" settings found",
+        "No \"iOS\" settings found"
+      ],
+      "testExitCode": 70,
+      "failure": "Could not find test host for ChineseCalendarUITests"
+    },
+    "after": {
+      "installation": "binary plus share/xcodegen/SettingPresets",
+      "generationWarnings": [],
+      "testExitCode": 0,
+      "resultBundle": "/Users/tigerguo/.codex/worktrees/ff47/Chinese-date/.output/ci-165-pristine-complete-derived/Logs/Test/Test-ChineseCalendar-iOS-2026.10.24_04-46-36-+0800.xcresult",
+      "summary": {
+        "devicesAndConfigurations": [
+          {
+            "device": {
+              "architecture": "arm64",
+              "deviceId": "16A9CAA7-45CE-46D5-8915-F61531FC617C",
+              "deviceName": "chinesedate iPhone 18 Pro Max (885f)",
+              "modelName": "iPhone 18 Pro Max",
+              "osBuildNumber": "24A434",
+              "osVersion": "27.0",
+              "platform": "iOS Simulator"
+            },
+            "expectedFailures": 0,
+            "failedTests": 0,
+            "passedTests": 506,
+            "skippedTests": 0,
+            "testPlanConfiguration": {
+              "configurationId": "1",
+              "configurationName": "Test Scheme Action"
+            }
+          }
+        ],
+        "environmentDescription": "ChineseCalendar-iOS · Built with macOS 27.0.1",
+        "expectedFailures": 0,
+        "failedTests": 0,
+        "finishTime": 1792788712.751,
+        "passedTests": 393,
+        "result": "Passed",
+        "runtimeWarnings": [],
+        "skippedTests": 0,
+        "startTime": 1792788396.12,
+        "statistics": [
+          {
+            "subtitle": "176 test runs",
+            "title": "63 tests ran with dynamic parameters"
+          }
+        ],
+        "testFailures": [],
+        "title": "Test - ChineseCalendar-iOS",
+        "topInsights": [
+          {
+            "category": "Longest Test Runs",
+            "impact": "21% of duration",
+            "text": "6 longest test runs with outlier durations exceeding 2.36s (three standard deviations)"
+          }
+        ],
+        "totalTestCount": 393
+      }
+    }
+  }
+}

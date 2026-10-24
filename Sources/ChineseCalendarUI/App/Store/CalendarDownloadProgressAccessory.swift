@@ -5,9 +5,11 @@ struct CalendarDownloadProgressAccessory: View {
     let progress: FullStoreDownloadProgress
     @Environment(CalendarPresentationContext.self) private var presentation
 
+    @Environment(CalendarHomeCoordinator.self) private var coordinator
+
     var body: some View {
         FullStoreDownloadBottomProgressView(progress: progress) {
-            presentation.present(.downloadDetails)
+            coordinator.downloadDetails.present(from: presentation)
         }
     }
 }

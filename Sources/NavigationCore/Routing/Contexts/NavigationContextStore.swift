@@ -17,8 +17,11 @@ final class NavigationContextStore<
         stack: NavigationStackID<Scope>,
         router: NavigationRouter<Scope, Destination, AlertRoute>
     ) -> NavigationContext<Scope, Destination> {
-        guard router.layer(id: layer.id) === layer else {
-            return NavigationContext(id: stack, state: nil, access: .inactive, layerID: layer.id)
+        if router.layer(id: layer.id) !== layer {
+            let state = layer.stacks[stack]
+            let id = NavigationContextID(layer: layer.id, stack: stack)
+            if let state, let existing = contexts[id], existing.state === state { return existing }
+            return NavigationContext(id: stack, state: state, access: .inactive, layerID: layer.id)
         }
         guard layer.route.destination.providesNavigationContainer || stack == .primary else {
             return NavigationContext(
@@ -29,7 +32,7 @@ final class NavigationContextStore<
             return NavigationContext(id: stack, state: nil, access: .unavailable(.undeclaredStack), layerID: layer.id)
         }
         let id = NavigationContextID(layer: layer.id, stack: stack)
-        if let existing = contexts[id], existing.state === state, existing.isActive { return existing }
+        if let existing = contexts[id], existing.state === state { return existing }
         let access = NavigationStackAccess(
             isActive: { [weak router, weak layer, weak state] in
                 guard let router, let layer, let state else { return false }
@@ -60,7 +63,7 @@ final class NavigationContextStore<
         } else {
             presentationContexts[layer.id]
         }
-        if let existing, existing.layer === layer, existing.isActive { return existing }
+        if let existing, existing.layer === layer { return existing }
         let context = NavigationPresentationContext(router: router, layer: layer, sourceStack: sourceStack)
         guard context.isActive else { return context }
         if let sourceStack {

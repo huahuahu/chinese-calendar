@@ -12,44 +12,24 @@ final class CalendarRouter {
         [.scope(.years): .calendarHome, .scope(.history): .historyEmpty, .scope(.settings): .settings]
     }
 
-    /// 根层选中的命名 Tab；使用 primary 栈时没有 Tab 选择。
     var selectedTab: CalendarTab? {
-        get { navigation.selectedScope }
-        set { navigation.selectedScope = newValue }
+        get {
+            if case let .scope(tab) = navigation.rootPresentation.selectedStack { return tab }
+            return nil
+        }
+        set {
+            if let newValue { navigation.rootPresentation.selectedStack = .scope(newValue) }
+        }
     }
 
     var yearsPath: [CalendarDestination] {
-        get { navigation.path(for: .years) }
-        set { navigation.setPath(newValue, for: .years) }
+        get { navigation.rootPresentation.context(for: .scope(.years)).path }
+        set { navigation.rootPresentation.context(for: .scope(.years)).path = newValue }
     }
 
     var historyPath: [CalendarDestination] {
-        get { navigation.path(for: .history) }
-        set { navigation.setPath(newValue, for: .history) }
-    }
-
-    var sheet: CalendarPresentationNode? {
-        navigation.sheet
-    }
-
-    var fullScreen: CalendarPresentationNode? {
-        navigation.fullScreen
-    }
-
-    var selectedDestination: CalendarDestination? {
-        navigation.selectedDestination
-    }
-
-    var hasActivePresentation: Bool {
-        navigation.hasActivePresentation
-    }
-
-    var isAwaitingPresentationDismissal: Bool {
-        navigation.isAwaitingPresentationDismissal
-    }
-
-    var presentations: [CalendarPresentationNode] {
-        navigation.presentations
+        get { navigation.rootPresentation.context(for: .scope(.history)).path }
+        set { navigation.rootPresentation.context(for: .scope(.history)).path = newValue }
     }
 
     init(
@@ -62,51 +42,6 @@ final class CalendarRouter {
             rootDestinations: Self.mainTabRoots,
             paths: [.scope(.years): yearsPath, .scope(.history): historyPath]
         )
-    }
-
-    func path(for tab: CalendarTab) -> [CalendarDestination] {
-        navigation.path(for: tab)
-    }
-
-    func setPath(_ path: [CalendarDestination], for tab: CalendarTab) {
-        navigation.setPath(path, for: tab)
-    }
-
-    func currentDestination(on tab: CalendarTab) -> CalendarDestination? {
-        navigation.currentDestination(on: tab)
-    }
-
-    func push(_ destination: CalendarDestination, on tab: CalendarTab? = nil) {
-        navigation.push(destination, on: tab)
-    }
-
-    func presentSheet(_ destination: CalendarDestination) {
-        guard !isAwaitingPresentationDismissal else { return }
-        navigation.presentSheet(destination)
-    }
-
-    func presentFullScreen(
-        _ destination: CalendarDestination, initialStack: NavigationStackID<CalendarTab> = .primary
-    ) {
-        guard !isAwaitingPresentationDismissal else { return }
-        navigation.presentFullScreen(destination, initialStack: initialStack)
-    }
-
-    func dismissSheet() {
-        navigation.dismissSheet()
-    }
-
-    func dismissFullScreen() {
-        navigation.dismissFullScreen()
-    }
-
-    @discardableResult
-    func dismissPresentation(id: NavigationPresentationID) -> NavigationPresentationResult {
-        navigation.dismissPresentation(id: id)
-    }
-
-    func rootPresentationDidDismiss() {
-        navigation.presentationDidDismiss(isRoot: true)
     }
 
     func openDeepLink(

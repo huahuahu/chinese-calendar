@@ -34,7 +34,7 @@ final class CalendarHistoryState {
 
     init(navigation: CalendarNavigationContext) {
         self.navigation = navigation
-        synchronizeRoot()
+        preferredCompactColumn = Self.compactColumn(for: navigation.rootDestination) ?? .sidebar
     }
 
     @discardableResult
@@ -65,20 +65,19 @@ final class CalendarHistoryState {
     /// 外部请求实际应用后才根据新根移动紧凑栏；确认和关闭事务期间保持原布局。
     @discardableResult
     func synchronizeRoot() -> Bool {
-        let column: NavigationSplitViewColumn
-        switch navigation.rootDestination {
-        case .historyEmpty:
-            column = .sidebar
-        case let .historyDetail(_, section):
-            column = section == nil ? .content : .detail
-        case .emperor, .historyEmperor:
-            column = .detail
-        default:
-            return false
-        }
+        guard let column = Self.compactColumn(for: navigation.rootDestination) else { return false }
         guard navigation.setPath(navigation.path).isApplied else { return false }
         preferredCompactColumn = column
         return true
+    }
+
+    private static func compactColumn(for destination: CalendarDestination?) -> NavigationSplitViewColumn? {
+        switch destination {
+        case .historyEmpty: .sidebar
+        case let .historyDetail(_, section): section == nil ? .content : .detail
+        case .emperor, .historyEmperor: .detail
+        default: nil
+        }
     }
 
     /// 页面查询到皇帝所属正统时期后补齐父级；已被新请求替换的根不会接收旧查询结果。

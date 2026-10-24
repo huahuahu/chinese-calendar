@@ -6,10 +6,13 @@
     struct FullStoreDownloadPreviewHost: View {
         @State private var coordinator = CalendarHomeCoordinator()
 
+        @State private var feature = FullStoreDownloadPreviewFeature()
+
         var body: some View {
             Color.clear
                 .calendarNavigationHost(coordinator: coordinator)
-                .task { coordinator.presentDownloadPreview() }
+                .task { feature.present(from: coordinator.router.navigation.rootPresentation)
+                }
         }
     }
 #endif

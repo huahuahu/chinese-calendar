@@ -6,9 +6,8 @@ import SwiftUI
 /// 供导航容器使用，将 CalendarDestination 分发到对应页面。
 struct CalendarDestinationView<BottomStatusBar: View>: View {
     let destination: CalendarDestination
-    let bottomStatusBarIsPresented: Bool
+    let bottomStatusBarIsPresented: () -> Bool
     let bottomStatusBar: () -> BottomStatusBar
-    @Environment(CalendarHomeCoordinator.self) private var coordinator
     @Environment(CalendarPresentationContext.self) private var presentation
     @Environment(CalendarNavigationContext.self) private var navigation: CalendarNavigationContext?
     @Environment(ChineseCalendarStoreCoordinator.self) private var storeCoordinator: ChineseCalendarStoreCoordinator?
@@ -18,7 +17,7 @@ struct CalendarDestinationView<BottomStatusBar: View>: View {
             switch destination {
             case .mainTabs:
                 CalendarHomeTabView(
-                    bottomStatusBarIsPresented: bottomStatusBarIsPresented,
+                    bottomStatusBarIsPresented: bottomStatusBarIsPresented(),
                     bottomStatusBar: bottomStatusBar
                 )
             case .calendarHome:
@@ -29,8 +28,10 @@ struct CalendarDestinationView<BottomStatusBar: View>: View {
                 CalendarHistoryEmptyDetailView()
             case let .historyDetail(orthodoxPeriodID, section):
                 CalendarHistoryDetailView(orthodoxPeriodID: orthodoxPeriodID, section: section)
+                    .calendarStoreContent(state: storeCoordinator?.state)
             case let .historyEmperor(_, emperorID):
                 EmperorDetailView(emperorID: emperorID)
+                    .calendarStoreContent(state: storeCoordinator?.state)
             case .settings:
                 if let storeCoordinator {
                     CalendarSettingsView(coordinator: storeCoordinator, showsDoneButton: false)
@@ -55,18 +56,25 @@ struct CalendarDestinationView<BottomStatusBar: View>: View {
                     .id(destination)
             case let .dynasty(orthodoxPeriodID):
                 DynastyDetailView(orthodoxPeriodID: orthodoxPeriodID)
+                    .calendarStoreContent(state: storeCoordinator?.state)
             case let .emperorList(dynastyID):
                 EmperorListView(dynastyID: dynastyID)
+                    .calendarStoreContent(state: storeCoordinator?.state)
             case let .reignEraList(dynastyID):
                 ReignEraListView(dynastyID: dynastyID)
+                    .calendarStoreContent(state: storeCoordinator?.state)
             case let .dynastySpan(orthodoxPeriodID):
                 DynastySpanDetailView(orthodoxPeriodID: orthodoxPeriodID)
+                    .calendarStoreContent(state: storeCoordinator?.state)
             case let .reignEra(reignEraID):
                 ReignEraDetailView(reignEraID: reignEraID)
+                    .calendarStoreContent(state: storeCoordinator?.state)
             case let .emperor(emperorID):
                 EmperorDetailView(emperorID: emperorID)
-            case let .yearPicker(sessionID):
-                CalendarYearPickerDestinationView(sessionID: sessionID)
+                    .calendarStoreContent(state: storeCoordinator?.state)
+            case let .yearPicker(_, selection, modelContext):
+                CalendarYearPickerDestinationView(selection: selection)
+                    .environment(\.modelContext, modelContext)
             case .downloadDetails:
                 if let progress = storeCoordinator?.fullStoreDownloadProgress {
                     FullStoreDownloadDetailView(progress: progress)
@@ -86,23 +94,19 @@ struct CalendarDestinationView<BottomStatusBar: View>: View {
                     CalendarDebugSplitDetailView(item: item, level: level)
                 case .debugNavigationTabs:
                     CalendarDebugNavigationTabsView()
-                case let .downloadPreview(sessionID):
-                    FullStoreDownloadPreviewDestinationView(sessionID: sessionID)
-                case let .downloadPreviewScenarios(sessionID):
-                    if let state = coordinator.downloadPreviewSessions[sessionID] {
-                        FullStoreDownloadPreviewScenariosView(state: state)
-                    }
+                case let .downloadPreview(_, state):
+                    FullStoreDownloadPreview(state: state)
+                case let .downloadPreviewScenarios(_, state):
+                    FullStoreDownloadPreviewScenariosView(state: state)
                 case .downloadPreviewSwitch:
                     Text(CalendarStringKey.Settings.Debug.DownloadPreview.switchMessage)
                         .padding()
                         .navigationTitle(CalendarStringKey.Settings.Debug.DownloadPreview.switchTab)
-                case let .downloadPreviewDetails(sessionID):
-                    FullStoreDownloadPreviewDetailView(sessionID: sessionID)
+                case let .downloadPreviewDetails(_, state):
+                    FullStoreDownloadPreviewDetailView(state: state)
             #endif
             }
         }
-        // 数据替换只重建页面内容，所在栈和呈现宿主继续完成导航事务。
-        .id(storeCoordinator?.navigationStoreIdentity)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(.calendarSystemBackground)
         .toolbar {

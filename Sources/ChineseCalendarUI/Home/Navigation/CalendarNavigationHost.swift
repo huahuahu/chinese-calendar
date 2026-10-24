@@ -8,7 +8,7 @@ private struct CalendarNavigationHost<BottomStatusBar: View>: ViewModifier {
     let coordinator: CalendarHomeCoordinator
     let storeCoordinator: ChineseCalendarStoreCoordinator?
     let handlesExternalNavigation: Bool
-    let bottomStatusBarIsPresented: Bool
+    let bottomStatusBarIsPresented: () -> Bool
     let bottomStatusBar: () -> BottomStatusBar
 
     func body(content: Content) -> some View {
@@ -23,14 +23,10 @@ private struct CalendarNavigationHost<BottomStatusBar: View>: ViewModifier {
             )
             .environment(coordinator)
             .environment(storeCoordinator)
-            .modifier(CalendarNavigationSessionCleanup(coordinator: coordinator))
-            .onChange(of: storeCoordinator?.navigationStoreIdentity, initial: true) {
-                coordinator.storeIdentityDidChange(storeCoordinator?.navigationStoreIdentity)
-            }
             .onChange(of: storeCoordinator?.fullStoreDownloadProgress) { _, progress in
-                if progress == nil { coordinator.downloadProgressDidDisappear() }
+                if progress == nil { coordinator.downloadDetails.progressDidDisappear() }
             }
-            .onChange(of: storeCoordinator?.downloadErrorMessage, initial: true) { _, message in
+            .onChange(of: storeCoordinator?.downloadFailure, initial: true) { _, message in
                 if let message, coordinator.presentDownloadError(message) { storeCoordinator?.dismissDownloadError() }
             }
             .task {
@@ -57,15 +53,16 @@ extension View {
     ) -> some View {
         calendarNavigationHost(
             coordinator: coordinator, storeCoordinator: storeCoordinator,
-            handlesExternalNavigation: handlesExternalNavigation, bottomStatusBarIsPresented: false
-        ) { EmptyView() }
+            handlesExternalNavigation: handlesExternalNavigation,
+            bottomStatusBarIsPresented: { false }, bottomStatusBar: { EmptyView() }
+        )
     }
 
     func calendarNavigationHost(
         coordinator: CalendarHomeCoordinator,
         storeCoordinator: ChineseCalendarStoreCoordinator? = nil,
         handlesExternalNavigation: Bool = false,
-        bottomStatusBarIsPresented: Bool,
+        bottomStatusBarIsPresented: @escaping () -> Bool,
         @ViewBuilder bottomStatusBar: @escaping () -> some View
     ) -> some View {
         modifier(CalendarNavigationHost(

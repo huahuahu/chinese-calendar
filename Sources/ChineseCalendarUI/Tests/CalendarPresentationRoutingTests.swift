@@ -1,62 +1,91 @@
 @testable import ChineseCalendarUI
+import NavigationCore
 import Testing
 
 @MainActor
-@Test func manualDismissalDefersTheLatestDeepLinkUntilTheHostFinishes() {
+@Test func manualDismissalDefersTheLatestDeepLinkUntilTheHostFinishes() async throws {
     let router = CalendarRouter(yearsPath: [.lunarYear(2024)])
-    router.presentSheet(.lunarYear(2025))
-    router.dismissSheet()
+    let root = router.navigation.rootPresentation
+    let host = try await NavigationTestHost.show(router: router.navigation)
+    defer { host.removeFromWindow() }
+    var finishCount = 0
+    let submission = root.present(.lunarYear(2025), onDismiss: { finishCount += 1 })
+    #expect(submission.result == .applied)
+    _ = try await host.waitForPresentation()
+    #expect(try #require(submission.handle).dismiss() == .applied)
 
-    #expect(router.isAwaitingPresentationDismissal)
     #expect(router.openDeepLink(.lunarYear(2026, monthIndex: nil)) == .deferredUntilPresentationDismisses)
     #expect(router.openDeepLink(.emperor("ming-taizu")) == .deferredUntilPresentationDismisses)
-    // 手动关闭和深链接主动关闭统一由 Core 等待最新请求。
-    #expect(router.navigation.deferredRequest == .setRoot(.emperor("ming-taizu"), on: .history))
-    router.presentFullScreen(.downloadDetails)
-    #expect(!router.hasActivePresentation)
+    #expect(root.present(.downloadDetails, style: .fullScreen).result == .rejected(.awaitingDismissal))
     #expect(router.yearsPath == [.lunarYear(2024)])
     #expect(router.historyPath.isEmpty)
+    #expect(finishCount == 0)
 
-    router.rootPresentationDidDismiss()
-    #expect(router.navigation.rootDestination(for: .history) == .emperor("ming-taizu"))
+    let history = root.context(for: .scope(.history))
+    try await host.waitUntil { history.rootDestination == .emperor("ming-taizu") }
     #expect(router.historyPath.isEmpty)
-    #expect(!router.isAwaitingPresentationDismissal)
-    router.rootPresentationDidDismiss()
-    #expect(router.navigation.rootDestination(for: .history) == .emperor("ming-taizu"))
-    #expect(router.historyPath.isEmpty)
+    #expect(router.yearsPath == [.lunarYear(2024)])
+    #expect(router.selectedTab == .history)
+    #expect(finishCount == 1)
+    #expect(host.presentedViewController() == nil)
+    await host.close()
 }
 
 @MainActor
-@Test func dismissalWithoutARequestAllowsReopening() {
+@Test func dismissalWithoutARequestAllowsReopening() async throws {
     let router = CalendarRouter()
-    router.presentFullScreen(.downloadDetails)
-    let originalID = router.fullScreen?.id
-    router.dismissFullScreen()
-    #expect(router.isAwaitingPresentationDismissal)
+    let root = router.navigation.rootPresentation
+    let host = try await NavigationTestHost.show(router: router.navigation)
+    defer { host.removeFromWindow() }
+    var finishCount = 0
+    let original = root.present(.downloadDetails, style: .fullScreen) { finishCount += 1 }
+    #expect(original.result == .applied)
+    let context = try await host.context(for: .downloadDetails)
+    _ = try await host.waitForPresentation()
+    #expect(try #require(original.handle).dismiss() == .applied)
+    #expect(finishCount == 0)
+    try await host.waitUntil { finishCount == 1 }
 
-    router.rootPresentationDidDismiss()
-    router.presentFullScreen(.downloadDetails)
-    #expect(router.fullScreen != nil)
-    #expect(router.fullScreen?.id != originalID)
+    #expect(root.present(.downloadDetails, style: .fullScreen).result == .applied)
+    let reopened = try await host.context(for: .downloadDetails, differentFrom: context)
+    #expect(reopened !== context)
+    #expect(context.dismiss() == .rejected(.inactiveContext))
+    #expect(reopened.context(for: .primary).rootDestination == .downloadDetails)
+    _ = try await host.waitForPresentation()
+    await host.close()
 }
 
 @MainActor
-@Test func targetedDismissalPreservesTheParentAndTabPaths() throws {
-    let router = CalendarRouter()
-    router.push(.lunarYear(2024))
-    router.presentFullScreen(.lunarYear(2025))
-    let parent = try #require(router.fullScreen)
-    router.navigation.context(for: parent).push(.lunarYear(2026))
-    router.navigation.presentationContext(for: parent).present(.downloadDetails)
-    let child = try #require(parent.sheet)
-    router.navigation.presentationContext(for: child).present(.lunarYear(2027), style: .fullScreen)
-    #expect(router.presentations.count == 3)
+@Test func targetedDismissalPreservesTheParentAndTabPaths() async throws {
+    let router = CalendarRouter(yearsPath: [.lunarYear(2024)])
+    let root = router.navigation.rootPresentation
+    let host = try await NavigationTestHost.show(router: router.navigation)
+    defer { host.removeFromWindow() }
+    #expect(root.present(.lunarYear(2025), style: .fullScreen).result == .applied)
+    let parent = try await host.context(for: .lunarYear(2025))
+    let parentController = try await host.waitForPresentation()
+    #expect(parent.context(for: .primary).push(.lunarYear(2026)) == .applied)
+    var childFinishes = 0
+    var descendantFinishes = 0
+    let childSubmission = parent.present(.downloadDetails, onDismiss: { childFinishes += 1 })
+    #expect(childSubmission.result == .applied)
+    let child = try await host.context(for: .downloadDetails)
+    _ = try await host.waitForPresentation()
+    #expect(child.present(.lunarYear(2027), style: .fullScreen, onDismiss: { descendantFinishes += 1 })
+        .result == .applied)
+    let descendant = try await host.context(for: .lunarYear(2027))
+    _ = try await host.waitForPresentation()
 
-    #expect(router.dismissPresentation(id: child.id) == .applied)
-    #expect(router.fullScreen === parent)
-    #expect(parent.sheet == nil)
-    #expect(parent.path == [.lunarYear(2026)])
+    let handle = try #require(childSubmission.handle)
+    #expect(handle.dismiss() == .applied)
+    #expect(parent.context(for: .primary).path == [.lunarYear(2026)])
     #expect(router.yearsPath == [.lunarYear(2024)])
-    #expect(!router.isAwaitingPresentationDismissal)
-    #expect(router.dismissPresentation(id: child.id) == .noChange(.presentationNotFound))
+    #expect(!child.dismiss().isAccepted)
+    #expect(!descendant.dismiss().isAccepted)
+    try await host.waitUntil { childFinishes == 1 && descendantFinishes == 1 }
+    #expect(host.presentedViewController() === parentController)
+    #expect(!handle.dismiss().isAccepted)
+    #expect(parent.context(for: .primary).push(.lunarYear(2028)) == .applied)
+    #expect(router.yearsPath == [.lunarYear(2024)])
+    await host.close()
 }

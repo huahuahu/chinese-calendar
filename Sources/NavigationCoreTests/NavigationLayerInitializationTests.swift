@@ -64,14 +64,17 @@ struct NavigationLayerInitializationTests {
 
     @Test func malformedPresentationsLeaveEveryExistingLayerUntouched() throws {
         let router = Router(rootDestination: .home, paths: [.primary: [.detail]])
-        #expect(router.rootPresentation.present(.detail, paths: [.primary: [.home]]) == .applied)
+        #expect(router.rootPresentation.submitPresentation(.detail, paths: [.primary: [.home]]) == .applied)
         let parent = try #require(router.sheet)
+        parent.lifetime.claimHost()
         let modal = router.presentationContext(for: parent)
-        #expect(modal.present(.home, initialStack: .scope(.home)) == .rejected(.incompatibleContainer))
-        #expect(modal.present(.home, rootDestinations: [.primary: .home]) == .rejected(.incompatibleContainer))
-        #expect(modal.present(.home, paths: [.scope(.history): [.detail]]) == .rejected(.incompatibleContainer))
-        #expect(modal.present(.tabs) == .rejected(.missingRootDestination))
-        #expect(modal.present(
+        #expect(modal.submitPresentation(.home, initialStack: .scope(.home)) == .rejected(.incompatibleContainer))
+        #expect(modal
+            .submitPresentation(.home, rootDestinations: [.primary: .home]) == .rejected(.incompatibleContainer))
+        #expect(modal
+            .submitPresentation(.home, paths: [.scope(.history): [.detail]]) == .rejected(.incompatibleContainer))
+        #expect(modal.submitPresentation(.tabs) == .rejected(.missingRootDestination))
+        #expect(modal.submitPresentation(
             .tabs, initialStack: .scope(.home), rootDestinations: [.scope(.home): .home],
             paths: [.scope(.history): []]
         ) == .rejected(.missingRootDestination))
@@ -92,17 +95,19 @@ struct NavigationLayerInitializationTests {
         let rootStack = router.rootPresentation.context(for: .primary)
         #expect(rootStack.setRootDestination(.detail) == .applied)
         #expect(rootStack.push(.tabs) == .applied)
-        #expect(router.rootPresentation.present(.detail) == .applied)
+        #expect(router.rootPresentation.submitPresentation(.detail) == .applied)
         let parent = try #require(router.sheet)
+        parent.lifetime.claimHost()
         let modal = router.presentationContext(for: parent)
         #expect(modal.context(for: .primary).setRootDestination(.tabs) == .applied)
         #expect(modal.context(for: .primary).push(.home) == .applied)
-        #expect(modal.present(
+        #expect(modal.submitPresentation(
             .tabs, style: .fullScreen, initialStack: .scope(.history),
             rootDestinations: [.scope(.home): .home, .scope(.history): .detail],
             paths: [.scope(.home): [.detail], .scope(.history): [.home, .tabs]]
         ) == .applied)
         let child = try #require(parent.fullScreen)
+        child.lifetime.claimHost()
         let tabs = router.presentationContext(for: child)
         #expect(router.rootPresentation.destination == .home)
         #expect(modal.destination == .detail)

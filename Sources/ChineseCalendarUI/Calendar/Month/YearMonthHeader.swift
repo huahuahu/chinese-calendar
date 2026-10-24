@@ -19,17 +19,13 @@ struct YearMonthHeader: View {
     }
 
     @Environment(CalendarPresentationContext.self) private var presentation
-    @Environment(CalendarHomeCoordinator.self) private var homeCoordinator
-    @Environment(CalendarSelection.self) private var selection
-    @Environment(CalendarToday.self) private var today
+    @Environment(CalendarYearFeature.self) private var feature
+    @Environment(ChineseCalendarStoreCoordinator.self) private var storeCoordinator: ChineseCalendarStoreCoordinator?
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.locale) private var locale
     @Environment(\.modelContext) private var modelContext
 
     let month: ChineseLunarMonth
-
-    @State private var pendingYearTransition: LunarYearTransitionRequest?
-    @State private var yearTransitionContext = LunarYearTransitionContext()
 
     var body: some View {
         let previousMonth = adjacentMonth(direction: .earlier)
@@ -78,8 +74,8 @@ struct YearMonthHeader: View {
                     months: months,
                     selectedMonth: month,
                     selectMonth: selectMonth,
-                    yearTransitionPreparationMonthIndex: pendingYearTransition?.sourceMonthIndex,
-                    completeYearTransitionPreparation: completeYearTransitionPreparation
+                    yearTransitionPreparationMonthIndex: feature.pendingYearTransition?.sourceMonthIndex,
+                    completeYearTransitionPreparation: feature.completeYearTransitionPreparation
                 )
                 .id(year?.lunarYearNumber)
                 .transition(yearTransition)
@@ -89,13 +85,13 @@ struct YearMonthHeader: View {
         }
         .toolbar {
             if #available(iOS 27.1, *) {
-                CalendarTodayToolbar(selectToday: selectToday)
+                CalendarTodayToolbar(selectToday: feature.selectToday)
             } else {
                 ToolbarItem(placement: .primaryAction) {
                     Button(
                         CalendarStringKey.Calendar.MonthNavigation.today,
                         systemSymbol: .calendarBadgeClock,
-                        action: selectToday
+                        action: feature.selectToday
                     )
                     .labelStyle(.titleOnly)
                 }
@@ -164,7 +160,7 @@ private extension YearMonthHeader {
         }
 
         return AnyTransition(
-            LunarYearContextualTransition(context: yearTransitionContext)
+            LunarYearContextualTransition(context: feature.yearTransitionContext)
         )
     }
 
@@ -176,12 +172,8 @@ private extension YearMonthHeader {
 
     private var titleContent: some View {
         Button {
-            homeCoordinator.presentYearPicker(
-                selection: selection,
-                modelContext: modelContext,
-                presentation: presentation,
-                selectYear: selectYear
-            )
+            feature.connect(modelContext: modelContext, storeCoordinator: storeCoordinator)
+            feature.presentYearPicker(presentation: presentation)
         } label: {
             VStack(alignment: .leading, spacing: Constants.titleSpacing) {
                 Text(monthNavigationTitle)
@@ -213,150 +205,7 @@ private extension YearMonthHeader {
     }
 
     private func selectMonth(_ destinationMonth: ChineseLunarMonth?) {
-        guard let destinationMonth,
-              destinationMonth.lunarMonthIndex != month.lunarMonthIndex,
-              let sourceYearNumber = year?.lunarYearNumber,
-              let destinationYearNumber = destinationMonth.chineseLunarYear?.lunarYearNumber
-        else {
-            return
-        }
-
-        let crossesYear = destinationYearNumber != sourceYearNumber
-        if crossesYear {
-            let direction = LunarYearTransitionDirection(
-                from: sourceYearNumber,
-                to: destinationYearNumber
-            )
-            if let direction {
-                yearTransitionContext.direction = direction
-            }
-        }
-
-        ChineseCalendarPerformanceSignposts.shared.beginMonthSwitch(
-            from: month.lunarMonthIndex,
-            to: destinationMonth.lunarMonthIndex,
-            crossesYear: crossesYear
-        )
-
-        pendingYearTransition = nil
-        selectDay(inMonth: destinationMonth.lunarMonthIndex)
-    }
-
-    private func selectToday() {
-        pendingYearTransition = nil
-        today.refresh()
-
-        do {
-            let destinationDayIndex = try resolver.todayDayIndex(
-                julianDayNumber: today.julianDayNumber
-            )
-            let destinationYearNumber = try resolver.yearNumber(forDayIndex: destinationDayIndex)
-
-            if let destinationYearNumber, let sourceYearNumber = year?.lunarYearNumber {
-                let direction = LunarYearTransitionDirection(
-                    from: sourceYearNumber,
-                    to: destinationYearNumber
-                )
-                if let direction {
-                    yearTransitionContext.direction = direction
-                }
-            }
-
-            selection.select(dayIndex: destinationDayIndex)
-        } catch {
-            ChineseCalendarLog.ui.error("无法选择今天：\(error.localizedDescription)")
-            selection.select(dayIndex: nil)
-        }
-    }
-
-    private func selectYear(_ yearNumber: Int) {
-        guard let sourceYearNumber = year?.lunarYearNumber,
-              let direction = LunarYearTransitionDirection(
-                  from: sourceYearNumber,
-                  to: yearNumber
-              )
-        else {
-            return
-        }
-
-        yearTransitionContext.direction = direction
-
-        do {
-            let destinationMonthIndex = try resolver.boundaryMonthIndex(
-                inYear: yearNumber,
-                direction: direction,
-                isSource: false
-            )
-            guard let sourceMonthIndex = try resolver.boundaryMonthIndex(
-                inYear: sourceYearNumber,
-                direction: direction,
-                isSource: true
-            ) else {
-                pendingYearTransition = nil
-                selectBoundaryDay(inYear: yearNumber, direction: direction)
-                return
-            }
-
-            pendingYearTransition = LunarYearTransitionRequest(
-                sourceYearNumber: sourceYearNumber,
-                sourceMonthIndex: sourceMonthIndex,
-                destinationYearNumber: yearNumber,
-                destinationMonthIndex: destinationMonthIndex
-            )
-        } catch {
-            ChineseCalendarLog.ui.error("无法准备农历年份切换：\(error.localizedDescription)")
-            pendingYearTransition = nil
-            selection.select(dayIndex: nil)
-        }
-    }
-
-    private func completeYearTransitionPreparation(_ sourceMonthIndex: Int) {
-        guard let pendingYearTransition,
-              pendingYearTransition.sourceMonthIndex == sourceMonthIndex,
-              pendingYearTransition.sourceYearNumber == year?.lunarYearNumber
-        else {
-            return
-        }
-
-        self.pendingYearTransition = nil
-
-        if let destinationMonthIndex = pendingYearTransition.destinationMonthIndex {
-            selectDay(inMonth: destinationMonthIndex)
-        } else {
-            selection.select(dayIndex: nil)
-        }
-    }
-
-    private func selectBoundaryDay(
-        inYear yearNumber: Int,
-        direction: LunarYearTransitionDirection
-    ) {
-        do {
-            try selection.select(
-                dayIndex: resolver.selectedDayIndex(
-                    inBoundaryMonthOf: yearNumber,
-                    direction: direction,
-                    todayJulianDayNumber: today.julianDayNumber
-                )
-            )
-        } catch {
-            ChineseCalendarLog.ui.error("无法选择目标年份的日期：\(error.localizedDescription)")
-            selection.select(dayIndex: nil)
-        }
-    }
-
-    private func selectDay(inMonth monthIndex: Int) {
-        do {
-            try selection.select(
-                dayIndex: resolver.selectedDayIndex(
-                    for: .month(index: monthIndex),
-                    todayJulianDayNumber: today.julianDayNumber
-                )
-            )
-        } catch {
-            ChineseCalendarLog.ui.error("无法选择目标月份的日期：\(error.localizedDescription)")
-            selection.select(dayIndex: nil)
-        }
+        feature.selectMonth(destinationMonth, from: month)
     }
 
     private var resolver: CalendarSelectionResolver {

@@ -1,0 +1,35 @@
+{
+  "build": {
+    "tool": "mcp__xcode__BuildProject",
+    "buildResult": "The project built successfully.",
+    "elapsedTime": 1.556,
+    "errors": [],
+    "fullLogPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/BuildProject/BuildProject-Log-20261024-003711.txt"
+  },
+  "format": {
+    "command": "./Scripts/format.sh --check",
+    "exitCode": 0,
+    "result": "0/356 files require formatting; 100 files skipped."
+  },
+  "lint": {
+    "command": "./Scripts/lint.sh",
+    "exitCode": 0,
+    "result": "0 violations, 0 serious in 343 files."
+  },
+  "localization": {
+    "command": "python3 Scripts/validate_localized_copy.py",
+    "exitCode": 0,
+    "result": "337 resource entries and 21 remaining production strings checked."
+  },
+  "diff": {
+    "command": "git diff --check && git diff --cached --check",
+    "exitCode": 0
+  },
+  "publicAPI": {
+    "command": "python3 Scripts/validate_navigation_public_api.py <build-products> <iPhoneSimulator27.1.sdk> arm64-apple-ios26.0-simulator --output-directory /tmp/issue-165-public-api-final",
+    "result": "Positive control and 18 independent negative cases passed.",
+    "report": "public-api-report.json"
+  },
+  "recorded_at": "2026-10-23T16:38:55.968971+00:00",
+  "implementation_commit": "edcf930e908a9bb9f5858fa23e52878da5d4adc0"
+}

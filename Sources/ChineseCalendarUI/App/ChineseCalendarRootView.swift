@@ -28,12 +28,8 @@ public struct ChineseCalendarRootView: View {
             switch coordinator.state {
             case .starting:
                 CalendarStoreProgressView(title: CalendarStringKey.Store.Bootstrap.preparing, progress: nil)
-            case let .ready(container, contentLevel, identityToken):
-                readyCalendarHome(
-                    container: container,
-                    contentLevel: contentLevel,
-                    identityToken: identityToken
-                )
+            case .ready:
+                NavigationRootView(context: homeCoordinator.router.navigation.rootPresentation)
             case let .failed(message):
                 CalendarStoreFailureView(message: message, retry: coordinator.prepareStore)
             }
@@ -47,27 +43,14 @@ public struct ChineseCalendarRootView: View {
             coordinator: homeCoordinator,
             storeCoordinator: coordinator,
             handlesExternalNavigation: true,
-            bottomStatusBarIsPresented: rootBottomStatusBarIsPresented
-        ) {
-            if case let .ready(_, contentLevel, _) = coordinator.state {
-                bottomStatusBar(contentLevel: contentLevel)
+            bottomStatusBarIsPresented: { rootBottomStatusBarIsPresented },
+            bottomStatusBar: {
+                if case let .ready(_, contentLevel, _) = coordinator.state {
+                    bottomStatusBar(contentLevel: contentLevel)
+                }
             }
-        }
+        )
         .calendarStoreEnvironment(state: coordinator.state)
-    }
-
-    private func readyCalendarHome(
-        container: ModelContainer,
-        contentLevel: ChineseCalendarSeedStoreContentLevel,
-        identityToken: String?
-    ) -> some View {
-        NavigationRootView(context: homeCoordinator.router.navigation.rootPresentation)
-            .calendarStoreContent(state: coordinator.state)
-            .id(coordinator.storeIdentity(
-                container: container,
-                contentLevel: contentLevel,
-                identityToken: identityToken
-            ))
     }
 
     private var rootBottomStatusBarIsPresented: Bool {

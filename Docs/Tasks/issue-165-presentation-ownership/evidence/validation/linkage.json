@@ -1,0 +1,166 @@
+{
+  "schema_version": 1,
+  "scope": {
+    "run": "RunSomeTests",
+    "run_started_at": "2026-10-24T00:19:35+08:00",
+    "build_graph": "BuildForTesting: App and hosted test share the automatic UI PackageProduct.framework",
+    "checked_at": "2026-10-24T00:23:47.531878+08:00",
+    "asserts": "Only uniqueness of the four named Persistence metadata symbols and absence of duplicate package objects in this targeted test build.",
+    "does_not_assert": [
+      "Final full-suite result",
+      "Ordinary Run or Build linkage",
+      "XCUITest runtime success"
+    ],
+    "source_evidence": "source-boundary.md"
+  },
+  "path_base": "Paths below are relative to this run’s DerivedData Build directory.",
+  "binaries": {
+    "app": {
+      "path": "Products/Debug-iphonesimulator/Chinese Calendar.app/Chinese Calendar.debug.dylib",
+      "modified_at": "2026-10-24T00:19:41.646490+08:00",
+      "sha256": "1e3553c7035437c79c2e44d6c5e5051a1afc8a49c8b0b7eb2aaec4779d55cb76",
+      "uuid": "2AB49D67-F2D2-3F79-9F59-4F9A986462F7",
+      "ui_load_commands": [
+        "@rpath/ChineseCalendarUI_-79BCEEA08743D678_PackageProduct.framework/ChineseCalendarUI_-79BCEEA08743D678_PackageProduct (compatibility version 0.0.0, current version 0.0.0)"
+      ]
+    },
+    "hosted_test": {
+      "path": "Products/Debug-iphonesimulator/Chinese Calendar.app/PlugIns/ChineseCalendarUITests.xctest/ChineseCalendarUITests",
+      "modified_at": "2026-10-24T00:19:41.619864+08:00",
+      "sha256": "280e5d14aebea606110547f2ebab06cfe386f8e1e0f8055c4fbcaca63430f919",
+      "uuid": "28695914-6413-39C7-9DD7-9A9DBB62C424",
+      "ui_load_commands": [
+        "@rpath/ChineseCalendarUI_-79BCEEA08743D678_PackageProduct.framework/ChineseCalendarUI_-79BCEEA08743D678_PackageProduct (compatibility version 0.0.0, current version 0.0.0)"
+      ]
+    },
+    "ui_framework": {
+      "path": "Products/Debug-iphonesimulator/PackageFrameworks/ChineseCalendarUI_-79BCEEA08743D678_PackageProduct.framework/ChineseCalendarUI_-79BCEEA08743D678_PackageProduct",
+      "modified_at": "2026-10-23T23:22:48.282824+08:00",
+      "sha256": "ede01bb2f6ce09bb5925a22d892ead8aaa06e66726d52daa4b52bc025e34fff4",
+      "uuid": "2379736E-1C9D-3EBC-AAF2-5075AEB635EC",
+      "ui_load_commands": [
+        "@rpath/ChineseCalendarUI_-79BCEEA08743D678_PackageProduct.framework/ChineseCalendarUI_-79BCEEA08743D678_PackageProduct (compatibility version 0.0.0, current version 0.0.0)"
+      ]
+    }
+  },
+  "symbols": [
+    {
+      "demangled_name": "type metadata accessor for ChineseCalendarPersistence.ChineseLunarMonth",
+      "definition_counts": {
+        "app": 0,
+        "hosted_test": 0,
+        "ui_framework": 1
+      },
+      "ui_definition": "000000000027e7d8 (__TEXT,__text) external type metadata accessor for ChineseCalendarPersistence.ChineseLunarMonth",
+      "hosted_imports": [
+        "                 (undefined) external type metadata accessor for ChineseCalendarPersistence.ChineseLunarMonth (from ChineseCalendarUI_-79BCEEA08743D678_PackageProduct)"
+      ]
+    },
+    {
+      "demangled_name": "nominal type descriptor for ChineseCalendarPersistence.ChineseLunarMonth",
+      "definition_counts": {
+        "app": 0,
+        "hosted_test": 0,
+        "ui_framework": 1
+      },
+      "ui_definition": "00000000003d533c (__TEXT,__constg_swiftt) external nominal type descriptor for ChineseCalendarPersistence.ChineseLunarMonth",
+      "hosted_imports": [
+        "                 (undefined) external nominal type descriptor for ChineseCalendarPersistence.ChineseLunarMonth (from ChineseCalendarUI_-79BCEEA08743D678_PackageProduct)"
+      ]
+    },
+    {
+      "demangled_name": "type metadata accessor for ChineseCalendarPersistence.ChineseCalendarFullSeedStoreInstallError",
+      "definition_counts": {
+        "app": 0,
+        "hosted_test": 0,
+        "ui_framework": 1
+      },
+      "ui_definition": "000000000025adb8 (__TEXT,__text) external type metadata accessor for ChineseCalendarPersistence.ChineseCalendarFullSeedStoreInstallError",
+      "hosted_imports": [
+        "                 (undefined) external type metadata accessor for ChineseCalendarPersistence.ChineseCalendarFullSeedStoreInstallError (from ChineseCalendarUI_-79BCEEA08743D678_PackageProduct)"
+      ]
+    },
+    {
+      "demangled_name": "nominal type descriptor for ChineseCalendarPersistence.ChineseCalendarFullSeedStoreInstallError",
+      "definition_counts": {
+        "app": 0,
+        "hosted_test": 0,
+        "ui_framework": 1
+      },
+      "ui_definition": "00000000003d5080 (__TEXT,__constg_swiftt) external nominal type descriptor for ChineseCalendarPersistence.ChineseCalendarFullSeedStoreInstallError",
+      "hosted_imports": []
+    }
+  ],
+  "link_file_lists": {
+    "app": {
+      "path": "Intermediates.noindex/ChineseCalendar.build/Debug-iphonesimulator/ChineseCalendar-iOS.build/Objects-normal/arm64/Chinese Calendar.LinkFileList",
+      "modified_at": "2026-10-24T00:17:25.245656+08:00",
+      "sha256": "cd5ee39c291772c74a123da7c98fef51bba6f15ffa2d6296d9f1407599dcf3e0",
+      "input_count": 2,
+      "package_object_inputs": [],
+      "app_object_inputs": [
+        "ChineseCalendariOSApp.o",
+        "GeneratedAssetSymbols.o"
+      ]
+    },
+    "hosted_test": {
+      "path": "Intermediates.noindex/ChineseCalendar.build/Debug-iphonesimulator/ChineseCalendarUITests.build/Objects-normal/arm64/ChineseCalendarUITests.LinkFileList",
+      "modified_at": "2026-10-24T00:17:25.245852+08:00",
+      "sha256": "4cd5ea15e75112b44d4236b5a00cd08cd6102f1e59cb892cb70c211a2eb4119b",
+      "input_count": 35,
+      "package_object_inputs": [],
+      "non_object_products_input": "Products/Debug-iphonesimulator/Chinese Calendar.app/Chinese Calendar.debug.dylib"
+    },
+    "ui_framework": {
+      "path": "Intermediates.noindex/ChineseCalendarSources.build/Debug-iphonesimulator/ChineseCalendarUI-product-t.build/Objects-normal/arm64/ChineseCalendarUI_-79BCEEA08743D678_PackageProduct.LinkFileList",
+      "modified_at": "2026-10-23T23:22:44.863111+08:00",
+      "sha256": "89f3c7dd96f78eb1e7dfffd82379dcee9ae441fc41add54a10a9e644cf197ba1",
+      "input_count": 7,
+      "package_object_inputs": [
+        "ChineseCalendarUI.o",
+        "ChineseCalendarLocalization.o",
+        "ChineseCalendarLogging.o",
+        "ChineseCalendarCore.o",
+        "ChineseCalendarData.o",
+        "ChineseCalendarPersistence.o",
+        "NavigationCore.o"
+      ]
+    }
+  },
+  "embedded_ui_framework_copies": [
+    {
+      "path": "Products/Debug-iphonesimulator/Chinese Calendar.app/Frameworks/ChineseCalendarUI_-79BCEEA08743D678_PackageProduct.framework/ChineseCalendarUI_-79BCEEA08743D678_PackageProduct",
+      "modified_at": "2026-10-24T00:17:25.601785+08:00",
+      "sha256": "0266293380ed9cafc81d047dcda9b7dceba765426c3eb63b15b1638886f3a0d6",
+      "uuid": "2379736E-1C9D-3EBC-AAF2-5075AEB635EC"
+    },
+    {
+      "path": "Products/Debug-iphonesimulator/Chinese Calendar.app/PlugIns/ChineseCalendarUITests.xctest/Frameworks/ChineseCalendarUI_-79BCEEA08743D678_PackageProduct.framework/ChineseCalendarUI_-79BCEEA08743D678_PackageProduct",
+      "modified_at": "2026-10-24T00:17:27.612386+08:00",
+      "sha256": "0266293380ed9cafc81d047dcda9b7dceba765426c3eb63b15b1638886f3a0d6",
+      "uuid": "2379736E-1C9D-3EBC-AAF2-5075AEB635EC"
+    }
+  ],
+  "commands": [
+    "nm -m <binary> | xcrun swift-demangle",
+    "otool -L <binary>",
+    "dwarfdump --uuid <binary>"
+  ],
+  "console": {
+    "file_name": "test-console-log-2026-10-24T00-19-35+08-00.txt",
+    "project_duplicate_implementation_message_count": 0,
+    "system_duplicate_class": "UIAccessibilityLoaderWebShared",
+    "system_locations": [
+      "WebKit.axbundle/WebKit",
+      "WebCore.axbundle/WebCore"
+    ],
+    "system_message_occurrences_in_aggregated_log": 6
+  },
+  "notes": [
+    "The shared UI framework was incrementally reused from 2026-10-23 23:22; App and hosted binaries were updated at 00:19:41.",
+    "Embedded framework copies share the source framework LC_UUID. Whole-file hashes differ after embedding/signing; this is not evidence of distinct metadata modules.",
+    "The stale package test bundle at Products/Debug-iphonesimulator/ChineseCalendarUITests.xctest was excluded. The actual hosted bundle is inside Chinese Calendar.app/PlugIns.",
+    "A normal non-testing app build may statically link the entire UI dependency closure. This record applies only to the shared testing build graph."
+  ],
+  "passed": true
+}

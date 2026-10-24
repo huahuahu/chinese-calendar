@@ -150,12 +150,8 @@ let package = Package(
             name: "NavigationCoreTests",
             dependencies: ["NavigationCore"],
             path: "NavigationCoreTests",
-            swiftSettings: mainActorSwiftSettings
-        ),
-        .testTarget(
-            name: "ChineseCalendarUITests",
-            dependencies: ["ChineseCalendarUI", "ChineseCalendarLocalization"],
-            path: "ChineseCalendarUI/Tests",
+            // UIKit 呈现测试由 App 承载的 ChineseCalendarUITests Xcode target 运行。
+            exclude: ["NavigationPhysicalHostTests.swift", "NavigationPhysicalHostSupport.swift"],
             swiftSettings: mainActorSwiftSettings
         )
     ]

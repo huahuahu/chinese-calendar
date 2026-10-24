@@ -1,18 +1,14 @@
 import SwiftUI
 
-/// 按 sessionID 取得打开年份选择器时保存的会话，使用发起页的 CalendarSelection 和 ModelContext。
-/// 选年结果经该会话回传给发起页，避免改到另一个日历页面的选择。
+/// 页面参数来自本次路由；关闭命令被接受后，通过 Binding 回传所选年份。
 struct CalendarYearPickerDestinationView: View {
-    let sessionID: YearPickerSessionID
-    @Environment(CalendarHomeCoordinator.self) private var coordinator
+    @Binding var selection: Int?
+    @Environment(CalendarPresentationContext.self) private var presentation
 
     var body: some View {
-        if let session = coordinator.yearPickerSessions[sessionID] {
-            CalendarYearPickerView { yearNumber in
-                coordinator.selectYear(yearNumber, sessionID: sessionID)
-            }
-            .environment(session.selection)
-            .environment(\.modelContext, session.modelContext)
+        CalendarYearPickerView(selectedYearNumber: selection) { yearNumber in
+            guard presentation.dismiss().isAccepted else { return }
+            selection = yearNumber
         }
     }
 }

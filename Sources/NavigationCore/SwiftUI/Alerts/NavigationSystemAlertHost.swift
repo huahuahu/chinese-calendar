@@ -77,6 +77,7 @@ import SwiftUI
                 guard currentAlert?.id == alert.id else { return }
                 self.controller = nil
                 currentAlert = nil
+                if desiredAlert?.id == alert.id { desiredAlert = nil }
                 isClosing = false
                 _ = alert.didDismiss(selection)
                 scheduleUpdate()

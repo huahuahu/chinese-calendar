@@ -53,6 +53,28 @@ struct CalendarLocalizationPresentationTests {
         )) == "下载服务暂时不可用（HTTP 503），请稍后重试。")
     }
 
+    @Test func structuredFailureKeepsOnlyRecoveryCategoryAndRequiredParameters() {
+        let first = NSError(
+            domain: NSURLErrorDomain,
+            code: NSURLErrorNotConnectedToInternet,
+            userInfo: [NSLocalizedDescriptionKey: "private source A"]
+        )
+        let second = NSError(
+            domain: NSURLErrorDomain,
+            code: NSURLErrorCannotConnectToHost,
+            userInfo: [NSLocalizedDescriptionKey: "private source B"]
+        )
+        #expect(CalendarStoreErrorPresentation.failure(for: first, operation: .download) == .network)
+        #expect(CalendarStoreErrorPresentation.failure(for: second, operation: .download) == .network)
+        #expect(CalendarStoreErrorPresentation.failure(
+            for: ChineseCalendarFullSeedStoreInstallError.downloadFailed(503), operation: .download
+        ) == .server(status: 503))
+        #expect(CalendarStoreErrorPresentation.failure(
+            for: ChineseCalendarFullSeedStoreInstallError.checksumMismatch(expected: "secret", actual: "bad"),
+            operation: .download
+        ) == .invalidFile)
+    }
+
     private func localized(_ resource: LocalizedStringResource, locale: String = "zh-Hans") -> String {
         var resource = resource
         resource.locale = Locale(identifier: locale)

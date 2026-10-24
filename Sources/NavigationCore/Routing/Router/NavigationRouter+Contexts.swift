@@ -1,9 +1,9 @@
 import Foundation
 
-public extension NavigationRouter {
+extension NavigationRouter {
     /// App 根层的 NavigationPresentationContext，供根界面容器和 TabView 附件等控件使用。
     /// 根层命名栈的 push/pop 使用 context(for: scope)；默认栈使用 rootPresentation.context(for: .primary)。
-    var rootPresentation: NavigationPresentationContext<Scope, Destination, AlertRoute> {
+    public var rootPresentation: NavigationPresentationContext<Scope, Destination, AlertRoute> {
         presentationContext(in: rootLayer)
     }
 

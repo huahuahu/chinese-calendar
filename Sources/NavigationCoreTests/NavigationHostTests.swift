@@ -104,14 +104,15 @@ struct NavigationHostTests {
             rootDestinations: [.home: .detail, .history: .detail]
         )
         let recorder = HostTestRecorder()
-        #expect(router.rootPresentation.present(
+        #expect(router.rootPresentation.submitPresentation(
             .tabs,
             initialStack: .scope(.home),
             rootDestinations: [.scope(.home): .detail, .scope(.history): .detail]
         ) == .applied)
         let node = try #require(router.presentedNode)
+        node.lifetime.claimHost()
         let modal = router.presentationContext(for: node)
-        let content = NavigationPresentationNodeView(node: node, context: modal)
+        let content = NavigationLayerContent(context: modal)
             .navigationHost(
                 context: router.rootPresentation,
                 configuration: HostTestConfiguration(name: "shared", recorder: recorder)
@@ -122,16 +123,17 @@ struct NavigationHostTests {
         #expect(Set(recorder.pages) == ["shared:zh_CN"])
     }
 
-    @Test func inactiveLayerKeepsItsDestinationWithoutBuildingContent() throws {
+    @Test func closingLayerKeepsItsOriginalContentForExitAnimation() throws {
         let router = Router(
             rootDestination: .root,
             selectedScope: .home,
             rootDestinations: [.home: .detail, .history: .detail]
         )
-        #expect(router.rootPresentation.present(
+        #expect(router.rootPresentation.submitPresentation(
             .tabs, initialStack: .scope(.home), rootDestinations: [.scope(.home): .detail]
         ) == .applied)
         let node = try #require(router.presentedNode)
+        node.lifetime.claimHost()
         let modal = router.presentationContext(for: node)
         let recorder = HostTestRecorder()
         let content = VStack {
@@ -150,7 +152,7 @@ struct NavigationHostTests {
         #expect(modal.destination == .tabs)
         #expect(node.destination == .tabs)
         #expect(ImageRenderer(content: content).cgImage != nil)
-        #expect(recorder.routes.isEmpty)
+        #expect(recorder.routes == [.tabs])
     }
 
     @Test func configurationSupportsModalTabsWithoutChangingContextOwnership() throws {
@@ -167,12 +169,13 @@ struct NavigationHostTests {
         let configuration = HostTestConfiguration(name: "shared", recorder: HostTestRecorder())
         #expect(Route.tabs.providesNavigationContainer)
         #expect(!Route.detail.providesNavigationContainer)
-        #expect(router.rootPresentation.present(
+        #expect(router.rootPresentation.submitPresentation(
             .tabs,
             initialStack: .scope(.history),
             rootDestinations: [.scope(.home): .detail, .scope(.history): .detail]
         ) == .applied)
         let modal = try router.presentationContext(for: #require(router.presentedNode))
+        router.presentedNode?.lifetime.claimHost()
         let modalHistory = modal.context(for: .scope(.history))
         #expect(modalHistory.push(.detail) == .applied)
         #expect(router.context(for: .history).path.isEmpty)

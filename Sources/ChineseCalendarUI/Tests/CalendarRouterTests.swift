@@ -1,12 +1,13 @@
 @testable import ChineseCalendarUI
 import Foundation
+import NavigationCore
 import Testing
 
 @MainActor
 @Test func pushUpdatesSelectedTabPath() {
     let router = CalendarRouter()
 
-    router.push(.dynasty(orthodoxPeriodID: "qin-period"), on: .history)
+    router.navigation.submit(.push(.dynasty(orthodoxPeriodID: "qin-period"), on: .history))
 
     #expect(router.selectedTab == .history)
     #expect(router.historyPath == [.dynasty(orthodoxPeriodID: "qin-period")])
@@ -17,13 +18,13 @@ import Testing
 @Test func tabPathsDoNotPolluteEachOther() {
     let router = CalendarRouter()
 
-    router.push(.lunarYear(2025), on: .years)
-    router.push(.dynasty(orthodoxPeriodID: "qin-period"), on: .history)
+    router.navigation.submit(.push(.lunarYear(2025), on: .years))
+    router.navigation.submit(.push(.dynasty(orthodoxPeriodID: "qin-period"), on: .history))
 
     #expect(router.yearsPath == [.lunarYear(2025)])
     #expect(router.historyPath == [.dynasty(orthodoxPeriodID: "qin-period")])
-    #expect(router.selectedDestination == .dynasty(orthodoxPeriodID: "qin-period"))
-    #expect(router.currentDestination(on: .years) == .lunarYear(2025))
+    #expect(router.selectedTab == .history)
+    #expect(router.navigation.rootPresentation.context(for: .scope(.years)).path.last == .lunarYear(2025))
 }
 
 @MainActor
@@ -31,7 +32,7 @@ import Testing
     let router = CalendarRouter(selectedTab: .history)
     let destination = CalendarDestination.dynasty(orthodoxPeriodID: "orthodox-ming")
 
-    router.push(destination)
+    router.navigation.rootPresentation.context(for: .scope(.history)).push(destination)
 
     #expect(router.historyPath == [destination])
     #expect(destination.id == "dynasty-orthodox-ming")
@@ -43,19 +44,19 @@ import Testing
     let emperorList = CalendarDestination.emperorList(dynastyID: "ming")
     let router = CalendarRouter(selectedTab: .history)
 
-    router.push(dynasty)
-    router.push(emperorList)
+    router.navigation.rootPresentation.context(for: .scope(.history)).push(dynasty)
+    router.navigation.rootPresentation.context(for: .scope(.history)).push(emperorList)
     router.selectedTab = .years
-    router.push(.lunarYear(2026), on: .years)
+    router.navigation.submit(.push(.lunarYear(2026), on: .years))
     router.selectedTab = .history
 
     #expect(router.historyPath == [dynasty, emperorList])
-    #expect(router.currentDestination(on: .history) == emperorList)
+    #expect(router.navigation.rootPresentation.context(for: .scope(.history)).path.last == emperorList)
 
     router.historyPath.removeLast()
 
     #expect(router.historyPath == [dynasty])
-    #expect(router.currentDestination(on: .history) == dynasty)
+    #expect(router.navigation.rootPresentation.context(for: .scope(.history)).path.last == dynasty)
     #expect(router.yearsPath == [.lunarYear(2026)])
 }
 
@@ -75,36 +76,37 @@ import Testing
 @Test func replacingYearsPathChangesItsCurrentDestination() {
     let router = CalendarRouter(yearsPath: [.lunarYear(2025)])
 
-    router.setPath([.lunarYear(2026)], for: .years)
+    router.yearsPath = [.lunarYear(2026)]
 
     #expect(router.yearsPath == [.lunarYear(2026)])
-    #expect(router.currentDestination(on: .years) == .lunarYear(2026))
+    #expect(router.navigation.rootPresentation.context(for: .scope(.years)).path.last == .lunarYear(2026))
 }
 
 @MainActor
-@Test func hotDeepLinkConfirmsThenDismissesActivePresentationTreeBeforeRouting() throws {
+@Test func hotDeepLinkKeepsTheRootPathAndModalAliveWhileWaitingForConfirmation() async throws {
     let router = CalendarRouter(yearsPath: [.lunarYear(2024)])
     let coordinator = CalendarHomeCoordinator(router: router)
-    router.presentSheet(.lunarYear(2025))
+    let host = try await NavigationTestHost.show(router: router.navigation)
+    defer { host.removeFromWindow() }
+    var finishCount = 0
+    #expect(router.navigation.rootPresentation.present(.lunarYear(2025), onDismiss: { finishCount += 1 })
+        .result == .applied)
+    let modal = try await host.context(for: .lunarYear(2025))
+    let controller = try await host.waitForPresentation()
 
     coordinator.openDeepLink(.lunarYear(2026, monthIndex: 26001))
+    let alert = try await host.waitForAlert()
 
-    #expect(router.sheet != nil)
-    #expect(router.navigation.deferredRequest == nil)
-    let confirmation = try #require(router.navigation.pendingConfirmation)
-    router.navigation.confirmNavigation(id: confirmation.id)
-    #expect(router.sheet == nil)
-    #expect(
-        router.navigation.deferredRequest
-            == .replacePath([.lunarYear(2026, monthIndex: 26001)], on: .years)
-    )
-    #expect(router.currentDestination(on: .years) == .lunarYear(2024))
-
-    coordinator.rootPresentationDidDismiss()
-
-    #expect(router.navigation.deferredRequest == nil)
-    #expect(router.currentDestination(on: .years) == .lunarYear(2026, monthIndex: 26001))
-    #expect(router.yearsPath == [.lunarYear(2026, monthIndex: 26001)])
+    #expect(alert.actions.count == 2)
+    #expect(alert.actions.contains { $0.style == .cancel })
+    #expect(alert.actions.contains { $0.style == .default })
+    #expect(controller.viewIfLoaded?.window != nil)
+    #expect(!controller.isBeingDismissed)
+    #expect(modal.context(for: .primary).rootDestination == .lunarYear(2025))
+    #expect(router.yearsPath == [.lunarYear(2024)])
+    #expect(router.selectedTab == .years)
+    #expect(finishCount == 0)
+    await host.close()
 }
 
 @MainActor
@@ -113,10 +115,9 @@ import Testing
 
     coordinator.openColdLaunchDeepLink(.lunarYear(2026, monthIndex: 26001))
 
-    #expect(coordinator.router.navigation.deferredRequest == nil)
     #expect(coordinator.router.yearsPath == [.lunarYear(2026, monthIndex: 26001)])
     #expect(
-        coordinator.router.currentDestination(on: .years)
+        coordinator.router.navigation.rootPresentation.context(for: .scope(.years)).path.last
             == .lunarYear(2026, monthIndex: 26001)
     )
 }
@@ -129,7 +130,7 @@ import Testing
 
     #expect(coordinator.router.selectedTab == .history)
     #expect(
-        coordinator.router.navigation.rootDestination(for: .history)
+        coordinator.router.navigation.rootPresentation.context(for: .scope(.history)).rootDestination
             == .historyDetail(orthodoxPeriodID: "qin-period", section: nil)
     )
     #expect(coordinator.router.historyPath.isEmpty)
@@ -142,7 +143,8 @@ import Testing
     coordinator.openColdLaunchDeepLink(.emperor("ming-taizu"))
 
     #expect(coordinator.router.selectedTab == .history)
-    #expect(coordinator.router.navigation.rootDestination(for: .history) == .emperor("ming-taizu"))
+    #expect(coordinator.router.navigation.rootPresentation.context(for: .scope(.history))
+        .rootDestination == .emperor("ming-taizu"))
     #expect(coordinator.router.historyPath.isEmpty)
 }
 

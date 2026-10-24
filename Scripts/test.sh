@@ -14,6 +14,7 @@ fi
 IOS_DESTINATION="$(resolve_ios_simulator_destination)"
 IOS_SIMULATOR_ARCH="$(resolve_ios_simulator_architecture)"
 
+# Simulator 测试需要 ad-hoc 签名保留 App Groups 权限，无需开发者证书。
 xcodebuild \
     -project ChineseCalendar.xcodeproj \
     -scheme ChineseCalendar-iOS \
@@ -22,6 +23,7 @@ xcodebuild \
     -destination "$IOS_DESTINATION,arch=$IOS_SIMULATOR_ARCH" \
     ARCHS="$IOS_SIMULATOR_ARCH" \
     ONLY_ACTIVE_ARCH=YES \
-    CODE_SIGNING_ALLOWED=NO \
-    CODE_SIGNING_REQUIRED=NO \
+    CODE_SIGN_IDENTITY=- \
+    CODE_SIGNING_ALLOWED=YES \
+    CODE_SIGNING_REQUIRED=YES \
     test

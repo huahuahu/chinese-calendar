@@ -1,0 +1,234 @@
+{
+  "baseCommit": "7fbbeac309afa02f2f89a7b92576a3f3def03774",
+  "date": "2026-10-24",
+  "environment": {
+    "tool": "native Xcode MCP",
+    "scheme": "ChineseCalendar-iOS",
+    "simulatorName": "chinesedate iPhone 18 Pro Max (885f)",
+    "simulatorId": "16A9CAA7-45CE-46D5-8915-F61531FC617C",
+    "runtime": "iOS 27.0",
+    "xcode": "27.1"
+  },
+  "targeted": {
+    "counts": {
+      "expectedFailures": 0,
+      "failed": 0,
+      "notRun": 0,
+      "passed": 16,
+      "skipped": 0,
+      "total": 16
+    },
+    "fullConsoleLogsPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/RunSomeTests/test-console-log-2026-10-24T07-33-45+08-00.txt",
+    "fullSummaryPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/RunSomeTests/CAA4A216-3EF9-439D-A0DA-EDD9A253DF34.txt",
+    "results": [
+      {
+        "displayName": ".sheet",
+        "errorMessages": [],
+        "identifier": "NavigationEndpointTests/rebindFinishesUnclaimedRequestAndRejectsOldContext(style:)",
+        "state": "Passed",
+        "targetName": "NavigationCoreTests"
+      },
+      {
+        "displayName": ".fullScreen",
+        "errorMessages": [],
+        "identifier": "NavigationEndpointTests/rebindFinishesUnclaimedRequestAndRejectsOldContext(style:)",
+        "state": "Passed",
+        "targetName": "NavigationCoreTests"
+      },
+      {
+        "displayName": "oldCompletionCanSubmitToNewLayerWithoutBeingTornDown()",
+        "errorMessages": [],
+        "identifier": "NavigationEndpointTests/oldCompletionCanSubmitToNewLayerWithoutBeingTornDown()",
+        "state": "Passed",
+        "targetName": "NavigationCoreTests"
+      },
+      {
+        "displayName": "sameLayerScopedContextKeepsAcceptedRequest()",
+        "errorMessages": [],
+        "identifier": "NavigationEndpointTests/sameLayerScopedContextKeepsAcceptedRequest()",
+        "state": "Passed",
+        "targetName": "NavigationCoreTests"
+      },
+      {
+        "displayName": "false",
+        "errorMessages": [],
+        "identifier": "NavigationEndpointTests/invalidContextRebindRevokesPreviousLayerAndAllowsRecovery(retainsInvalidLayer:)",
+        "state": "Passed",
+        "targetName": "NavigationCoreTests"
+      },
+      {
+        "displayName": "true",
+        "errorMessages": [],
+        "identifier": "NavigationEndpointTests/invalidContextRebindRevokesPreviousLayerAndAllowsRecovery(retainsInvalidLayer:)",
+        "state": "Passed",
+        "targetName": "NavigationCoreTests"
+      },
+      {
+        "displayName": "rebindFinishesEveryUnclaimedQueuedRequestAndReleasesDefaultConfiguration()",
+        "errorMessages": [],
+        "identifier": "NavigationEndpointTests/rebindFinishesEveryUnclaimedQueuedRequestAndReleasesDefaultConfiguration()",
+        "state": "Passed",
+        "targetName": "NavigationCoreTests"
+      },
+      {
+        "displayName": "reentrantDetachDuringRebindCannotReactivateEndpoint()",
+        "errorMessages": [],
+        "identifier": "NavigationEndpointTests/reentrantDetachDuringRebindCannotReactivateEndpoint()",
+        "state": "Passed",
+        "targetName": "NavigationCoreTests"
+      },
+      {
+        "displayName": "retiredClaimedRecordIsTornDownOnceAcrossFurtherReattachments()",
+        "errorMessages": [],
+        "identifier": "NavigationEndpointTests/retiredClaimedRecordIsTornDownOnceAcrossFurtherReattachments()",
+        "state": "Passed",
+        "targetName": "NavigationCoreTests"
+      },
+      {
+        "displayName": "hostDetachBeforeRetiredCleanupStillFinishesOnce()",
+        "errorMessages": [],
+        "identifier": "NavigationEndpointTests/hostDetachBeforeRetiredCleanupStillFinishesOnce()",
+        "state": "Passed",
+        "targetName": "NavigationCoreTests"
+      },
+      {
+        "displayName": ".sheet, false",
+        "errorMessages": [],
+        "identifier": "NavigationPhysicalHostTests/sameHostRouterReplacementFinishesOldRequestAndKeepsNewLayerUsable(style:afterPresentation:)",
+        "state": "Passed",
+        "targetName": "ChineseCalendarUITests"
+      },
+      {
+        "displayName": ".sheet, true",
+        "errorMessages": [],
+        "identifier": "NavigationPhysicalHostTests/sameHostRouterReplacementFinishesOldRequestAndKeepsNewLayerUsable(style:afterPresentation:)",
+        "state": "Passed",
+        "targetName": "ChineseCalendarUITests"
+      },
+      {
+        "displayName": ".fullScreen, false",
+        "errorMessages": [],
+        "identifier": "NavigationPhysicalHostTests/sameHostRouterReplacementFinishesOldRequestAndKeepsNewLayerUsable(style:afterPresentation:)",
+        "state": "Passed",
+        "targetName": "ChineseCalendarUITests"
+      },
+      {
+        "displayName": ".fullScreen, true",
+        "errorMessages": [],
+        "identifier": "NavigationPhysicalHostTests/sameHostRouterReplacementFinishesOldRequestAndKeepsNewLayerUsable(style:afterPresentation:)",
+        "state": "Passed",
+        "targetName": "ChineseCalendarUITests"
+      },
+      {
+        "displayName": ".sheet",
+        "errorMessages": [],
+        "identifier": "CalendarDownloadAccessoryTests/retainedModalConfigurationReevaluatesAccessoryVisibility(style:)",
+        "state": "Passed",
+        "targetName": "ChineseCalendarUITests"
+      },
+      {
+        "displayName": ".fullScreen",
+        "errorMessages": [],
+        "identifier": "CalendarDownloadAccessoryTests/retainedModalConfigurationReevaluatesAccessoryVisibility(style:)",
+        "state": "Passed",
+        "targetName": "ChineseCalendarUITests"
+      }
+    ],
+    "schemeName": "ChineseCalendar-iOS",
+    "summary": "16 tests: 16 passed, 0 failed, 0 skipped, 0 expected failures, 0 not run",
+    "totalResults": 16,
+    "truncated": false,
+    "xcresultBundlePath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/RunSomeTests/Test-ChineseCalendar-iOS-2026.10.24_07-33-45-+0800.xcresult"
+  },
+  "allTests": {
+    "counts": {
+      "expectedFailures": 0,
+      "failed": 0,
+      "notRun": 0,
+      "passed": 522,
+      "skipped": 0,
+      "total": 522
+    },
+    "fullConsoleLogsPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/RunAllTests/test-console-log-2026-10-24T07-35-10+08-00.txt",
+    "fullSummaryPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/RunAllTests/D539D530-DC6B-472C-BADA-ED4876CA82D6.txt",
+    "message": "Results truncated to 100 of 522 tests. Failed tests shown first. Full logs available at /var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/RunAllTests/D539D530-DC6B-472C-BADA-ED4876CA82D6.txt.",
+    "schemeName": "ChineseCalendar-iOS",
+    "summary": "522 tests: 522 passed, 0 failed, 0 skipped, 0 expected failures, 0 not run",
+    "totalResults": 522,
+    "truncated": true,
+    "xcresultBundlePath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/RunAllTests/Test-ChineseCalendar-iOS-2026.10.24_07-35-09-+0800.xcresult",
+    "passedByTarget": {
+      "ChineseCalendarUITests": 223,
+      "CalendarNavigationUIIntegrationTests": 2,
+      "ChineseCalendarLocalizationTests": 14,
+      "ChineseCalendarCoreTests": 24,
+      "ChineseCalendarDataTests": 10,
+      "ChineseCalendarLoggingTests": 3,
+      "ChineseCalendarPersistenceTests": 55,
+      "NavigationCoreTests": 191
+    },
+    "summarySHA256": "796f4b334b5954511d6d7d33f8ff7ca64fbff74f09aa1c7d87c3edaffa7728dd",
+    "states": {
+      "Passed": 522
+    }
+  },
+  "build": {
+    "buildResult": "The project built successfully.",
+    "elapsedTime": 2.827,
+    "errors": [],
+    "fullLogPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/BuildProject/BuildProject-Log-20261024-073901.txt"
+  },
+  "sourceSHA256": {
+    "Sources/ChineseCalendarUI/App/ChineseCalendarRootView.swift": "5f4f9e92b0c7ccff868c43e8df5f20eaba76fff71a15fb9dd2e4529d255b8d5a",
+    "Sources/ChineseCalendarUI/Home/CalendarHomeCoordinator.swift": "52215f28f41d4a0548ff3537cc2d20dc54cb7b7c74ca7dc74d5e0b399418ab34",
+    "Sources/ChineseCalendarUI/Home/CalendarHomeView.swift": "20c5bc082481c2c9a15ff3debda084207aa3d25fc00861488c743e636c0cf8f2",
+    "Sources/ChineseCalendarUI/Home/Navigation/CalendarDestinationView.swift": "b3a9e9b013c02d00afcc39429ecb3dc510497e5b68c3f2355cfe4cb004fe0cab",
+    "Sources/ChineseCalendarUI/Home/Navigation/CalendarNavigationConfiguration.swift": "344a89a137b4b418ea2979c5b5eee768adea20fb513040dd241a730423a98152",
+    "Sources/ChineseCalendarUI/Home/Navigation/CalendarNavigationHost.swift": "2063afa25d6c77a048689775729763c0511bf5fab56eee89b7ff41629ebd067b",
+    "Sources/ChineseCalendarUI/Tests/CalendarAlertActionTests.swift": "3e83b3fc4b8d7f993fdd66662085ef3c564a989c92dde06a9d186e25f9d851f2",
+    "Sources/ChineseCalendarUI/Tests/CalendarAlertConfigurationTests.swift": "02925c537e3f5943b96fc0da5d2eaedf264ab8b6eb9fac3e99ebf5417ab746cb",
+    "Sources/NavigationCore/SwiftUI/Presentation/NavigationPresentationEndpoint.swift": "21f6a006c2fb6753eeb24ff84e7fafce84ac1a5457384091251696ab61c63ac7",
+    "Sources/NavigationCore/SwiftUI/Presentation/NavigationPresentationRenderRecord.swift": "d39ae5afe96634b43e412afd6658f67d4e5d503551705bc619631b2633caee0c",
+    "Sources/NavigationCoreTests/NavigationPhysicalHostSupport.swift": "027fec48500451d4a7238f9e4bcf057feaeab8d486c5fa753d44c3e83fe4a781",
+    "Sources/NavigationCoreTests/NavigationPhysicalHostTests.swift": "a16502d7b446b6728944688031b3237606ea2d9d84f2a2253ced23ec70962439",
+    "Sources/ChineseCalendarUI/Tests/CalendarDownloadAccessoryTests.swift": "68ed848226b35bb9092f88b8abd67235bed580c9abf2b8827c79e59f315cbd89",
+    "Sources/NavigationCoreTests/NavigationEndpointTests.swift": "e622ebe146b304558dddd3dd991fea785a0af85aa76effc71dab26e2574fac7a"
+  },
+  "staticChecks": {
+    "format": {
+      "exitCode": 0,
+      "checkedFiles": 358,
+      "requiringFormatting": 0,
+      "excludedFiles": 100
+    },
+    "strictLint": {
+      "exitCode": 0,
+      "files": 345,
+      "violations": 0
+    },
+    "localization": {
+      "exitCode": 0,
+      "resources": 337,
+      "productionStrings": 21
+    },
+    "gitDiffCheck": {
+      "exitCode": 0
+    }
+  },
+  "review": {
+    "scope": "repair diff only",
+    "status": "complete",
+    "confirmedMaterialRegressions": 0,
+    "confirmedIssuesRepaired": [
+      "endpoint-lifecycle-001",
+      "summary-claims-001"
+    ],
+    "limits": [
+      "Public CalendarHomeView Bool initializer retains fixed-value semantics for retained modals; repository callers use default false.",
+      "No new pixel/device/network check.",
+      "Interactive-dismissal rebind and real suspended-alert rebind are not individually reproduced.",
+      "Existing OWN-07 and OWN-09 gaps are retained.",
+      "Alert readiness callback timing remains unverified."
+    ]
+  }
+}

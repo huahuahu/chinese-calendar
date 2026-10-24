@@ -8,6 +8,7 @@ struct SampleDataPreviewHost: View {
     @State private var navigationCoordinator = CalendarHomeCoordinator()
     @State private var selection: CalendarSelection
     @State private var today: CalendarToday
+    @State private var feature: CalendarYearFeature
 
     init(
         content: PreviewModifierContent,
@@ -15,10 +16,11 @@ struct SampleDataPreviewHost: View {
     ) {
         self.content = content
         self.context = context
-        _selection = State(
-            initialValue: CalendarSelection(selectedDayIndex: context.selectedDayIndex)
-        )
-        _today = State(initialValue: CalendarToday(date: context.today))
+        let selection = CalendarSelection(selectedDayIndex: context.selectedDayIndex)
+        let today = CalendarToday(date: context.today)
+        _selection = State(initialValue: selection)
+        _today = State(initialValue: today)
+        _feature = State(initialValue: CalendarYearFeature(selection: selection, today: today))
     }
 
     var body: some View {
@@ -27,6 +29,8 @@ struct SampleDataPreviewHost: View {
             .modelContainer(context.modelContainer)
             .environment(selection)
             .environment(today)
+            .environment(feature)
+            .onAppear { feature.connect(modelContext: context.modelContainer.mainContext, storeCoordinator: nil) }
             .environment(\.calendarStoreContentLevel, .full)
     }
 }

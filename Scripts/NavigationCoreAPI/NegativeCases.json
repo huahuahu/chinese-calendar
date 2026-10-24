@@ -1,0 +1,20 @@
+[
+  {"name":"presentation_node", "symbol":"NavigationPresentationNode", "kind":"type", "body":"let _: NavigationPresentationNode<APIScope, APIDestination, APIAlert>? = nil"},
+  {"name":"presentation_id", "symbol":"NavigationPresentationID", "kind":"type", "body":"let _: NavigationPresentationID? = nil"},
+  {"name":"alert_id", "symbol":"NavigationAlertID", "kind":"type", "body":"let _: NavigationAlertID? = nil"},
+  {"name":"confirmation_id", "symbol":"NavigationConfirmationID", "kind":"type", "body":"let _: NavigationConfirmationID? = nil"},
+  {"name":"layer_route", "symbol":"NavigationLayerRoute", "kind":"type", "body":"let _: NavigationLayerRoute<APIDestination>? = nil"},
+  {"name":"node_view", "symbol":"NavigationPresentationNodeView", "kind":"type", "body":"let _: NavigationPresentationNodeView<APIScope, APIDestination, APIAlert>? = nil"},
+  {"name":"router_tree", "symbol":"presentedNode", "kind":"internal", "body":"_ = router.presentedNode"},
+  {"name":"frontmost_query", "symbol":"frontmostPresentationNode", "kind":"internal", "body":"_ = router.frontmostPresentationNode"},
+  {"name":"all_presentations", "symbol":"presentations", "kind":"internal", "body":"_ = router.presentations"},
+  {"name":"pending_transaction", "symbol":"pendingConfirmation", "kind":"internal", "body":"_ = router.pendingConfirmation"},
+  {"name":"deferred_transaction", "symbol":"deferredRequest", "kind":"internal", "body":"_ = router.deferredRequest"},
+  {"name":"aggregate_setter", "symbol":"paths", "kind":"internal", "body":"router.paths = [:]"},
+  {"name":"manual_completion", "symbol":"presentationDidDismiss", "kind":"internal", "body":"router.rootPresentation.presentationDidDismiss()"},
+  {"name":"presentation_context_tree", "symbol":"presentedContent", "kind":"internal", "body":"_ = router.rootPresentation.presentedContent"},
+  {"name":"presentation_context_route", "symbol":"route", "kind":"internal", "body":"_ = router.rootPresentation.route"},
+  {"name":"handle_identity", "symbol":"lifetime", "kind":"private", "body":"let handle = router.rootPresentation.present(.sheet(.detail)).handle; _ = handle?.lifetime"},
+  {"name":"removed_resource_projection", "symbol":"retainedPresentationRoutes", "kind":"missing", "body":"_ = router.retainedPresentationRoutes"},
+  {"name":"removed_alert_projection", "symbol":"alertRoutes", "kind":"missing", "body":"_ = router.alertRoutes"}
+]

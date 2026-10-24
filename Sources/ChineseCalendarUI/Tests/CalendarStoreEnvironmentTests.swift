@@ -1,12 +1,13 @@
 import ChineseCalendarPersistence
 @testable import ChineseCalendarUI
 import NavigationCore
+import Observation
 import SwiftData
 import SwiftUI
 import Testing
 
 @MainActor
-@Suite("导航树共享数据环境")
+@Suite("导航树共享数据环境", .serialized)
 struct CalendarStoreEnvironmentTests {
     @Test func replacingTheSameArtifactChangesTheNavigationStoreIdentity() throws {
         let first = try PreviewSampleData.makeModelContainer(includesSampleData: false)
@@ -17,75 +18,50 @@ struct CalendarStoreEnvironmentTests {
         #expect(firstIdentity != store.storeIdentity(container: second, contentLevel: .base, identityToken: "same"))
     }
 
-    @Test func rootAndModalShareStoreEnvironmentWhileKeepingTheirOwnPresentation() throws {
-        let container = try PreviewSampleData.makeModelContainer()
-        let expectedYears = try container.mainContext.fetch(FetchDescriptor<ChineseLunarYear>()).count
-        let router = NavigationRouter<CalendarTab, StoreEnvironmentDestination, CalendarAlert>(
-            rootDestination: .root, selectedScope: .years, rootDestinations: [.years: .probe]
-        )
-        let store = ChineseCalendarStoreCoordinator(fullStoreConfiguration: nil)
-        let root = router.rootPresentation
-        #expect(root.present(.probe, rootDestinations: [.primary: .probe]) == .applied)
-        let node = try #require(router.sheet)
-        let modal = router.presentationContext(for: node)
-        let recorder = StoreEnvironmentRecorder()
-        let content = VStack {
-            StoreEnvironmentProbe(recorder: recorder)
-            NavigationPresentationNodeView(node: node, context: modal)
-        }
-        .navigationHost(context: root, configuration: StoreEnvironmentConfiguration(recorder: recorder))
-        .environment(store)
-        .calendarStoreEnvironment(state: .ready(container: container, contentLevel: .full, identityToken: "first"))
-
-        #expect(ImageRenderer(content: content).cgImage != nil)
-        #expect(!recorder.contexts.isEmpty)
-        #expect(recorder.contexts.allSatisfy { $0 === container.mainContext })
-        #expect(recorder.levels.allSatisfy { $0 == .full })
-        #expect(recorder.stores.allSatisfy { $0 === store })
-        #expect(expectedYears > 0)
-        #expect(recorder.yearCounts.allSatisfy { $0 == expectedYears })
-        #expect(Set(recorder.presentations) == [root.id, modal.id])
-    }
-
-    @Test func replacingStoreUpdatesTheEnvironmentWithoutChangingPresentationIdentity() throws {
+    @Test(.timeLimit(.minutes(1)))
+    func rootAndModalShareStoreAndReplacementKeepsPresentationIdentity() async throws {
         let first = try PreviewSampleData.makeModelContainer(includesSampleData: false)
         let second = try PreviewSampleData.makeModelContainer()
         let expectedYears = try second.mainContext.fetch(FetchDescriptor<ChineseLunarYear>()).count
         let router = NavigationRouter<CalendarTab, StoreEnvironmentDestination, CalendarAlert>(
-            rootDestination: .root, selectedScope: .years, rootDestinations: [.years: .probe]
+            rootDestination: .root, initialStack: .scope(.years), rootDestinations: [.scope(.years): .probe]
         )
-        let root = router.rootPresentation
-        #expect(root.present(.probe, rootDestinations: [.primary: .probe]) == .applied)
-        let node = try #require(router.sheet)
-        let modal = router.presentationContext(for: node)
+        let store = ChineseCalendarStoreCoordinator(fullStoreConfiguration: nil)
+        let state = StoreEnvironmentState(state: .ready(container: first, contentLevel: .base, identityToken: "first"))
         let recorder = StoreEnvironmentRecorder()
-        let content = NavigationPresentationNodeView(node: node, context: modal)
-            .navigationHost(context: root, configuration: StoreEnvironmentConfiguration(recorder: recorder))
-        let renderer = ImageRenderer(content: content.calendarStoreEnvironment(
-            state: .ready(container: first, contentLevel: .base, identityToken: "first")
+        let host = try await NavigationTestHost.show(StoreEnvironmentHost(
+            router: router, store: store, state: state, recorder: recorder
         ))
-        #expect(renderer.cgImage != nil)
-        #expect(recorder.contexts.last === first.mainContext)
-        #expect(recorder.levels.last == .base)
-        #expect(recorder.yearCounts.last == 0)
+        defer { host.removeFromWindow() }
+        try await host.waitUntil { !recorder.contexts.isEmpty }
+        #expect(recorder.contexts.allSatisfy { $0 === first.mainContext })
+        let root = router.rootPresentation
+        let request = root.present(.sheet(.probe, rootDestinations: [.primary: .probe]))
+        try #require(request.result == .applied)
+        _ = try await host.waitForPresentation()
+        try await host.waitUntil { recorder.presentations.contains { $0 !== root } }
+        let modal = try #require(recorder.presentations.first { $0 !== root })
+        #expect(recorder.contexts.allSatisfy { $0 === first.mainContext })
+        #expect(recorder.stores.allSatisfy { $0 === store })
 
-        renderer.content = content.calendarStoreEnvironment(
-            state: .ready(container: second, contentLevel: .full, identityToken: "second")
-        )
-        #expect(renderer.cgImage != nil)
-        #expect(recorder.contexts.last === second.mainContext)
+        recorder.contexts.removeAll()
+        recorder.levels.removeAll()
+        recorder.yearCounts.removeAll()
+        state.state = .ready(container: second, contentLevel: .full, identityToken: "second")
+        try await host.waitUntil { recorder.contexts.contains { $0 === second.mainContext } }
         #expect(recorder.levels.last == .full)
-        #expect(expectedYears > 0)
         #expect(recorder.yearCounts.last == expectedYears)
-        #expect(Set(recorder.presentations) == [modal.id])
-        #expect(router.sheet === node)
-        #expect(modal.isActive)
+        #expect(modal.isPresented)
+        #expect(recorder.presentations.contains { $0 === modal })
+        request.handle?.dismiss()
+        try await host.waitUntil { host.presentedViewController() == nil }
+        await host.close()
     }
 
     @Test func unavailableStorePreservesAnInheritedPreviewEnvironment() throws {
         let container = try PreviewSampleData.makeModelContainer(includesSampleData: false)
         let router = NavigationRouter<CalendarTab, StoreEnvironmentDestination, CalendarAlert>(
-            rootDestination: .root, selectedScope: .years, rootDestinations: [.years: .probe]
+            rootDestination: .root, initialStack: .scope(.years), rootDestinations: [.scope(.years): .probe]
         )
         let recorder = StoreEnvironmentRecorder()
         let content = StoreEnvironmentProbe(recorder: recorder)
@@ -104,7 +80,7 @@ private final class StoreEnvironmentRecorder {
     var contexts: [ModelContext] = []
     var levels: [ChineseCalendarSeedStoreContentLevel] = []
     var stores: [ChineseCalendarStoreCoordinator?] = []
-    var presentations: [NavigationLayerID] = []
+    var presentations: [NavigationPresentationContext<CalendarTab, StoreEnvironmentDestination, CalendarAlert>] = []
     var yearCounts: [Int] = []
 }
 
@@ -113,9 +89,11 @@ private struct StoreEnvironmentConfiguration: @MainActor NavigationHostConfigura
     typealias Destination = StoreEnvironmentDestination
     typealias AlertRoute = CalendarAlert
     let recorder: StoreEnvironmentRecorder
+    var state: StoreEnvironmentState?
 
     func destination(for destination: StoreEnvironmentDestination) -> some View {
         StoreEnvironmentProbe(recorder: recorder)
+            .calendarStoreContent(state: state?.state)
     }
 }
 
@@ -132,16 +110,42 @@ private struct StoreEnvironmentProbe: View {
         recorder.contexts.append(modelContext)
         recorder.levels.append(contentLevel)
         recorder.stores.append(store)
-        recorder.presentations.append(presentation.id)
+        recorder.presentations.append(presentation)
         recorder.yearCounts.append(years.count)
         return Color.clear.frame(width: 10, height: 10)
     }
 }
 
-/// ImageRenderer 不渲染 NavigationStack；使用声明自带容器的探针检验模态边界的环境继承。
+/// 探针自行提供内容；根层和模态均显式声明栈根，检验模态边界的环境继承。
 private enum StoreEnvironmentDestination: NavigationDestination {
     case root, probe
     var providesNavigationContainer: Bool {
         true
+    }
+}
+
+@MainActor
+@Observable
+private final class StoreEnvironmentState {
+    var state: CalendarStoreBootstrapState
+    init(state: CalendarStoreBootstrapState) {
+        self.state = state
+    }
+}
+
+private struct StoreEnvironmentHost: View {
+    let router: NavigationRouter<CalendarTab, StoreEnvironmentDestination, CalendarAlert>
+    let store: ChineseCalendarStoreCoordinator
+    let state: StoreEnvironmentState
+    let recorder: StoreEnvironmentRecorder
+
+    var body: some View {
+        NavigationRootView(context: router.rootPresentation)
+            .navigationHost(
+                context: router.rootPresentation,
+                configuration: StoreEnvironmentConfiguration(recorder: recorder, state: state)
+            )
+            .environment(store)
+            .calendarStoreEnvironment(state: state.state)
     }
 }

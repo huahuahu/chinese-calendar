@@ -31,6 +31,7 @@ struct NavigationCoordinationTests {
             rootDestinations: [.home: .first, .history: .second]
         )
         router.presentSheet(.first)
+        router.frontmostPresentationNode?.lifetime.claimHost()
         #expect(router.submit(.push(.second, on: .history)) == .deferredUntilPresentationDismisses)
         #expect(router.submit(.push(.third, on: .history), confirmIfPresented: true) == .awaitingConfirmation)
         let confirmation = try #require(router.pendingConfirmation)
@@ -71,8 +72,9 @@ struct NavigationCoordinationTests {
         )
         router.presentSheet(.first)
         let page = try #require(router.sheet)
+        page.lifetime.claimHost()
         let context = router.presentationContext(for: page)
-        let alertID = try beginAlert(context)
+        let session = try beginAlert(context)
         #expect(router.submit(
             .push(.second, on: .history), confirmIfPresented: firstRequiresConfirmation
         ) == .deferredUntilAlertDismisses)
@@ -82,7 +84,7 @@ struct NavigationCoordinationTests {
         #expect(router.requestWaitingForAlert == .push(.third, on: .history))
         #expect(router.pendingConfirmation == nil)
 
-        finishAlert(alertID, on: context)
+        finishAlert(session, on: context)
         #expect(router.requestWaitingForAlert == nil)
         #expect(router.path(for: .history).isEmpty)
         if latestRequiresConfirmation {
@@ -109,12 +111,14 @@ struct NavigationCoordinationTests {
         )
         router.presentSheet(.first)
         let parent = try #require(router.sheet)
+        parent.lifetime.claimHost()
         let parentContext = router.presentationContext(for: parent)
-        #expect(parentContext.present(.second) == .applied)
+        #expect(parentContext.submitPresentation(.second) == .applied)
         let child = try #require(parent.sheet)
+        child.lifetime.claimHost()
         let childContext = router.presentationContext(for: child)
-        let alertID = try beginAlert(childContext)
-        #expect(childContext.presentAlert(.message) == .queued)
+        let session = try beginAlert(childContext)
+        #expect(childContext.submitAlert(.message) == .queued)
 
         if allFirst { router.dismissAllPresentations() }
         #expect(childContext.dismiss() == .queued)
@@ -123,10 +127,10 @@ struct NavigationCoordinationTests {
         if !allFirst { router.dismissAllPresentations() }
         #expect(router.sheet === parent)
         #expect(parent.sheet === child)
-        childContext.alertWillDismiss(id: .business(alertID))
-        #expect(childContext.beginAlertCompletion(id: .business(alertID)))
+        childContext.alertWillDismiss(id: session.id)
+        #expect(session.beginCompletion())
         #expect(router.sheet === parent)
-        childContext.alertDidDismiss(id: .business(alertID))
+        childContext.completeAlertSession(session)
         #expect(router.sheet == nil)
         #expect(router.isAwaitingPresentationDismissal)
         #expect(!parentContext.isActive)
@@ -135,10 +139,12 @@ struct NavigationCoordinationTests {
 
         router.presentSheet(.third)
         let reopened = try #require(router.sheet)
-        childContext.alertDidDismiss(id: .business(alertID))
+        reopened.lifetime.claimHost()
+        childContext.completeAlertSession(session)
         router.resumePresentations()
         #expect(router.sheet === reopened)
-        #expect(router.alertRoutes.isEmpty)
+        #expect(!router.hasActiveAlert)
+        #expect(reopened.layer.queuedPresentations.isEmpty)
     }
 
     private func resolve(_ id: NavigationConfirmationID, on router: Router, approve: Bool) {
@@ -149,16 +155,15 @@ struct NavigationCoordinationTests {
         }
     }
 
-    private func beginAlert(_ context: Presentation) throws -> NavigationAlertID {
-        #expect(context.presentAlert(.message) == .applied)
+    private func beginAlert(_ context: Presentation) throws -> NavigationAlertSession {
+        #expect(context.submitAlert(.message) == .applied)
         let id = try #require(context.presentedAlert).id
-        #expect(context.alertWillPresent(id: .business(id)))
-        return id
+        return try #require(context.claimAlertSession(id: .business(id)))
     }
 
-    private func finishAlert(_ id: NavigationAlertID, on context: Presentation) {
-        context.alertWillDismiss(id: .business(id))
-        #expect(context.beginAlertCompletion(id: .business(id)))
-        context.alertDidDismiss(id: .business(id))
+    private func finishAlert(_ session: NavigationAlertSession, on context: Presentation) {
+        context.alertWillDismiss(id: session.id)
+        #expect(session.beginCompletion())
+        context.completeAlertSession(session)
     }
 }

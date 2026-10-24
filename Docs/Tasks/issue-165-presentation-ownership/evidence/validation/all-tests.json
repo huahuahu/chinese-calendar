@@ -1,0 +1,34 @@
+{
+  "tool": "mcp__xcode__RunAllTests",
+  "started_at": "2026-10-24T00:33:41+08:00",
+  "completed_at": "2026-10-24T00:36:54+08:00",
+  "scheme": "ChineseCalendar-iOS",
+  "xcode": "27.1 (27A9275)",
+  "sdk": "iOS Simulator 27.1",
+  "runtime": "iOS 27.0",
+  "simulator": "chinesedate iPhone 18 Pro Max (885f)",
+  "simulator_id": "16A9CAA7-45CE-46D5-8915-F61531FC617C",
+  "counts": {
+    "total": 506,
+    "passed": 506,
+    "failed": 0,
+    "skipped": 0,
+    "expectedFailures": 0,
+    "notRun": 0
+  },
+  "passed_by_target": {
+    "ChineseCalendarUITests": 217,
+    "CalendarNavigationUIIntegrationTests": 2,
+    "ChineseCalendarLocalizationTests": 14,
+    "ChineseCalendarCoreTests": 24,
+    "ChineseCalendarDataTests": 10,
+    "ChineseCalendarLoggingTests": 3,
+    "ChineseCalendarPersistenceTests": 55,
+    "NavigationCoreTests": 181
+  },
+  "all_results": "all-tests.tsv",
+  "source_summary": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/RunAllTests/B941DF5A-7B63-469E-8F92-1CCE2B02283B.txt",
+  "source_summary_sha256": "192c8f32bfe9f77e61ec4979486e38db06d400fd65a6944fc0ea39f79b2e1ca2",
+  "code_snapshot": "Staged tree c4d7ffbbd74583560e603f42b20942e0c50bdb73; implementation commit recorded in 001-result.md. Documentation changes are outside the tested code.",
+  "implementation_commit": "edcf930e908a9bb9f5858fa23e52878da5d4adc0"
+}

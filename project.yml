@@ -30,11 +30,7 @@ targets:
         buildPhase: resources
     dependencies:
       - package: ChineseCalendarPackage
-        product: ChineseCalendarLogging
-      - package: ChineseCalendarPackage
         product: ChineseCalendarUI
-      - package: ChineseCalendarPackage
-        product: ChineseCalendarPersistence
     preBuildScripts:
       - name: Validate SwiftData Seed Store
         script: |
@@ -69,6 +65,8 @@ targets:
         SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD: NO
         SWIFT_VERSION: 6.0
         SWIFT_DEFAULT_ACTOR_ISOLATION: MainActor
+        # App 与测试共享 UI 产品；传递依赖只导入模块，不再单独静态链接。
+        SWIFT_INCLUDE_PATHS: "$(inherited) $(BUILT_PRODUCTS_DIR)"
         CODE_SIGN_STYLE: Automatic
         DEVELOPMENT_TEAM: F29WG8477A
         CODE_SIGN_ENTITLEMENTS: Apps/iOSApp/ChineseCalendar-iOS.entitlements
@@ -94,11 +92,64 @@ targets:
               - chinese-calendar
         UILaunchScreen: {}
 
+  ChineseCalendarUITests:
+    type: bundle.unit-test
+    supportedDestinations: [iOS]
+    deploymentTarget: "26.0"
+    sources:
+      - path: Sources/ChineseCalendarUI/Tests
+      - path: Sources/NavigationCoreTests/NavigationPhysicalHostTests.swift
+      - path: Sources/NavigationCoreTests/NavigationPhysicalHostSupport.swift
+    dependencies:
+      - target: ChineseCalendar-iOS
+      - package: ChineseCalendarPackage
+        product: ChineseCalendarUI
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.tiger.suzhou.ChineseCalendarTests
+        GENERATE_INFOPLIST_FILE: YES
+        SWIFT_VERSION: 6.0
+        SWIFT_DEFAULT_ACTOR_ISOLATION: MainActor
+        # 共享 UI 产品已包含传递依赖；测试只导入它们，避免再次静态链接。
+        SWIFT_INCLUDE_PATHS: "$(inherited) $(BUILT_PRODUCTS_DIR)"
+        TARGETED_DEVICE_FAMILY: 1,2
+        TEST_TARGET_NAME: ChineseCalendar-iOS
+        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/Chinese Calendar.app/Chinese Calendar"
+        BUNDLE_LOADER: "$(TEST_HOST)"
+
+  CalendarNavigationUIIntegrationTests:
+    type: bundle.ui-testing
+    supportedDestinations: [iOS]
+    deploymentTarget: "26.0"
+    sources:
+      - path: Tests/NavigationUIIntegrationTests
+    dependencies:
+      - target: ChineseCalendar-iOS
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.tiger.suzhou.ChineseCalendar.NavigationUIIntegrationTests
+        GENERATE_INFOPLIST_FILE: YES
+        SWIFT_VERSION: 6.0
+        SWIFT_DEFAULT_ACTOR_ISOLATION: MainActor
+        TARGETED_DEVICE_FAMILY: 1,2
+        TEST_TARGET_NAME: ChineseCalendar-iOS
+
 schemes:
   ChineseCalendar-iOS:
     build:
       targets:
         ChineseCalendar-iOS: all
+        ChineseCalendarUITests: [test]
+        CalendarNavigationUIIntegrationTests: [test]
+    test:
+      config: Debug
+      environmentVariables:
+        PACKAGE_RESOURCE_BUNDLE_PATH: "$(BUILT_PRODUCTS_DIR)"
+      targets:
+        - name: ChineseCalendarUITests
+          parallelizable: false
+        - name: CalendarNavigationUIIntegrationTests
+          parallelizable: false
     run:
       config: Debug
       language: zh-Hans

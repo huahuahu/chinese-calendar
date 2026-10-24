@@ -26,7 +26,7 @@ struct NavigationOperationResultTests {
         let stack = root.context(for: .primary)
         #expect(stack.pop() == .noChange(.alreadyAtRoot))
         #expect(stack.push(.detail) == .applied)
-        #expect(root.presentAlert(.notice) == .applied)
+        #expect(root.submitAlert(.notice) == .applied)
         #expect(stack.pop() == .rejected(.alertInProgress))
         #expect(stack.setRootDestination(.detail) == .rejected(.alertInProgress))
         #expect(stack.path == [.detail])
@@ -34,6 +34,7 @@ struct NavigationOperationResultTests {
 
         let other = Router(rootDestination: .home)
         other.presentSheet(.detail)
+        other.frontmostPresentationNode?.lifetime.claimHost()
         let modal = try other.context(for: #require(other.presentedNode))
         #expect(other.dismissSheet() == .applied)
         #expect(modal.pop() == .rejected(.inactiveContext))
@@ -44,6 +45,7 @@ struct NavigationOperationResultTests {
         let stack = router.rootPresentation.context(for: .primary)
         #expect(stack.setPath(stack.path) == .applied)
         router.presentSheet(.detail)
+        router.frontmostPresentationNode?.lifetime.claimHost()
         #expect(router.submit(.replacePath([], on: .primary), confirmIfPresented: true) == .awaitingConfirmation)
         #expect(stack.setPath(stack.path) == .rejected(.awaitingConfirmation))
         #expect(stack.push(.home) == .rejected(.awaitingConfirmation))
@@ -97,6 +99,7 @@ struct NavigationOperationResultTests {
     @Test func staleConfirmationResultsDoNotResolveTheReplacementRequest() throws {
         let router = Router(rootDestination: .home)
         router.presentSheet(.detail)
+        router.frontmostPresentationNode?.lifetime.claimHost()
         #expect(router.submit(.push(.detail, on: .primary), confirmIfPresented: true) == .awaitingConfirmation)
         let first = try #require(router.pendingConfirmation)
         #expect(router.submit(.push(.home, on: .primary), confirmIfPresented: true) == .awaitingConfirmation)
@@ -111,13 +114,16 @@ struct NavigationOperationResultTests {
         #expect(router.cancelConfirmation(id: replacement.id) == .noChange(.staleConfirmation))
     }
 
-    @Test func rootDismissalReportsNoChangeAndAlertDeferral() {
+    @Test func rootDismissalReportsNoChangeAndAlertDeferral() throws {
         let router = Router(rootDestination: .home)
         #expect(router.dismissSheet() == .noChange(.notPresented))
         #expect(router.dismissFullScreen() == .noChange(.notPresented))
         #expect(router.dismissAllPresentations() == .noChange(.notPresented))
         #expect(router.dismissPresentation(id: NavigationPresentationID()) == .noChange(.presentationNotFound))
-        #expect(router.presentAlert(.notice) == .applied)
+        #expect(router.submitAlert(.notice) == .applied)
+        let alert = try #require(router.rootPresentation.presentedAlert)
+        let session = try #require(router.rootPresentation.claimAlertSession(id: .business(alert.id)))
+        #expect(router.rootPresentation.layer?.alertSession === session)
         #expect(router.dismissAllPresentations() == .queued)
         #expect(router.rootPresentation.presentedAlert?.destination == .notice)
     }

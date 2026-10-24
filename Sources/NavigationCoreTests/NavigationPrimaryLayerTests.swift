@@ -23,7 +23,9 @@ struct NavigationPrimaryLayerTests {
         let paths: [NavigationStackID<Tab>: [Route]] = [initialStack: [.home], .scope(.home): [.detail]]
         let invalid: NavigationPresentationRequest<Tab, Route, NoNavigationAlert> = fullScreen
             ? .fullScreen(.tabs, initialStack: initialStack) : .sheet(.tabs, initialStack: initialStack)
-        #expect(router.rootPresentation.present(invalid) == .rejected(.missingRootDestination))
+        #expect(router.rootPresentation
+            .submitPresentation(invalid, lifetime: NavigationPresentationLifetime()) ==
+            .rejected(.missingRootDestination))
         #expect(router.presentedNode == nil)
         #expect(router.rootLayer.roots == [.primary: .home])
         #expect(router.rootLayer.paths == [.primary: [.detail]])
@@ -31,8 +33,10 @@ struct NavigationPrimaryLayerTests {
             ? .fullScreen(.tabs, initialStack: initialStack, rootDestinations: roots, paths: paths)
             : .sheet(.tabs, initialStack: initialStack, rootDestinations: roots, paths: paths)
 
-        #expect(router.rootPresentation.present(request) == .applied)
+        #expect(router.rootPresentation
+            .submitPresentation(request, lifetime: NavigationPresentationLifetime()) == .applied)
         let node = try #require(router.presentedNode)
+        node.lifetime.claimHost()
         #expect(node.style == (fullScreen ? .fullScreen : .sheet))
         #expect(node.destination == .tabs)
         #expect(node.layer.selectedStack == initialStack)
@@ -44,8 +48,9 @@ struct NavigationPrimaryLayerTests {
     @Test(arguments: [false, true], [false, true])
     func routerConveniencesPreserveContainerStacksInTheFrontmostLayer(fullScreen: Bool, namedStack: Bool) throws {
         let router = Router(rootDestination: .home, paths: [.primary: [.detail]])
-        #expect(router.rootPresentation.present(.detail) == .applied)
+        #expect(router.rootPresentation.submitPresentation(.detail) == .applied)
         let parent = try #require(router.sheet)
+        parent.lifetime.claimHost()
         let initialStack: NavigationStackID<Tab> = namedStack ? .scope(.history) : .primary
         let roots: [NavigationStackID<Tab>: Route] = [initialStack: .detail, .scope(.home): .home]
         let paths: [NavigationStackID<Tab>: [Route]] = [initialStack: [.home], .scope(.home): [.detail]]
@@ -64,6 +69,7 @@ struct NavigationPrimaryLayerTests {
 
         #expect(accepted == .applied)
         let node = try #require(parent.presentation)
+        node.lifetime.claimHost()
         #expect(router.sheet === parent)
         #expect(node.style == (fullScreen ? .fullScreen : .sheet))
         #expect(node.destination == .tabs)
@@ -144,11 +150,13 @@ struct NavigationPrimaryLayerTests {
     @Test func primaryDeepLinkCancellationAndApprovalWaitForTheRootDismissal() throws {
         let router = Router(rootDestination: .home, paths: [.primary: [.detail]])
         let root = router.rootPresentation.context(for: .primary)
-        #expect(router.rootPresentation.present(.detail, paths: [.primary: [.home]]) == .applied)
+        #expect(router.rootPresentation.submitPresentation(.detail, paths: [.primary: [.home]]) == .applied)
         let parent = try #require(router.sheet)
+        parent.lifetime.claimHost()
         let modal = router.presentationContext(for: parent)
-        #expect(modal.present(.home, style: .fullScreen) == .applied)
+        #expect(modal.submitPresentation(.home, style: .fullScreen) == .applied)
         let child = try router.presentationContext(for: #require(parent.fullScreen))
+        parent.fullScreen?.lifetime.claimHost()
         #expect(router.submit(.push(.tabs, on: .primary), confirmIfPresented: true) == .awaitingConfirmation)
         let cancelled = try #require(child.confirmation)
         #expect(root.setPath([.tabs]) == .rejected(.awaitingConfirmation))
@@ -188,8 +196,9 @@ struct NavigationPrimaryLayerTests {
     @Test func replacingRootThroughEachContextClearsOnlyItsPath() throws {
         let router = Router(rootDestination: .home, paths: [.primary: [.detail]])
         let root = router.rootPresentation.context(for: .primary)
-        #expect(router.rootPresentation.present(.detail, paths: [.primary: [.home]]) == .applied)
+        #expect(router.rootPresentation.submitPresentation(.detail, paths: [.primary: [.home]]) == .applied)
         let node = try #require(router.sheet)
+        node.lifetime.claimHost()
         let modal = router.presentationContext(for: node)
         let modalStack = modal.context(for: .primary)
         #expect(root.setRootDestination(.detail) == .applied)

@@ -40,6 +40,10 @@ jobs:
           # The release zip may add a top-level directory, so resolve the binary dynamically.
           XCODEGEN_PATH="$(find "$XCODEGEN_TEMP_DIR" -type f -path '*/bin/xcodegen' -print -quit)"
           install -m 0755 "$XCODEGEN_PATH" "$RUNNER_TEMP/bin/xcodegen"
+          # XcodeGen 从可执行文件旁的 share 目录读取平台、Debug 和测试预设。
+          XCODEGEN_PREFIX="$(dirname "$(dirname "$XCODEGEN_PATH")")"
+          mkdir -p "$RUNNER_TEMP/share/xcodegen"
+          cp -R "$XCODEGEN_PREFIX/share/xcodegen/SettingPresets" "$RUNNER_TEMP/share/xcodegen/"
 
           curl -fsSL -o /tmp/swiftformat.zip "https://github.com/nicklockwood/SwiftFormat/releases/download/${SWIFTFORMAT_VERSION}/swiftformat.zip"
           unzip -qo /tmp/swiftformat.zip -d /tmp/swiftformat
@@ -90,6 +94,10 @@ jobs:
           # The release zip may add a top-level directory, so resolve the binary dynamically.
           XCODEGEN_PATH="$(find "$XCODEGEN_TEMP_DIR" -type f -path '*/bin/xcodegen' -print -quit)"
           install -m 0755 "$XCODEGEN_PATH" "$RUNNER_TEMP/bin/xcodegen"
+          # XcodeGen 从可执行文件旁的 share 目录读取平台、Debug 和测试预设。
+          XCODEGEN_PREFIX="$(dirname "$(dirname "$XCODEGEN_PATH")")"
+          mkdir -p "$RUNNER_TEMP/share/xcodegen"
+          cp -R "$XCODEGEN_PREFIX/share/xcodegen/SettingPresets" "$RUNNER_TEMP/share/xcodegen/"
           echo "$RUNNER_TEMP/bin" >> "$GITHUB_PATH"
 
       - name: Run tests

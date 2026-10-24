@@ -31,40 +31,42 @@ struct NavigationAlertSessionTests {
         )
         router.presentSheet(.first)
         let context = try router.presentationContext(for: #require(router.sheet))
+        router.sheet?.lifetime.claimHost()
         let id: NavigationSystemAlertID
         if isConfirmation {
             router.submit(.push(.second, on: .history), confirmIfPresented: true)
             id = try .confirmation(#require(context.confirmation).id)
         } else {
-            context.presentAlert(.first)
+            context.submitAlert(.first)
             id = try .business(#require(context.presentedAlert).id)
         }
-        #expect(context.alertWillPresent(id: id))
+        let session = try #require(context.claimAlertSession(id: id))
         #expect(context.layer?.alertSession?.state == .presented)
         #expect(context.layer?.alertSession?.id == id)
-        #expect(!context.alertWillPresent(id: id))
-        #expect(!context.beginAlertCompletion(id: id))
-        context.alertDidDismiss(id: id)
+        #expect(context.layer?.alertSession === session)
+        #expect(context.claimAlertSession(id: id) == nil)
+        #expect(!session.beginCompletion())
+        context.completeAlertSession(session)
         #expect(context.layer?.alertSession?.state == .presented)
 
         context.alertWillDismiss(id: id)
         context.alertWillDismiss(id: id)
-        context.alertDidDismiss(id: id)
+        context.completeAlertSession(session)
         #expect(context.layer?.alertSession?.state == .dismissing)
         #expect(router.hasActiveAlert)
         #expect(context.presentedAlert == nil)
         #expect(router.path(for: .history).isEmpty)
 
-        #expect(context.beginAlertCompletion(id: id))
+        #expect(session.beginCompletion())
         context.alertWillDismiss(id: id)
         #expect(context.layer?.alertSession?.state == .handlingCompletion)
-        #expect(!context.beginAlertCompletion(id: id))
+        #expect(!session.beginCompletion())
         if case let .confirmation(confirmationID) = id { context.cancelNavigation(id: confirmationID) }
-        context.alertDidDismiss(id: id)
+        context.completeAlertSession(session)
         #expect(context.layer?.alertSession == nil)
         #expect(!router.hasActiveAlert)
-        context.alertDidDismiss(id: id)
-        #expect(!context.beginAlertCompletion(id: id))
+        context.completeAlertSession(session)
+        #expect(!session.beginCompletion())
         #expect(router.path(for: .history).isEmpty)
     }
 
@@ -76,13 +78,13 @@ struct NavigationAlertSessionTests {
             rootDestinations: [.home: .first, .history: .second]
         )
         let context = router.rootPresentation
-        let id = try beginAlert(context)
-        context.presentAlert(.second)
+        let (id, session) = try beginAlert(context)
+        context.submitAlert(.second)
         router.submit(.push(.second, on: .history))
-        advance(context, id: id, to: state)
+        advance(context, session: session, to: state)
         let wrongID = NavigationAlertID()
 
-        #expect(!context.alertWillPresent(id: .business(wrongID)))
+        #expect(context.claimAlertSession(id: .business(wrongID)) == nil)
         context.alertWillDismiss(id: .business(wrongID))
         #expect(!context.beginAlertCompletion(id: .business(wrongID)))
         context.alertDidDismiss(id: .business(wrongID))
@@ -98,7 +100,7 @@ struct NavigationAlertSessionTests {
     }
 
     @Test(arguments: [State.presented, .dismissing, .handlingCompletion])
-    func matchingRawValueFromConfirmationCannotChangeBusinessSession(state: State) {
+    func matchingRawValueFromConfirmationCannotChangeBusinessSession(state: State) throws {
         let router = Router(
             rootDestination: .root,
             selectedScope: .home,
@@ -109,13 +111,13 @@ struct NavigationAlertSessionTests {
         let alertID = NavigationAlertID(rawValue: rawValue)
         let wrongSource = NavigationSystemAlertID.confirmation(NavigationConfirmationID(rawValue: rawValue))
         router.rootLayer.presentedContent = .alert(NavigationAlertNode(id: alertID, destination: .first))
-        #expect(!context.alertWillPresent(id: wrongSource))
-        #expect(context.alertWillPresent(id: .business(alertID)))
-        #expect(context.presentAlert(.second) == .queued)
+        #expect(context.claimAlertSession(id: wrongSource) == nil)
+        let session = try #require(context.claimAlertSession(id: .business(alertID)))
+        #expect(context.submitAlert(.second) == .queued)
         #expect(router.submit(.push(.second, on: .history)) == .deferredUntilAlertDismisses)
-        advance(context, id: alertID, to: state)
+        advance(context, session: session, to: state)
 
-        #expect(!context.alertWillPresent(id: wrongSource))
+        #expect(context.claimAlertSession(id: wrongSource) == nil)
         context.alertWillDismiss(id: wrongSource)
         #expect(!context.beginAlertCompletion(id: wrongSource))
         context.alertDidDismiss(id: wrongSource)
@@ -137,19 +139,19 @@ struct NavigationAlertSessionTests {
             rootDestinations: [.home: .first, .history: .second]
         )
         let context = router.rootPresentation
-        let first = try beginAlert(context)
-        context.presentAlert(.second)
+        let (first, firstSession) = try beginAlert(context)
+        context.submitAlert(.second)
         router.submit(.push(.second, on: .history))
-        advance(context, id: first, to: .handlingCompletion)
-        context.alertDidDismiss(id: .business(first))
+        advance(context, session: firstSession, to: .handlingCompletion)
+        context.completeAlertSession(firstSession)
         let second = try #require(context.presentedAlert).id
-        #expect(context.alertWillPresent(id: .business(second)))
-        advance(context, id: second, to: state)
+        let secondSession = try #require(context.claimAlertSession(id: .business(second)))
+        advance(context, session: secondSession, to: state)
 
-        #expect(!context.alertWillPresent(id: .business(first)))
+        #expect(context.claimAlertSession(id: .business(first)) == nil)
         context.alertWillDismiss(id: .business(first))
-        #expect(!context.beginAlertCompletion(id: .business(first)))
-        context.alertDidDismiss(id: .business(first))
+        #expect(!firstSession.beginCompletion())
+        context.completeAlertSession(firstSession)
 
         #expect(context.layer?.alertSession?.id == .business(second))
         #expect(context.layer?.alertSession?.state == state)
@@ -167,43 +169,45 @@ struct NavigationAlertSessionTests {
         )
         router.presentSheet(.first)
         let oldPage = try #require(router.sheet)
+        oldPage.lifetime.claimHost()
         let oldContext = router.presentationContext(for: oldPage)
         oldContext.dismiss()
         router.rootPresentation.presentationDidDismiss()
         router.rootLayer.presentation = NavigationPresentationNode(id: oldPage.id, destination: .first)
         let newPage = try #require(router.sheet)
+        newPage.lifetime.claimHost()
         let context = router.presentationContext(for: newPage)
         #expect(newPage.id == oldPage.id)
         #expect(!oldContext.isActive)
-        let id = try beginAlert(context)
+        let (id, session) = try beginAlert(context)
 
         // 即使传入新提示的真实 ID，旧 Context 也不能连接同 ID 的新层。
-        #expect(!oldContext.alertWillPresent(id: .business(id)))
+        #expect(oldContext.claimAlertSession(id: .business(id)) == nil)
         oldContext.alertWillDismiss(id: .business(id))
         #expect(!oldContext.beginAlertCompletion(id: .business(id)))
         oldContext.alertDidDismiss(id: .business(id))
         #expect(context.layer?.alertSession?.state == .presented)
         #expect(context.presentedAlert?.id == id)
 
-        advance(context, id: id, to: .handlingCompletion)
+        advance(context, session: session, to: .handlingCompletion)
         oldContext.alertDidDismiss(id: .business(id))
         #expect(context.layer?.alertSession?.state == .handlingCompletion)
-        context.alertDidDismiss(id: .business(id))
+        context.completeAlertSession(session)
         #expect(!router.hasActiveAlert)
     }
 
-    private func beginAlert(_ context: Presentation) throws -> NavigationAlertID {
-        #expect(context.presentAlert(.first) == .applied)
+    private func beginAlert(_ context: Presentation) throws -> (NavigationAlertID, NavigationAlertSession) {
+        #expect(context.submitAlert(.first) == .applied)
         let id = try #require(context.presentedAlert).id
-        #expect(context.alertWillPresent(id: .business(id)))
-        return id
+        let session = try #require(context.claimAlertSession(id: .business(id)))
+        return (id, session)
     }
 
-    private func advance(_ context: Presentation, id: NavigationAlertID, to state: State) {
+    private func advance(_ context: Presentation, session: NavigationAlertSession, to state: State) {
         guard state != .presented else { return }
-        context.alertWillDismiss(id: .business(id))
+        context.alertWillDismiss(id: session.id)
         if state == .handlingCompletion {
-            #expect(context.beginAlertCompletion(id: .business(id)))
+            #expect(session.beginCompletion())
         }
     }
 }

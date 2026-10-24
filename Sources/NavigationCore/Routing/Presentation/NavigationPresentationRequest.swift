@@ -1,6 +1,6 @@
 // swiftformat:disable modifierOrder
 
-/// 用强类型数据描述一次页面模态或业务 alert 的呈现请求；只有页面模态需要配置导航栈。
+/// 用强类型数据描述一次 presentation request，可选择 sheet、fullScreen 或 alert；只有前两者需要配置导航栈。
 nonisolated public enum NavigationPresentationRequest<
     Scope: NavigationScope,
     Destination: NavigationDestination,
@@ -21,18 +21,33 @@ nonisolated public enum NavigationPresentationRequest<
     case alert(AlertRoute)
 }
 
-public extension NavigationPresentationContext {
-    /// 根据数据请求呈现页面或业务提示。已有 alert 时返回 queued，applied 也不代表显示动画完成。
+extension NavigationPresentationContext {
+    /// 根据 presentation request 打开页面或业务 alert；已有 alert 时返回 queued，applied 也不代表显示动画完成。
     @discardableResult
-    func present(
-        _ request: NavigationPresentationRequest<Scope, Destination, AlertRoute>
+    func submitPresentation(
+        _ request: NavigationPresentationRequest<Scope, Destination, AlertRoute>,
+        lifetime: NavigationPresentationLifetime
     ) -> NavigationPresentationResult {
         switch request {
         case let .sheet(destination, stack, roots, paths):
-            present(destination, style: .sheet, initialStack: stack, rootDestinations: roots, paths: paths)
+            submitPresentation(
+                destination,
+                style: .sheet,
+                initialStack: stack,
+                rootDestinations: roots,
+                paths: paths,
+                lifetime: lifetime
+            )
         case let .fullScreen(destination, stack, roots, paths):
-            present(destination, style: .fullScreen, initialStack: stack, rootDestinations: roots, paths: paths)
-        case let .alert(destination): presentAlert(destination)
+            submitPresentation(
+                destination,
+                style: .fullScreen,
+                initialStack: stack,
+                rootDestinations: roots,
+                paths: paths,
+                lifetime: lifetime
+            )
+        case let .alert(destination): submitAlert(destination, lifetime: lifetime)
         }
     }
 }

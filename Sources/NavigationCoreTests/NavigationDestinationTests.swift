@@ -31,8 +31,9 @@ struct NavigationDestinationTests {
         #expect(root.selectedStack == .primary)
         #expect(rootStack.rootDestination == .home)
         #expect(rootStack.path == [.detail])
-        #expect(root.present(.home, style: style, paths: [.primary: [.detail]]) == .applied)
+        #expect(root.submitPresentation(.home, style: style, paths: [.primary: [.detail]]) == .applied)
         let node = try #require(router.presentedNode)
+        node.lifetime.claimHost()
         let modal = router.presentationContext(for: node)
         let modalStack = modal.context(for: .primary)
         #expect(node.layer.selectedStack == router.rootLayer.selectedStack)
@@ -73,23 +74,25 @@ struct NavigationDestinationTests {
         let root = router.rootPresentation
         let home = root.context(for: .scope(.home))
         let history = root.context(for: .scope(.history))
-        #expect(root.present(
+        #expect(root.submitPresentation(
             .tabs, initialStack: .scope(.home), rootDestinations: tabRoots,
             paths: [.scope(.history): [.detail]]
         ) == .applied)
         let node = try #require(root.presentedNode)
+        node.lifetime.claimHost()
         let modal = router.presentationContext(for: node)
         let modalHome = modal.context(for: .scope(.home))
         let modalHistory = modal.context(for: .scope(.history))
         #expect(modalHome !== home)
         #expect(modalHome.push(.detail) == .applied)
-        #expect(modal.scoped(to: .scope(.history)).present(.home) == .rejected(.sourceStackNotSelected))
+        #expect(modal.scoped(to: .scope(.history)).submitPresentation(.home) == .rejected(.sourceStackNotSelected))
         modal.selectedStack = .scope(.history)
         #expect(modalHistory.push(.tabs) == .applied)
-        #expect(modal.scoped(to: .scope(.history)).present(
+        #expect(modal.scoped(to: .scope(.history)).submitPresentation(
             .tabs, style: .fullScreen, initialStack: .scope(.home), rootDestinations: tabRoots
         ) == .applied)
         let childNode = try #require(modal.presentedNode)
+        childNode.lifetime.claimHost()
         let child = router.presentationContext(for: childNode)
         #expect(child.context(for: .scope(.home)).push(.home) == .applied)
         #expect(child.selectedStack == .scope(.home))
@@ -124,7 +127,7 @@ struct NavigationDestinationTests {
         #expect(stack.rootDestination == route)
         #expect(stack.push(route) == .applied)
         #expect(stack.path == [route])
-        #expect(router.rootPresentation.present(route, rootDestinations: roots) == .applied)
+        #expect(router.rootPresentation.submitPresentation(route, rootDestinations: roots) == .applied)
         #expect(router.presentedNode?.destination == route)
     }
 
@@ -158,21 +161,24 @@ struct NavigationDestinationTests {
     @Test func repeatedDestinationAndReusedIDNeverReviveOldContexts() throws {
         let router = makeRouter()
         #expect(router.rootPresentation
-            .present(.tabs, initialStack: .scope(.home), rootDestinations: tabRoots) == .applied)
+            .submitPresentation(.tabs, initialStack: .scope(.home), rootDestinations: tabRoots) == .applied)
         let first = try #require(router.presentedNode)
+        first.lifetime.claimHost()
         let old = router.presentationContext(for: first)
         let stack = old.context(for: .scope(.home))
         let oldScoped = old.scoped(to: .scope(.home))
         #expect(stack.push(.detail) == .applied)
         #expect(old.dismiss() == .applied)
         #expect(old.route == .presentation(id: first.id, destination: .tabs))
-        #expect(stack.rootDestination == nil)
+        #expect(stack.rootDestination == .home)
+        #expect(stack.path == [.detail])
         #expect(stack.setPath([.home]) == .rejected(.inactiveContext))
         #expect(first.layer.paths[.scope(.home)] == [.detail])
         router.rootPresentation.presentationDidDismiss()
         #expect(router.rootPresentation
-            .present(.tabs, initialStack: .scope(.home), rootDestinations: tabRoots) == .applied)
+            .submitPresentation(.tabs, initialStack: .scope(.home), rootDestinations: tabRoots) == .applied)
         let second = try #require(router.presentedNode)
+        second.lifetime.claimHost()
         #expect(second.id != first.id)
         #expect(router.presentationContext(for: second).dismiss() == .applied)
         router.rootPresentation.presentationDidDismiss()
@@ -185,13 +191,13 @@ struct NavigationDestinationTests {
         #expect(replacement.id == first.id)
         #expect(!old.isActive)
         #expect(old.destination == .tabs)
-        #expect(oldScoped.present(.detail) == .rejected(.inactiveContext))
+        #expect(oldScoped.submitPresentation(.detail) == .rejected(.inactiveContext))
         #expect(stack.setPath([.home]) == .rejected(.inactiveContext))
         #expect(stack.push(.detail) == .rejected(.inactiveContext))
         #expect(old.context(for: .scope(.history)).push(.detail) == .rejected(.inactiveContext))
-        #expect(old.scoped(to: .scope(.history)).present(.detail) == .rejected(.inactiveContext))
+        #expect(old.scoped(to: .scope(.history)).submitPresentation(.detail) == .rejected(.inactiveContext))
         #expect(current.context(for: .scope(.home)).path == [.detail])
         #expect(current.context(for: .scope(.home)).push(.home) == .applied)
-        #expect(current.present(.detail) == .applied)
+        #expect(current.submitPresentation(.detail) == .applied)
     }
 }

@@ -6,8 +6,8 @@
     /// 下载演示的展示状态；呈现树由共享 Router 保存。
     @MainActor
     @Observable
-    final class FullStoreDownloadPreviewState: Identifiable {
-        let id = DownloadPreviewSessionID()
+    final class FullStoreDownloadPreviewState {
+        let id = UUID()
         var stage = Stage.preparing
         var textSize = DynamicTypeSize.large
 

@@ -6,16 +6,16 @@ import SwiftUI
 
 /// 显示可选农历年列表，由所在 NavigationStack 提供导航容器。
 struct CalendarYearPickerView: View {
-    @Environment(CalendarSelection.self) private var selection
-    @Environment(\.modelContext) private var modelContext
     @Query(sort: \ChineseLunarYear.lunarYearNumber) private var years: [ChineseLunarYear]
 
+    let selectedYearNumber: Int?
     let selectYear: (Int) -> Void
 
     @State private var hasResolvedInitialScrollTarget = false
     @State private var isListReady = false
 
-    init(selectYear: @escaping (Int) -> Void) {
+    init(selectedYearNumber: Int? = nil, selectYear: @escaping (Int) -> Void) {
+        self.selectedYearNumber = selectedYearNumber
         self.selectYear = selectYear
     }
 
@@ -48,11 +48,6 @@ struct CalendarYearPickerView: View {
 
     private var availableYearNumbers: [Int] {
         years.map(\.lunarYearNumber)
-    }
-
-    private var selectedYearNumber: Int? {
-        try? CalendarSelectionResolver(modelContext: modelContext)
-            .yearNumber(forDayIndex: selection.selectedDayIndex)
     }
 
     static func initialScrollTarget(
@@ -170,8 +165,9 @@ private struct CalendarYearPickerPreviewContent: View {
     @Environment(\.modelContext) private var modelContext
 
     var body: some View {
-        CalendarYearPickerView { yearNumber in
-            let resolver = CalendarSelectionResolver(modelContext: modelContext)
+        let resolver = CalendarSelectionResolver(modelContext: modelContext)
+        let selectedYear = try? resolver.yearNumber(forDayIndex: selection.selectedDayIndex)
+        CalendarYearPickerView(selectedYearNumber: selectedYear) { yearNumber in
             selection.select(dayIndex: try? resolver.selectedDayIndex(
                 for: .year(number: yearNumber),
                 todayJulianDayNumber: today.julianDayNumber

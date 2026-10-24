@@ -4,6 +4,28 @@
 
 下面按需要改动的接口组织，目标都是当前 API。历史任务记录解释当时的决策和验证范围，其中的中间方案可能已经被后续设计替代。
 
+## 迁移到发起方所有权与原生关闭回调
+
+当前接入以 [2026-10-24 简化方案](../../Docs/Tasks/issue-165-presentation-ownership/002-native-dismissal.md) 为准，替代按次配置和所有终止情况都通知的中间方案。
+
+| 旧接法 | 当前接法 |
+| --- | --- |
+| `present(request, configuration:onDismiss:)` | `present(request, onDismiss:)`，页面参数直接放入路由 |
+| 按 sessionID 查表或创建按次配置 | 路由关联值携带 Binding、ModelContext 或业务 state；根 builder 直接解包 |
+| 可变状态参与路由比较 | 创建时固定 ID 用于参数路由的相等比较和哈希；普通值路由仍比较完整关联值 |
+| 所有取消／销毁都保证 onDismiss | 页面仅转发 SwiftUI onDismiss；主动取消同步清理发起方状态 |
+| 持有内部节点、ID 或查询树 | 保存返回的 handle，使用 dismiss() 定点取消／关闭；内部状态保持不可访问 |
+
+根部仅安装一次 `navigationHost(context:configuration:)`。独立窗口与 Preview 可以各自配置；当前树的根、栈根、push、嵌套模态全部继承根配置。
+
+`present` 返回 NavigationPresentationSubmission，以 result.isAccepted 判断接受；接受仅表示写入状态或排队。未呈现取消不需要等待系统回调。handle 弱引用 Router 和请求，旧 Context 不保留路由参数。释放 handle 本身不取消请求。
+
+CalendarYearFeature 通过年份 Binding 回传结果，校验本次 ID、一次消费和 store generation。来源取消或 store 变化时撤销结果资格并清理自己的 active 状态；路由为退出动画保留具体数据。下载演示的父子页面通过关联值共享 state。业务 alert 保留原生关闭后的异步动作及串行导航协调。
+
+NavigationPresentationEndpoint、NavigationPresentationRenderRecord、NavigationModalMount 和模态 UIKit 生命周期探针已删除。App 不建立集中字典、弱寻址表、节点扫描器或全局清理回调。节点、队列、内部身份、有效性查询和手动系统完成通知继续只在 Core 内使用。
+
+App 集成测试通过普通 import、根配置与真实系统宿主验证；只记录稳定 ID，不能用带 Binding 的路由作为长期测试字典 key 而保活业务资源。纯结构测试仍在 Core 内部；实际手势与布局验收单独记录。
+
 ## 每类业务 alert 使用自己的 Action
 
 移除 `NavigationAlertRoute.Action`。路由继续是 Hashable 数据，每类提示可定义独立的 `Action: Hashable`；相同选项的通知也可以共用一个 Action。不要将所有子 Action 包装到另一个大枚举。
@@ -19,28 +41,17 @@ func alert(
 
 在每个 route 分支中，通过 `NavigationAlertDefinition(content:onAction:)` 将 `NavigationAlertContent<具体Action>` 与接收相同 Action 的异步 handler 配对。泛型初始化完成后才擦除具体类型，按钮去重和 Action 捕获已在同一类型下完成。将其他 Action 的按钮或 handler 传入会编译失败。完整双 Action 示例见 [README](README.md#业务-alert)。
 
-业务函数按 Action 拆分，不再接收大统一 Action 或用 route guard 过滤不可能的组合。需要清理消息时捕获该路由的 messageID；需要操作本层时使用配置方法传入的 presentation，不能固定使用根 Context。definition 只存在于配置／展示层，不能写入 Router、节点或排队状态。
+业务函数按 Action 拆分，不再接收大统一 Action 或用 route guard 过滤不可能的组合。提示内容由 route 的结构化值直接构建；需要操作本层时使用配置方法传入的 presentation，不能固定使用根 Context。definition 只存在于配置／展示层，不能写入 Router、节点或排队状态。
 
 `NoNavigationAlert` 仍可作为不使用业务提示的 route，默认配置返回 nil。普通／取消按钮的构造和去重不变，框架确认仍独立。真实关闭后才调用 handler；异步完成前继续占用会话，重复／过期／失效回调不会再次执行业务。方案与证据见 [Issue #164](../../Docs/Tasks/issue-164-typed-alert-actions/000-plan.md)。
 
-## 将 UUID 迁移为对应领域的身份
+## Core 内部继续保留强类型身份
 
-直接修改保存身份的属性、字典键、集合、路由关联值和方法参数，不提供旧 UUID overload 或公开 raw-value 转换接口。
+#166 将模态、确认和业务提示身份分别改为 `NavigationPresentationID`、`NavigationConfirmationID`、`NavigationAlertID`，系统适配器用不同 case 保留来源。#165 保留这种内部隔离，同时收回节点和身份查询；业务不再从节点取 ID 或直接批准／取消内部确认。
 
-| 原用途 | 当前类型 |
-| --- | --- |
-| `NavigationPresentationNode.id`、`NavigationLayerID.presentation`、模态查找和关闭 | `NavigationPresentationID` |
-| `NavigationConfirmation.id`、批准／取消导航确认 | `NavigationConfirmationID` |
-| `NavigationAlertNode.id` | `NavigationAlertID` |
-| App 年份选择会话 | `YearPickerSessionID` |
-| App DEBUG 下载演示会话 | `DownloadPreviewSessionID` |
-| App 提示临时文案 | `CalendarAlertMessageID` |
+旧 YearPickerSessionID、DownloadPreviewSessionID、CalendarAlertMessageID 和 CalendarPresentationSessionID 的集中查表用途已移除。携带 Binding 或业务引用的临时路由仍需在创建时生成稳定 ID，用于相等比较与哈希；这个 ID 不用于查找业务字典。普通 DEBUG Destination 的 UUID 保留其页面身份用途。
 
-Core 身份以 `NavigationPresentationID()` 等无参数初始化生成。更常见的做法是直接传递节点的 `id` 或 `pendingConfirmation.id`，不要把一个领域的 ID 当作另一个领域的凭证。App 的三种身份留在业务模块，不属于 NavigationCore 的 API。
-
-系统 alert 适配器的内部身份改为 `NavigationSystemAlertID`：业务为 `.business(node.id)`，框架确认为 `.confirmation(confirmation.id)`。`alertWillPresent` 不再接收 `isConfirmation`；present、willDismiss、beginCompletion 和 didDismiss 贯穿同一个带来源的身份。重复／过期／错误来源回调继续幂等。
-
-App 汇总登记从 `Set<UUID>` 迁移为 `Set<CalendarPresentationSessionID>`，分别包装 `.yearPicker`、`.downloadPreview` 和 `.alertMessage`。普通 DEBUG Destination 的 UUID 不属于这些会话身份，不需要机械替换。请求内容去重、结果枚举、日志与真实关闭时序保持不变。实现及编译失败验证见 [Issue #166](../../Docs/Tasks/issue-166-typed-navigation-ids/000-plan.md)。
+内部强类型迁移的历史依据见 [Issue #166](../../Docs/Tasks/issue-166-typed-navigation-ids/000-plan.md)；当前外部 API 按本文第一节迁移。
 
 ## 将命令的 Bool／Void 返回值迁移为结果枚举
 
@@ -49,15 +60,15 @@ App 汇总登记从 `Set<UUID>` 迁移为 `Set<CalendarPresentationSessionID>`�
 | 原调用合同 | 当前合同与调用方式 |
 | --- | --- |
 | 栈修改返回 Bool，部分 Router 修改方法返回 Void | 返回 `NavigationMutationResult`：`.applied`、`.noChange(reason)`、`.rejected(reason)`；原 `if navigation.push(...)` 改为 `if navigation.push(...).isApplied` |
-| `present`、`presentAlert`、`dismiss` 等返回 Bool | 返回 `NavigationPresentationResult`：`.applied`、`.queued`、`.noChange(reason)`、`.rejected(reason)`；仅判断是否接受请求时使用 `.isAccepted` |
+| `present`、`presentAlert` 返回 Bool／呈现结果 | 返回 `NavigationPresentationSubmission`；使用 `.result.isAccepted` 判断接受，保存 `.handle` 定点取消／关闭 |
+| `dismiss` 返回 Bool | 返回 `NavigationPresentationResult`：`.applied`、`.queued`、`.noChange(reason)`、`.rejected(reason)`；判断接受使用 `.isAccepted` |
 | `NavigationRequestResult.rejected` 没有原因 | 改为 `.rejected(NavigationRejectionReason)`，匹配时读取关联原因 |
-| `confirmNavigation(id:)` 返回 Void | 返回 `NavigationRequestResult`，过期确认返回 `.noChange(.staleConfirmation)`，批准后仍可能等待关闭 |
-| `cancelNavigation(id:)`／`cancelConfirmation(id:)` 返回 Void | 返回 `NavigationMutationResult`，成功取消为 `.applied`，过期确认为 `.noChange(.staleConfirmation)` |
+| 业务直接批准／取消内部确认 ID | 移除业务调用，由统一宿主处理；业务通过 `confirmationContent(for:)` 提供文案 |
 | 通过属性赋值，无法读取拒绝结果 | setter 转调对应命令；Binding 接法不变，需要结果时调用 `setPath`、`setSelectedStack` 等方法 |
 
 `isApplied` 只接受 `.applied`，适用于成功修改导航数据后再同步业务状态。`isAccepted` 包括 `.applied` 和 `.queued`，适用于判断呈现／关闭请求是否被接受；不要用它作为完成通知。`.applied` 不代表界面动画结束，`.queued` 可能在所属层失效后丢弃，不保证最终执行。
 
-正常无操作有独立原因：栈底 pop 为 `.noChange(.alreadyAtRoot)`，根层 dismiss 为 `.noChange(.notPresented)`，不存在的指定模态为 `.noChange(.presentationNotFound)`。不要把所有 `isApplied == false` 或 `isAccepted == false` 都当成失败。重复写入同一合法 path 或选中栈仍为 `.applied`，保留 App 先校验访问权限、再同步布局的用法。
+正常无操作有独立原因：栈底 pop 为 `.noChange(.alreadyAtRoot)`，根层 dismiss 为 `.noChange(.notPresented)`，已结束的 handle 再次关闭为 `.noChange(.notPresented)`。不要把所有 `isApplied == false` 或 `isAccepted == false` 都当成失败。重复写入同一合法 path 或选中栈仍为 `.applied`，保留 App 先校验访问权限、再同步布局的用法。
 
 例如，原先以 Bool 结果保护业务选择的代码应改为：
 
@@ -75,11 +86,11 @@ selectedCategory = category
 - 根 `rootContext` 改为 `rootPresentation`，类型为 `NavigationPresentationContext<Scope, Destination, AlertRoute>`。
 - `NavigationContext<Scope, Destination>` 只负责本栈的根、path、push、pop。页面另外从环境读取 `NavigationPresentationContext` 来 present／dismiss，不能通过 navigation 转取 presentation。
 - Router 和呈现相关类型增加 `AlertRoute` 泛型。业务提示遵循 `NavigationAlertRoute`，在配置边界为各类内容绑定独立 Action 与 handler；不使用业务提示时采用 `NoNavigationAlert`。
-- `dismiss()` 关闭当前所在的模态及后代；根层调用返回 `.noChange(.notPresented)`。父层关闭指定子模态使用 `dismissPresented(id:)`，栈内返回使用 `pop()`。
+- `dismiss()` 关闭当前所在的模态及后代；根层调用返回 `.noChange(.notPresented)`。来源关闭本次请求使用保存的 handle，栈内返回使用 `pop()`。
 
 栈宿主默认注入记录发起栈的 `NavigationPresentationContext`。同层多个实例共享状态，不能依靠对象是否相同判断是否属于同一层。Tab 公共控件使用层级入口；同时可交互的分栏可显式使用 `unscoped()` 或 `restrictsPresentationToSelectedStack: false`。
 
-`presentation.route`／`destination` 现在是非可选值，失效后仍能读取最后入口。移除以路由 nil 判断 Context 有效性的代码，改用 `isActive` 和操作返回值。同 ID 的新层也不能让旧 Context 重新有效；层 ID 与入口 Destination 也不是同一个概念。
+`presentation.route`／`destination` 和 `isActive` 已收回库内。业务不通过路由 nil 或有效性查询判断生命周期；是否允许修改看操作返回值，资源结束使用单次 `onDismiss`。同 ID 的新层不会使旧 Context 重新有效。
 
 三类 Context 缓存统一由每个 Router 独立持有的内部 `NavigationContextStore` 管理；公开的 `context(for:)`、`rootPresentation`、`scoped(to:)` 和 `unscoped()` 接法不变。模态从树中移除时入口立即失效，真实 dismiss 完成后统一清理缓存。Context 与访问闭包继续弱引用原运行时状态。
 
@@ -89,15 +100,15 @@ selectedCategory = category
 | --- | --- |
 | `navigationPresentations(context:destinationContent:)` | 根部一次 `navigationHost(context:configuration:)` |
 | 每个 `NavigationScopeView` 传 `destinationContent` | 从所在导航树继承配置，使用 `NavigationScopeView(stack:presentation:)` |
-| `NavigationPresentationNodeView` 单独传页面 builder | 只传 node 与 context，并位于同一配置环境中 |
+| 业务自行创建 `NavigationPresentationNodeView` | 删除业务接入；节点递归宿主为 Core 内部实现 |
 | 根、push 与模态分别使用 builder | `NavigationHostConfiguration.destination(for:)` 统一构建 |
 | `NavigationConfiguredDestination` 转调 builder | 宿主直接调用配置，不增加包装 View |
 
 递归呈现宿主由 Core 创建，业务 Tab 或多 Tab 模态不重复挂 `navigationHost`。独立导航树和独立 Preview 各自提供根配置。
 
-原模态 builder 中用于全 App 的数据注入应移到根呈现宿主外。发起页面自己的 selection、ModelContext、回调仍按会话传递，不能用根页面固定上下文替代。
+原模态 builder 中用于全 App 的数据注入应移到根呈现宿主外。发起页面自己的 selection、ModelContext、回调仍通过路由参数传递，不能用根页面固定上下文替代。
 
-配置协议的 `presentationDidDismiss()` 已移除；删除实现及手动转调。Core 宿主仍自动处理实际关闭与全局导航。业务会话改为观察 `router.retainedPresentationRoutes`，根据具体 destination 的会话 ID 清理；投影包含排队和正在关闭的节点，不能用仅包含活动页面的 `presentations` 替代。栈缓存用 `router.retains(context)` 判断是否仍由本树保留。稳定的业务宿主还应观察会话 ID 登记与 `alertRoutes`，覆盖尚未显示就被丢弃的队列。日历 App 已在 `CalendarNavigationSessionCleanup` 接入，无需逐页配置关闭回调。
+配置协议的 `presentationDidDismiss()` 已移除；删除实现及手动转调。当前资源回收使用提交处的 `onDismiss`，配置只负责页面和提示构建。先前过渡方案中的保留路由投影和集中扫描清理也已删除，详见[发起方所有权迁移](#迁移到发起方所有权与原生关闭回调)。
 
 ## 容器声明改由 Destination 提供
 
@@ -119,12 +130,12 @@ App 的主 Tab 入口由 `.root` 改名为 `.mainTabs`。页面读取当前层�
 - Scope 从 `Hashable` 约束改为显式遵循 `NavigationScope`。给已有类型增加协议遵循即可；协议继承 `Hashable`，不要求 `CaseIterable` 或 `Codable`。
 - 新接入使用 `NavigationStackID<Scope>`：默认栈为 `.primary`，命名栈为 `.scope(scope)`。旧代码若以 `Never` 作为 Scope，应改用显式遵循 `NavigationScope` 的业务类型；只有默认栈时可定义无成员的 `enum AppScope: NavigationScope {}`，需要命名栈时再增加成员。
 - Router 初始化增加整个根层的 `rootDestination`。统一初始化器与 `present` 均使用 `initialStack`、以 StackID 为 key 的 `rootDestinations` 和 `paths`；基于 Scope 的根 Tab 便利入口仍存在。
-- `NavigationPresentationRequest.sheet`／`.fullScreen` 与 Router 的 `presentSheet`／`presentFullScreen` 同样接受 `initialStack`、`rootDestinations` 和 `paths`。容器入口必须通过这些参数声明根；普通页面可继续省略。匹配请求枚举时，两个页面 case 现在各有四个关联值。Router 两个便利方法当前返回可忽略的 `NavigationPresentationResult`；使用 `.isAccepted` 判断是否接受请求，不能据此判断界面完成。
-- 外部容器为要显示的各栈声明根，至少覆盖初始选中栈及所有带 path 的栈。push、写 path、切栈和获取 Context 都不隐式创建无根栈；需要动态增加根层命名栈时，先通过 Router 的 `setRootDestination` 或 `.setRoot` 请求声明根，再获取 Context。
+- `NavigationPresentationRequest.sheet`／`.fullScreen` 及 Context 的 `present` 接受 `initialStack`、`rootDestinations` 和 `paths`。容器入口必须通过这些参数声明根；普通页面可继续省略。匹配请求枚举时，两个页面 case 各有四个关联值。原 Router 的 `presentSheet`／`presentFullScreen` 不再公开，页面改用来源 Context。
+- 外部容器为要显示的各栈声明根，至少覆盖初始选中栈及所有带 path 的栈。push、写 path、切栈和获取 Context 都不隐式创建无根栈；需要动态增加根层命名栈时，先通过 Router 的 `.setRoot` 请求声明根，再获取 Context。
 - 栈根必须是非可选 Destination。`setRootDestination`／`.setRoot` 不接受 nil；SplitView 的空详情使用明确的空态路由。换根同时清空 path，同一对象重复选择时由 App 保留原根和 path。
 - `NavigationContext.rootDestination` 仍是可选查询，nil 表示未声明或已失效的 Context。Preview 的 root closure 只覆盖显示内容，不能绕过根声明。
 
-Router 的 `selectedScope` 现在是 `Scope?`：`.primary` 对应 nil，写 nil 不改变选择。TabView 绑定完整的 `presentation.selectedStack`，不要用某个默认 Tab 填补 nil。Router 的 `paths`／`rootDestinations` 属性只投影根层命名栈；操作 primary 或模态内部栈使用该层 Context。
+TabView 绑定完整的 `presentation.selectedStack`，保留 `.primary` 与命名栈的区别。Router 的 `selectedScope`、`paths`／`rootDestinations` 等汇总投影不再公开；查询和操作根层或模态的具体栈都通过该层 Context。
 
 ## 移除完整导航树快照与恢复调用
 
@@ -146,9 +157,9 @@ Router 的 `selectedScope` 现在是 `Scope?`：`.primary` 对应 nil，写 nil 
 
 相同普通 Action 采用最后内容，保留首次位置；取消按钮独立于普通集合。显示顺序与点击动作映射使用同一份结果。
 
-业务 alert 关闭后，框架等待异步按钮动作与排队呈现结束，再继续外部请求。按钮“确定”不自动批准外部导航；提交时的确认要求仍然保留。自定义宿主必须按真实关闭回调推进流程，不能把状态清空或固定延时当作关闭完成。
+业务 alert 关闭后，框架等待异步按钮动作与排队呈现结束，再继续外部请求。按钮“确定”不自动批准外部导航；提交时的确认要求仍然保留。实际关闭由 Core 宿主推进，业务不能把状态清空或固定延时当作关闭完成。
 
-Router 的 `deferredRequest`、`pendingConfirmation`、`requestWaitingForAlert` 是统一协调状态的只读投影。已批准请求和新待确认请求可以并存，取消后者不撤销前者。业务层不再另存一套关闭窗口、延迟请求或 presentation 树。
+Router 的 `deferredRequest`、`pendingConfirmation`、`requestWaitingForAlert` 是内部协调状态，业务不再读取这些投影。已批准请求和新待确认请求可以并存，取消后者不撤销前者。业务层不再另存一套关闭窗口、延迟请求或 presentation 树。
 
 ## 设计与验证记录
 
@@ -156,6 +167,7 @@ Router 的 `deferredRequest`、`pendingConfirmation`、`requestWaitingForAlert` 
 
 | 主题 | 记录 |
 | --- | --- |
+| 发起方所有权与 API 收敛 | [#165 方案](../../Docs/Tasks/issue-165-presentation-ownership/000-plan.md)、[结果记录](../../Docs/Tasks/issue-165-presentation-ownership/001-result.md)，最终验收以结果证据为准 |
 | 强类型操作结果与诊断 | [2026-10-22 方案](../../Docs/Tasks/task-2026-10-22-navigation-results/000-plan.md)，迁移旧 Bool／Void 命令合同 |
 | 初始统一导航与作用域 | [#145 计划](../../Docs/Tasks/issue-145-unified-navigation/000-plan.md)、[独立环境 API](../../Docs/Tasks/issue-145-unified-navigation/009-separate-context-apis.md) |
 | 业务 alert 与请求协调 | [统一提示](../../Docs/Tasks/issue-145-unified-navigation/011-unified-alerts.md)、[协调状态](../../Docs/Tasks/issue-145-unified-navigation/015-coordination-state.md) |

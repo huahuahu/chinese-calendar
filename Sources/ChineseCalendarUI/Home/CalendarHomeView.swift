@@ -26,7 +26,7 @@ public struct CalendarHomeView<BottomStatusBar: View>: View {
                 coordinator: coordinator,
                 storeCoordinator: settingsCoordinator,
                 handlesExternalNavigation: true,
-                bottomStatusBarIsPresented: bottomStatusBarIsPresented, bottomStatusBar: bottomStatusBar
+                bottomStatusBarIsPresented: { bottomStatusBarIsPresented }, bottomStatusBar: bottomStatusBar
             )
     }
 }
