@@ -28,7 +28,6 @@ struct DynastyFactCard: View {
         } label: {
             cardLabel
         }
-        .calendarPresentationMenu(destination: model.destination)
         .buttonStyle(
             HistoryPressButtonStyle(
                 cornerRadius: Constants.cardCornerRadius
