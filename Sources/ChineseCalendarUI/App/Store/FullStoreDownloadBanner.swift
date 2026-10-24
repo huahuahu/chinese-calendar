@@ -27,3 +27,17 @@ struct FullStoreDownloadBanner: View {
         static let verticalPadding: CGFloat = 10
     }
 }
+
+#Preview("下载提示", traits: .sizeThatFitsLayout) {
+    FullStoreDownloadBanner(action: {})
+}
+
+#Preview("下载提示 · 深色", traits: .sizeThatFitsLayout) {
+    FullStoreDownloadBanner(action: {})
+        .preferredColorScheme(.dark)
+}
+
+#Preview("下载提示 · 最大辅助字号", traits: .sizeThatFitsLayout) {
+    FullStoreDownloadBanner(action: {})
+        .dynamicTypeSize(.accessibility5)
+}

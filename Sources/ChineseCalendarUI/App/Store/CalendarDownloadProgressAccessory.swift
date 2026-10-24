@@ -13,3 +13,23 @@ struct CalendarDownloadProgressAccessory: View {
         }
     }
 }
+
+#if DEBUG
+    #Preview("下载附件 · 下载一半") {
+        CalendarDownloadProgressAccessoryPreview(progress: .downloading(progress: 0.5))
+    }
+
+    #Preview("下载附件 · 准备中") {
+        CalendarDownloadProgressAccessoryPreview(progress: .preparingManifest)
+    }
+
+    #Preview("下载附件 · 完成 · 深色") {
+        CalendarDownloadProgressAccessoryPreview(progress: .completed)
+            .preferredColorScheme(.dark)
+    }
+
+    #Preview("下载附件 · 最大辅助字号") {
+        CalendarDownloadProgressAccessoryPreview(progress: .downloading(progress: 1))
+            .dynamicTypeSize(.accessibility5)
+    }
+#endif

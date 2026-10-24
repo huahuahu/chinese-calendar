@@ -113,3 +113,37 @@ struct FullStoreDownloadBottomProgressView: View {
         }
     }
 }
+
+#Preview("准备下载", traits: .sizeThatFitsLayout) {
+    FullStoreDownloadBottomProgressView(progress: .preparingManifest, showDetails: {})
+}
+
+#Preview("下载 0%", traits: .sizeThatFitsLayout) {
+    FullStoreDownloadBottomProgressView(progress: .downloading(progress: 0), showDetails: {})
+}
+
+#Preview("下载 50%", traits: .sizeThatFitsLayout) {
+    FullStoreDownloadBottomProgressView(progress: .downloading(progress: 0.5), showDetails: {})
+}
+
+#Preview("下载 100%", traits: .sizeThatFitsLayout) {
+    FullStoreDownloadBottomProgressView(progress: .downloading(progress: 1), showDetails: {})
+}
+
+#Preview("验证数据", traits: .sizeThatFitsLayout) {
+    FullStoreDownloadBottomProgressView(progress: .validating, showDetails: {})
+}
+
+#Preview("安装数据", traits: .sizeThatFitsLayout) {
+    FullStoreDownloadBottomProgressView(progress: .installing, showDetails: {})
+}
+
+#Preview("全部完成 · 深色", traits: .sizeThatFitsLayout) {
+    FullStoreDownloadBottomProgressView(progress: .completed, showDetails: {})
+        .preferredColorScheme(.dark)
+}
+
+#Preview("下载 100% · 最大辅助字号", traits: .sizeThatFitsLayout) {
+    FullStoreDownloadBottomProgressView(progress: .downloading(progress: 1), showDetails: {})
+        .dynamicTypeSize(.accessibility5)
+}

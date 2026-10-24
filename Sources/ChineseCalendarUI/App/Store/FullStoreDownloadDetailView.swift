@@ -36,6 +36,12 @@ struct FullStoreDownloadDetailView: View {
     }
 }
 
+#Preview("文件开始下载") {
+    NavigationStack {
+        FullStoreDownloadDetailView(progress: .downloading(progress: 0))
+    }
+}
+
 #Preview("文件下载一半") {
     NavigationStack {
         FullStoreDownloadDetailView(progress: .downloading(progress: 0.5))
@@ -46,6 +52,18 @@ struct FullStoreDownloadDetailView: View {
     NavigationStack {
         FullStoreDownloadDetailView(progress: .downloading(progress: 0.5))
             .dynamicTypeSize(.accessibility5)
+    }
+}
+
+#Preview("文件下载完成") {
+    NavigationStack {
+        FullStoreDownloadDetailView(progress: .downloading(progress: 1))
+    }
+}
+
+#Preview("验证数据") {
+    NavigationStack {
+        FullStoreDownloadDetailView(progress: .validating)
     }
 }
 
