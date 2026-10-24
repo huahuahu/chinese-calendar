@@ -3,6 +3,7 @@ import NavigationCore
 import SwiftData
 import SwiftUI
 
+@MainActor
 enum CalendarDestination: NavigationDestination, Identifiable {
     case mainTabs
     case calendarHome
@@ -149,7 +150,7 @@ enum CalendarDestination: NavigationDestination, Identifiable {
         }
     }
 
-    var providesNavigationContainer: Bool {
+    nonisolated var providesNavigationContainer: Bool {
         if case .mainTabs = self { return true }
         if case .historyHome = self { return true }
         #if DEBUG
