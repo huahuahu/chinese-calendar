@@ -1,0 +1,53 @@
+{
+  "date": "2026-10-24",
+  "commit": "8c8453bd",
+  "baseCommit": "dc76f6b5a531ff93fa90a23e7598c1440b318de0",
+  "reason": "Revalidated after rebasing onto main, including PR #175.",
+  "snapshotCount": 23,
+  "baselineStatus": "No baseline changes after rebase; all original recorded SHA-256 values match.",
+  "counts": {
+    "expectedFailures": 0,
+    "failed": 0,
+    "notRun": 0,
+    "passed": 4,
+    "skipped": 0,
+    "total": 4
+  },
+  "fullConsoleLogsPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/RunAllTests/test-console-log-2026-10-24T20-02-54+08-00.txt",
+  "fullSummaryPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/RunAllTests/4DAFD023-FDA1-4502-8537-09309E8BCA27.txt",
+  "results": [
+    {
+      "displayName": "testPhonePages()",
+      "errorMessages": [],
+      "identifier": "CalendarSnapshotTests/testPhonePages()",
+      "state": "Passed",
+      "targetName": "ChineseCalendarSnapshotTests"
+    },
+    {
+      "displayName": "testTabletPages()",
+      "errorMessages": [],
+      "identifier": "CalendarSnapshotTests/testTabletPages()",
+      "state": "Passed",
+      "targetName": "ChineseCalendarSnapshotTests"
+    },
+    {
+      "displayName": "testDarkPages()",
+      "errorMessages": [],
+      "identifier": "CalendarSnapshotTests/testDarkPages()",
+      "state": "Passed",
+      "targetName": "ChineseCalendarSnapshotTests"
+    },
+    {
+      "displayName": "testAccessibilityCalendar()",
+      "errorMessages": [],
+      "identifier": "CalendarSnapshotTests/testAccessibilityCalendar()",
+      "state": "Passed",
+      "targetName": "ChineseCalendarSnapshotTests"
+    }
+  ],
+  "schemeName": "ChineseCalendarSnapshots",
+  "summary": "4 tests: 4 passed, 0 failed, 0 skipped, 0 expected failures, 0 not run",
+  "totalResults": 4,
+  "truncated": false,
+  "xcresultBundlePath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/RunAllTests/Test-ChineseCalendarSnapshots-2026.10.24_20-02-54-+0800.xcresult"
+}

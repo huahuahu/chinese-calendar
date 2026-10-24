@@ -2917,30 +2917,6 @@
         }
       }
     },
-    "navigation.openFullScreen": {
-      "comment": "历史资料入口的上下文菜单，以全屏模态流程浏览资料。",
-      "extractionState": "manual",
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "全屏打开"
-          }
-        }
-      }
-    },
-    "navigation.openSheet": {
-      "comment": "历史资料入口的上下文菜单，使用独立模态流程浏览资料。",
-      "extractionState": "manual",
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "在弹窗中打开"
-          }
-        }
-      }
-    },
     "navigation.stayAction": {
       "comment": "取消外部导航并保留当前页面的按钮。",
       "extractionState": "manual",

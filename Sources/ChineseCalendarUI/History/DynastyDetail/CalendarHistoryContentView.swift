@@ -19,21 +19,18 @@ struct CalendarHistoryContentView: View {
             List(selection: $selection) {
                 sectionRow(
                     .emperors, title: CalendarStringKey.History.EmperorList.title,
-                    value: String(dynasty.emperors.count), symbol: .personCropCircle,
-                    destination: .emperorList(dynastyID: dynasty.id)
+                    value: String(dynasty.emperors.count), symbol: .personCropCircle
                 )
                 sectionRow(
                     .reignEras, title: CalendarStringKey.History.ReignEraList.title,
-                    value: String(dynasty.emperors.reduce(0) { $0 + $1.reignEras.count }), symbol: .textBookClosed,
-                    destination: .reignEraList(dynastyID: dynasty.id)
+                    value: String(dynasty.emperors.reduce(0) { $0 + $1.reignEras.count }), symbol: .textBookClosed
                 )
                 sectionRow(
                     .orthodoxSpan, title: CalendarStringKey.History.DynastySpan.title,
                     value: HistoryDateRangeFormatter.orthodoxPeriodRange(
                         start: period.startBoundary?.date, end: period.endBoundary?.date
                     ),
-                    symbol: .timelineSelection,
-                    destination: .dynastySpan(orthodoxPeriodID: period.id)
+                    symbol: .timelineSelection
                 )
             }
             .navigationTitle(dynasty.shortName ?? dynasty.name)
@@ -50,8 +47,7 @@ struct CalendarHistoryContentView: View {
         _ section: CalendarHistorySection,
         title: LocalizedStringResource,
         value: String,
-        symbol: SFSymbol,
-        destination: CalendarDestination
+        symbol: SFSymbol
     ) -> some View {
         LabeledContent {
             Text(value)
@@ -60,6 +56,5 @@ struct CalendarHistoryContentView: View {
             Label(title, systemSymbol: symbol)
         }
         .tag(section)
-        .calendarPresentationMenu(destination: destination)
     }
 }

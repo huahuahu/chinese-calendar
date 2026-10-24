@@ -96,3 +96,49 @@ struct FullStoreDownloadStepView: View {
         }
     }
 }
+
+#Preview("等待、进行中与已完成", traits: .sizeThatFitsLayout) {
+    VStack(alignment: .leading, spacing: 0) {
+        FullStoreDownloadStepView(
+            phase: .preparingManifest,
+            status: .completed,
+            detail: nil,
+            downloadFraction: nil
+        )
+        FullStoreDownloadStepView(
+            phase: .downloading,
+            status: .current,
+            detail: FullStoreDownloadProgress.downloading(progress: 0.5).detail,
+            downloadFraction: 0.5
+        )
+        FullStoreDownloadStepView(
+            phase: .validating,
+            status: .pending,
+            detail: nil,
+            downloadFraction: nil
+        )
+        FullStoreDownloadStepView(
+            phase: .installing,
+            status: .pending,
+            detail: nil,
+            downloadFraction: nil
+        )
+        FullStoreDownloadStepView(
+            phase: .completed,
+            status: .pending,
+            detail: nil,
+            downloadFraction: nil
+        )
+    }
+    .padding()
+}
+
+#Preview("最终完成步骤", traits: .sizeThatFitsLayout) {
+    FullStoreDownloadStepView(
+        phase: .completed,
+        status: .completed,
+        detail: FullStoreDownloadProgress.completed.detail,
+        downloadFraction: nil
+    )
+    .padding()
+}
