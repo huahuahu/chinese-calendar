@@ -1,0 +1,28 @@
+2026-10-24，原生 Xcode DeviceInteraction 层级摘录。
+截图与 AX 依次采集，进度在采集期间继续推进；截图为 10%、34%、48%，对应 AX 为 12%、36%、52%。
+
+01-root-idle-hierarchy.txt
+StaticText, {{38.7, 829.0}, {202.3, 24.0}}, label: '可下载完整日期数据', hitPoint: {139.8, 841.0}
+
+04-root-progress-a-hierarchy.txt
+Button, {{21.0, 819.0}, {398.0, 44.0}}, label: '第 2/5 步 · 下载文件', value: 文件已下载 12%。, hitPoint: {220.0, 841.0}
+StaticText, {{73.0, 825.0}, {173.0, 24.0}}, label: '第 2/5 步 · 下载文件', hitPoint: {159.5, 837.0}
+StaticText, {{344.0, 830.8}, {36.0, 20.3}}, label: '12%', hitPoint: {362.0, 841.0}
+ProgressIndicator, {{73.0, 853.0}, {263.0, 4.0}}, value: 12%, hitPoint: {204.5, 855.0}
+ProgressIndicator, {{73.0, 843.0}, {263.0, 24.0}}, value: 12%, hitPoint: {204.5, 855.0}
+
+05-root-progress-b-hierarchy.txt
+Button, {{21.0, 819.0}, {398.0, 44.0}}, label: '第 2/5 步 · 下载文件', value: 文件已下载 36%。, hitPoint: {220.0, 841.0}
+StaticText, {{73.0, 825.0}, {173.0, 24.0}}, label: '第 2/5 步 · 下载文件', hitPoint: {159.5, 837.0}
+StaticText, {{344.0, 830.8}, {36.0, 20.3}}, label: '36%', hitPoint: {362.0, 841.0}
+ProgressIndicator, {{73.0, 853.0}, {263.0, 4.0}}, value: 36%, hitPoint: {204.5, 855.0}
+ProgressIndicator, {{73.0, 843.0}, {263.0, 24.0}}, value: 36%, hitPoint: {204.5, 855.0}
+
+06-root-detail-open-hierarchy.txt
+StaticText, {{18.3, 236.3}, {405.7, 90.3}}, label: '下载文件、文件已下载 52%。', value: 进行中, hitPoint: {221.2, 281.5}
+StaticText, {{60.3, 269.7}, {147.7, 23.0}}, label: '文件已下载 52%。', hitPoint: {134.2, 281.2}
+
+07-root-completed-hierarchy.txt
+StaticText, {{38.0, 352.0}, {247.0, 25.3}}, label: '正在使用内置基础数据', hitPoint: {161.5, 364.7}
+StaticText, {{38.7, 829.0}, {202.3, 24.0}}, label: '可下载完整日期数据', hitPoint: {139.8, 841.0}
+Button, {{280.3, 877.0}, {134.7, 54.0}}, label: '设置', Selected, hitPoint: {347.7, 904.0}

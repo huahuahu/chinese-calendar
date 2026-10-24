@@ -1,0 +1,171 @@
+{
+  "date": "2026-10-24",
+  "codeState": "基于 baseCommit 的未提交工作区；修改的 Swift 文件按 SHA-256 标识。",
+  "baseCommit": "eaa09912ab77817f688f5e5dde1ba3f00133d599",
+  "sources": {
+    "Sources/ChineseCalendarUI/App/ChineseCalendarRootView.swift": "21beb9541a77e92671f0e21e6e74688fe825a159481c9de5bb7fb6fe90832114",
+    "Sources/ChineseCalendarUI/App/Store/FullStoreDownloadBanner.swift": "117b2bb4d19be18c29c7c655b6d10d9c221b1e6ef3b47574322fc74af7456395",
+    "Sources/ChineseCalendarUI/Home/CalendarHomeTabView.swift": "4c03b4282f354baf0cb25aadecbe1eb8114601252cfd3ad2fb24ccfbaa8de5d4",
+    "Sources/ChineseCalendarUI/Home/CalendarHomeView.swift": "c747e47f4bea373f9383e51fc7497d238a66a097070573165f9ed7374ac995f7",
+    "Sources/ChineseCalendarUI/Home/Navigation/CalendarDestinationView.swift": "04b8e3c9952d6c83349bea339141536f9671f7033424bd642f3134763c4baee2",
+    "Sources/ChineseCalendarUI/Home/Navigation/CalendarNavigationConfiguration.swift": "b445953813fd853f7f67d2eb50f93bf4e86ca655184dc9477dc1a0faf071addb",
+    "Sources/ChineseCalendarUI/Home/Navigation/CalendarNavigationHost.swift": "b0ee2fbd4a508410c0921b4893793bbcb738a78a0e2ce0287b31c3e405ee07c5",
+    "Sources/ChineseCalendarUI/Tests/CalendarAlertActionTests.swift": "0bb48defbc63e1e9a99d84a13f52fbd38e84cba5f34faf067cbf8ebba495025c",
+    "Sources/ChineseCalendarUI/Tests/CalendarAlertConfigurationTests.swift": "bd8b1a0a554d267d85b6ee96261770fbbec03f465b936b8df55b3467344b4093",
+    "Sources/ChineseCalendarUI/Tests/CalendarDownloadAccessoryTests.swift": "0a63a8c73fe1e8498def61beb645f7c6ae4d2860c0265d35df909862a98f99a4",
+    "Sources/ChineseCalendarUI/Tests/NavigationTestHost.swift": "ceba7e422a2f8152dea2e87f505c2c94a5eaf58808f919c055a4846e6fe9b918"
+  },
+  "context": {
+    "project": "ChineseCalendar.xcodeproj",
+    "scheme": "ChineseCalendar-iOS",
+    "simulatorName": "chinesedate iPhone 18 Pro Max (885f)",
+    "simulatorId": "16A9CAA7-45CE-46D5-8915-F61531FC617C",
+    "runtime": "iOS 27.0"
+  },
+  "build": {
+    "tool": "mcp__xcode__BuildProject",
+    "result": "passed"
+  },
+  "tests": {
+    "tool": "mcp__xcode__RunSomeTests",
+    "counts": {
+      "expectedFailures": 0,
+      "failed": 0,
+      "notRun": 0,
+      "passed": 22,
+      "skipped": 0,
+      "total": 22
+    },
+    "results": [
+      {
+        "identifier": "coordinatorPreventsConcurrentSimulatedAndRealDownloads()",
+        "displayName": "coordinatorPreventsConcurrentSimulatedAndRealDownloads()",
+        "state": "Passed"
+      },
+      {
+        "identifier": "simulatedDownloadObservesCancellation()",
+        "displayName": "simulatedDownloadObservesCancellation()",
+        "state": "Passed"
+      },
+      {
+        "identifier": "simulatedDownloadProducesTheCompleteProgressSequenceWithoutWaiting()",
+        "displayName": "simulatedDownloadProducesTheCompleteProgressSequenceWithoutWaiting()",
+        "state": "Passed"
+      },
+      {
+        "identifier": "CalendarAlertConfigurationTests/errorRoutesCarryTheirOwnRecoveryValue(isDownload:)",
+        "displayName": "false",
+        "state": "Passed"
+      },
+      {
+        "identifier": "CalendarAlertConfigurationTests/buildingClearConfigurationDoesNotStartTheStoreOperation()",
+        "displayName": "buildingClearConfigurationDoesNotStartTheStoreOperation()",
+        "state": "Passed"
+      },
+      {
+        "identifier": "CalendarAlertConfigurationTests/successfulClearAndNoticesHaveConfigurationsWithoutMessageRegistration()",
+        "displayName": "successfulClearAndNoticesHaveConfigurationsWithoutMessageRegistration()",
+        "state": "Passed"
+      },
+      {
+        "identifier": "CalendarAlertActionTests/cancellingClearDoesNotRunTheOperationOrPresentAResult()",
+        "displayName": "cancellingClearDoesNotRunTheOperationOrPresentAResult()",
+        "state": "Passed"
+      },
+      {
+        "identifier": "CalendarAlertActionTests/successfulClearPresentsAResultBeforeTheNextPage()",
+        "displayName": "successfulClearPresentsAResultBeforeTheNextPage()",
+        "state": "Passed"
+      },
+      {
+        "identifier": "CalendarAlertActionTests/failedClearPresentsRecoveryWithoutRetainingTheError()",
+        "displayName": "failedClearPresentsRecoveryWithoutRetainingTheError()",
+        "state": "Passed"
+      },
+      {
+        "identifier": "CalendarAlertActionTests/clearWithoutAStoreDoesNotPresentAResult()",
+        "displayName": "clearWithoutAStoreDoesNotPresentAResult()",
+        "state": "Passed"
+      },
+      {
+        "identifier": "CalendarAlertActionTests/failureAfterTheNavigationOwnerEndsCannotPresentAnotherAlert()",
+        "displayName": "failureAfterTheNavigationOwnerEndsCannotPresentAnotherAlert()",
+        "state": "Passed"
+      },
+      {
+        "identifier": "CalendarAlertActionTests/debugActionsRetainTheirIndependentNavigationBehavior()",
+        "displayName": "debugActionsRetainTheirIndependentNavigationBehavior()",
+        "state": "Passed"
+      },
+      {
+        "identifier": "CalendarStoreEnvironmentTests/replacingTheSameArtifactChangesTheNavigationStoreIdentity()",
+        "displayName": "replacingTheSameArtifactChangesTheNavigationStoreIdentity()",
+        "state": "Passed"
+      },
+      {
+        "identifier": "CalendarStoreEnvironmentTests/rootAndModalShareStoreAndReplacementKeepsPresentationIdentity()",
+        "displayName": "rootAndModalShareStoreAndReplacementKeepsPresentationIdentity()",
+        "state": "Passed"
+      },
+      {
+        "identifier": "CalendarStoreEnvironmentTests/unavailableStorePreservesAnInheritedPreviewEnvironment()",
+        "displayName": "unavailableStorePreservesAnInheritedPreviewEnvironment()",
+        "state": "Passed"
+      },
+      {
+        "identifier": "CalendarDownloadAccessoryTests/modalAccessoryVisibilityPreservesPresentation(style:)",
+        "displayName": ".sheet",
+        "state": "Passed"
+      },
+      {
+        "identifier": "CalendarDownloadAccessoryTests/modalAccessoryVisibilityPreservesPresentation(style:)",
+        "displayName": ".fullScreen",
+        "state": "Passed"
+      },
+      {
+        "identifier": "CalendarPresentationTests/rejectedAndSynchronouslyCancelledDetailsAllowANewRequest()",
+        "displayName": "rejectedAndSynchronouslyCancelledDetailsAllowANewRequest()",
+        "state": "Passed"
+      },
+      {
+        "identifier": "CalendarPresentationTests/disappearingDownloadOnlyClosesItsOwnDetails()",
+        "displayName": "disappearingDownloadOnlyClosesItsOwnDetails()",
+        "state": "Passed"
+      },
+      {
+        "identifier": "CalendarPresentationTests/disappearingProgressCancelsAnUnshownRequest()",
+        "displayName": "disappearingProgressCancelsAnUnshownRequest()",
+        "state": "Passed"
+      },
+      {
+        "identifier": "CalendarPresentationTests/rebuildingDataPagesDoesNotReplayColdLaunchLink()",
+        "displayName": "rebuildingDataPagesDoesNotReplayColdLaunchLink()",
+        "state": "Passed"
+      },
+      {
+        "identifier": "CalendarPresentationTests/previewOwnerReleasesAfterActualFullscreenDismissalAndCanReopen()",
+        "displayName": "previewOwnerReleasesAfterActualFullscreenDismissalAndCanReopen()",
+        "state": "Passed"
+      }
+    ],
+    "scope": "定向 App-hosted 测试；非完整套件。附件测试验证原生显隐及模态身份，不以 store 值代替内容文字断言。"
+  },
+  "checks": {
+    "format": "0/353 files require formatting",
+    "lint": "0 violations in 340 files",
+    "localization": "337 resources verified",
+    "diff": "passed"
+  },
+  "runtime": {
+    "tool": "原生 Xcode DeviceInteraction",
+    "route": "设置 → 调试操作 → 下载调试 → 模拟完整数据下载",
+    "rootTabs": "下载提示 → 进度 10% → 34% → 点击打开详情 48% → 完成后详情自动关闭、设置 Tab 保留并恢复下载提示",
+    "networkDownload": false,
+    "hierarchyEvidence": "runtime-hierarchy.txt"
+  },
+  "limitations": [
+    "App-hosted 进程无法通过公开 accessibilityElements/automationElements 读到附件 AX 值，已删除不可靠的探针。",
+    "模态主标签页内进度文字变化尚未取得交互证据；根主标签页已实际验证。",
+    "未运行完整测试套件、iOS 26.0 兼容分支交互、真机、CI 或专项 review。"
+  ]
+}

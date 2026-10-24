@@ -5,10 +5,9 @@ import SFSafeSymbols
 import SwiftUI
 
 /// 以当前层的独立栈组织日历、历史和设置；根层与任意模态层均可复用。
-struct CalendarHomeTabView<BottomStatusBar: View>: View {
+struct CalendarHomeTabView: View {
     @Environment(CalendarPresentationContext.self) private var presentation
-    let bottomStatusBarIsPresented: Bool
-    let bottomStatusBar: () -> BottomStatusBar
+    @Environment(ChineseCalendarStoreCoordinator.self) private var storeCoordinator: ChineseCalendarStoreCoordinator?
 
     var body: some View {
         @Bindable var presentation = presentation
@@ -38,7 +37,30 @@ struct CalendarHomeTabView<BottomStatusBar: View>: View {
                 Label(CalendarTab.settings.title, systemSymbol: CalendarTab.settings.systemSymbol)
             }
         }
-        .calendarTabViewBottomAccessory(isEnabled: bottomStatusBarIsPresented, content: bottomStatusBar)
+        .calendarTabViewBottomAccessory(isEnabled: isDownloadAccessoryPresented) {
+            downloadAccessory
+        }
         .background(.calendarSystemBackground)
+    }
+
+    private var isDownloadAccessoryPresented: Bool {
+        guard let storeCoordinator, case let .ready(_, contentLevel, _) = storeCoordinator.state else { return false }
+        return storeCoordinator.fullStoreDownloadProgress != nil ||
+            storeCoordinator.canDownloadFullStore(contentLevel: contentLevel)
+    }
+
+    @ViewBuilder
+    private var downloadAccessory: some View {
+        if let storeCoordinator, case let .ready(_, contentLevel, _) = storeCoordinator.state {
+            if let progress = storeCoordinator.fullStoreDownloadProgress {
+                CalendarDownloadProgressAccessory(progress: progress)
+            } else if storeCoordinator.canDownloadFullStore(contentLevel: contentLevel) {
+                FullStoreDownloadBanner(action: startFullStoreDownload)
+            }
+        }
+    }
+
+    private func startFullStoreDownload() {
+        storeCoordinator?.startFullStoreDownload()
     }
 }
