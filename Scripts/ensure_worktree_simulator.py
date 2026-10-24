@@ -24,6 +24,10 @@ except ModuleNotFoundError:
 class WorktreeSimulator:
     CONFIG_PATH = Path(".xcodebuildmcp/config.yaml")
     TEMPLATE_PATH = Path(".xcodebuildmcp/config.example.yaml")
+    # 与截图基准固定为同一机型和系统版本，安装新 runtime 后也不自动升级。
+    DEVICE_TYPE_NAME = "iPhone 18 Pro Max"
+    DEVICE_TYPE_ID = "com.apple.CoreSimulator.SimDeviceType.iPhone-18-Pro-Max"
+    RUNTIME_ID = "com.apple.CoreSimulator.SimRuntime.iOS-27-0"
     UUID_PATTERN = re.compile(r"[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}", re.IGNORECASE)
 
     def __init__(self, root, dry_run=False):
@@ -102,6 +106,10 @@ class WorktreeSimulator:
             runtime["identifier"] == device["runtimeIdentifier"] for runtime in self.runtimes
         )
 
+    def matches_target(self, device):
+        return (device.get("deviceTypeIdentifier") == self.DEVICE_TYPE_ID
+                and device["runtimeIdentifier"] == self.RUNTIME_ID)
+
     def configured_device(self, defaults):
         identifier = defaults.get("simulatorId")
         if identifier:
@@ -111,36 +119,44 @@ class WorktreeSimulator:
                     f"Configured simulator {identifier} is missing or unavailable. "
                     f"Fix {self.CONFIG_PATH}; no device was changed."
                 )
+            if not self.matches_target(device):
+                raise RuntimeError(
+                    f"Configured simulator {identifier} must use {self.DEVICE_TYPE_NAME} / iOS 27.0 "
+                    f"for the snapshot baseline. Fix {self.CONFIG_PATH}; no device was changed."
+                )
             return device
 
         name = defaults.get("simulatorName")
         if not name:
             raise RuntimeError(f"{self.CONFIG_PATH}: set simulatorId or simulatorName.")
-        matches = [item for item in self.devices if self.available(item) and item["name"] == name]
+        matches = [item for item in self.devices
+                   if self.available(item) and self.matches_target(item) and item["name"] == name]
         if len(matches) > 1:
             raise RuntimeError(f"Multiple available simulators named {name!r}; set an explicit simulatorId.")
         return matches[0] if matches else None
 
     def creation_target(self, defaults, device):
         if device:
-            return device["deviceTypeIdentifier"], device["runtimeIdentifier"]
-        device_type = next((item for item in self.types if item["name"] == defaults.get("simulatorName")), None)
-        if device_type is None:
+            return self.DEVICE_TYPE_ID, self.RUNTIME_ID
+        if defaults.get("simulatorName") != self.DEVICE_TYPE_NAME:
             raise RuntimeError(
-                f"No simulator or device type named {defaults.get('simulatorName')!r}. "
-                "Set simulatorName to an installed device type."
+                f"No matching simulator named {defaults.get('simulatorName')!r}. "
+                f"Set simulatorName to {self.DEVICE_TYPE_NAME!r} for the iOS 27.0 snapshot baseline."
             )
+        device_type = next((item for item in self.types if item["identifier"] == self.DEVICE_TYPE_ID), None)
+        if device_type is None:
+            raise RuntimeError(f"Xcode is missing the {self.DEVICE_TYPE_NAME} Simulator device type.")
 
-        # 无 UUID 的模板按设备型号选择支持它的最新可用 iOS runtime。
-        compatible = [
+        runtime = next((
             runtime for runtime in self.runtimes
-            if runtime["identifier"].startswith("com.apple.CoreSimulator.SimRuntime.iOS-")
+            if runtime["identifier"] == self.RUNTIME_ID
             and any(item["identifier"] == device_type["identifier"]
                     for item in runtime.get("supportedDeviceTypes", []))
-        ]
-        if not compatible:
-            raise RuntimeError(f"No available iOS runtime supports {device_type['name']}. Install one in Xcode.")
-        runtime = max(compatible, key=lambda item: tuple(int(part) for part in item["version"].split(".")))
+        ), None)
+        if runtime is None:
+            raise RuntimeError(
+                f"No available iOS 27.0 runtime supports {self.DEVICE_TYPE_NAME}. Install it in Xcode."
+            )
         return device_type["identifier"], runtime["identifier"]
 
     def write_config(self, config, expected_source):

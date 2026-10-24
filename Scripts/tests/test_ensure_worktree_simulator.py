@@ -4,8 +4,8 @@
 import copy
 import json
 import os
-import shlex
 from pathlib import Path
+import shlex
 import subprocess
 import sys
 import tempfile
@@ -22,8 +22,8 @@ ORIGINAL_ID = "AAAAAAAA-1111-2222-3333-444444444444"
 OTHER_ID = "BBBBBBBB-1111-2222-3333-444444444444"
 DEVICE_NAME = "Calendar simulator"
 DEVICE_TYPE = "com.apple.CoreSimulator.SimDeviceType.iPhone-18-Pro-Max"
-RUNTIME = "com.apple.CoreSimulator.SimRuntime.iOS-26-0"
-NEWER_RUNTIME = "com.apple.CoreSimulator.SimRuntime.iOS-27-0"
+RUNTIME = "com.apple.CoreSimulator.SimRuntime.iOS-27-0"
+NEWER_RUNTIME = "com.apple.CoreSimulator.SimRuntime.iOS-27-1"
 SNAPSHOT_RUNTIME = "com.apple.CoreSimulator.SimRuntime.iOS-27-0"
 
 
@@ -79,7 +79,7 @@ with state_path.with_suffix(".lock").open("a") as lock:
 '''
 
 
-# 只接受截图入口需要的命令，意外调用使测试失败。
+# 只接受截图入口需要的三个命令，任何意外调用都使测试失败。
 FAKE_XCODEBUILD = r'''import json
 import os
 from pathlib import Path
@@ -144,7 +144,7 @@ class WorktreeSimulatorTests(unittest.TestCase):
         }
         self.save_state({
             "devices": {RUNTIME: [self.device(ORIGINAL_ID, DEVICE_NAME)]},
-            "runtimes": [self.runtime(RUNTIME, "26.0"), self.runtime(NEWER_RUNTIME, "27.0")],
+            "runtimes": [self.runtime(RUNTIME, "27.0"), self.runtime(NEWER_RUNTIME, "27.1")],
             "devicetypes": [{"identifier": DEVICE_TYPE, "name": "iPhone 18 Pro Max"}],
             "create_attempts": 0,
             "calls": [],
@@ -459,7 +459,7 @@ class WorktreeSimulatorTests(unittest.TestCase):
         path = self.write_config(config=config)
         before = path.read_bytes()
         state = self.state()
-        state["devices"][NEWER_RUNTIME] = [self.device(OTHER_ID, DEVICE_NAME)]
+        state["devices"][RUNTIME].append(self.device(OTHER_ID, DEVICE_NAME))
         self.save_state(state)
         self.run_allocator(success=False)
         self.assertEqual(path.read_bytes(), before)
@@ -475,7 +475,7 @@ class WorktreeSimulatorTests(unittest.TestCase):
         self.assertEqual(path.read_bytes(), before)
         self.assertEqual(self.state()["create_attempts"], 0)
 
-    def test_template_creates_device_using_latest_supported_available_runtime(self):
+    def test_template_creates_pinned_device_even_with_newer_compatible_runtime(self):
         config = copy.deepcopy(self.config)
         config["sessionDefaults"].pop("simulatorId")
         config["sessionDefaults"]["simulatorName"] = "iPhone 18 Pro Max"
@@ -493,8 +493,56 @@ class WorktreeSimulatorTests(unittest.TestCase):
         self.assert_other_settings_unchanged(actual, config)
         self.assertEqual(template.read_bytes(), before)
         self.assertEqual(self.state()["create_attempts"], 1)
-        self.assertEqual(self.state()["devices"][NEWER_RUNTIME][0]["udid"],
-                         actual["sessionDefaults"]["simulatorId"])
+        creates = [call for call in self.state()["calls"] if call[:2] == ["simctl", "create"]]
+        self.assertEqual(creates[0][3:], [DEVICE_TYPE, RUNTIME])
+        self.assertNotIn(NEWER_RUNTIME, self.state()["devices"])
+
+    def test_configured_uuid_with_wrong_runtime_or_device_type_is_rejected(self):
+        path = self.write_config()
+        before = path.read_bytes()
+        original_state = self.state()
+        for mismatch in ("runtime", "device_type"):
+            with self.subTest(mismatch=mismatch):
+                state = copy.deepcopy(original_state)
+                if mismatch == "runtime":
+                    state["devices"][NEWER_RUNTIME] = state["devices"].pop(RUNTIME)
+                else:
+                    state["devices"][RUNTIME][0]["deviceTypeIdentifier"] = (
+                        "com.apple.CoreSimulator.SimDeviceType.iPhone-18-Pro"
+                    )
+                self.save_state(state)
+                result = self.run_allocator(success=False)
+                self.assertIn("iPhone 18 Pro Max / iOS 27.0", result.stderr)
+                self.assertEqual(path.read_bytes(), before)
+                self.assertEqual(self.state()["create_attempts"], 0)
+
+    def test_name_only_selection_ignores_other_runtime_and_device_type(self):
+        config = copy.deepcopy(self.config)
+        config["sessionDefaults"].pop("simulatorId")
+        self.write_config(config=config)
+        state = self.state()
+        state["devices"][NEWER_RUNTIME] = [self.device(OTHER_ID, DEVICE_NAME)]
+        other_type = self.device("DDDDDDDD-1111-2222-3333-444444444444", DEVICE_NAME)
+        other_type["deviceTypeIdentifier"] = "com.apple.CoreSimulator.SimDeviceType.iPhone-18-Pro"
+        state["devices"][RUNTIME].insert(0, other_type)
+        self.save_state(state)
+        self.assert_selected(self.run_allocator(), ORIGINAL_ID)
+        self.assertEqual(self.read_config()["sessionDefaults"]["simulatorId"], ORIGINAL_ID)
+        self.assertEqual(self.state()["create_attempts"], 0)
+
+    def test_missing_pinned_runtime_does_not_fall_back_to_newer_runtime(self):
+        config = copy.deepcopy(self.config)
+        config["sessionDefaults"].pop("simulatorId")
+        config["sessionDefaults"]["simulatorName"] = "iPhone 18 Pro Max"
+        self.write_config(config=config, template=True)
+        state = self.state()
+        state["runtimes"] = [self.runtime(NEWER_RUNTIME, "27.1")]
+        state["devices"] = {NEWER_RUNTIME: [self.device(OTHER_ID, "iPhone 18 Pro Max")]}
+        self.save_state(state)
+        result = self.run_allocator(success=False)
+        self.assertIn("iOS 27.0", result.stderr)
+        self.assertFalse((self.root / CONFIG).exists())
+        self.assertEqual(self.state()["create_attempts"], 0)
 
     def test_template_can_bind_existing_unique_name_without_creation(self):
         config = copy.deepcopy(self.config)

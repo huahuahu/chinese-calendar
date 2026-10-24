@@ -31,12 +31,18 @@ Python 迁移后验证环境为本机 Python 3.14.7 / PyYAML 6.0.3。`python3 Sc
 
 本轮本地操作记录位于已忽略的 `.output/worktree-simulator/python-validation.json` 和 `python-allocation.log`；初版记录仍为 `validation.json` 和 `allocation.log`。机器 UUID 不进入共享配置模板。
 
+## 固定截图模拟器：2026-10-24 补充
+
+- AC-08 已验证：分配器固定为 iPhone 18 Pro Max / iOS 27.0，与现有截图入口一致。显式 UUID 的型号或 runtime 不符时失败；新建和同名选择不随已安装的新版本改变。
+- 针对固定设备约束，执行 `python3 -B Scripts/tests/test_ensure_worktree_simulator.py -v`，29 项隔离测试全部通过，包含新增的版本和型号约束，以及已有截图 shell 入口回归测试。测试使用临时 Git 仓库和 fake Xcode 工具，没有创建真实模拟器或运行真实截图对比。
+- `bash -n Scripts/test_snapshots.sh Scripts/ios_simulator.sh`、Python 3.9 语法解析和 `git diff --check` 通过。该记录为本地验证；用户已确认将本补充纳入 PR #187，远程 CI 需在包含本补充的最新提交上重新通过。
+
 ## 合并前审查与交付
 
 - 关联：[PR #187](https://github.com/huahuahu/chinese-calendar/pull/187)，基于更新后的 `main` 提交 `2633da5af1eab55560acd0fd8b75e6fb27bf1025`。
 - 使用 `review-changes` 的 allocator 和 integration 专项完成审查；确认并修复两项 P2。`integration-001`：截图入口保留分配器返回的 UUID，避免合法带注释/flow YAML 被正则漏读后选错设备。`allocator-001`：fake 工具改用正确引用解释器路径的 shell launcher，支持虚拟环境路径含空格。
 - PR 范围内的 26 项隔离集成测试通过，新增真实 shell 入口回归覆盖截图 UUID、显式覆盖和 CI 设备选择。SwiftFormat 359 个文件中 0 个需修改；严格 SwiftLint 346 个文件、0 违规。
-- 另有并发写入的“固定型号和 runtime”改动保留在本机工作区，未纳入本 PR；本 PR 的分配器继续依据当前配置，在冲突时使用原设备的型号和 runtime。
+- 用户已确认将固定 iPhone 18 Pro Max / iOS 27.0 的改动纳入同一 PR。当前配置继续决定 UUID，分配器同时验证设备必须符合固定型号和系统要求；其他配置字段保留。最终隔离集成测试共 29 项。
 - 本文件记录提交时的本地验证。远程 CI 及合并结果以 PR 最新提交的检查和最终状态为准；不将此前本地验证等同于远程通过。
 
 ## 验证边界
