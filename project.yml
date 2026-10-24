@@ -16,6 +16,9 @@ packages:
   ChineseCalendarPackage:
     path: Sources
     group: Packages
+  SnapshotTesting:
+    url: https://github.com/pointfreeco/swift-snapshot-testing.git
+    exactVersion: 1.19.7
 
 targets:
   ChineseCalendar-iOS:
@@ -117,6 +120,32 @@ targets:
         TEST_HOST: "$(BUILT_PRODUCTS_DIR)/Chinese Calendar.app/Chinese Calendar"
         BUNDLE_LOADER: "$(TEST_HOST)"
 
+  ChineseCalendarSnapshotTests:
+    type: bundle.unit-test
+    supportedDestinations: [iOS]
+    deploymentTarget: "26.0"
+    sources:
+      - path: Tests/Snapshots
+        excludes:
+          - __Snapshots__
+    dependencies:
+      - target: ChineseCalendar-iOS
+      - package: ChineseCalendarPackage
+        product: ChineseCalendarUI
+      - package: SnapshotTesting
+        product: SnapshotTesting
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.tiger.suzhou.ChineseCalendarSnapshotTests
+        GENERATE_INFOPLIST_FILE: YES
+        SWIFT_VERSION: 6.0
+        SWIFT_DEFAULT_ACTOR_ISOLATION: MainActor
+        SWIFT_INCLUDE_PATHS: "$(inherited) $(BUILT_PRODUCTS_DIR)"
+        TARGETED_DEVICE_FAMILY: 1,2
+        TEST_TARGET_NAME: ChineseCalendar-iOS
+        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/Chinese Calendar.app/Chinese Calendar"
+        BUNDLE_LOADER: "$(TEST_HOST)"
+
 schemes:
   ChineseCalendar-iOS:
     build:
@@ -136,3 +165,37 @@ schemes:
       region: CN
       environmentVariables:
         CHINESE_CALENDAR_PERFORMANCE_SIGNPOSTS: "1"
+
+  ChineseCalendarSnapshots:
+    build:
+      targets:
+        ChineseCalendar-iOS: all
+        ChineseCalendarSnapshotTests: [test]
+    test:
+      config: Debug
+      language: zh-Hans
+      region: CN
+      environmentVariables:
+        PACKAGE_RESOURCE_BUNDLE_PATH: "$(BUILT_PRODUCTS_DIR)"
+        TZ: Asia/Shanghai
+        SNAPSHOT_RECORD: "0"
+      targets:
+        - name: ChineseCalendarSnapshotTests
+          parallelizable: false
+
+  ChineseCalendarSnapshots-Record:
+    build:
+      targets:
+        ChineseCalendar-iOS: all
+        ChineseCalendarSnapshotTests: [test]
+    test:
+      config: Debug
+      language: zh-Hans
+      region: CN
+      environmentVariables:
+        PACKAGE_RESOURCE_BUNDLE_PATH: "$(BUILT_PRODUCTS_DIR)"
+        TZ: Asia/Shanghai
+        SNAPSHOT_RECORD: "1"
+      targets:
+        - name: ChineseCalendarSnapshotTests
+          parallelizable: false

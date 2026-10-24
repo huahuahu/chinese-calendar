@@ -1,0 +1,43 @@
+{
+  "counts": {
+    "expectedFailures": 0,
+    "failed": 0,
+    "notRun": 0,
+    "passed": 4,
+    "skipped": 0,
+    "total": 4
+  },
+  "summary": "4 tests: 4 passed, 0 failed, 0 skipped, 0 expected failures, 0 not run",
+  "schemeName": "ChineseCalendarSnapshots",
+  "results": [
+    {
+      "displayName": "testPhonePages()",
+      "errorMessages": [],
+      "identifier": "CalendarSnapshotTests/testPhonePages()",
+      "state": "Passed",
+      "targetName": "ChineseCalendarSnapshotTests"
+    },
+    {
+      "displayName": "testTabletPages()",
+      "errorMessages": [],
+      "identifier": "CalendarSnapshotTests/testTabletPages()",
+      "state": "Passed",
+      "targetName": "ChineseCalendarSnapshotTests"
+    },
+    {
+      "displayName": "testDarkPages()",
+      "errorMessages": [],
+      "identifier": "CalendarSnapshotTests/testDarkPages()",
+      "state": "Passed",
+      "targetName": "ChineseCalendarSnapshotTests"
+    },
+    {
+      "displayName": "testAccessibilityCalendar()",
+      "errorMessages": [],
+      "identifier": "CalendarSnapshotTests/testAccessibilityCalendar()",
+      "state": "Passed",
+      "targetName": "ChineseCalendarSnapshotTests"
+    }
+  ],
+  "xcresultBundlePath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/RunAllTests/Test-ChineseCalendarSnapshots-2026.10.24_18-12-51-+0800.xcresult"
+}

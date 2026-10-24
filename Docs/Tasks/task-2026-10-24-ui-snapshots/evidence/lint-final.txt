@@ -1,0 +1,4 @@
+Linting 'SnapshotAppearance.swift' (342/344)
+Linting 'SnapshotRenderer.swift' (343/344)
+Linting 'ChineseCalendariOSApp.swift' (344/344)
+Done linting! Found 0 violations, 0 serious in 344 files.

@@ -1,0 +1,47 @@
+{
+  "counts": {
+    "expectedFailures": 0,
+    "failed": 2,
+    "notRun": 0,
+    "passed": 2,
+    "skipped": 0,
+    "total": 4
+  },
+  "summary": "4 tests: 2 passed, 2 failed, 0 skipped, 0 expected failures, 0 not run",
+  "schemeName": "ChineseCalendarSnapshots",
+  "results": [
+    {
+      "displayName": "testDarkPages()",
+      "errorMessages": [
+        "ChineseCalendar/Tests/Snapshots/CalendarSnapshotTests.swift:24 CalendarSnapshotTests/testDarkPages(): failed - Snapshot \"dark\" does not match reference.\n\n@−\n\"file:///Users/tigerguo/.codex/worktrees/63ec/Chinese-date/Tests/Snapshots/__Snapshots__/CalendarSnapshotTests/calendar-modern.dark.png\"\n@+\n\"file:///Users/tigerguo/Library/Developer/CoreSimulator/Devices/16A9CAA7-45CE-46D5-8915-F61531FC617C/data/Containers/Data/Application/DEDCEA59-DC5F-4232-9937-A7A63B820121/tmp/CalendarSnapshotTests/calendar-modern.dark.png\"\n\nTo configure output for a custom diff tool, use 'withSnapshotTesting'. For example:\n\n    withSnapshotTesting(diffTool: .ksdiff) {\n      // ...\n    }\n\nThe percentage of pixels that match 0.9770355 is less than required 1.0\nThe lowest perceptual color precision 0.0 is less than required 0.99"
+      ],
+      "identifier": "CalendarSnapshotTests/testDarkPages()",
+      "state": "Failed",
+      "targetName": "ChineseCalendarSnapshotTests"
+    },
+    {
+      "displayName": "testAccessibilityCalendar()",
+      "errorMessages": [
+        "ChineseCalendar/Tests/Snapshots/CalendarSnapshotTests.swift:30 CalendarSnapshotTests/testAccessibilityCalendar(): failed - No reference was found on disk. New snapshot was not recorded because recording is disabled"
+      ],
+      "identifier": "CalendarSnapshotTests/testAccessibilityCalendar()",
+      "state": "Failed",
+      "targetName": "ChineseCalendarSnapshotTests"
+    },
+    {
+      "displayName": "testPhonePages()",
+      "errorMessages": [],
+      "identifier": "CalendarSnapshotTests/testPhonePages()",
+      "state": "Passed",
+      "targetName": "ChineseCalendarSnapshotTests"
+    },
+    {
+      "displayName": "testTabletPages()",
+      "errorMessages": [],
+      "identifier": "CalendarSnapshotTests/testTabletPages()",
+      "state": "Passed",
+      "targetName": "ChineseCalendarSnapshotTests"
+    }
+  ],
+  "xcresultBundlePath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/RunAllTests/Test-ChineseCalendarSnapshots-2026.10.24_18-13-44-+0800.xcresult"
+}
