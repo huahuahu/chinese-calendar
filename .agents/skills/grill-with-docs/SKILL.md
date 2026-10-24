@@ -4,89 +4,39 @@ description: Grilling session that challenges your plan against the existing dom
 license: MIT
 metadata:
   author: Matt Pocock
+  version: "1.1-local"
   source: https://github.com/mattpocock/skills/tree/main/skills/engineering/grill-with-docs
 ---
 
-<what-to-do>
+# Grill with project documentation
 
-Interview me relentlessly about every aspect of this plan until we reach a shared understanding. Walk down each branch of the design tree, resolving dependencies between decisions one-by-one. For each question, provide your recommended answer.
+Stress-test the requested plan against the project's domain language, implementation, and accepted decisions. This local skill combines the upstream [grilling](https://github.com/mattpocock/skills/tree/main/skills/productivity/grilling) and [domain-modeling](https://github.com/mattpocock/skills/tree/main/skills/engineering/domain-modeling) workflows so it can run without an unavailable `Skill` tool or additional installed skills.
 
-Ask the questions one at a time, waiting for feedback on each question before continuing.
+## Read the project before asking
 
-If a question can be answered by exploring the codebase, explore the codebase instead.
+- Resolve paths from the active repository root. Read `AGENTS.md`, `CONTEXT.md`, and relevant documents indexed by `Docs/README.md`.
+- Read `Docs/Tasks/README.md` and existing task records when the plan involves a substantial feature or decision. Preserve their established location and naming; Chinese-date uses `CONTEXT.md` for domain language and `Docs/Tasks/` for task decisions.
+- Find facts in code, tests, documentation, or available tools. Use independent read-only exploration when useful. Distinguish observed behavior from a proposed change; do not ask the user to supply facts you can inspect.
 
-</what-to-do>
+## Work through decisions in rounds
 
-<supporting-info>
+1. Identify the decisions needed for the requested scope and their prerequisites. Focus on choices that affect behavior, boundaries, acceptance, or meaningful trade-offs.
+2. Ask a small numbered round of independent questions whose prerequisites are settled, giving a recommended answer and its consequence for each. If the user prefers one question at a time, follow that preference. Questions that depend on an unanswered decision belong to a later round.
+3. When an async user-input tool is available, use it for questions and continue independent fact-finding while waiting. Otherwise ask in the conversation and wait. A pending answer is not acceptance of a recommendation. Interpret a brief “yes” only when its question or recommendation is unambiguous.
+4. Incorporate answers, update the remaining decisions, and test them against concrete scenarios. Do not repeatedly reopen settled choices without new evidence.
+5. Finish with the agreed decisions, acceptance conditions, unresolved questions, and changed documentation. A request to discuss a plan alone does not authorize implementation; existing explicit implementation authorization does not require another ceremonial approval.
 
-## Domain awareness
+## Refine the domain model when it changes
 
-During codebase exploration, also look for existing documentation:
+- Compare terminology with `CONTEXT.md`. When a phrase conflicts with the glossary, show the conflicting definitions and propose a precise term.
+- Exercise proposed relationships with realistic edge cases: for example, a date spanning historical attribution boundaries or a navigation request arriving during a pending confirmation. Derive relevant scenarios from the actual plan rather than forcing these examples into every discussion.
+- Check claims against callers, data, and tests. Explain whether a mismatch requires correcting the model, changing behavior, or clarifying documentation.
+- Once the user resolves a term, update the existing glossary in place using [CONTEXT-FORMAT.md](CONTEXT-FORMAT.md). Do not rename it to upstream's `GLOSSARY.md` or create a competing glossary.
+- Keep implementation mechanisms, progress, and unresolved hypotheses out of the glossary. Reading established terminology alone does not require changing the domain model.
 
-### File structure
+## Record accepted decisions
 
-Most repos have a single context:
-
-```md
-/
-├── CONTEXT.md
-├── docs/
-│   └── adr/
-│       ├── 0001-event-sourced-orders.md
-│       └── 0002-postgres-for-write-model.md
-└── src/
-```
-
-If a `CONTEXT-MAP.md` exists at the root, the repo has multiple contexts. The map points to where each one lives:
-
-```md
-/
-├── CONTEXT-MAP.md
-├── docs/
-│   └── adr/                          ← system-wide decisions
-├── src/
-│   ├── ordering/
-│   │   ├── CONTEXT.md
-│   │   └── docs/adr/                 ← context-specific decisions
-│   └── billing/
-│       ├── CONTEXT.md
-│       └── docs/adr/
-```
-
-Create files lazily — only when you have something to write. If no `CONTEXT.md` exists, create one when the first term is resolved. If no `docs/adr/` exists, create it when the first ADR is needed.
-
-## During the session
-
-### Challenge against the glossary
-
-When the user uses a term that conflicts with the existing language in `CONTEXT.md`, call it out immediately. "Your glossary defines 'cancellation' as X, but you seem to mean Y — which is it?"
-
-### Sharpen fuzzy language
-
-When the user uses vague or overloaded terms, propose a precise canonical term. "You're saying 'account' — do you mean the Customer or the User? Those are different things."
-
-### Discuss concrete scenarios
-
-When domain relationships are being discussed, stress-test them with specific scenarios. Invent scenarios that probe edge cases and force the user to be precise about the boundaries between concepts.
-
-### Cross-reference with code
-
-When the user states how something works, check whether the code agrees. If you find a contradiction, surface it: "Your code cancels entire Orders, but you just said partial cancellation is possible — which is right?"
-
-### Update CONTEXT.md inline
-
-When a term is resolved, update `CONTEXT.md` right there. Don't batch these up — capture them as they happen. Use the format in [CONTEXT-FORMAT.md](./CONTEXT-FORMAT.md).
-
-`CONTEXT.md` should be totally devoid of implementation details. Do not treat `CONTEXT.md` as a spec, a scratch pad, or a repository for implementation decisions. It is a glossary and nothing else.
-
-### Offer ADRs sparingly
-
-Only offer to create an ADR when all three are true:
-
-1. **Hard to reverse** — the cost of changing your mind later is meaningful
-1. **Surprising without context** — a future reader will wonder "why did they do it this way?"
-1. **The result of a real trade-off** — there were genuine alternatives and you picked one for specific reasons
-
-If any of the three is missing, skip the ADR. Use the format in [ADR-FORMAT.md](./ADR-FORMAT.md).
-
-</supporting-info>
+- Update the relevant existing task record as decisions settle. Follow `Docs/Tasks/README.md` for whether a new record is warranted; small discussions do not automatically need a task folder.
+- Record durable rationale when a choice is costly to reverse, surprising without context, and the result of a real trade-off. Use [ADR-FORMAT.md](ADR-FORMAT.md) within the project's established records instead of starting a parallel `docs/adr/` hierarchy.
+- Clearly distinguish a proposal from an accepted decision. Preserve still-open alternatives and the reason an earlier accepted choice was superseded.
+- Keep documentation in the project's language and provide the changed file paths at the end. Do not turn a planning discussion into unrelated code edits or remote publication.
