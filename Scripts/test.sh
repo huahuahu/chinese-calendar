@@ -5,6 +5,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "${SCRIPT_DIR}/ios_simulator.sh"
 
+python3 "$SCRIPT_DIR/tests/test_ensure_worktree_simulator.py"
 node --test Scripts/BuildChineseCalendarSeedStore/Tests/*.test.mjs
 
 if [[ ! -d "ChineseCalendar.xcodeproj" ]]; then

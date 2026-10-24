@@ -30,14 +30,6 @@ read_build_server_value() {
     plutil -extract "$1" raw -o - "$REPO_ROOT/buildServer.json"
 }
 
-read_xcodebuildmcp_session_default() {
-    if [[ ! -f "$REPO_ROOT/.xcodebuildmcp/config.yaml" ]]; then
-        return 0
-    fi
-
-    awk -v key="$1:" '$1 == key { print $2; exit }' "$REPO_ROOT/.xcodebuildmcp/config.yaml"
-}
-
 hash_text() {
     if command -v md5 >/dev/null 2>&1; then
         printf '%s' "$1" | md5 -q
@@ -83,7 +75,8 @@ if [[ "$BUILD_ROOT" != "$EXPECTED_BUILD_ROOT" ]]; then
 fi
 
 BUILD_DESTINATION="generic/platform=iOS Simulator"
-if SIMULATOR_ID="$(read_xcodebuildmcp_session_default simulatorId)" && [[ -n "$SIMULATOR_ID" ]]; then
+if [[ "${CI:-}" != "true" && "${GITHUB_ACTIONS:-}" != "true" ]]; then
+    SIMULATOR_ID="$(python3 "$REPO_ROOT/Scripts/ensure_worktree_simulator.py" --worktree "$REPO_ROOT")"
     BUILD_DESTINATION="platform=iOS Simulator,id=$SIMULATOR_ID"
 fi
 

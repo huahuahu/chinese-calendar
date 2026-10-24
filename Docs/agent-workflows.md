@@ -6,6 +6,10 @@ Read the relevant section when [AGENTS.md](../AGENTS.md) routes a task here. The
 
 Prefer the native `xcode` MCP whenever it exposes the required operation, including inspection, builds, tests, Preview, diagnostics, and device interaction. Use the third-party `xcodebuildmcp` MCP when that operation is missing, unavailable, or fails. Use direct `xcodebuild` or `xcrun simctl` only when neither MCP can perform the operation, including branch-scoped Simulator lifecycle operations handled by the worktree skills.
 
+Before selecting either MCP's context, run `python3 Scripts/ensure_worktree_simulator.py` using Python 3.9+ with `Scripts/requirements.txt` installed; see the [local environment setup](../Scripts/README.md#worktree-simulator-allocation). It checks the current configuration against other worktrees registered in the same Git repository. If another worktree references the device, it creates an empty Simulator of the same type and runtime, then atomically updates only this worktree's local configuration. It leaves existing devices running and does not boot the new device. Simulator allocation uses `simctl` inside the script because the MCPs do not expose device creation.
+
+`.xcodebuildmcp/config.yaml` is local and Git-ignored. A missing file is initialized from the tracked `.xcodebuildmcp/config.example.yaml`; edit the example for shared preferences, never commit a machine-specific UUID. Use `--dry-run` to inspect the allocation decision without creating a device or changing the configuration. See [the script guide](../Scripts/README.md#worktree-simulator-allocation) for its concurrency and scope boundaries.
+
 Before the first native Xcode build, test, run, Preview, or device operation in a session:
 
 1. Read `sessionDefaults` from `.xcodebuildmcp/config.yaml`. This is shared context for both MCPs; do not assume the native Xcode MCP reads it automatically.
@@ -31,7 +35,7 @@ Do not change global Git configuration for this workaround. Combine the override
 
 Use the `ios-simulator-browser` skill with the available in-app browser tools. The following repository requirements supplement the skill's general instructions.
 
-- Use the Simulator selected from the shared project defaults. Read `sessionDefaults.simulatorId` from `.xcodebuildmcp/config.yaml` when session-default tools are unavailable; do not choose a different booted Simulator by name.
+- Run the allocation check above and use the Simulator selected from the resulting local defaults. Read `sessionDefaults.simulatorId` from `.xcodebuildmcp/config.yaml` when session-default tools are unavailable; do not choose a different booted Simulator by name. If a previously connected MCP or browser points to a different UUID after allocation, reselect/reconnect it before operating the device.
 - `serve-sim` must run without inherited proxy variables. A proxy-launched process can capture the framebuffer while the browser remains at `Connecting...` or reports `control socket connect timeout`. If the package is not cached yet, fetch/cache it in a separate command using the required full proxy environment, then start the actual mirror offline with all proxy variables removed.
 - Start a Simulator-scoped, long-running mirror and keep its terminal alive while the browser uses it. Never use an unscoped `serve-sim --kill`:
 
