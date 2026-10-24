@@ -72,3 +72,21 @@ private final class CalendarStoreContentLifetime {
         if let storeURL { ChineseCalendarModelContainerFactory.collectRetiredSeedStores(for: storeURL) }
     }
 }
+
+#Preview("完整日期数据内容") {
+    let result = Result { try PreviewSampleData.makeModelContainer() }
+
+    switch result {
+    case let .success(container):
+        NavigationStack {
+            EmperorDetailView(emperorID: HistoryPreviewData.emperorID)
+        }
+        .calendarStoreContent(state: .ready(
+            container: container,
+            contentLevel: .full,
+            identityToken: "preview-full-store-content"
+        ))
+    case let .failure(error):
+        Text(verbatim: error.localizedDescription)
+    }
+}
