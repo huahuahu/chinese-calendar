@@ -117,38 +117,18 @@ targets:
         TEST_HOST: "$(BUILT_PRODUCTS_DIR)/Chinese Calendar.app/Chinese Calendar"
         BUNDLE_LOADER: "$(TEST_HOST)"
 
-  CalendarNavigationUIIntegrationTests:
-    type: bundle.ui-testing
-    supportedDestinations: [iOS]
-    deploymentTarget: "26.0"
-    sources:
-      - path: Tests/NavigationUIIntegrationTests
-    dependencies:
-      - target: ChineseCalendar-iOS
-    settings:
-      base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.tiger.suzhou.ChineseCalendar.NavigationUIIntegrationTests
-        GENERATE_INFOPLIST_FILE: YES
-        SWIFT_VERSION: 6.0
-        SWIFT_DEFAULT_ACTOR_ISOLATION: MainActor
-        TARGETED_DEVICE_FAMILY: 1,2
-        TEST_TARGET_NAME: ChineseCalendar-iOS
-
 schemes:
   ChineseCalendar-iOS:
     build:
       targets:
         ChineseCalendar-iOS: all
         ChineseCalendarUITests: [test]
-        CalendarNavigationUIIntegrationTests: [test]
     test:
       config: Debug
       environmentVariables:
         PACKAGE_RESOURCE_BUNDLE_PATH: "$(BUILT_PRODUCTS_DIR)"
       targets:
         - name: ChineseCalendarUITests
-          parallelizable: false
-        - name: CalendarNavigationUIIntegrationTests
           parallelizable: false
     run:
       config: Debug

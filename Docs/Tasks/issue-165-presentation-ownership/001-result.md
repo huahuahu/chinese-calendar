@@ -2,6 +2,8 @@
 
 > 2026-10-24：按次配置、额外模态生命周期探测和通用结束通知已由[简化方案](002-native-dismissal.md)替代。本文保留此前设计或验证的历史，当前结果见[简化结果](003-native-dismissal-result.md)。
 
+> 2026-10-24 后续调整：按维护者要求移除独立 `CalendarNavigationUIIntegrationTests` target 及其两条深链 UI 自动化用例，保留单元测试和 App-hosted 集成测试。下文的 XCUITest 通过记录与计数仅代表当时的验证快照，相关历史 evidence 保留；当前 scheme 不再运行这两条用例。
+
 - 方案：[000-plan.md](000-plan.md)
 - 关联：[Issue #165](https://github.com/huahuahu/chinese-calendar/issues/165)、[PR #170](https://github.com/huahuahu/chinese-calendar/pull/170)
 - 状态：远端评论的两项 P2 已修复，本轮新增 16 个回归实例，完整 scheme 522 条及 App 构建通过；原实现及宿主映射／签名补充各有本地 506 条通过证据；XcodeGen 2.45.3 遗漏 SettingPresets 的 CI 安装问题已在干净副本复现，完整安装修复后直接全量测试也通过 506 条实例。PR #170 尚未合并，远程 CI 状态以 PR 最新提交检查为准；OWN-07／09 的具体覆盖边界见验收表。
@@ -44,7 +46,7 @@
 
 App 两条热 Deep Link 测试已经呈现真实 `UIAlertController`，但通过其辅助功能元素调用 `accessibilityActivate()` 返回失败，日志为 `.actionCannotBeActivated("留在当前页面")`／`.actionCannotBeActivated("关闭并前往")`。该路径不能充当系统按钮被点击的证据，现已删除对应 helper。[CalendarNavigationContextTests](../../../Sources/ChineseCalendarUI/Tests/CalendarNavigationContextTests.swift) 和 [CalendarRouterTests](../../../Sources/ChineseCalendarUI/Tests/CalendarRouterTests.swift) 保留提交请求、真实确认出现、两种 action 存在、来源模态仍挂载、path／Tab 未改变及结束回调未提前发生的断言，并将名称改为等待确认的实际覆盖范围。
 
-取消与批准的完整按钮流程移入独立 `CalendarNavigationUIIntegrationTests` target 的 [CalendarDeepLinkUITests](../../../Tests/NavigationUIIntegrationTests/CalendarDeepLinkUITests.swift)，由测试进程通过公开 `XCUIDevice.shared.system.open(url)` 向正在运行的 App 投递系统 URL，再真实点击系统按钮。初次使用 `XCUIApplication.open(_:)` 时发生按 launch 语义重启，日志 PID 从 23999 变为 24143，因此那轮不能作为活动模态上的热链接证据。现用已有 DEBUG 菜单进入 sheet／fullScreen，以页面 UUID、来源 Tab、目标皇帝详情及整棵模态树消失作为 UI 断言；每条测试正常启动／终止 App，不新增生产测试后门。年份场景核对目标年确认文案、关闭两层模态和进入日历；精确内部路由与一次性结束顺序仍由 Core 合同测试承担。原 Core 取消／批准和异步完成测试完整保留，没有 skip，也没有用私有 action handler 或 App 手动完成通知代替真实点击。
+取消与批准的完整按钮流程当时由独立 `CalendarNavigationUIIntegrationTests` target 的 `CalendarDeepLinkUITests` 覆盖（见[历史测试记录](evidence/validation/hot-url-tests.json)），测试进程通过公开 `XCUIDevice.shared.system.open(url)` 向正在运行的 App 投递系统 URL，再真实点击系统按钮。初次使用 `XCUIApplication.open(_:)` 时发生按 launch 语义重启，日志 PID 从 23999 变为 24143，因此那轮不能作为活动模态上的热链接证据。现用已有 DEBUG 菜单进入 sheet／fullScreen，以页面 UUID、来源 Tab、目标皇帝详情及整棵模态树消失作为 UI 断言；每条测试正常启动／终止 App，不新增生产测试后门。年份场景核对目标年确认文案、关闭两层模态和进入日历；精确内部路由与一次性结束顺序仍由 Core 合同测试承担。原 Core 取消／批准和异步完成测试完整保留，没有 skip，也没有用私有 action handler 或 App 手动完成通知代替真实点击。
 
 打开 DEBUG 菜单时，Form 外层辅助功能行虽然带有“调试操作”名称且 `isHittable` 为 true，行中央并不位于实际 Menu 控件。当前按 `StaticText("调试操作")` 的实时坐标点击标签位置，随后选择导航测试项；不依赖外层同名行中央触摸。
 
@@ -148,12 +150,12 @@ App 两条热 Deep Link 测试已经呈现真实 `UIAlertController`，但通过
 | API-02 | 普通 import 无法访问 node、队列、事务、内部 ID、保留查询或伪造系统完成 | 通过（独立负向编译） | [API 报告](evidence/validation/public-api-report.json)与[诊断](evidence/validation/public-api-diagnostics.txt)确认正向控制成功后，18 个独立负向样例均按预期拒绝；检查的是目标符号缺失／保护级别，不将 SDK 或模块导入错误记作通过。 |
 | VAL-01 | Core / App 相关回归、iOS build、format 和 strict lint 通过 | 本地通过（含 CI 配置与安装复现） | [最终自动验证](#最终自动验证)：506 passed，失败／跳过／预期失败／未运行均为 0；iOS BuildProject、API 正向及 18 负向、format、strict lint、本地化与 diff 检查通过，代码对应 `edcf930e908a9bb9f5858fa23e52878da5d4adc0`。宿主映射与 Simulator 签名补充也在完整 XcodeGen 2.46 环境下通过全新 DerivedData 构建、506 条测试实例及静态检查，见 [ci-configuration.json](evidence/validation/ci-configuration.json)。CI 同版 2.45.3 缺少 SettingPresets 的安装问题已精确复现，补齐后的干净副本直接全量回归另有 506 条实例通过；远程 CI 状态以 PR 最新提交检查为准。 |
 
-当前验证入口：
+当时的验证入口（独立 XCUITest 已按上述后续调整移除）：
 
 - Core 结构与协调：[NavigationCoreTests](../../../Sources/NavigationCoreTests/)。
 - UIKit 对照、正常／祖先关闭、宿主拆除、Router 销毁和入场期间移除：[NavigationPhysicalHostTests](../../../Sources/NavigationCoreTests/NavigationPhysicalHostTests.swift)。
 - 业务来源、实际 builder 和资源释放：[App 集成测试](../../../Sources/ChineseCalendarUI/Tests/)。
-- 真实系统确认按钮及热 Deep Link：[独立 XCUITest](../../../Tests/NavigationUIIntegrationTests/CalendarDeepLinkUITests.swift)。
+- 真实系统确认按钮及热 Deep Link：[独立 XCUITest 历史记录](evidence/validation/hot-url-tests.json)。
 - 手势、来源隔离、Tab／宽窄切换及真实清空：[两轮 Simulator 交互与覆盖边界](evidence/runtime/runtime-results.md)。
 - 公开 API 正向与独立负向编译：[validate_navigation_public_api.py](../../../Scripts/validate_navigation_public_api.py)、[样例目录](../../../Scripts/NavigationCoreAPI/)。
 
