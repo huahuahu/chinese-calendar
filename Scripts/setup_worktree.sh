@@ -41,6 +41,9 @@ esac
 
 cd "$WORKSPACE_PATH"
 
+echo "Checking the worktree Simulator allocation..."
+python3 ./Scripts/ensure_worktree_simulator.py --worktree "$WORKSPACE_PATH"
+
 if ! command -v xcodegen >/dev/null 2>&1; then
     echo "error: xcodegen is required. Install it with: brew install xcodegen" >&2
     exit 127

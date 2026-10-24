@@ -42,7 +42,8 @@ This repository contains a Swift Package rooted at `Sources` and Xcode app targe
 ## Agent Configuration
 
 - Canonical project instructions: `./AGENTS.md`
-- XcodeBuildMCP project defaults: `./.xcodebuildmcp/config.yaml`
+- Xcode MCP local defaults: `./.xcodebuildmcp/config.yaml` (Git-ignored; initialize with `python3 Scripts/ensure_worktree_simulator.py`)
+- Shared Xcode MCP template: `./.xcodebuildmcp/config.example.yaml`
 - Project-local skills root: `./.agents/skills`
 - Copilot skill metadata: `./.agents/skills/*/agents/copilot.yaml`
 

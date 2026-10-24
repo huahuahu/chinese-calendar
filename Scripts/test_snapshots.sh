@@ -50,6 +50,11 @@ xcodebuild -version > "$OUTPUT_DIR/xcode-version.txt"
 xcodebuild -sdk iphonesimulator -version SDKVersion > "$OUTPUT_DIR/sdk-version.txt"
 [[ "$(cat "$OUTPUT_DIR/sdk-version.txt")" == "27.1" ]] \
     || fail "截图基准要求 iPhoneSimulator SDK 27.1。"
+# 显式指定设备时沿用调用者选择；其余本地运行先分配，再读取最新设备清单。
+if [[ "${CI:-}" != "true" && "${GITHUB_ACTIONS:-}" != "true" && -z "${SNAPSHOT_SIMULATOR_ID:-}" ]]; then
+    python3 "$SCRIPT_DIR/ensure_worktree_simulator.py" --worktree "$REPO_ROOT" >/dev/null \
+        || fail "无法分配工作区专属 Simulator。"
+fi
 xcrun simctl list --json > "$OUTPUT_DIR/simulators.json"
 
 # CI 使用 runner 自身的设备；本地优先使用共享上下文中的 Simulator。
@@ -92,7 +97,7 @@ if identifier:
     sys.exit(0)
 
 config = Path(sys.argv[2])
-if os.environ.get("CI") != "true" and config.exists():
+if os.environ.get("CI") != "true" and os.environ.get("GITHUB_ACTIONS") != "true" and config.exists():
     in_defaults = False
     for line in config.read_text().splitlines():
         if line == "sessionDefaults:":

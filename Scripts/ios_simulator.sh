@@ -1,7 +1,17 @@
 #!/usr/bin/env bash
 
 resolve_ios_simulator_destination() {
-    local devices_output simulator_id
+    local devices_output simulator_id repository_root
+    # 本地入口共享工作区配置；CI 继续使用 runner 自身的可用设备。
+    if [[ "${CI:-}" != "true" && "${GITHUB_ACTIONS:-}" != "true" ]]; then
+        repository_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+        if ! simulator_id="$(python3 "$repository_root/Scripts/ensure_worktree_simulator.py" --worktree "$repository_root")"; then
+            return 1
+        fi
+        echo "id=${simulator_id}"
+        return 0
+    fi
+
     devices_output="$(xcrun simctl list devices available)"
 
     simulator_id="$(awk '
