@@ -51,11 +51,6 @@ final class CalendarRouter {
         navigation.submit(navigationRequest(for: deepLink), confirmIfPresented: confirmIfPresented)
     }
 
-    func openColdLaunchDeepLink(_ deepLink: CalendarDeepLink?) -> NavigationRequestResult? {
-        guard let deepLink else { return nil }
-        return navigation.submit(navigationRequest(for: deepLink), confirmIfPresented: true)
-    }
-
     private func navigationRequest(
         for deepLink: CalendarDeepLink
     ) -> NavigationRequest<CalendarTab, CalendarDestination> {

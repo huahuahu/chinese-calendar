@@ -74,17 +74,6 @@ struct CalendarPresentationTests {
         await host.close()
     }
 
-    @Test func rebuildingDataPagesDoesNotReplayColdLaunchLink() {
-        let coordinator = CalendarHomeCoordinator()
-        coordinator.openColdLaunchDeepLink(.lunarYear(2025, monthIndex: nil))
-        coordinator.openDeepLink(.emperor("ming-taizu"))
-        coordinator.openColdLaunchDeepLink(.lunarYear(2025, monthIndex: nil))
-        #expect(coordinator.router.selectedTab == .history)
-        #expect(coordinator.router.navigation.rootPresentation.context(for: .scope(.history)).rootDestination
-            == .emperor("ming-taizu"))
-        #expect(coordinator.router.historyPath.isEmpty)
-    }
-
     #if DEBUG
         @Test(.timeLimit(.minutes(1)))
         func previewOwnerReleasesAfterActualFullscreenDismissalAndCanReopen() async throws {

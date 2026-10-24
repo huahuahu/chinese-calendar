@@ -7,7 +7,6 @@ import SwiftUI
 private struct CalendarNavigationHost: ViewModifier {
     let coordinator: CalendarHomeCoordinator
     let storeCoordinator: ChineseCalendarStoreCoordinator?
-    let handlesExternalNavigation: Bool
 
     func body(content: Content) -> some View {
         content
@@ -26,32 +25,17 @@ private struct CalendarNavigationHost: ViewModifier {
             .onChange(of: storeCoordinator?.downloadFailure, initial: true) { _, message in
                 if let message, coordinator.presentDownloadError(message) { storeCoordinator?.dismissDownloadError() }
             }
-            .task {
-                if handlesExternalNavigation {
-                    coordinator.openColdLaunchDeepLink(
-                        CalendarDeepLinkParser.deepLink(from: ProcessInfo.processInfo.arguments)
-                    )
-                }
-            }
-            .onOpenURL { url in
-                guard handlesExternalNavigation, let deepLink = CalendarDeepLinkParser.deepLink(from: url) else {
-                    return
-                }
-                coordinator.openDeepLink(deepLink)
-            }
     }
 }
 
 extension View {
     func calendarNavigationHost(
         coordinator: CalendarHomeCoordinator,
-        storeCoordinator: ChineseCalendarStoreCoordinator? = nil,
-        handlesExternalNavigation: Bool = false
+        storeCoordinator: ChineseCalendarStoreCoordinator? = nil
     ) -> some View {
         modifier(CalendarNavigationHost(
             coordinator: coordinator,
-            storeCoordinator: storeCoordinator,
-            handlesExternalNavigation: handlesExternalNavigation
+            storeCoordinator: storeCoordinator
         ))
     }
 }

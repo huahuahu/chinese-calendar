@@ -83,7 +83,7 @@ import Testing
 }
 
 @MainActor
-@Test func hotDeepLinkKeepsTheRootPathAndModalAliveWhileWaitingForConfirmation() async throws {
+@Test func externalDeepLinkKeepsTheRootPathAndModalAliveWhileWaitingForConfirmation() async throws {
     let router = CalendarRouter(yearsPath: [.lunarYear(2024)])
     let coordinator = CalendarHomeCoordinator(router: router)
     let host = try await NavigationTestHost.show(router: router.navigation)
@@ -110,10 +110,10 @@ import Testing
 }
 
 @MainActor
-@Test func coldLaunchDeepLinkAppliesImmediately() {
+@Test func deepLinkWithoutPresentationAppliesImmediately() {
     let coordinator = CalendarHomeCoordinator()
 
-    coordinator.openColdLaunchDeepLink(.lunarYear(2026, monthIndex: 26001))
+    coordinator.openDeepLink(.lunarYear(2026, monthIndex: 26001))
 
     #expect(coordinator.router.yearsPath == [.lunarYear(2026, monthIndex: 26001)])
     #expect(
@@ -124,28 +124,61 @@ import Testing
 
 @MainActor
 @Test func dynastyDeepLinkSelectsHistoryTab() {
-    let coordinator = CalendarHomeCoordinator()
+    let router = CalendarRouter()
 
-    coordinator.openColdLaunchDeepLink(.dynasty(orthodoxPeriodID: "qin-period"))
+    #expect(router.openDeepLink(.dynasty(orthodoxPeriodID: "qin-period")) == .applied)
 
-    #expect(coordinator.router.selectedTab == .history)
+    #expect(router.selectedTab == .history)
     #expect(
-        coordinator.router.navigation.rootPresentation.context(for: .scope(.history)).rootDestination
+        router.navigation.rootPresentation.context(for: .scope(.history)).rootDestination
             == .historyDetail(orthodoxPeriodID: "qin-period", section: nil)
     )
-    #expect(coordinator.router.historyPath.isEmpty)
+    #expect(router.historyPath.isEmpty)
 }
 
 @MainActor
 @Test func emperorDeepLinkSelectsHistoryTab() {
-    let coordinator = CalendarHomeCoordinator()
+    let router = CalendarRouter()
 
-    coordinator.openColdLaunchDeepLink(.emperor("ming-taizu"))
+    #expect(router.openDeepLink(.emperor("ming-taizu")) == .applied)
 
-    #expect(coordinator.router.selectedTab == .history)
-    #expect(coordinator.router.navigation.rootPresentation.context(for: .scope(.history))
+    #expect(router.selectedTab == .history)
+    #expect(router.navigation.rootPresentation.context(for: .scope(.history))
         .rootDestination == .emperor("ming-taizu"))
-    #expect(coordinator.router.historyPath.isEmpty)
+    #expect(router.historyPath.isEmpty)
+}
+
+@MainActor
+@Test func laterDeepLinkCanReturnToCalendarAfterHistoryNavigation() {
+    let coordinator = CalendarHomeCoordinator()
+    coordinator.openDeepLink(.lunarYear(2025))
+    coordinator.openDeepLink(.emperor("ming-taizu"))
+    #expect(coordinator.router.selectedTab == .history)
+
+    coordinator.openDeepLink(.lunarYear(2025))
+    #expect(coordinator.router.selectedTab == .years)
+    #expect(coordinator.router.yearsPath == [.lunarYear(2025)])
+    #expect(coordinator.router.navigation.rootPresentation.context(for: .scope(.history)).rootDestination
+        == .emperor("ming-taizu"))
+}
+
+@MainActor
+@Test(arguments: [
+    "chinesecalendar://year/2026",
+    "https://example.com/year/2026",
+    "chinesecalendar://unsupported/2026",
+    "chinesecalendar://year/not-a-year"
+])
+func systemURLParsingOnlySubmitsSupportedLinks(urlString: String) throws {
+    let coordinator = CalendarHomeCoordinator(router: CalendarRouter(yearsPath: [.lunarYear(2024)]))
+    let url = try #require(URL(string: urlString))
+    if let deepLink = CalendarDeepLinkParser.deepLink(from: url) {
+        coordinator.openDeepLink(deepLink)
+    }
+
+    let expectedYear = urlString == "chinesecalendar://year/2026" ? 2026 : 2024
+    #expect(coordinator.router.yearsPath == [.lunarYear(expectedYear)])
+    #expect(coordinator.router.selectedTab == .years)
 }
 
 @Test func parserSupportsYearURLs() throws {
@@ -169,12 +202,8 @@ import Testing
     #expect(CalendarDeepLinkParser.deepLink(from: url) == .emperor("ming-taizu"))
 }
 
-@Test func parserSupportsLaunchArguments() {
-    let deepLink = CalendarDeepLinkParser.deepLink(from: [
-        "ChineseCalendar",
-        "--deep-link",
-        "chinese-calendar://2026?month=26001"
-    ])
+@Test func parserSupportsAlternateSchemeAndMonthQuery() throws {
+    let url = try #require(URL(string: "chinese-calendar://2026?month=26001"))
 
-    #expect(deepLink == .lunarYear(2026, monthIndex: 26001))
+    #expect(CalendarDeepLinkParser.deepLink(from: url) == .lunarYear(2026, monthIndex: 26001))
 }

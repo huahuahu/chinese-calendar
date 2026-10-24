@@ -40,10 +40,13 @@ public struct ChineseCalendarRootView: View {
         .calendarColorSchemePreference()
         .calendarNavigationHost(
             coordinator: homeCoordinator,
-            storeCoordinator: coordinator,
-            handlesExternalNavigation: true
+            storeCoordinator: coordinator
         )
         .calendarStoreEnvironment(state: coordinator.state)
+        .onOpenURL { url in
+            guard let deepLink = CalendarDeepLinkParser.deepLink(from: url) else { return }
+            homeCoordinator.openDeepLink(deepLink)
+        }
     }
 }
 
