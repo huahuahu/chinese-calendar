@@ -6,7 +6,7 @@ import Testing
 @Suite("业务提示的普通按钮与取消入口")
 struct CalendarAlertContentTests {
     @Test func clearDataConfirmationSeparatesCancellationFromTheDestructiveAction() {
-        let content = CalendarSettingsAlerts.clearDownloadedDataContent
+        let content = CalendarAlertContent.clearDownloadedData
         #expect(content.buttons.map(\.action) == [.clear])
         #expect(content.buttons.map(\.role) == [.destructive])
         #expect(content.cancelButton?.action == .cancel)
@@ -14,12 +14,12 @@ struct CalendarAlertContentTests {
 
     @Test func noticesKeepASingleAcknowledgement() {
         var contents: [NavigationAlertContent<CalendarNoticeAction>] = [
-            CalendarSettingsAlerts.clearDataSucceededContent,
-            CalendarSettingsAlerts.clearDataFailedContent(failure: .clear),
-            CalendarDownloadAlerts.failureContent(failure: .download)
+            CalendarAlertContent.clearDataSucceeded,
+            CalendarAlertContent.clearDataFailed(message: nil),
+            CalendarAlertContent.downloadFailed(message: nil)
         ]
         #if DEBUG
-            contents.append(CalendarDebugAlerts.noticeContent(number: 1))
+            contents.append(CalendarAlertContent.debugNotice(number: 1))
         #endif
         for content in contents {
             #expect(content.buttons.map(\.action) == [.acknowledge])
@@ -30,7 +30,7 @@ struct CalendarAlertContentTests {
 
     #if DEBUG
         @Test func debugNavigationKeepsItsExplicitCancelAndOpenHistoryActions() {
-            let content = CalendarDebugAlerts.navigationChoiceContent
+            let content = CalendarAlertContent.debugNavigationChoice
             #expect(content.buttons.map(\.action) == [.openHistory])
             #expect(content.cancelButton?.action == .cancel)
         }

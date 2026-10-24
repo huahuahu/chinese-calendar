@@ -4,7 +4,6 @@
 - 状态：可执行
 - 日期：2026-10-23
 - 依据：[导航规范](../../Conventions/Navigation.md)、[通用规范](../../Conventions/Common.md)、[SwiftUI 规范](../../Conventions/SwiftUI.md)
-- 后续补充：[业务提示按功能归属](002-business-ownership.md)（2026-10-24）。
 
 ## 背景与范围
 

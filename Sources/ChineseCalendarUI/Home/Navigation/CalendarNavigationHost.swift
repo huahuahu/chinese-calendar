@@ -23,10 +23,8 @@ private struct CalendarNavigationHost: ViewModifier {
             .onChange(of: storeCoordinator?.fullStoreDownloadProgress) { _, progress in
                 if progress == nil { coordinator.downloadDetails.progressDidDisappear() }
             }
-            .onChange(of: storeCoordinator?.downloadFailure, initial: true) { _, failure in
-                if let failure, CalendarDownloadAlerts.presentFailure(failure, router: coordinator.router) {
-                    storeCoordinator?.dismissDownloadError()
-                }
+            .onChange(of: storeCoordinator?.downloadFailure, initial: true) { _, message in
+                if let message, coordinator.presentDownloadError(message) { storeCoordinator?.dismissDownloadError() }
             }
             .task {
                 if handlesExternalNavigation {

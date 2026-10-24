@@ -1,7 +1,7 @@
 import NavigationCore
 import SwiftUI
 
-/// 为整棵日历导航树提供构建入口，具体提示及按钮动作委托所属业务。
+/// 为整棵日历导航树构建页面和提示，并处理 alert 按钮动作。
 /// 每次页面需要的 Binding 和业务资源由路由传入。
 struct CalendarNavigationConfiguration: @MainActor NavigationHostConfiguration {
     typealias Scope = CalendarTab
@@ -24,18 +24,43 @@ struct CalendarNavigationConfiguration: @MainActor NavigationHostConfiguration {
     func alert(for route: CalendarAlert, presentation: CalendarPresentationContext) -> NavigationAlertDefinition? {
         switch route {
         case .clearDownloadedData:
-            CalendarSettingsAlerts.clearDownloadedData(storeCoordinator: storeCoordinator, presentation: presentation)
+            let clearDownloadedData: (@MainActor () async throws -> Void)? = if let store = storeCoordinator {
+                { try await store.clearDownloadedData() }
+            } else {
+                nil
+            }
+            return NavigationAlertDefinition(content: CalendarAlertContent.clearDownloadedData) { action in
+                await coordinator.handleClearDownloadedDataAction(
+                    action, presentation: presentation, clearDownloadedData: clearDownloadedData
+                )
+            }
         case .clearDataSucceeded:
-            CalendarSettingsAlerts.clearDataSucceeded()
+            return NavigationAlertDefinition(content: CalendarAlertContent.clearDataSucceeded) { action in
+                coordinator.handleNoticeAction(action)
+            }
         case let .clearDataFailed(failure):
-            CalendarSettingsAlerts.clearDataFailed(failure: failure)
+            return NavigationAlertDefinition(
+                content: CalendarAlertContent
+                    .clearDataFailed(message: CalendarStoreErrorPresentation.message(for: failure))
+            ) { action in
+                coordinator.handleNoticeAction(action)
+            }
         case let .downloadFailed(failure):
-            CalendarDownloadAlerts.failed(failure: failure)
+            return NavigationAlertDefinition(
+                content: CalendarAlertContent
+                    .downloadFailed(message: CalendarStoreErrorPresentation.message(for: failure))
+            ) { action in
+                coordinator.handleNoticeAction(action)
+            }
         #if DEBUG
             case let .debugNotice(number):
-                CalendarDebugAlerts.notice(number: number)
+                return NavigationAlertDefinition(content: CalendarAlertContent.debugNotice(number: number)) { action in
+                    coordinator.handleNoticeAction(action)
+                }
             case .debugNavigationChoice:
-                CalendarDebugAlerts.navigationChoice(router: coordinator.router)
+                return NavigationAlertDefinition(content: CalendarAlertContent.debugNavigationChoice) { action in
+                    coordinator.handleDebugNavigationAction(action)
+                }
         #endif
         }
     }

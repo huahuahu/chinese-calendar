@@ -186,7 +186,7 @@ private struct NavigationTestConfiguration: @MainActor NavigationHostConfigurati
     }
 
     func alert(for route: CalendarAlert, presentation: CalendarPresentationContext) -> NavigationAlertDefinition? {
-        CalendarSettingsAlerts.clearDataSucceeded()
+        NavigationAlertDefinition(content: CalendarAlertContent.clearDataSucceeded) { _ in }
     }
 }
 
