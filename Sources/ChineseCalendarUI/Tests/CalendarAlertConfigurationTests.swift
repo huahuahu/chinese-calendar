@@ -20,8 +20,8 @@ struct CalendarAlertConfigurationTests {
         ) != nil)
         let message = CalendarStoreErrorPresentation.message(for: failure)
         let content = isDownload
-            ? CalendarAlertContent.downloadFailed(message: message)
-            : CalendarAlertContent.clearDataFailed(message: message)
+            ? CalendarDownloadAlerts.failureContent(failure: failure)
+            : CalendarSettingsAlerts.clearDataFailedContent(failure: failure)
         #expect(String(localized: content.message) == String(localized: message))
         #expect(content.buttons.map(\.action) == [.acknowledge])
         #expect(content.cancelButton == nil)
