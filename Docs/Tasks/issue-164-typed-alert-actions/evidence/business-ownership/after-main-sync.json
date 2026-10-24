@@ -1,0 +1,81 @@
+{
+  "codeCommit": "fda693b8def766c4126b7fc8d2edcc008bbf8eef",
+  "mergedRemoteMain": "8bb52e64181dd5365a07b28638f1f98b32ebf146",
+  "mergedRemoteCommits": 4,
+  "mergeConflicts": false,
+  "swiftFileCount": 362,
+  "swiftSourcesSHA256": "62f43259ceffb83d88f0977f4622b1eff9a755a6844e5b3920d9accd2e4183d2",
+  "hashAlgorithm": "Same algorithm as validation-summary.json",
+  "simulatorName": "chinesedate iPhone 18 Pro Max (885f)",
+  "simulatorId": "16A9CAA7-45CE-46D5-8915-F61531FC617C",
+  "runtime": "iOS 27.0",
+  "businessTests": {
+    "scheme": "ChineseCalendar-iOS",
+    "counts": {
+      "expectedFailures": 0,
+      "failed": 0,
+      "notRun": 0,
+      "passed": 489,
+      "skipped": 0,
+      "total": 489
+    },
+    "summary": "489 tests: 489 passed, 0 failed, 0 skipped, 0 expected failures, 0 not run",
+    "fullSummaryPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/RunAllTests/D09E59DA-E17B-492A-B320-56BE3BC5BF7C.txt",
+    "xcresultBundlePath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/RunAllTests/Test-ChineseCalendar-iOS-2026.10.24_21-00-42-+0800.xcresult"
+  },
+  "snapshotTests": {
+    "scheme": "ChineseCalendarSnapshots",
+    "counts": {
+      "expectedFailures": 0,
+      "failed": 0,
+      "notRun": 0,
+      "passed": 4,
+      "skipped": 0,
+      "total": 4
+    },
+    "summary": "4 tests: 4 passed, 0 failed, 0 skipped, 0 expected failures, 0 not run",
+    "fullSummaryPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/RunAllTests/3A5B820D-0DFC-41D8-80EA-54BAB5BB0F14.txt",
+    "xcresultBundlePath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/RunAllTests/Test-ChineseCalendarSnapshots-2026.10.24_21-09-18-+0800.xcresult",
+    "baselineImages": 23,
+    "mode": "compare",
+    "recordSetting": "SNAPSHOT_RECORD=0",
+    "results": [
+      {
+        "displayName": "testPhonePages()",
+        "errorMessages": [],
+        "identifier": "CalendarSnapshotTests/testPhonePages()",
+        "state": "Passed",
+        "targetName": "ChineseCalendarSnapshotTests"
+      },
+      {
+        "displayName": "testTabletPages()",
+        "errorMessages": [],
+        "identifier": "CalendarSnapshotTests/testTabletPages()",
+        "state": "Passed",
+        "targetName": "ChineseCalendarSnapshotTests"
+      },
+      {
+        "displayName": "testDarkPages()",
+        "errorMessages": [],
+        "identifier": "CalendarSnapshotTests/testDarkPages()",
+        "state": "Passed",
+        "targetName": "ChineseCalendarSnapshotTests"
+      },
+      {
+        "displayName": "testAccessibilityCalendar()",
+        "errorMessages": [],
+        "identifier": "CalendarSnapshotTests/testAccessibilityCalendar()",
+        "state": "Passed",
+        "targetName": "ChineseCalendarSnapshotTests"
+      }
+    ]
+  },
+  "checks": {
+    "format": "passed: 0/359 files require formatting",
+    "strictLint": "passed: 0 violations in 346 files",
+    "localizedCopy": "passed: 335 resources and 21 remaining production strings",
+    "diffWhitespace": "passed",
+    "baselineImagesChanged": false
+  },
+  "integrationNote": "Initial snapshot build referenced deleted SnapshotRenderer.swift in ignored generated project. Regenerated from project.yml with xcodegen generate, then retried comparison successfully. No product source or baseline image changed."
+}

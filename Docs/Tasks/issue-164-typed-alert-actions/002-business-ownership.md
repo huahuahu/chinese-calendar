@@ -46,3 +46,11 @@
 测试使用本 worktree 的 `ChineseCalendar.xcodeproj`、`ChineseCalendar-iOS` scheme 和配置指定的 `chinesedate iPhone 18 Pro Max (885f)`（iOS 27.0，UDID `16A9CAA7-45CE-46D5-8915-F61531FC617C`）。测试摘要及相关用例记录见 [xcode-tests.json](evidence/business-ownership/xcode-tests.json)。
 
 本次保留并迁移既有行为测试，没有为文件拆分增加镜像实现的测试。未运行完整专项 review、手动 Simulator 点击或真机验证；原结果中的交互证据属于原代码状态，不作为本次改动的交互验证。
+
+## 合入远端 main 后的验证
+
+在 `codex/feature-owned-alerts` 分支提交实现，并将远端 `main` 的 4 个后续提交合入至 `fda693b8def766c4126b7fc8d2edcc008bbf8eef`；合入的 main 为 `8bb52e64181dd5365a07b28638f1f98b32ebf146`，没有冲突。后续提交涉及原生 SwiftUI 截图策略、旧入口清理和 Store Preview，没有改变本次 alert 调用的清理方法或宿主生命周期。
+
+合并后的原生 Xcode 业务／导航测试 489 次执行全部通过；独立 `ChineseCalendarSnapshots` 比较 scheme 的 4 组测试、23 张基准也全部通过，未重录或修改基准。首次快照构建发现被忽略的本地生成工程仍引用远端已删除的 `SnapshotRenderer.swift`，使用 `xcodegen generate` 按现有 `project.yml` 更新工程后重试通过，无需修改产品源码。
+
+format 检查 359 个文件、strict lint 检查 346 个文件均通过；本地化检查覆盖合并后的 335 项资源和 21 个剩余生产字符串。362 个现存 Swift 文件的合并摘要为 `62f43259ceffb83d88f0977f4622b1eff9a755a6844e5b3920d9accd2e4183d2`。环境、测试结果和代码版本见 [after-main-sync.json](evidence/business-ownership/after-main-sync.json)。远程 CI 以 PR 当前检查状态为准。
