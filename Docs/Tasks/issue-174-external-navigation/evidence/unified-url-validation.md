@@ -43,4 +43,3 @@
 - NavigationCoreTests / requestDuringApprovedDismissalRequiresItsOwnApproval()：Passed
 - NavigationCoreTests / coldRequestDoesNotRequireConfirmation()：Passed
 - NavigationCoreTests / primaryDeepLinkCancellationAndApprovalWaitForTheRootDismissal()：Passed
-

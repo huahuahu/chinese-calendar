@@ -1,4 +1,3 @@
-import ChineseCalendarCore
 import NavigationCore
 import SwiftUI
 
@@ -22,11 +21,4 @@ public struct CalendarHomeView: View {
 
 #Preview(traits: .sampleData) {
     CalendarHomeView()
-}
-
-public extension CalendarHomeView {
-    @available(*, deprecated, message: "CalendarHomeView now selects the current lunar year automatically.")
-    init(selectedDate _: ChineseCalendarDate?) {
-        self.init()
-    }
 }

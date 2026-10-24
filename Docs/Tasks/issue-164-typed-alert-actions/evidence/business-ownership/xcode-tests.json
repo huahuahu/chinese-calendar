@@ -1,0 +1,89 @@
+{
+  "tool": "mcp__xcode__RunAllTests",
+  "workspace": "ChineseCalendar.xcodeproj",
+  "scheme": "ChineseCalendar-iOS",
+  "simulatorName": "chinesedate iPhone 18 Pro Max (885f)",
+  "simulatorId": "16A9CAA7-45CE-46D5-8915-F61531FC617C",
+  "runtime": "iOS 27.0",
+  "counts": {
+    "expectedFailures": 0,
+    "failed": 0,
+    "notRun": 0,
+    "passed": 489,
+    "skipped": 0,
+    "total": 489
+  },
+  "summary": "489 tests: 489 passed, 0 failed, 0 skipped, 0 expected failures, 0 not run",
+  "fullSummaryPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/RunAllTests/92BCB68B-6614-46B7-A938-EA9A1F4DF31F.txt",
+  "fullConsoleLogsPath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/RunAllTests/test-console-log-2026-10-24T20-39-44+08-00.txt",
+  "xcresultBundlePath": "/var/folders/xg/hh57n8x55bg16qydl87zp3lw0000gn/T/ActionArtifacts/default/RunAllTests/Test-ChineseCalendar-iOS-2026.10.24_20-39-44-+0800.xcresult",
+  "sourceSnapshot": "validation-summary.json",
+  "buildResult": "The build succeeded",
+  "alertBusinessTests": [
+    {
+      "identifier": "CalendarAlertContentTests/clearDataConfirmationSeparatesCancellationFromTheDestructiveAction()",
+      "displayName": "clearDataConfirmationSeparatesCancellationFromTheDestructiveAction()",
+      "state": "Passed"
+    },
+    {
+      "identifier": "CalendarAlertContentTests/noticesKeepASingleAcknowledgement()",
+      "displayName": "noticesKeepASingleAcknowledgement()",
+      "state": "Passed"
+    },
+    {
+      "identifier": "CalendarAlertContentTests/debugNavigationKeepsItsExplicitCancelAndOpenHistoryActions()",
+      "displayName": "debugNavigationKeepsItsExplicitCancelAndOpenHistoryActions()",
+      "state": "Passed"
+    },
+    {
+      "identifier": "CalendarAlertConfigurationTests/errorRoutesCarryTheirOwnRecoveryValue(isDownload:)",
+      "displayName": "false",
+      "state": "Passed"
+    },
+    {
+      "identifier": "CalendarAlertConfigurationTests/errorRoutesCarryTheirOwnRecoveryValue(isDownload:)",
+      "displayName": "true",
+      "state": "Passed"
+    },
+    {
+      "identifier": "CalendarAlertConfigurationTests/buildingClearConfigurationDoesNotStartTheStoreOperation()",
+      "displayName": "buildingClearConfigurationDoesNotStartTheStoreOperation()",
+      "state": "Passed"
+    },
+    {
+      "identifier": "CalendarAlertConfigurationTests/successfulClearAndNoticesHaveConfigurationsWithoutMessageRegistration()",
+      "displayName": "successfulClearAndNoticesHaveConfigurationsWithoutMessageRegistration()",
+      "state": "Passed"
+    },
+    {
+      "identifier": "CalendarAlertActionTests/cancellingClearDoesNotRunTheOperationOrPresentAResult()",
+      "displayName": "cancellingClearDoesNotRunTheOperationOrPresentAResult()",
+      "state": "Passed"
+    },
+    {
+      "identifier": "CalendarAlertActionTests/successfulClearPresentsAResultBeforeTheNextPage()",
+      "displayName": "successfulClearPresentsAResultBeforeTheNextPage()",
+      "state": "Passed"
+    },
+    {
+      "identifier": "CalendarAlertActionTests/failedClearPresentsRecoveryWithoutRetainingTheError()",
+      "displayName": "failedClearPresentsRecoveryWithoutRetainingTheError()",
+      "state": "Passed"
+    },
+    {
+      "identifier": "CalendarAlertActionTests/clearWithoutAStoreDoesNotPresentAResult()",
+      "displayName": "clearWithoutAStoreDoesNotPresentAResult()",
+      "state": "Passed"
+    },
+    {
+      "identifier": "CalendarAlertActionTests/failureAfterTheNavigationOwnerEndsCannotPresentAnotherAlert()",
+      "displayName": "failureAfterTheNavigationOwnerEndsCannotPresentAnotherAlert()",
+      "state": "Passed"
+    },
+    {
+      "identifier": "CalendarAlertActionTests/debugActionsRetainTheirIndependentNavigationBehavior()",
+      "displayName": "debugActionsRetainTheirIndependentNavigationBehavior()",
+      "state": "Passed"
+    }
+  ]
+}

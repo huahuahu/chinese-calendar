@@ -24,7 +24,6 @@ struct CalendarHistorySidebarView: View {
                                 .tag(period.id)
                                 .selectionDisabled(period.dynasty == nil)
                                 .listRowSeparator(.hidden)
-                                .calendarPresentationMenu(destination: .dynasty(orthodoxPeriodID: period.id))
                         }
                     } header: {
                         Text(CalendarStringKey.History.Timeline.subtitle)

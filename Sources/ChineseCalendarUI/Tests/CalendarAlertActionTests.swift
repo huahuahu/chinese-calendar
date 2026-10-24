@@ -14,7 +14,7 @@ struct CalendarAlertActionTests {
         let host = try await alertHost(coordinator)
         defer { host.removeFromWindow() }
         var clearCount = 0
-        await coordinator.handleClearDownloadedDataAction(.cancel, presentation: context) {
+        await CalendarSettingsAlerts.handleClearDownloadedDataAction(.cancel, presentation: context) {
             clearCount += 1
         }
         #expect(clearCount == 0)
@@ -28,7 +28,7 @@ struct CalendarAlertActionTests {
         let host = try await alertHost(coordinator)
         defer { host.removeFromWindow() }
         var clearCount = 0
-        await coordinator.handleClearDownloadedDataAction(.clear, presentation: context) {
+        await CalendarSettingsAlerts.handleClearDownloadedDataAction(.clear, presentation: context) {
             clearCount += 1
         }
         #expect(clearCount == 1)
@@ -45,7 +45,7 @@ struct CalendarAlertActionTests {
         let context = coordinator.router.navigation.rootPresentation
         let host = try await alertHost(coordinator)
         defer { host.removeFromWindow() }
-        await coordinator.handleClearDownloadedDataAction(.clear, presentation: context) {
+        await CalendarSettingsAlerts.handleClearDownloadedDataAction(.clear, presentation: context) {
             throw URLError(.notConnectedToInternet)
         }
         let alert = try await host.waitForAlert()
@@ -60,17 +60,18 @@ struct CalendarAlertActionTests {
         let context = coordinator.router.navigation.rootPresentation
         let host = try await alertHost(coordinator)
         defer { host.removeFromWindow() }
-        await coordinator.handleClearDownloadedDataAction(.clear, presentation: context, clearDownloadedData: nil)
+        await CalendarSettingsAlerts.handleClearDownloadedDataAction(
+            .clear, presentation: context, clearDownloadedData: nil
+        )
         #expect(context.present(.settings).result == .applied)
         await host.close()
     }
 
     @Test func failureAfterTheNavigationOwnerEndsCannotPresentAnotherAlert() async throws {
-        let coordinator = CalendarHomeCoordinator()
         var router: NavigationRouter<CalendarTab, CalendarDestination, CalendarAlert>? =
             .init(rootDestination: .settings)
         let context = try #require(router).rootPresentation
-        await coordinator.handleClearDownloadedDataAction(.clear, presentation: context) {
+        await CalendarSettingsAlerts.handleClearDownloadedDataAction(.clear, presentation: context) {
             router = nil
             throw URLError(.notConnectedToInternet)
         }
@@ -91,10 +92,10 @@ struct CalendarAlertActionTests {
             let coordinator = CalendarHomeCoordinator()
             let context = coordinator.router.navigation.rootPresentation
             let history = context.context(for: .scope(.history))
-            coordinator.handleDebugNavigationAction(.cancel)
+            CalendarDebugAlerts.handleNavigationAction(.cancel, router: coordinator.router)
             #expect(context.selectedStack == .scope(.years))
             #expect(history.path.isEmpty)
-            coordinator.handleDebugNavigationAction(.openHistory)
+            CalendarDebugAlerts.handleNavigationAction(.openHistory, router: coordinator.router)
             #expect(context.selectedStack == .scope(.history))
             #expect(history.path.count == 1)
             guard case .debugNavigation = history.path.first else {

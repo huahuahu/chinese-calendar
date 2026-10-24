@@ -36,6 +36,12 @@ public final class ChineseCalendarStoreCoordinator {
     }
 
     #if DEBUG
+        /// 为 Canvas 固定下载状态，不启动下载任务或打开磁盘数据库。
+        convenience init(previewDownloadProgress: FullStoreDownloadProgress) {
+            self.init(fullStoreConfiguration: nil)
+            fullStoreDownloadProgress = previewDownloadProgress
+        }
+
         init(
             fullStoreConfiguration: FullSeedStoreConfig? = .fromBundle(),
             seedStoreBundle: Bundle = .main,

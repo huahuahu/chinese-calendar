@@ -1,0 +1,35 @@
+{
+  "recordedAt": "2026-10-24T20:40:43.425099+08:00",
+  "baseCommit": "dc76f6b5a531ff93fa90a23e7598c1440b318de0",
+  "codeState": "uncommitted working tree",
+  "swiftFileCount": 363,
+  "swiftSourcesSHA256": "88daee132bc180458047817bb2266f6d4bed97037d398a987284b1e65c953aaa",
+  "hashAlgorithm": "SHA256 of sorted path + NUL + file SHA256 + LF for each existing nonignored tracked or untracked Swift file",
+  "changedSwiftFiles": {
+    "Sources/ChineseCalendarUI/App/Store/CalendarDownloadAlerts.swift": "0273414c04a710c63d7b9a53b51ebba8d4618c9ea7f028d0acb5c762d3ddeb5c",
+    "Sources/ChineseCalendarUI/Debug/CalendarDebugAlerts.swift": "127789726382455024a085934b469cae38b26f32a5ba1e52c398a539894fb5b1",
+    "Sources/ChineseCalendarUI/Home/Navigation/CalendarAlertContent.swift": null,
+    "Sources/ChineseCalendarUI/Home/Navigation/CalendarHomeCoordinator+Alerts.swift": null,
+    "Sources/ChineseCalendarUI/Home/Navigation/CalendarNavigationConfiguration.swift": "f6ed3b6955b60d8f1e68274412d88879f5f20d684b6563f7b3c0c7adfc5504d8",
+    "Sources/ChineseCalendarUI/Home/Navigation/CalendarNavigationHost.swift": "c2e10a941b8c972230bebc374acda218e9d44b692e4681a1f289f61b4d56a31f",
+    "Sources/ChineseCalendarUI/Home/Navigation/CalendarNoticeAction.swift": null,
+    "Sources/ChineseCalendarUI/Home/Navigation/ClearDownloadedDataAction.swift": null,
+    "Sources/ChineseCalendarUI/Settings/CalendarSettingsAlerts.swift": "69fe5cdb0129084ab5ae4339aa010eeecf4ec77f84d7ac394e74f276a3cd546f",
+    "Sources/ChineseCalendarUI/Settings/ClearDownloadedDataAction.swift": "dc64444e5c209e94b73fe9589f8b6f7fa05300d76cf6e1f8693ce8ec93a80fad",
+    "Sources/ChineseCalendarUI/Shared/CalendarNoticeAction.swift": "5a94830bf6ea98bbf25e0583e8663046e17831672885f13fb8d0f5f7bcf99d69",
+    "Sources/ChineseCalendarUI/Shared/CalendarNoticeAlert.swift": "2b7d28bfb6364b0fbbf6ac8c0a9c75b214413230c085ec32a02f8972687941d8",
+    "Sources/ChineseCalendarUI/Tests/CalendarAlertActionTests.swift": "d88c2530fddb4ad35f62b81d30cc9482e2536823644a69be034de976c0426189",
+    "Sources/ChineseCalendarUI/Tests/CalendarAlertConfigurationTests.swift": "410f81eb2342dbb00c4c85ba14c8f6704e99d9bfd6f528b90d6a5e78ec0d7e48",
+    "Sources/ChineseCalendarUI/Tests/CalendarAlertContentTests.swift": "b40549f61440767841e9530b4f56b715d94101e3f09c8228d05cb8eb91acbeb1",
+    "Sources/ChineseCalendarUI/Tests/NavigationTestHost.swift": "2f3d13da6a217af44acaa50eb827e9badb5dfd5a79b1c093f0a5132f34cb1e1d"
+  },
+  "checks": {
+    "format": "passed: 0/360 files require formatting",
+    "strictLint": "passed: 0 violations in 347 files",
+    "localizedCopy": "passed: 337 resources and 21 remaining production strings",
+    "diffWhitespace": "passed",
+    "xcodeBuild": "The build succeeded",
+    "xcodeTests": "489 tests: 489 passed, 0 failed, 0 skipped, 0 expected failures, 0 not run",
+    "sourcesUnchangedAfterTests": true
+  }
+}

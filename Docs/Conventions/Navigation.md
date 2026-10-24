@@ -22,6 +22,8 @@ Router 保存“去哪里”的页面身份和导航结构。业务层负责 des
 
 所有 `present` 接收强类型路由数据，由根宿主的统一配置映射为页面或提示文案；不接收按次 configuration。业务 alert 定义独立 AlertRoute，各类提示使用自己的 Action，由 NavigationAlertDefinition 将内容与异步 handler 配对。Core 保留待确认请求、呈现队列和关闭事务；业务不复制导航树或队列。
 
+统一配置按路由委托对应功能构建 alert；内容、错误映射、依赖适配和按钮业务动作与所属 feature 一起维护。根配置只负责分发和依赖注入，不集中实现各功能的提示流程。业务归属不要求宿主绑定具体 View 的生命周期；跨页面事件由所属业务发起，系统呈现和异步动作等待仍交给统一宿主。
+
 ## NAV-03 — 发起作用域与生命周期
 
 每个 `NavigationLayer` 注入 `CalendarPresentationContext`，负责本层 `present`、自身 `dismiss`、选中栈和离开确认，不提供 path／push／pop。根宿主使用 `rootPresentation`，不隐式代理当前选中 Tab 的栈操作。栈宿主从层级入口取得带发起栈身份的呈现入口并单独注入环境；这些入口共享同一层状态，不要求对象相同。
