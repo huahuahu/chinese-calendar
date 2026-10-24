@@ -46,8 +46,7 @@ final class NavigationTestHost {
         let host = NavigationTestHost(windowLease: windowLease)
         let configuration = NavigationRecordingConfiguration(
             configuration: CalendarNavigationConfiguration(
-                coordinator: coordinator, storeCoordinator: nil,
-                bottomStatusBarIsPresented: { false }, bottomStatusBar: { EmptyView() }
+                coordinator: coordinator, storeCoordinator: nil
             )
         ) { [weak host] destination, context in host?.contexts[destination.id] = context }
         try await host.mount(Color.clear.navigationHost(

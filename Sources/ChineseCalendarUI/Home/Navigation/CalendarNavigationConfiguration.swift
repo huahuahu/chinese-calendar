@@ -3,22 +3,16 @@ import SwiftUI
 
 /// 为整棵日历导航树构建页面和提示，并处理 alert 按钮动作。
 /// 每次页面需要的 Binding 和业务资源由路由传入。
-struct CalendarNavigationConfiguration<BottomStatusBar: View>: @MainActor NavigationHostConfiguration {
+struct CalendarNavigationConfiguration: @MainActor NavigationHostConfiguration {
     typealias Scope = CalendarTab
     typealias Destination = CalendarDestination
     typealias AlertRoute = CalendarAlert
 
     let coordinator: CalendarHomeCoordinator
     let storeCoordinator: ChineseCalendarStoreCoordinator?
-    /// 所有页面共用根配置，通过闭包读取最新的附件显示状态。
-    let bottomStatusBarIsPresented: () -> Bool
-    let bottomStatusBar: () -> BottomStatusBar
 
     func destination(for destination: CalendarDestination) -> some View {
-        CalendarDestinationView(
-            destination: destination, bottomStatusBarIsPresented: bottomStatusBarIsPresented,
-            bottomStatusBar: bottomStatusBar
-        )
+        CalendarDestinationView(destination: destination)
     }
 
     func confirmationContent(

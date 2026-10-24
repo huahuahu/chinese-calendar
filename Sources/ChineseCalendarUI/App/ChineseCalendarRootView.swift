@@ -2,7 +2,6 @@ import ChineseCalendarLocalization
 import ChineseCalendarPersistence
 import NavigationCore
 import SFSafeSymbols
-import SwiftData
 import SwiftUI
 
 /// 应用根视图，负责准备日历数据并进入主浏览界面。
@@ -42,57 +41,9 @@ public struct ChineseCalendarRootView: View {
         .calendarNavigationHost(
             coordinator: homeCoordinator,
             storeCoordinator: coordinator,
-            handlesExternalNavigation: true,
-            bottomStatusBarIsPresented: { rootBottomStatusBarIsPresented },
-            bottomStatusBar: {
-                if case let .ready(_, contentLevel, _) = coordinator.state {
-                    bottomStatusBar(contentLevel: contentLevel)
-                }
-            }
+            handlesExternalNavigation: true
         )
         .calendarStoreEnvironment(state: coordinator.state)
-    }
-
-    private var rootBottomStatusBarIsPresented: Bool {
-        guard case let .ready(_, contentLevel, _) = coordinator.state else { return false }
-        return bottomStatusBarIsPresented(contentLevel: contentLevel)
-    }
-
-    private func bottomStatusBarIsPresented(contentLevel: ChineseCalendarSeedStoreContentLevel) -> Bool {
-        coordinator.fullStoreDownloadProgress != nil || coordinator.canDownloadFullStore(contentLevel: contentLevel)
-    }
-
-    @ViewBuilder
-    private func bottomStatusBar(contentLevel: ChineseCalendarSeedStoreContentLevel) -> some View {
-        if let progress = coordinator.fullStoreDownloadProgress {
-            CalendarDownloadProgressAccessory(progress: progress)
-        } else if coordinator.canDownloadFullStore(contentLevel: contentLevel) {
-            FullStoreDownloadBanner(action: startFullStoreDownload)
-        }
-    }
-
-    private func startFullStoreDownload() {
-        coordinator.startFullStoreDownload()
-    }
-}
-
-/// 显示在应用根视图底部，用于提示完整数据的下载进度。
-private struct FullStoreDownloadBanner: View {
-    let action: () -> Void
-
-    var body: some View {
-        HStack(spacing: 12) {
-            Label(CalendarStringKey.Store.Download.Banner.title, systemSymbol: .arrowDownCircle)
-                .font(.callout)
-
-            Spacer(minLength: 12)
-
-            Button(CalendarStringKey.Store.Download.Banner.action, systemSymbol: .arrowDown, action: action)
-                .buttonStyle(.borderedProminent)
-        }
-        .padding(.horizontal)
-        .padding(.vertical, 10)
-        .background(.calendarSystemBackground)
     }
 }
 

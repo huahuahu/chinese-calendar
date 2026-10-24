@@ -4,12 +4,10 @@ import SwiftUI
 
 /// 将导航宿主放在按数据库 identity 重建的页面内容之外。
 /// 完整数据下载后切换 ModelContainer 时，原宿主仍能接收模态关闭通知并继续等待中的外部导航。
-private struct CalendarNavigationHost<BottomStatusBar: View>: ViewModifier {
+private struct CalendarNavigationHost: ViewModifier {
     let coordinator: CalendarHomeCoordinator
     let storeCoordinator: ChineseCalendarStoreCoordinator?
     let handlesExternalNavigation: Bool
-    let bottomStatusBarIsPresented: () -> Bool
-    let bottomStatusBar: () -> BottomStatusBar
 
     func body(content: Content) -> some View {
         content
@@ -17,8 +15,7 @@ private struct CalendarNavigationHost<BottomStatusBar: View>: ViewModifier {
                 context: coordinator.router.navigation.rootPresentation,
                 configuration: CalendarNavigationConfiguration(
                     coordinator: coordinator,
-                    storeCoordinator: storeCoordinator,
-                    bottomStatusBarIsPresented: bottomStatusBarIsPresented, bottomStatusBar: bottomStatusBar
+                    storeCoordinator: storeCoordinator
                 )
             )
             .environment(coordinator)
@@ -51,25 +48,10 @@ extension View {
         storeCoordinator: ChineseCalendarStoreCoordinator? = nil,
         handlesExternalNavigation: Bool = false
     ) -> some View {
-        calendarNavigationHost(
-            coordinator: coordinator, storeCoordinator: storeCoordinator,
-            handlesExternalNavigation: handlesExternalNavigation,
-            bottomStatusBarIsPresented: { false }, bottomStatusBar: { EmptyView() }
-        )
-    }
-
-    func calendarNavigationHost(
-        coordinator: CalendarHomeCoordinator,
-        storeCoordinator: ChineseCalendarStoreCoordinator? = nil,
-        handlesExternalNavigation: Bool = false,
-        bottomStatusBarIsPresented: @escaping () -> Bool,
-        @ViewBuilder bottomStatusBar: @escaping () -> some View
-    ) -> some View {
         modifier(CalendarNavigationHost(
             coordinator: coordinator,
             storeCoordinator: storeCoordinator,
-            handlesExternalNavigation: handlesExternalNavigation,
-            bottomStatusBarIsPresented: bottomStatusBarIsPresented, bottomStatusBar: bottomStatusBar
+            handlesExternalNavigation: handlesExternalNavigation
         ))
     }
 }

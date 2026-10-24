@@ -79,8 +79,7 @@ struct CalendarAlertActionTests {
 
     private func alertHost(_ coordinator: CalendarHomeCoordinator) async throws -> NavigationTestHost {
         let configuration = CalendarNavigationConfiguration(
-            coordinator: coordinator, storeCoordinator: nil,
-            bottomStatusBarIsPresented: { false }, bottomStatusBar: { EmptyView() }
+            coordinator: coordinator, storeCoordinator: nil
         )
         return try await NavigationTestHost.show(Color.clear.navigationHost(
             context: coordinator.router.navigation.rootPresentation, configuration: configuration

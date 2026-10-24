@@ -4,10 +4,8 @@ import SFSafeSymbols
 import SwiftUI
 
 /// 供导航容器使用，将 CalendarDestination 分发到对应页面。
-struct CalendarDestinationView<BottomStatusBar: View>: View {
+struct CalendarDestinationView: View {
     let destination: CalendarDestination
-    let bottomStatusBarIsPresented: () -> Bool
-    let bottomStatusBar: () -> BottomStatusBar
     @Environment(CalendarPresentationContext.self) private var presentation
     @Environment(CalendarNavigationContext.self) private var navigation: CalendarNavigationContext?
     @Environment(ChineseCalendarStoreCoordinator.self) private var storeCoordinator: ChineseCalendarStoreCoordinator?
@@ -16,10 +14,7 @@ struct CalendarDestinationView<BottomStatusBar: View>: View {
         Group {
             switch destination {
             case .mainTabs:
-                CalendarHomeTabView(
-                    bottomStatusBarIsPresented: bottomStatusBarIsPresented(),
-                    bottomStatusBar: bottomStatusBar
-                )
+                CalendarHomeTabView()
             case .calendarHome:
                 LunarYearDestinationView(landing: .year(number: ChineseLunarCalendar.yearNumber()))
             case .historyHome:

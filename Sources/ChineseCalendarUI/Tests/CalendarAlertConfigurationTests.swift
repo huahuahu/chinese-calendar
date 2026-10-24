@@ -55,10 +55,9 @@ struct CalendarAlertConfigurationTests {
 
     private func configuration(
         _ coordinator: CalendarHomeCoordinator, store: ChineseCalendarStoreCoordinator? = nil
-    ) -> CalendarNavigationConfiguration<EmptyView> {
+    ) -> CalendarNavigationConfiguration {
         CalendarNavigationConfiguration(
-            coordinator: coordinator, storeCoordinator: store,
-            bottomStatusBarIsPresented: { false }, bottomStatusBar: { EmptyView() }
+            coordinator: coordinator, storeCoordinator: store
         )
     }
 }
