@@ -136,6 +136,7 @@
 
             #expect(root.present(destination, rootDestinations: roots(for: destination)).result == .applied)
             let reopened = try await host.context(for: destination, differentFrom: context)
+            _ = try await host.waitForPresentation()
             let reopenedNavigation = reopened.context(for: .primary)
             let reopenedState = CalendarDebugSplitState(navigation: reopenedNavigation)
             #expect(reopenedNavigation !== navigation)
