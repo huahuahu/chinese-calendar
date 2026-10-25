@@ -1,7 +1,7 @@
 {
   "artifact" : "swiftdata_import",
-  "artifactVersion" : "43ae5b55e0290f25451885dca5458022bedf647e7d868ad35d546f36a6d54637",
-  "datasetVersion" : "83cf6bfb03abac883492e52f7e1152947233a9cc03f1614d9162413c5fa5e737",
+  "artifactVersion" : "af9e78c3b23c04241ee7d45c193a2c237718ed5adf1dd37d287d5c0754c8de7c",
+  "datasetVersion" : "c6615b909dc79cc12ff0d5f333cb547ca0dbbb13a0f8c6bfc067059090ace512",
   "dynastyArtifact" : {
     "artifact" : "dynasty_periods",
     "generatedAt" : "2026-06-28T08:56:12.613Z",

@@ -15,4 +15,9 @@ extension PreviewTrait where T == Preview.ViewTraits {
     static var emptySampleData: Self {
         .modifier(EmptySampleDataPreviewModifier())
     }
+
+    /// 使用真实包含年月、没有逐日记录的内存库验证基础数据下的浏览。
+    static var baseSampleData: Self {
+        .modifier(BaseSampleDataPreviewModifier())
+    }
 }

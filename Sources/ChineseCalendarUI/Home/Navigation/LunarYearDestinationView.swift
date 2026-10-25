@@ -1,11 +1,10 @@
-import ChineseCalendarLogging
 import ChineseCalendarPersistence
 import Combine
 import Foundation
 import SwiftData
 import SwiftUI
 
-/// 把年月日导航地址解析为一次性的选中日，并为日历功能子树提供共享环境。
+/// 把年月日导航地址解析为月或日选择，并为日历功能子树提供共享环境。
 struct LunarYearDestinationView: View {
     let landing: LunarCalendarLanding
 
@@ -21,7 +20,7 @@ struct LunarYearDestinationView: View {
     }
 }
 
-/// 隔离环境读取与日期刷新副作用，页面本身只表达选中日对应的内容。
+/// 隔离环境读取与日期刷新副作用，页面本身只表达选中月或日对应的内容。
 private struct LunarYearSelectionHost: View {
     @Environment(CalendarYearFeature.self) private var feature
     @Environment(ChineseCalendarStoreCoordinator.self) private var storeCoordinator: ChineseCalendarStoreCoordinator?
@@ -33,7 +32,7 @@ private struct LunarYearSelectionHost: View {
     let landing: LunarCalendarLanding
 
     var body: some View {
-        CalendarPageView(selectedDayIndex: selection.selectedDayIndex)
+        CalendarPageView(selection: selection.value)
             .task(id: ObjectIdentifier(modelContext)) {
                 resolveInitialSelectionIfNeeded()
             }
@@ -66,22 +65,6 @@ private struct LunarYearSelectionHost: View {
     private func resolveInitialSelectionIfNeeded() {
         feature.connect(modelContext: modelContext, storeCoordinator: storeCoordinator)
         guard feature.modelContext === modelContext else { return }
-        let resolver = CalendarSelectionResolver(modelContext: modelContext)
-
-        do {
-            if let selectedDayIndex = selection.selectedDayIndex, try resolver.contains(dayIndex: selectedDayIndex) {
-                return
-            }
-
-            try selection.select(
-                dayIndex: resolver.selectedDayIndex(
-                    for: landing,
-                    todayJulianDayNumber: today.julianDayNumber
-                )
-            )
-        } catch {
-            ChineseCalendarLog.ui.error("无法解析日历初始选中日：\(error.localizedDescription)")
-            selection.select(dayIndex: nil)
-        }
+        feature.resolveSelectionIfNeeded(for: landing)
     }
 }

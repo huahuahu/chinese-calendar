@@ -17,7 +17,7 @@ enum PreviewSampleData {
         )
         return SampleDataPreviewContext(
             modelContainer: modelContainer,
-            selectedDayIndex: includesSampleData ? selectedDayIndex : nil,
+            selection: includesSampleData ? .day(index: selectedDayIndex) : nil,
             today: referenceDate
         )
     }

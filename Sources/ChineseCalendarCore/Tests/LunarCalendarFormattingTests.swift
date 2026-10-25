@@ -21,6 +21,19 @@ func yearTitleUsesHistoricalEra(lunarYearNumber: Int, expectedTitle: String) {
     #expect(LunarCalendarFormatting.monthTitle(monthNumberInYear: 8, isLeapMonth: false, dayCount: 29) == "八月小")
 }
 
+@Test(arguments: [1, 23, 28, 29])
+func shortMonthsKeepTheirActualDayCount(dayCount: Int) {
+    #expect(LunarMonthSize(dayCount: dayCount) == .small)
+    #expect(LunarCalendarFormatting.monthTitle(monthNumberInYear: 12, isLeapMonth: false, dayCount: dayCount) == "十二月小")
+    #expect(LunarCalendarFormatting.monthSubtitle(dayCount: dayCount, stemIndex: 7, branchIndex: 1)
+        .contains("\(dayCount)"))
+}
+
+@Test(arguments: [-1, 0, 31])
+func invalidMonthLengthsHaveNoSize(dayCount: Int) {
+    #expect(LunarMonthSize(dayCount: dayCount) == nil)
+}
+
 @Test func monthTitleUsesPostMonthStyleForZhuanxuIntercalaryMonth() {
     #expect(LunarCalendarFormatting.monthTitle(
         monthNumberInYear: 9,

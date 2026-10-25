@@ -54,11 +54,15 @@ enum SnapshotScene: String, CaseIterable {
         switch self {
         case .calendar, .beforeCommonEra, .commonEra, .civilEraBoundary, .postNinthMonth:
             NavigationStack {
-                CalendarPageView(selectedDayIndex: scenario.selectedDayIndex)
+                CalendarPageView(selection: .day(index: scenario.selectedDayIndex))
             }
-        case .emptyCalendar, .baseCalendar:
+        case .emptyCalendar:
             NavigationStack {
-                CalendarPageView(selectedDayIndex: nil)
+                CalendarPageView(selection: nil)
+            }
+        case .baseCalendar:
+            NavigationStack {
+                CalendarPageView(selection: .month(index: PreviewBaseCalendarData.selectedMonthIndex))
             }
         case .yearPicker:
             NavigationStack {

@@ -6,7 +6,7 @@ import SFSafeSymbols
 import SwiftData
 import SwiftUI
 
-/// 显示由选中日推导出的年月，并负责月、年与“今天”选择入口。
+/// 显示当前月及其所属年份，并负责月、年与“今天”选择入口。
 struct YearMonthHeader: View {
     // swiftformat:disable:next enumNamespaces
     private struct Constants {

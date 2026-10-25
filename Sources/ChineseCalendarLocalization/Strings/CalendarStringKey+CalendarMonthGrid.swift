@@ -63,8 +63,8 @@ public extension CalendarStringKey.Calendar.MonthGrid.Empty {
     static var requiresFullDataMessage: LocalizedStringResource {
         CalendarStringKey.resource(
             "calendar.monthGrid.empty.requiresFullDataMessage",
-            defaultValue: "请先下载完整日期数据。",
-            comment: "农历月格因只有基础数据而为空时，提示用户下载完整日期数据。"
+            defaultValue: "下载完整日期数据后，可查看本月的每日信息。",
+            comment: "农历年月仍可浏览但月格没有逐日记录时，说明下载完整日期数据可查看本月每日信息。"
         )
     }
 

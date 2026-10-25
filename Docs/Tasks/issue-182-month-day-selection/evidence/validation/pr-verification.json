@@ -1,0 +1,108 @@
+{
+  "base": "e0723aeaee9862e9346e03ad41b1df62f2b95c76",
+  "date": "2026-10-25",
+  "branch": "codex/issue-182-month-day-delivery",
+  "context": {
+    "tool": "native Xcode MCP",
+    "simulator": "iPhone 18 Pro Max",
+    "runtime": "iOS 27.0"
+  },
+  "checks": {
+    "ios_suite": {
+      "counts": {
+        "expectedFailures": 0,
+        "failed": 0,
+        "notRun": 0,
+        "passed": 539,
+        "skipped": 0,
+        "total": 539
+      },
+      "scheme": "ChineseCalendar-iOS",
+      "summary": "539 tests: 539 passed, 0 failed, 0 skipped, 0 expected failures, 0 not run"
+    },
+    "final_resolver": {
+      "counts": {
+        "expectedFailures": 0,
+        "failed": 0,
+        "notRun": 0,
+        "passed": 19,
+        "skipped": 0,
+        "total": 19
+      },
+      "scheme": "ChineseCalendar-iOS",
+      "summary": "19 tests: 19 passed, 0 failed, 0 skipped, 0 expected failures, 0 not run"
+    },
+    "final_snapshots": {
+      "counts": {
+        "expectedFailures": 0,
+        "failed": 0,
+        "notRun": 0,
+        "passed": 4,
+        "skipped": 0,
+        "total": 4
+      },
+      "scheme": "ChineseCalendarSnapshots",
+      "summary": "4 tests: 4 passed, 0 failed, 0 skipped, 0 expected failures, 0 not run"
+    },
+    "swiftformat": "pass; 363 files",
+    "swiftlint": "pass; 350 files, 0 violations",
+    "localization": "pass; 335 entries",
+    "schema": "pass; 919377 JSONL records",
+    "production_index": "pass; 884256 days, 29944 months",
+    "sqlite": "integrity ok; 29944 months match import; artifact identity valid"
+  },
+  "review": {
+    "domain": "complete; no findings",
+    "ui": "complete; no findings",
+    "data": "complete; no findings",
+    "followup": "resolver optional projection; no findings"
+  },
+  "limits": [
+    "No new real download completion, full-store day tap, or clear-and-restore UI run.",
+    "No remote full seed store publication.",
+    "Base snapshot injects a month selection; it does not prove today landing."
+  ],
+  "source_sha256": {
+    "Apps/Shared/Resources/ChineseCalendarSeedStore.bundle/ChineseCalendar.sqlite": "9fee7b93632109d69dc35b20f0dff719fb41b550980221a22dcaf79244515e18",
+    "Apps/Shared/Resources/ChineseCalendarSeedStore.bundle/manifest.json": "a9d035e00f8a047182aead9d35f24bf19c19a741786f1292272170a79cb93e06",
+    "CONTEXT.md": "d5dfb84f1f6da00f1f1e07d74bfd04248c349061778bbe53f721849a83650599",
+    "Data/Processed/calendar_days/237/calendar_days.jsonl": "d20c79a7e0365269f56745d96694fe9b5b832f4708480906e129b8ee0f00b103",
+    "Data/Processed/swiftdata_import/chinese_lunar_months.jsonl": "c4842e1e9b7b1fec95c6c94d3d797837111c0d03d6d00368e242ceba93ed5708",
+    "Data/Schemas/chinese_lunar_month.schema.json": "f0d71fbfa13de6f5f070ccab8bf35894eb86a50a3491481bcbe324c6c6ce70b3",
+    "Scripts/ImportChineseCalendar/README.md": "da86a350292ddb791cf02171636aecba7fcc67e77dbc4711e7954d7e8e0a1eec",
+    "Scripts/ImportChineseCalendar/generate_calendar_days.mjs": "d9bbe20509f3d094b3c09d5f5c51901a385e064648d7a01c27f3047b26f0cc5d",
+    "Scripts/ImportChineseCalendar/generate_swiftdata_import.mjs": "107abca25017a234dc4d140d9a7c1b663eaa1d07f40b0e2ab979b2e620cd0593",
+    "Sources/ChineseCalendarCore/ChineseLunarCalendar.swift": null,
+    "Sources/ChineseCalendarCore/LunarCalendarFormatting.swift": "1ae330412e3daca2fdfdb96c147c1868b730567332b149b5b95632688eccbea3",
+    "Sources/ChineseCalendarCore/LunarMonthDateIndex.swift": "9ffe0f9c78e490655d26da2b9f4f32fdebbe6c2a5327ae8fac0be0ea59e36400",
+    "Sources/ChineseCalendarCore/Tests/ChineseLunarCalendarTests.swift": null,
+    "Sources/ChineseCalendarCore/Tests/LunarCalendarFormattingTests.swift": "149156a7fc30a4bc7db817cddd5e31d2a83a44f2453f0092283bd3aa950c93a2",
+    "Sources/ChineseCalendarCore/Tests/LunarMonthDateIndexTests.swift": "261beac5f77af594292fca106f4313c830b90bca6955857e82caeb5b4cf628ed",
+    "Sources/ChineseCalendarLocalization/Resources/Calendar.xcstrings": "85292f6998457fa8db06d3f93c273074a2fbadff343e17631835b92984eb1bf2",
+    "Sources/ChineseCalendarLocalization/Strings/CalendarStringKey+CalendarMonthGrid.swift": "7623df1ea11983b31ed0b72eb50509e548b4a4b838d2ce4907f7107cdde541d2",
+    "Sources/ChineseCalendarUI/Calendar/CalendarPageView.swift": "150b2a529354a8215a9e34cd58792bbeca5fa617ed99345d90aa9e0821fe53db",
+    "Sources/ChineseCalendarUI/Calendar/Month/YearMonthHeader.swift": "bf1723a18cd45d4cb866b2c38c1b7b32f20d470b125bf54fa4f696b730098669",
+    "Sources/ChineseCalendarUI/Calendar/Selection/CalendarSelection.swift": "8e3b4e899f3f32e318230d966927864fefd6aa675a0daec32bedf9a55955d670",
+    "Sources/ChineseCalendarUI/Calendar/Selection/CalendarSelectionResolver.swift": "453aed10cec005686209e7f5038f69599f1ac56198c118373822b550a37845dc",
+    "Sources/ChineseCalendarUI/Calendar/Selection/CalendarSelectionValue.swift": "81a63185b4b9e0f499779d90366327627b2b3a01202438294a83cb107c7f584c",
+    "Sources/ChineseCalendarUI/Calendar/Selection/LunarCalendarLanding.swift": "b0986bd033833ec4d00216af1a8d8644ba34a39926e18605d5522f72e37ea990",
+    "Sources/ChineseCalendarUI/Calendar/Year/CalendarYearFeature.swift": "3894ed6eefbb7421f6c8d756f069c1e831aa85d2c7f15db111bfbb1d4feb8451",
+    "Sources/ChineseCalendarUI/Calendar/Year/Picker/CalendarYearPickerView.swift": "a750b568d3c48f359c5024b7572d2b71ee9429d226921707a51598a862da998f",
+    "Sources/ChineseCalendarUI/Debug/CalendarDebugNavigationActions.swift": "8ce7512acfdbb4e600e06a6d4817dab5b230137b88cb8f84c136e537115b1f12",
+    "Sources/ChineseCalendarUI/Home/Navigation/CalendarDestinationView.swift": "3b7bc8e1fe03cb8d2dd33ed36192873ae2dec16941d02b5e9d3ad848415c9a28",
+    "Sources/ChineseCalendarUI/Home/Navigation/LunarYearDestinationView.swift": "613f9bf559f570cfb8ff7fdf2df72392180d0e22cb55457288a9c487756d45b5",
+    "Sources/ChineseCalendarUI/PreviewSupport/BaseSampleDataPreviewModifier.swift": "662b307e2b8dac133775f2d3058b5d6f91c872b4170b3bd4ede565e0c14892dc",
+    "Sources/ChineseCalendarUI/PreviewSupport/PreviewBaseCalendarData.swift": "0402a0c1bdb77a24c0a66e45eeb2d84232d4266f79c1e023e1faa06fcdaca37a",
+    "Sources/ChineseCalendarUI/PreviewSupport/PreviewSampleData.swift": "1d9f436b43c44aefa40642692ec32a12c5423a3c0e4362bcdde71ac6fd5f987c",
+    "Sources/ChineseCalendarUI/PreviewSupport/PreviewTrait+SampleData.swift": "cdb0af2ea12b278d7b8e46ee0c6bc0ea8fe3451331c70c48e9641f917f330ec3",
+    "Sources/ChineseCalendarUI/PreviewSupport/SampleDataPreviewContext.swift": "a7d9224b9a303617884e2b48d466fbdf49f2d2f6c7baae6e583da2b566708183",
+    "Sources/ChineseCalendarUI/PreviewSupport/SampleDataPreviewHost.swift": "432e0f4135e1e99276d5cdcf88e45464716344f1e6b4a7dff77a4a9b07889790",
+    "Sources/ChineseCalendarUI/PreviewSupport/SampleDataPreviewModifier.swift": "c3904896998ce3028063a6db0f3d02f68b1e15b5dfb0f24c44e71dae30093221",
+    "Sources/ChineseCalendarUI/Tests/CalendarSelectionResolverTests.swift": "7f793e5c00841c03c4dc3cce1470dce6e3add54016a59501657dd56a889ec973",
+    "Sources/ChineseCalendarUI/Tests/CalendarSelectionTransitionTests.swift": "7941fb591413ec6708581b9271a8fb70430cfaac9a3d2322c08fefbb29551ff3",
+    "Sources/ChineseCalendarUI/Tests/PreviewSampleDataTests.swift": "1f981525dd9ae61b81dc7031fa19b0d1c7b669c791579723e5cb599a0760c39a",
+    "Tests/Snapshots/SnapshotSampleHost.swift": "0bb7b1b5ffe347ae96cc80c44005c29c00a6561f195b7265b02bcb98883ab8e3",
+    "Tests/Snapshots/SnapshotScene.swift": "2fcf9adff7cedf2eefc67316ea5de8a94faeb942bc5ecf0cc7b089d0d74067db",
+    "Tests/Snapshots/__Snapshots__/CalendarSnapshotTests/calendar-base-data.phone.png": "d6903ee87f6a764dad6901f72581fcc2745c2e915831275ab0558d6714af51db"
+  }
+}
