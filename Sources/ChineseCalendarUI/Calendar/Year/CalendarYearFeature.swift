@@ -24,13 +24,6 @@ final class CalendarYearFeature {
     private var storeIdentity: String?
     private var storeGeneration = 0
     private var hasResolvedInitialSelection = false
-    private var storeSelectionToRestore: StoreSelectionRestoration?
-
-    /// 仅在切库期间传递稳定索引，恢复完成后立即释放。
-    private struct StoreSelectionRestoration {
-        let value: CalendarSelectionValue
-        let monthIndex: Int?
-    }
 
     init(selection: CalendarSelection = CalendarSelection(), today: CalendarToday = CalendarToday()) {
         self.selection = selection
@@ -49,7 +42,6 @@ final class CalendarYearFeature {
             else { return }
         }
         if let currentContext = self.modelContext, currentContext !== modelContext {
-            prepareSelectionForStoreReplacement()
             invalidateStoreResources()
         }
         self.modelContext = modelContext
@@ -69,17 +61,11 @@ final class CalendarYearFeature {
         }
     }
 
-    /// 首次解析导航意图；换库时恢复已经浏览到的位置，不重放最初落点。
+    /// 每个数据库首次解析页面入口；同库内刷新保留已有选择。
     func resolveSelectionIfNeeded(for landing: LunarCalendarLanding) {
         synchronizeStoreIdentity()
         guard let resolver else { return }
         do {
-            if let restoration = storeSelectionToRestore {
-                try restoreSelection(restoration, using: resolver)
-                storeSelectionToRestore = nil
-                hasResolvedInitialSelection = true
-                return
-            }
             if let value = selection.value, try resolver.contains(selection: value) {
                 hasResolvedInitialSelection = true
                 return
@@ -253,39 +239,13 @@ private extension CalendarYearFeature {
     private func storeIdentityDidChange(_ identity: String?) {
         guard storeIdentity != identity else { return }
         storeIdentity = identity
-        prepareSelectionForStoreReplacement()
         invalidateStoreResources()
         modelContext = nil
     }
 
-    private func prepareSelectionForStoreReplacement() {
-        guard storeSelectionToRestore == nil, let value = selection.value, let resolver else { return }
-        do {
-            storeSelectionToRestore = try StoreSelectionRestoration(
-                value: value, monthIndex: resolver.month(for: value)?.lunarMonthIndex
-            )
-        } catch {
-            ChineseCalendarLog.ui.error("无法保存换库前的日历月份：\(error.localizedDescription)")
-            storeSelectionToRestore = StoreSelectionRestoration(value: value, monthIndex: nil)
-        }
-    }
-
-    private func restoreSelection(
-        _ restoration: StoreSelectionRestoration,
-        using resolver: CalendarSelectionResolver
-    ) throws {
-        if case .day = restoration.value, try resolver.contains(selection: restoration.value) {
-            selection.select(restoration.value)
-        } else if let monthIndex = restoration.monthIndex {
-            try selection.select(resolver.selection(
-                for: .month(index: monthIndex), todayJulianDayNumber: today.julianDayNumber
-            ))
-        } else {
-            selection.select(nil)
-        }
-    }
-
     private func invalidateStoreResources() {
+        selection.select(nil)
+        hasResolvedInitialSelection = false
         storeGeneration += 1
         pendingYearTransition = nil
         acceptsYearPickerResult = false

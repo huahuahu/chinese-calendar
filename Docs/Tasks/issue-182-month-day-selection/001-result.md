@@ -5,6 +5,8 @@
 - 日期：2026-10-24
 - 代码状态：`codex/issue-182-month-day-selection` 未提交工作区
 
+> 当前换库规则已按用户最新评论简化，见 [005-store-selection-simplification.md](005-store-selection-simplification.md)。下文前两轮换库恢复实现和验证仅保留为历史记录。
+
 ## 实际变更
 
 CalendarSelection 只保存月／日枚举；Resolver、页面、年份选择器、当前月定位和 CalendarYearFeature 的换库恢复均使用该状态。基础数据的下载说明移到日格，日详情要求真实选中日。新增真实仅含年月的 Preview／截图夹具，并迁移原有测试到新的解析接口。
@@ -48,3 +50,11 @@ CalendarSelection 只保存月／日枚举；Resolver、页面、年份选择器
 合并前使用 review-changes 完成领域、UI、数据三个独立 lane 审查，并对最后的 Resolver 表达调整定向复审，未确认需要修正的缺陷。原始分工报告位于本地 `.output/reviews/20261025-issue182-pr/`；可携带的检查摘要与源文件 SHA-256 见 [pr-verification.json](evidence/validation/pr-verification.json)。
 
 本轮未补做真实 full 下载完成后的点日、清空后的 UI 恢复，因此 AC-03／AC-04 的相应交互项继续保持未完成，Issue #182 保持打开；自动测试和快照不替代这些证据。基础库快照直接注入月份，仅证明渲染，不作为 `.today` 运行链的证明。远程 full SQLite 仍未重建或发布。远端 PR 与 CI 状态以 GitHub 当前记录为准。
+
+## 2026-10-25 删除换库恢复逻辑后的最终状态
+
+按用户最新评论删除 `StoreSelectionRestoration`、临时恢复字段、换库前月份查询与换库后恢复分支。现有失效入口只清空选择、重置初始解析标记，并继续使旧年份选择器失效；新库连接后重新解析原始 landing。同库刷新保留当前选择，精确日缺失时不回退到月份。原 AC-04 的跨库保留位置要求已由 [005 补充](005-store-selection-simplification.md) 替代。
+
+调整 base→full、full→base、full→full 及同库刷新测试；增加清空完整数据后精确日入口保持不可用的回归，更新旧 Binding 失效断言。最终完整 iOS 测试 **540 passed，0 failed/skipped/notRun**；SwiftFormat 363 文件与 SwiftLint 350 文件零违规。专项领域／生命周期审查完成，未确认需要修正的缺陷。详见 [最终验证摘要](evidence/validation/pr-simplification-verification.json)。
+
+此前 4 组／23 PNG 本地快照结果对应删除换库恢复前的源码；本轮没有修改 View 或快照源文件，远端 CI 将对最终 PR 提交重新比较。真实下载完成后的点日与清空后的页面重新定位尚未补做 UI 端到端复验；已撤销的“换库保留原浏览月份”不再作为当前验收要求。远程 full SQLite 未发布。

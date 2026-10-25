@@ -75,7 +75,7 @@ struct CalendarYearFeatureTests {
         feature.completeYearTransitionPreparation(3)
         #expect(feature.yearPickerID == nil)
         #expect(feature.pendingYearTransition == nil)
-        #expect(feature.selection.selectedDayIndex == 315)
+        #expect(feature.selection.value == nil)
         guard case let .yearPicker(_, _, context) = try #require(feature.beginYearPicker()) else { return }
         #expect(context === second.mainContext)
     }

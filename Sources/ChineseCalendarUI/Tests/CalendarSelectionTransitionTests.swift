@@ -6,7 +6,7 @@ import SwiftData
 import Testing
 
 @MainActor
-@Suite("月日选择在浏览和换库之间保持当前位置")
+@Suite("月日浏览与换库后的入口解析")
 struct CalendarSelectionTransitionTests {
     @Test func baseMonthBrowsingCrossesYearsAndDistinguishesLeapMonth() throws {
         let base = try SelectionTransitionFixture.makeContainer(includesDays: false)
@@ -54,7 +54,7 @@ struct CalendarSelectionTransitionTests {
         #expect(binding.wrappedValue == 2025)
     }
 
-    @Test func installingFullDataResolvesDayInBrowsedMonthInsteadOfInitialLanding() throws {
+    @Test func installingFullDataResolvesTheOriginalMonthLanding() throws {
         let base = try SelectionTransitionFixture.makeContainer(includesDays: false)
         let full = try SelectionTransitionFixture.makeContainer(includesDays: true)
         let landing = LunarCalendarLanding.month(index: 3)
@@ -65,29 +65,42 @@ struct CalendarSelectionTransitionTests {
         feature.connect(modelContext: full.mainContext, storeCoordinator: nil)
         feature.resolveSelectionIfNeeded(for: landing)
 
-        #expect(feature.selection.value == .day(index: 501))
-        #expect(feature.selection.selectedDayIndex == 501)
+        #expect(feature.selection.value == .day(index: 315))
+        #expect(feature.selection.selectedDayIndex == 315)
         #expect(feature.modelContext === full.mainContext)
     }
 
-    @Test func clearingFullDataPreservesSelectedDaysMonth() throws {
+    @Test func clearingFullDataResolvesTheOriginalMonthLanding() throws {
         let full = try SelectionTransitionFixture.makeContainer(includesDays: true)
         let base = try SelectionTransitionFixture.makeContainer(includesDays: false)
-        let landing = LunarCalendarLanding.day(index: 315)
+        let landing = LunarCalendarLanding.month(index: 3)
         let feature = makeFeature(in: full, landing: landing)
         feature.selection.select(.day(index: 417))
 
         feature.connect(modelContext: base.mainContext, storeCoordinator: nil)
         feature.resolveSelectionIfNeeded(for: landing)
 
-        #expect(feature.selection.value == .month(index: 4))
+        #expect(feature.selection.value == .month(index: 3))
         #expect(feature.selection.selectedDayIndex == nil)
         guard case let .yearPicker(_, binding, context) = try #require(feature.beginYearPicker()) else { return }
         #expect(binding.wrappedValue == 2026)
         #expect(context === base.mainContext)
     }
 
-    @Test func replacingFullDataPreservesExactSelectedDay() throws {
+    @Test func clearingFullDataLeavesAnExactDayLandingUnavailable() throws {
+        let full = try SelectionTransitionFixture.makeContainer(includesDays: true)
+        let base = try SelectionTransitionFixture.makeContainer(includesDays: false)
+        let landing = LunarCalendarLanding.day(index: 315)
+        let feature = makeFeature(in: full, landing: landing)
+        #expect(feature.selection.value == .day(index: 315))
+
+        feature.connect(modelContext: base.mainContext, storeCoordinator: nil)
+        feature.resolveSelectionIfNeeded(for: landing)
+
+        #expect(feature.selection.value == nil)
+    }
+
+    @Test func replacingFullDataResolvesTheOriginalExactDayLanding() throws {
         let first = try SelectionTransitionFixture.makeContainer(includesDays: true)
         let second = try SelectionTransitionFixture.makeContainer(includesDays: true)
         let landing = LunarCalendarLanding.day(index: 315)
@@ -97,7 +110,7 @@ struct CalendarSelectionTransitionTests {
         feature.connect(modelContext: second.mainContext, storeCoordinator: nil)
         feature.resolveSelectionIfNeeded(for: landing)
 
-        #expect(feature.selection.value == .day(index: 417))
+        #expect(feature.selection.value == .day(index: 315))
         #expect(feature.modelContext === second.mainContext)
     }
 
@@ -133,7 +146,7 @@ struct CalendarSelectionTransitionTests {
         #expect(feature.pendingYearTransition == nil)
     }
 
-    @Test func resolvedLandingDoesNotOverwriteLaterBrowsingOnRefreshOrStoreReplacement() throws {
+    @Test func sameStoreRefreshKeepsBrowsingButReplacementResolvesTheLanding() throws {
         let first = try SelectionTransitionFixture.makeContainer(includesDays: false)
         let second = try SelectionTransitionFixture.makeContainer(includesDays: false)
         let landing = LunarCalendarLanding.month(index: 3)
@@ -143,8 +156,9 @@ struct CalendarSelectionTransitionTests {
         feature.resolveSelectionIfNeeded(for: landing)
         #expect(feature.selection.value == .month(index: 4))
         feature.connect(modelContext: second.mainContext, storeCoordinator: nil)
+        #expect(feature.selection.value == nil)
         feature.resolveSelectionIfNeeded(for: landing)
-        #expect(feature.selection.value == .month(index: 4))
+        #expect(feature.selection.value == .month(index: 3))
     }
 
     private func makeFeature(in container: ModelContainer, landing: LunarCalendarLanding) -> CalendarYearFeature {

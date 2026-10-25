@@ -1,0 +1,28 @@
+{
+  "date": "2026-10-25",
+  "comparison_head": "ef972e6ac965ffa251983b1a73f1e48516dd0f03",
+  "amendment": "005-store-selection-simplification.md",
+  "behavior": "Clear selection and initial-resolution flag on store/context replacement, then resolve original landing; keep same-store browsing.",
+  "ios_tests": {
+    "expectedFailures": 0,
+    "failed": 0,
+    "notRun": 0,
+    "passed": 540,
+    "skipped": 0,
+    "total": 540
+  },
+  "scheme": "ChineseCalendar-iOS",
+  "simulator": "iPhone 18 Pro Max / iOS 27.0",
+  "format": "pass; 363 files",
+  "lint": "pass; 350 files, 0 violations",
+  "changed_source_sha256": {
+    "Sources/ChineseCalendarUI/Calendar/Year/CalendarYearFeature.swift": "828d7c051af38a0ffc646ac5c308ec4dfe24676adc67ca8a51cb218c46982775",
+    "Sources/ChineseCalendarUI/Tests/CalendarSelectionTransitionTests.swift": "0e627fb934be3cefb8becbe6af401b6d23e16a1686956fa90b68e0c4d989321a",
+    "Sources/ChineseCalendarUI/Tests/CalendarYearFeatureTests.swift": "fde1fd50eb2c49e5bedfbdfb5c0fa2bc31d893e56b105aeab8d2dc91c41df267"
+  },
+  "limits": [
+    "Prior local snapshot comparison preceded this store-lifecycle simplification; no view or snapshot source changed. PR CI reruns snapshots for the final head.",
+    "Real completed download and clear UI run not performed.",
+    "Remote full store not published."
+  ]
+}
