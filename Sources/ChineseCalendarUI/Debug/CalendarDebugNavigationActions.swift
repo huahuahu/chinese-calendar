@@ -10,6 +10,7 @@
         /// 仅为调试跨 Tab 跳转和模拟外部 Deep Link，才在这里读取 App 级 coordinator。
         /// 普通业务页分别通过 navigation 操作栈、通过 presentation 操作模态。
         @Environment(CalendarHomeCoordinator.self) private var coordinator
+        @Environment(\.modelContext) private var modelContext
 
         var body: some View {
             Section(CalendarStringKey.Debug.Navigation.localActions) {
@@ -66,7 +67,11 @@
                     )
                 }
                 Button(CalendarStringKey.Debug.Navigation.deepLink) {
-                    coordinator.openDeepLink(.lunarYear(ChineseLunarCalendar.yearNumber()))
+                    let resolver = CalendarSelectionResolver(modelContext: modelContext)
+                    let today = JulianDayNumber.forLocalGregorianDate(containing: .now)
+                    guard let selection = try? resolver.todaySelection(julianDayNumber: today) else { return }
+                    guard let yearNumber = try? resolver.yearNumber(for: selection) else { return }
+                    coordinator.openDeepLink(.lunarYear(yearNumber))
                 }
             }
         }

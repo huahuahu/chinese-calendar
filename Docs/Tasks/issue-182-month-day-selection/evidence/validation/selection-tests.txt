@@ -1,0 +1,1031 @@
+================================================================================
+TEST RESULTS SUMMARY
+================================================================================
+Generated: 2026-10-24T13:32:32Z
+Total Results: 85
+================================================================================
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 1/85
+TEST_TARGET: ChineseCalendarUITests
+TEST_IDENTIFIER: CalendarSelectionResolverTests/dayLandingSelectsExactDayInsteadOfToday()
+TEST_DISPLAY_NAME: dayLandingSelectsExactDayInsteadOfToday()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarUI/Tests/CalendarSelectionResolverTests.swift
+TEST_LINE_NUMBER: 10
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 2/85
+TEST_TARGET: ChineseCalendarUITests
+TEST_IDENTIFIER: CalendarSelectionResolverTests/missingLandingTargetCannotProduceASelection(landing:)
+TEST_DISPLAY_NAME: .year(number: 9999)
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarUI/Tests/CalendarSelectionResolverTests.swift
+TEST_LINE_NUMBER: 21
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 3/85
+TEST_TARGET: ChineseCalendarUITests
+TEST_IDENTIFIER: CalendarSelectionResolverTests/missingLandingTargetCannotProduceASelection(landing:)
+TEST_DISPLAY_NAME: .month(index: 99999)
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarUI/Tests/CalendarSelectionResolverTests.swift
+TEST_LINE_NUMBER: 21
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 4/85
+TEST_TARGET: ChineseCalendarUITests
+TEST_IDENTIFIER: CalendarSelectionResolverTests/missingLandingTargetCannotProduceASelection(landing:)
+TEST_DISPLAY_NAME: .day(index: 9999999)
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarUI/Tests/CalendarSelectionResolverTests.swift
+TEST_LINE_NUMBER: 21
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 5/85
+TEST_TARGET: ChineseCalendarUITests
+TEST_IDENTIFIER: CalendarSelectionResolverTests/monthLandingSelectsTodayWhenTodayBelongsToThatMonth()
+TEST_DISPLAY_NAME: monthLandingSelectsTodayWhenTodayBelongsToThatMonth()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarUI/Tests/CalendarSelectionResolverTests.swift
+TEST_LINE_NUMBER: 37
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 6/85
+TEST_TARGET: ChineseCalendarUITests
+TEST_IDENTIFIER: CalendarSelectionResolverTests/monthLandingSelectsFirstDayWhenTodayIsElsewhere()
+TEST_DISPLAY_NAME: monthLandingSelectsFirstDayWhenTodayIsElsewhere()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarUI/Tests/CalendarSelectionResolverTests.swift
+TEST_LINE_NUMBER: 48
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 7/85
+TEST_TARGET: ChineseCalendarUITests
+TEST_IDENTIFIER: CalendarSelectionResolverTests/yearLandingSelectsTodayWhenTodayBelongsToThatYear()
+TEST_DISPLAY_NAME: yearLandingSelectsTodayWhenTodayBelongsToThatYear()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarUI/Tests/CalendarSelectionResolverTests.swift
+TEST_LINE_NUMBER: 59
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 8/85
+TEST_TARGET: ChineseCalendarUITests
+TEST_IDENTIFIER: CalendarSelectionResolverTests/yearLandingSelectsFirstDayOnTheContinuousMonthTimeline()
+TEST_DISPLAY_NAME: yearLandingSelectsFirstDayOnTheContinuousMonthTimeline()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarUI/Tests/CalendarSelectionResolverTests.swift
+TEST_LINE_NUMBER: 70
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 9/85
+TEST_TARGET: ChineseCalendarUITests
+TEST_IDENTIFIER: CalendarSelectionResolverTests/yearTransitionSelectsTheDestinationBoundaryMonth()
+TEST_DISPLAY_NAME: yearTransitionSelectsTheDestinationBoundaryMonth()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarUI/Tests/CalendarSelectionResolverTests.swift
+TEST_LINE_NUMBER: 81
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 10/85
+TEST_TARGET: ChineseCalendarUITests
+TEST_IDENTIFIER: CalendarSelectionResolverTests/adjacentMonthsUseTheGlobalContinuousMonthIndex()
+TEST_DISPLAY_NAME: adjacentMonthsUseTheGlobalContinuousMonthIndex()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarUI/Tests/CalendarSelectionResolverTests.swift
+TEST_LINE_NUMBER: 99
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 11/85
+TEST_TARGET: ChineseCalendarUITests
+TEST_IDENTIFIER: CalendarSelectionResolverTests/incompleteSelectedDayCannotResolveAValidCalendarPosition()
+TEST_DISPLAY_NAME: incompleteSelectedDayCannotResolveAValidCalendarPosition()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarUI/Tests/CalendarSelectionResolverTests.swift
+TEST_LINE_NUMBER: 109
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 12/85
+TEST_TARGET: ChineseCalendarUITests
+TEST_IDENTIFIER: CalendarSelectionResolverTests/yearWithoutDaysPreservesTheFirstMonth()
+TEST_DISPLAY_NAME: yearWithoutDaysPreservesTheFirstMonth()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarUI/Tests/CalendarSelectionResolverTests.swift
+TEST_LINE_NUMBER: 126
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 13/85
+TEST_TARGET: ChineseCalendarUITests
+TEST_IDENTIFIER: CalendarSelectionResolverTests/monthWithoutDaysPreservesMonthPrecision()
+TEST_DISPLAY_NAME: monthWithoutDaysPreservesMonthPrecision()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarUI/Tests/CalendarSelectionResolverTests.swift
+TEST_LINE_NUMBER: 137
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 14/85
+TEST_TARGET: ChineseCalendarUITests
+TEST_IDENTIFIER: CalendarSelectionResolverTests/selectionKeepsOnlyOnePrecisionAtATime()
+TEST_DISPLAY_NAME: selectionKeepsOnlyOnePrecisionAtATime()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarUI/Tests/CalendarSelectionResolverTests.swift
+TEST_LINE_NUMBER: 151
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 15/85
+TEST_TARGET: ChineseCalendarUITests
+TEST_IDENTIFIER: CalendarSelectionResolverTests/baseYearLandingLocatesTodayMonth(sample:)
+TEST_DISPLAY_NAME: LunarMonthSample(year: 2025, month: 7, day: 24, lunarYear: 2025, lunarMonth: 6, isLeap: false)
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarUI/Tests/CalendarSelectionResolverTests.swift
+TEST_LINE_NUMBER: 162
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 16/85
+TEST_TARGET: ChineseCalendarUITests
+TEST_IDENTIFIER: CalendarSelectionResolverTests/baseYearLandingLocatesTodayMonth(sample:)
+TEST_DISPLAY_NAME: LunarMonthSample(year: 2025, month: 7, day: 25, lunarYear: 2025, lunarMonth: 6, isLeap: true)
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarUI/Tests/CalendarSelectionResolverTests.swift
+TEST_LINE_NUMBER: 162
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 17/85
+TEST_TARGET: ChineseCalendarUITests
+TEST_IDENTIFIER: CalendarSelectionResolverTests/baseYearLandingLocatesTodayMonth(sample:)
+TEST_DISPLAY_NAME: LunarMonthSample(year: 2026, month: 1, day: 1, lunarYear: 2025, lunarMonth: 11, isLeap: false)
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarUI/Tests/CalendarSelectionResolverTests.swift
+TEST_LINE_NUMBER: 162
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 18/85
+TEST_TARGET: ChineseCalendarUITests
+TEST_IDENTIFIER: CalendarSelectionResolverTests/baseYearLandingLocatesTodayMonth(sample:)
+TEST_DISPLAY_NAME: LunarMonthSample(year: 2026, month: 2, day: 17, lunarYear: 2026, lunarMonth: 1, isLeap: false)
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarUI/Tests/CalendarSelectionResolverTests.swift
+TEST_LINE_NUMBER: 162
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 19/85
+TEST_TARGET: ChineseCalendarUITests
+TEST_IDENTIFIER: CalendarSelectionResolverTests/baseNavigationKeepsMonthOrderAndExactDayFailure()
+TEST_DISPLAY_NAME: baseNavigationKeepsMonthOrderAndExactDayFailure()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarUI/Tests/CalendarSelectionResolverTests.swift
+TEST_LINE_NUMBER: 183
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 20/85
+TEST_TARGET: ChineseCalendarUITests
+TEST_IDENTIFIER: CalendarSelectionResolverTests/todayMonthRequiresAnUnambiguousRecord()
+TEST_DISPLAY_NAME: todayMonthRequiresAnUnambiguousRecord()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarUI/Tests/CalendarSelectionResolverTests.swift
+TEST_LINE_NUMBER: 200
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 21/85
+TEST_TARGET: ChineseCalendarUITests
+TEST_IDENTIFIER: CalendarSelectionResolverTests/missingTodayMonthDoesNotChooseTheFirstMonthOfCurrentYear()
+TEST_DISPLAY_NAME: missingTodayMonthDoesNotChooseTheFirstMonthOfCurrentYear()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarUI/Tests/CalendarSelectionResolverTests.swift
+TEST_LINE_NUMBER: 212
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 22/85
+TEST_TARGET: ChineseCalendarUITests
+TEST_IDENTIFIER: CalendarSelectionResolverTests/todayDoesNotInterpretHistoricalPostMonthAsModernLeapMonth()
+TEST_DISPLAY_NAME: todayDoesNotInterpretHistoricalPostMonthAsModernLeapMonth()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarUI/Tests/CalendarSelectionResolverTests.swift
+TEST_LINE_NUMBER: 220
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 23/85
+TEST_TARGET: ChineseCalendarUITests
+TEST_IDENTIFIER: PreviewSampleDataTests/historicalMonthsHaveCompleteStableRelationships()
+TEST_DISPLAY_NAME: historicalMonthsHaveCompleteStableRelationships()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarUI/Tests/PreviewSampleDataTests.swift
+TEST_LINE_NUMBER: 10
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 24/85
+TEST_TARGET: ChineseCalendarUITests
+TEST_IDENTIFIER: PreviewSampleDataTests/eraBoundaryResolvesBothDirectionsWithoutADisplayedYearZero()
+TEST_DISPLAY_NAME: eraBoundaryResolvesBothDirectionsWithoutADisplayedYearZero()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarUI/Tests/PreviewSampleDataTests.swift
+TEST_LINE_NUMBER: 31
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 25/85
+TEST_TARGET: ChineseCalendarUITests
+TEST_IDENTIFIER: PreviewSampleDataTests/postNinthMonthRetainsNameIdentityAndAncientYearBoundary()
+TEST_DISPLAY_NAME: postNinthMonthRetainsNameIdentityAndAncientYearBoundary()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarUI/Tests/PreviewSampleDataTests.swift
+TEST_LINE_NUMBER: 70
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 26/85
+TEST_TARGET: ChineseCalendarUITests
+TEST_IDENTIFIER: PreviewSampleDataTests/civilEraBoundaryIsInsideALunarMonth()
+TEST_DISPLAY_NAME: civilEraBoundaryIsInsideALunarMonth()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarUI/Tests/PreviewSampleDataTests.swift
+TEST_LINE_NUMBER: 96
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 27/85
+TEST_TARGET: ChineseCalendarUITests
+TEST_IDENTIFIER: PreviewSampleDataTests/emptyAndModernScenariosRemainAvailable()
+TEST_DISPLAY_NAME: emptyAndModernScenariosRemainAvailable()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarUI/Tests/PreviewSampleDataTests.swift
+TEST_LINE_NUMBER: 114
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 28/85
+TEST_TARGET: ChineseCalendarUITests
+TEST_IDENTIFIER: LunarYearTransitionDirectionTests/laterYearMovesForwardAlongTheTimeline()
+TEST_DISPLAY_NAME: laterYearMovesForwardAlongTheTimeline()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarUI/Tests/LunarYearTransitionDirectionTests.swift
+TEST_LINE_NUMBER: 5
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 29/85
+TEST_TARGET: ChineseCalendarUITests
+TEST_IDENTIFIER: LunarYearTransitionDirectionTests/earlierYearMovesBackwardAlongTheTimeline()
+TEST_DISPLAY_NAME: earlierYearMovesBackwardAlongTheTimeline()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarUI/Tests/LunarYearTransitionDirectionTests.swift
+TEST_LINE_NUMBER: 9
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 30/85
+TEST_TARGET: ChineseCalendarUITests
+TEST_IDENTIFIER: LunarYearTransitionDirectionTests/equalYearHasNoTransition()
+TEST_DISPLAY_NAME: equalYearHasNoTransition()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarUI/Tests/LunarYearTransitionDirectionTests.swift
+TEST_LINE_NUMBER: 13
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 31/85
+TEST_TARGET: ChineseCalendarUITests
+TEST_IDENTIFIER: LunarYearTransitionDirectionTests/directionRemainsChronologicalAcrossCommonEraBoundary()
+TEST_DISPLAY_NAME: directionRemainsChronologicalAcrossCommonEraBoundary()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarUI/Tests/LunarYearTransitionDirectionTests.swift
+TEST_LINE_NUMBER: 17
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 32/85
+TEST_TARGET: ChineseCalendarUITests
+TEST_IDENTIFIER: LunarYearTransitionDirectionTests/laterYearLeavesFromTheCurrentYearsLastMonth()
+TEST_DISPLAY_NAME: laterYearLeavesFromTheCurrentYearsLastMonth()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarUI/Tests/LunarYearTransitionDirectionTests.swift
+TEST_LINE_NUMBER: 22
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 33/85
+TEST_TARGET: ChineseCalendarUITests
+TEST_IDENTIFIER: LunarYearTransitionDirectionTests/earlierYearLeavesFromTheCurrentYearsFirstMonth()
+TEST_DISPLAY_NAME: earlierYearLeavesFromTheCurrentYearsFirstMonth()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarUI/Tests/LunarYearTransitionDirectionTests.swift
+TEST_LINE_NUMBER: 28
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 34/85
+TEST_TARGET: ChineseCalendarUITests
+TEST_IDENTIFIER: LunarYearTransitionDirectionTests/laterYearStartsAtItsFirstMonth()
+TEST_DISPLAY_NAME: laterYearStartsAtItsFirstMonth()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarUI/Tests/LunarYearTransitionDirectionTests.swift
+TEST_LINE_NUMBER: 34
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 35/85
+TEST_TARGET: ChineseCalendarUITests
+TEST_IDENTIFIER: LunarYearTransitionDirectionTests/earlierYearStartsAtItsLastMonth()
+TEST_DISPLAY_NAME: earlierYearStartsAtItsLastMonth()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarUI/Tests/LunarYearTransitionDirectionTests.swift
+TEST_LINE_NUMBER: 40
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 36/85
+TEST_TARGET: ChineseCalendarUITests
+TEST_IDENTIFIER: LunarYearTransitionDirectionTests/aYearWithoutMonthsHasNoDestinationMonth()
+TEST_DISPLAY_NAME: aYearWithoutMonthsHasNoDestinationMonth()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarUI/Tests/LunarYearTransitionDirectionTests.swift
+TEST_LINE_NUMBER: 46
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 37/85
+TEST_TARGET: ChineseCalendarUITests
+TEST_IDENTIFIER: LunarYearTransitionDirectionTests/aYearWithoutMonthsHasNoSourceMonth()
+TEST_DISPLAY_NAME: aYearWithoutMonthsHasNoSourceMonth()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarUI/Tests/LunarYearTransitionDirectionTests.swift
+TEST_LINE_NUMBER: 51
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 38/85
+TEST_TARGET: ChineseCalendarUITests
+TEST_IDENTIFIER: CalendarYearFeatureTests/independentBindingsReturnOnlyToTheirOriginatingPage()
+TEST_DISPLAY_NAME: independentBindingsReturnOnlyToTheirOriginatingPage()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarUI/Tests/CalendarYearFeatureTests.swift
+TEST_LINE_NUMBER: 9
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 39/85
+TEST_TARGET: ChineseCalendarUITests
+TEST_IDENTIFIER: CalendarYearFeatureTests/bindingConsumesOnlyOneResultAndPreservesBoundaryTransition()
+TEST_DISPLAY_NAME: bindingConsumesOnlyOneResultAndPreservesBoundaryTransition()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarUI/Tests/CalendarYearFeatureTests.swift
+TEST_LINE_NUMBER: 33
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 40/85
+TEST_TARGET: ChineseCalendarUITests
+TEST_IDENTIFIER: CalendarYearFeatureTests/oldBindingAndOldDismissalCannotChangeReplacement()
+TEST_DISPLAY_NAME: oldBindingAndOldDismissalCannotChangeReplacement()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarUI/Tests/CalendarYearFeatureTests.swift
+TEST_LINE_NUMBER: 49
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 41/85
+TEST_TARGET: ChineseCalendarUITests
+TEST_IDENTIFIER: CalendarYearFeatureTests/replacingStoreInvalidatesOldBindingImmediately()
+TEST_DISPLAY_NAME: replacingStoreInvalidatesOldBindingImmediately()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarUI/Tests/CalendarYearFeatureTests.swift
+TEST_LINE_NUMBER: 66
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 42/85
+TEST_TARGET: ChineseCalendarUITests
+TEST_IDENTIFIER: CalendarYearPresentationTests/rejectedSubmissionClearsItsPreparedState()
+TEST_DISPLAY_NAME: rejectedSubmissionClearsItsPreparedState()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarUI/Tests/CalendarYearPresentationTests.swift
+TEST_LINE_NUMBER: 8
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 43/85
+TEST_TARGET: ChineseCalendarUITests
+TEST_IDENTIFIER: CalendarYearPresentationTests/normalDismissalClearsOnlyTheCurrentPicker()
+TEST_DISPLAY_NAME: normalDismissalClearsOnlyTheCurrentPicker()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarUI/Tests/CalendarYearPresentationTests.swift
+TEST_LINE_NUMBER: 18
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 44/85
+TEST_TARGET: ChineseCalendarUITests
+TEST_IDENTIFIER: CalendarYearPresentationTests/nestedPickersKeepIndependentOwners()
+TEST_DISPLAY_NAME: nestedPickersKeepIndependentOwners()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarUI/Tests/CalendarYearPresentationTests.swift
+TEST_LINE_NUMBER: 37
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 45/85
+TEST_TARGET: ChineseCalendarUITests
+TEST_IDENTIFIER: CalendarYearPresentationTests/replacingContextDismissesItsPickerAndAllowsReopening()
+TEST_DISPLAY_NAME: replacingContextDismissesItsPickerAndAllowsReopening()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarUI/Tests/CalendarYearPresentationTests.swift
+TEST_LINE_NUMBER: 60
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 46/85
+TEST_TARGET: ChineseCalendarUITests
+TEST_IDENTIFIER: CalendarYearPresentationTests/invalidatingQueuedPickerClearsOwnerWithoutDismissalCallback()
+TEST_DISPLAY_NAME: invalidatingQueuedPickerClearsOwnerWithoutDismissalCallback()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarUI/Tests/CalendarYearPresentationTests.swift
+TEST_LINE_NUMBER: 79
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 47/85
+TEST_TARGET: ChineseCalendarUITests
+TEST_IDENTIFIER: CalendarSelectionTransitionTests/baseMonthBrowsingCrossesYearsAndDistinguishesLeapMonth()
+TEST_DISPLAY_NAME: baseMonthBrowsingCrossesYearsAndDistinguishesLeapMonth()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarUI/Tests/CalendarSelectionTransitionTests.swift
+TEST_LINE_NUMBER: 10
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 48/85
+TEST_TARGET: ChineseCalendarUITests
+TEST_IDENTIFIER: CalendarSelectionTransitionTests/baseYearPickerCompletesAtSourceBoundaryAndUpdatesHighlight()
+TEST_DISPLAY_NAME: baseYearPickerCompletesAtSourceBoundaryAndUpdatesHighlight()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarUI/Tests/CalendarSelectionTransitionTests.swift
+TEST_LINE_NUMBER: 35
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 49/85
+TEST_TARGET: ChineseCalendarUITests
+TEST_IDENTIFIER: CalendarSelectionTransitionTests/installingFullDataResolvesDayInBrowsedMonthInsteadOfInitialLanding()
+TEST_DISPLAY_NAME: installingFullDataResolvesDayInBrowsedMonthInsteadOfInitialLanding()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarUI/Tests/CalendarSelectionTransitionTests.swift
+TEST_LINE_NUMBER: 56
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 50/85
+TEST_TARGET: ChineseCalendarUITests
+TEST_IDENTIFIER: CalendarSelectionTransitionTests/clearingFullDataPreservesSelectedDaysMonth()
+TEST_DISPLAY_NAME: clearingFullDataPreservesSelectedDaysMonth()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarUI/Tests/CalendarSelectionTransitionTests.swift
+TEST_LINE_NUMBER: 72
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 51/85
+TEST_TARGET: ChineseCalendarUITests
+TEST_IDENTIFIER: CalendarSelectionTransitionTests/replacingFullDataPreservesExactSelectedDay()
+TEST_DISPLAY_NAME: replacingFullDataPreservesExactSelectedDay()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarUI/Tests/CalendarSelectionTransitionTests.swift
+TEST_LINE_NUMBER: 89
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 52/85
+TEST_TARGET: ChineseCalendarUITests
+TEST_IDENTIFIER: CalendarSelectionTransitionTests/unresolvedExactDayRetriesWhenFullDataBecomesAvailable()
+TEST_DISPLAY_NAME: unresolvedExactDayRetriesWhenFullDataBecomesAvailable()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarUI/Tests/CalendarSelectionTransitionTests.swift
+TEST_LINE_NUMBER: 103
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 53/85
+TEST_TARGET: ChineseCalendarUITests
+TEST_IDENTIFIER: CalendarSelectionTransitionTests/nonexistentExactDayNeverFallsBackToAnAvailableMonth()
+TEST_DISPLAY_NAME: nonexistentExactDayNeverFallsBackToAnAvailableMonth()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarUI/Tests/CalendarSelectionTransitionTests.swift
+TEST_LINE_NUMBER: 119
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 54/85
+TEST_TARGET: ChineseCalendarUITests
+TEST_IDENTIFIER: CalendarSelectionTransitionTests/resolvedLandingDoesNotOverwriteLaterBrowsingOnRefreshOrStoreReplacement()
+TEST_DISPLAY_NAME: resolvedLandingDoesNotOverwriteLaterBrowsingOnRefreshOrStoreReplacement()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarUI/Tests/CalendarSelectionTransitionTests.swift
+TEST_LINE_NUMBER: 135
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 55/85
+TEST_TARGET: ChineseCalendarCoreTests
+TEST_IDENTIFIER: civilDateFormattingAlwaysUsesUTC()
+TEST_DISPLAY_NAME: civilDateFormattingAlwaysUsesUTC()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarCore/Tests/LunarCalendarFormattingTests.swift
+TEST_LINE_NUMBER: 121
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 56/85
+TEST_TARGET: ChineseCalendarCoreTests
+TEST_IDENTIFIER: civilDateRangeUsesLocalizedIntervalFormatting()
+TEST_DISPLAY_NAME: civilDateRangeUsesLocalizedIntervalFormatting()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarCore/Tests/LunarCalendarFormattingTests.swift
+TEST_LINE_NUMBER: 86
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 57/85
+TEST_TARGET: ChineseCalendarCoreTests
+TEST_IDENTIFIER: civilDatesBeforeCommonEraIncludeTheEra()
+TEST_DISPLAY_NAME: civilDatesBeforeCommonEraIncludeTheEra()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarCore/Tests/LunarCalendarFormattingTests.swift
+TEST_LINE_NUMBER: 106
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 58/85
+TEST_TARGET: ChineseCalendarCoreTests
+TEST_IDENTIFIER: civilDateTitleFollowsLocaleAndIncludesYearOnFirstDayOfCivilYear()
+TEST_DISPLAY_NAME: civilDateTitleFollowsLocaleAndIncludesYearOnFirstDayOfCivilYear()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarCore/Tests/LunarCalendarFormattingTests.swift
+TEST_LINE_NUMBER: 37
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 59/85
+TEST_TARGET: ChineseCalendarCoreTests
+TEST_IDENTIFIER: codableRoundTripPreservesValue()
+TEST_DISPLAY_NAME: codableRoundTripPreservesValue()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarCore/Tests/ChineseCalendarDateTests.swift
+TEST_LINE_NUMBER: 40
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 60/85
+TEST_TARGET: ChineseCalendarCoreTests
+TEST_IDENTIFIER: dayTitleUsesLunarDayNameOnly()
+TEST_DISPLAY_NAME: dayTitleUsesLunarDayNameOnly()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarCore/Tests/LunarCalendarFormattingTests.swift
+TEST_LINE_NUMBER: 32
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 61/85
+TEST_TARGET: ChineseCalendarCoreTests
+TEST_IDENTIFIER: defaultsLeapMonthFlagToFalse()
+TEST_DISPLAY_NAME: defaultsLeapMonthFlagToFalse()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarCore/Tests/ChineseCalendarDateTests.swift
+TEST_LINE_NUMBER: 28
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 62/85
+TEST_TARGET: ChineseCalendarCoreTests
+TEST_IDENTIFIER: fullCivilDateTitleFollowsLocale()
+TEST_DISPLAY_NAME: fullCivilDateTitleFollowsLocale()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarCore/Tests/LunarCalendarFormattingTests.swift
+TEST_LINE_NUMBER: 52
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 63/85
+TEST_TARGET: ChineseCalendarCoreTests
+TEST_IDENTIFIER: gregorianCalendarPreservesThe1582ReformBoundary()
+TEST_DISPLAY_NAME: gregorianCalendarPreservesThe1582ReformBoundary()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarCore/Tests/LunarCalendarFormattingTests.swift
+TEST_LINE_NUMBER: 69
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 64/85
+TEST_TARGET: ChineseCalendarCoreTests
+TEST_IDENTIFIER: localCivilJulianDayNumberDoesNotApplyTimeZoneTwice(offsetHours:)
+TEST_DISPLAY_NAME: 14
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarCore/Tests/ChineseLunarCalendarTests.swift
+TEST_LINE_NUMBER: 51
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 65/85
+TEST_TARGET: ChineseCalendarCoreTests
+TEST_IDENTIFIER: localCivilJulianDayNumberDoesNotApplyTimeZoneTwice(offsetHours:)
+TEST_DISPLAY_NAME: -12
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarCore/Tests/ChineseLunarCalendarTests.swift
+TEST_LINE_NUMBER: 51
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 66/85
+TEST_TARGET: ChineseCalendarCoreTests
+TEST_IDENTIFIER: localGregorianDateUsesTheUsersTimeZone()
+TEST_DISPLAY_NAME: localGregorianDateUsesTheUsersTimeZone()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarCore/Tests/JulianDayNumberTests.swift
+TEST_LINE_NUMBER: 4
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 67/85
+TEST_TARGET: ChineseCalendarCoreTests
+TEST_IDENTIFIER: lunarMonthDecodesOldPayloadWithoutNameStyle()
+TEST_DISPLAY_NAME: lunarMonthDecodesOldPayloadWithoutNameStyle()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarCore/Tests/ChineseCalendarDateTests.swift
+TEST_LINE_NUMBER: 56
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 68/85
+TEST_TARGET: ChineseCalendarCoreTests
+TEST_IDENTIFIER: lunarMonthUsesCivilDateAndLeapMonth(sample:)
+TEST_DISPLAY_NAME: LunarMonthSample(year: 2026, month: 1, day: 1, lunarYear: 2025, lunarMonth: 11, isLeap: false)
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarCore/Tests/ChineseLunarCalendarTests.swift
+TEST_LINE_NUMBER: 28
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 69/85
+TEST_TARGET: ChineseCalendarCoreTests
+TEST_IDENTIFIER: lunarMonthUsesCivilDateAndLeapMonth(sample:)
+TEST_DISPLAY_NAME: LunarMonthSample(year: 2026, month: 2, day: 16, lunarYear: 2025, lunarMonth: 12, isLeap: false)
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarCore/Tests/ChineseLunarCalendarTests.swift
+TEST_LINE_NUMBER: 28
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 70/85
+TEST_TARGET: ChineseCalendarCoreTests
+TEST_IDENTIFIER: lunarMonthUsesCivilDateAndLeapMonth(sample:)
+TEST_DISPLAY_NAME: LunarMonthSample(year: 2026, month: 2, day: 17, lunarYear: 2026, lunarMonth: 1, isLeap: false)
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarCore/Tests/ChineseLunarCalendarTests.swift
+TEST_LINE_NUMBER: 28
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 71/85
+TEST_TARGET: ChineseCalendarCoreTests
+TEST_IDENTIFIER: lunarMonthUsesCivilDateAndLeapMonth(sample:)
+TEST_DISPLAY_NAME: LunarMonthSample(year: 2025, month: 7, day: 24, lunarYear: 2025, lunarMonth: 6, isLeap: false)
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarCore/Tests/ChineseLunarCalendarTests.swift
+TEST_LINE_NUMBER: 28
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 72/85
+TEST_TARGET: ChineseCalendarCoreTests
+TEST_IDENTIFIER: lunarMonthUsesCivilDateAndLeapMonth(sample:)
+TEST_DISPLAY_NAME: LunarMonthSample(year: 2025, month: 7, day: 25, lunarYear: 2025, lunarMonth: 6, isLeap: true)
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarCore/Tests/ChineseLunarCalendarTests.swift
+TEST_LINE_NUMBER: 28
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 73/85
+TEST_TARGET: ChineseCalendarCoreTests
+TEST_IDENTIFIER: monthTitleIncludesLunarMonthSizeWhenKnown()
+TEST_DISPLAY_NAME: monthTitleIncludesLunarMonthSizeWhenKnown()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarCore/Tests/LunarCalendarFormattingTests.swift
+TEST_LINE_NUMBER: 18
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 74/85
+TEST_TARGET: ChineseCalendarCoreTests
+TEST_IDENTIFIER: monthTitleUsesPostMonthStyleForZhuanxuIntercalaryMonth()
+TEST_DISPLAY_NAME: monthTitleUsesPostMonthStyleForZhuanxuIntercalaryMonth()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarCore/Tests/LunarCalendarFormattingTests.swift
+TEST_LINE_NUMBER: 23
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 75/85
+TEST_TARGET: ChineseCalendarCoreTests
+TEST_IDENTIFIER: preservesLeapMonthFlag()
+TEST_DISPLAY_NAME: preservesLeapMonthFlag()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarCore/Tests/ChineseCalendarDateTests.swift
+TEST_LINE_NUMBER: 4
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 76/85
+TEST_TARGET: ChineseCalendarCoreTests
+TEST_IDENTIFIER: sexagenaryNameUsesCyclicStemAndBranchIndexes()
+TEST_DISPLAY_NAME: sexagenaryNameUsesCyclicStemAndBranchIndexes()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarCore/Tests/SexagenaryCycleTests.swift
+TEST_LINE_NUMBER: 3
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 77/85
+TEST_TARGET: ChineseCalendarCoreTests
+TEST_IDENTIFIER: supportsHistoricalPostMonthDisplayName()
+TEST_DISPLAY_NAME: supportsHistoricalPostMonthDisplayName()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarCore/Tests/ChineseCalendarDateTests.swift
+TEST_LINE_NUMBER: 17
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 78/85
+TEST_TARGET: ChineseCalendarCoreTests
+TEST_IDENTIFIER: yearNumberUsesChineseCalendarYearBoundary()
+TEST_DISPLAY_NAME: yearNumberUsesChineseCalendarYearBoundary()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarCore/Tests/ChineseLunarCalendarTests.swift
+TEST_LINE_NUMBER: 4
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 79/85
+TEST_TARGET: ChineseCalendarCoreTests
+TEST_IDENTIFIER: yearTitleUsesHistoricalEra(lunarYearNumber:expectedTitle:)
+TEST_DISPLAY_NAME: -220, "公元前 221 年"
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarCore/Tests/LunarCalendarFormattingTests.swift
+TEST_LINE_NUMBER: 4
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 80/85
+TEST_TARGET: ChineseCalendarCoreTests
+TEST_IDENTIFIER: yearTitleUsesHistoricalEra(lunarYearNumber:expectedTitle:)
+TEST_DISPLAY_NAME: -1, "公元前 2 年"
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarCore/Tests/LunarCalendarFormattingTests.swift
+TEST_LINE_NUMBER: 4
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 81/85
+TEST_TARGET: ChineseCalendarCoreTests
+TEST_IDENTIFIER: yearTitleUsesHistoricalEra(lunarYearNumber:expectedTitle:)
+TEST_DISPLAY_NAME: 0, "公元前 1 年"
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarCore/Tests/LunarCalendarFormattingTests.swift
+TEST_LINE_NUMBER: 4
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 82/85
+TEST_TARGET: ChineseCalendarCoreTests
+TEST_IDENTIFIER: yearTitleUsesHistoricalEra(lunarYearNumber:expectedTitle:)
+TEST_DISPLAY_NAME: 1, "公元 1 年"
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarCore/Tests/LunarCalendarFormattingTests.swift
+TEST_LINE_NUMBER: 4
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 83/85
+TEST_TARGET: ChineseCalendarCoreTests
+TEST_IDENTIFIER: yearTitleUsesHistoricalEra(lunarYearNumber:expectedTitle:)
+TEST_DISPLAY_NAME: 2026, "公元 2026 年"
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarCore/Tests/LunarCalendarFormattingTests.swift
+TEST_LINE_NUMBER: 4
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 84/85
+TEST_TARGET: ChineseCalendarCoreTests
+TEST_IDENTIFIER: localMidnightAdvancesJulianDayNumber(secondsFromGMT:year:month:day:utcHourAtLocalMidnight:)
+TEST_DISPLAY_NAME: 28800, 2025, 12, 31, 16
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarCore/Tests/JulianDayNumberTests.swift
+TEST_LINE_NUMBER: 19
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 85/85
+TEST_TARGET: ChineseCalendarCoreTests
+TEST_IDENTIFIER: localMidnightAdvancesJulianDayNumber(secondsFromGMT:year:month:day:utcHourAtLocalMidnight:)
+TEST_DISPLAY_NAME: -28800, 2026, 1, 1, 8
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Packages/Sources/ChineseCalendarCore/Tests/JulianDayNumberTests.swift
+TEST_LINE_NUMBER: 19
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+
+================================================================================
+END OF TEST RESULTS SUMMARY
+================================================================================

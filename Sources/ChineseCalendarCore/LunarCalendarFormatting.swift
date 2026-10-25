@@ -6,7 +6,11 @@ public enum LunarMonthSize: Int, Codable, CaseIterable, Sendable {
     case big = 30
 
     public init?(dayCount: Int) {
-        self.init(rawValue: dayCount)
+        switch dayCount {
+        case 1 ..< 30: self = .small
+        case 30: self = .big
+        default: return nil
+        }
     }
 
     public var chineseName: String {

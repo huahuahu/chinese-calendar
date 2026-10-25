@@ -1,8 +1,9 @@
+import ChineseCalendarCore
 import ChineseCalendarPersistence
 import Foundation
 import SwiftData
 
-/// 把年月日导航意图解析为一个具体农历日，避免维护独立的当前年或当前月状态。
+/// 把年月日导航意图解析为真实月份或日期，保持唯一业务浏览位置。
 ///
 /// 这里只查询和返回结果，由调用方决定是否更新 CalendarSelection。
 /// dayIndex 是应用内部日序，julianDayNumber 用于定位民用日期，两者不能直接互换。
@@ -15,54 +16,63 @@ struct CalendarSelectionResolver {
         self.modelContext = modelContext
     }
 
-    /// 按年、月、日三种导航意图，确定目标的选中日。
-    ///
-    /// 年和月分别复用各自的默认日期规则；日按内部日序精确查询，不受今天影响。
-    /// 目标缺少可用的日记录时返回 nil，不跨到其他导航粒度寻找替代日期。
-    func selectedDayIndex(
+    /// 年月入口可在没有日记录时停留于月份；日入口必须精确命中，不能降级为月。
+    func selection(
         for landing: LunarCalendarLanding,
         todayJulianDayNumber: Int
-    ) throws -> Int? {
+    ) throws -> CalendarSelectionValue? {
         switch landing {
+        case .today:
+            try todaySelection(julianDayNumber: todayJulianDayNumber)
         case let .year(yearNumber):
-            try selectedDayIndex(
-                inYear: yearNumber,
-                todayJulianDayNumber: todayJulianDayNumber
-            )
+            try selection(inYear: yearNumber, todayJulianDayNumber: todayJulianDayNumber)
         case let .month(monthIndex):
-            try selectedDayIndex(
-                inMonth: monthIndex,
-                todayJulianDayNumber: todayJulianDayNumber
-            )
+            try lunarMonth(for: monthIndex).map {
+                try defaultSelection(in: $0, todayJulianDayNumber: todayJulianDayNumber)
+            }
         case let .day(dayIndex):
-            try lunarDay(for: dayIndex)?.dayIndex
+            try lunarDay(for: dayIndex).map { .day(index: $0.dayIndex) }
         }
     }
 
-    /// 为沿时间方向进入目标年份的场景，选择目标年边界月份中的一个日期。
+    /// 从当前浏览位置取得真实月份；月精度不要求日记录，日精度仍校验完整关系。
+    func month(for selection: CalendarSelectionValue) throws -> ChineseLunarMonth? {
+        switch selection {
+        case let .month(index): try lunarMonth(for: index)
+        case let .day(index): try lunarDay(for: index)?.chineseLunarMonth
+        }
+    }
+
+    func yearNumber(for selection: CalendarSelectionValue) throws -> Int? {
+        try month(for: selection)?.chineseLunarYear?.lunarYearNumber
+    }
+
+    func contains(selection: CalendarSelectionValue) throws -> Bool {
+        try month(for: selection) != nil
+    }
+
+    /// 优先精确匹配今天的日记录；缺日时按连续月序累计真实月长定位月份。
+    func todaySelection(julianDayNumber: Int) throws -> CalendarSelectionValue? {
+        if let today = try lunarDay(forJulianDayNumber: julianDayNumber) {
+            return .day(index: today.dayIndex)
+        }
+        return try todayLunarMonth(julianDayNumber: julianDayNumber).map { .month(index: $0.lunarMonthIndex) }
+    }
+
+    /// 为沿时间方向进入目标年份的场景，选择目标年的边界月份或其中的日期。
     ///
-    /// 向更早年份切换时进入目标年的最后一个月，向更晚年份切换时进入目标年的第一个月。
-    /// 找到边界月后复用月内选择规则：今天在该月时选今天，否则选最早的日记录；缺少数据则返回 nil。
-    func selectedDayIndex(
+    /// 向更早年份进入末月，向更晚年份进入首月；无日记录时保留真实月份。
+    func selection(
         inBoundaryMonthOf yearNumber: Int,
         direction: LunarYearTransitionDirection,
         todayJulianDayNumber: Int
-    ) throws -> Int? {
+    ) throws -> CalendarSelectionValue? {
         let order: SortOrder = switch direction {
-        case .earlier:
-            .reverse
-        case .later:
-            .forward
+        case .earlier: .reverse
+        case .later: .forward
         }
-
-        guard let destinationMonth = try boundaryLunarMonth(inYear: yearNumber, order: order) else {
-            return nil
-        }
-
-        return try selectedDayIndex(
-            inMonth: destinationMonth.lunarMonthIndex,
-            todayJulianDayNumber: todayJulianDayNumber
-        )
+        guard let month = try boundaryLunarMonth(inYear: yearNumber, order: order) else { return nil }
+        return try defaultSelection(in: month, todayJulianDayNumber: todayJulianDayNumber)
     }
 
     /// 计算跨年切换时，月份条应离开或进入的边界月份，供滚动和过渡过程使用。
@@ -117,75 +127,53 @@ struct CalendarSelectionResolver {
         limitedDescriptor.fetchLimit = 1
         return try modelContext.fetch(limitedDescriptor).first
     }
-
-    /// 从选中日推导所属农历年，供年份选择器高亮和切换方向判断使用。
-    ///
-    /// 先按日序查询有效农历日，再沿 chineseLunarMonth、chineseLunarYear 关系读取所属年份。
-    /// 未提供日序、日记录不存在或民用日期及年月关系不完整时返回 nil。
-    func yearNumber(forDayIndex dayIndex: Int?) throws -> Int? {
-        guard let dayIndex,
-              let selectedDay = try lunarDay(for: dayIndex),
-              let selectedMonth = selectedDay.chineseLunarMonth
-        else {
-            return nil
-        }
-
-        return selectedMonth.chineseLunarYear?.lunarYearNumber
-    }
-
-    /// 将外部提供的“今天”儒略日数转换为可写入 CalendarSelection 的内部日序。
-    ///
-    /// 复用 lunarDay(forJulianDayNumber:) 查找民用日期关联的农历日，再返回它的 dayIndex；日期或关联缺失时返回 nil。
-    /// 今天由 CalendarToday 等调用方提供，这里不读取系统时钟。
-    func todayDayIndex(julianDayNumber: Int) throws -> Int? {
-        try lunarDay(forJulianDayNumber: julianDayNumber)?.dayIndex
-    }
-
-    /// 检查已有选中日是否仍存在于当前数据中，供调用方决定是否需要重新解析初始选择。
-    ///
-    /// 复用按日序精确查询，要求日期存在且民用日期及年月关系完整；无效时返回 false，查询失败仍抛出错误。
-    func contains(dayIndex: Int) throws -> Bool {
-        try lunarDay(for: dayIndex) != nil
-    }
 }
 
 private extension CalendarSelectionResolver {
-    /// 为目标月份确定一个可选中的日序：今天在该月时选今天，否则选月内最早的日记录。
-    ///
-    /// 先通过今天的儒略日数查找有效农历日并核对所属月的月序，否则从目标月的 days 关系取日号最小的记录。
-    /// 该月没有日级数据时返回 nil，不会仅凭月份信息生成选中日。
-    func selectedDayIndex(
-        inMonth monthIndex: Int,
+    /// 月内优先今天，否则选最早的有效日；没有有效日时保留月份位置。
+    func defaultSelection(
+        in month: ChineseLunarMonth,
         todayJulianDayNumber: Int
-    ) throws -> Int? {
+    ) throws -> CalendarSelectionValue {
         let today = try lunarDay(forJulianDayNumber: todayJulianDayNumber)
-        if let today, today.chineseLunarMonth?.lunarMonthIndex == monthIndex {
-            return today.dayIndex
+        if let today, today.chineseLunarMonth?.lunarMonthIndex == month.lunarMonthIndex {
+            return .day(index: today.dayIndex)
         }
-
-        return try firstLunarDay(inMonth: monthIndex)?.dayIndex
+        let firstDay = ChineseCalendarRelationshipQueries.days(inMonth: month).first { validDay($0) != nil }
+        if let firstDay {
+            return .day(index: firstDay.dayIndex)
+        }
+        return .month(index: month.lunarMonthIndex)
     }
 
-    /// 为直接导航到某个农历年的场景确定默认选中日。
-    ///
-    /// 今天属于目标年时优先选今天；否则按连续农历月序找到该年的第一个月，再取其中最早的日记录。
-    /// 目标年没有月份，或第一个月没有日记录时返回 nil；不会继续扫描该年的后续月份。
-    func selectedDayIndex(
+    /// 今天属于目标年时优先定位当天或当月，其余年份按连续月序进入首月。
+    func selection(
         inYear yearNumber: Int,
         todayJulianDayNumber: Int
-    ) throws -> Int? {
-        if let today = try lunarDay(forJulianDayNumber: todayJulianDayNumber) {
-            let todayYearNumber = today.chineseLunarMonth?.chineseLunarYear?.lunarYearNumber
-            if todayYearNumber == yearNumber {
-                return today.dayIndex
-            }
+    ) throws -> CalendarSelectionValue? {
+        let today = try todaySelection(julianDayNumber: todayJulianDayNumber)
+        let todayMonth = try today.flatMap { try month(for: $0) }
+        if let todayMonth, todayMonth.chineseLunarYear?.lunarYearNumber == yearNumber {
+            return try defaultSelection(in: todayMonth, todayJulianDayNumber: todayJulianDayNumber)
         }
-
         guard let firstMonth = try boundaryLunarMonth(inYear: yearNumber, order: .forward) else {
             return nil
         }
+        return try defaultSelection(in: firstMonth, todayJulianDayNumber: todayJulianDayNumber)
+    }
 
-        return try firstLunarDay(inMonth: firstMonth.lunarMonthIndex)?.dayIndex
+    /// 月表包含完整月长，即使没有逐日记录，也可从数据集月初锚点累计定位。
+    func todayLunarMonth(julianDayNumber: Int) throws -> ChineseLunarMonth? {
+        var descriptor = FetchDescriptor<ChineseLunarMonth>(sortBy: [SortDescriptor(\.lunarMonthIndex)])
+        descriptor.propertiesToFetch = [\.lunarMonthIndex, \.dayCount]
+        let months = try modelContext.fetch(descriptor)
+        let lengths = months.lazy.map { LunarMonthDateIndex.Month(index: $0.lunarMonthIndex, dayCount: $0.dayCount) }
+        guard let dateIndex = LunarMonthDateIndex(months: lengths),
+              let position = dateIndex.day(forJulianDayNumber: julianDayNumber)
+        else {
+            return nil
+        }
+        return try lunarMonth(for: position.monthIndex)
     }
 
     /// 按内部日序取得一条农历日记录，作为日期选择和所属年月推导的基础查询。
@@ -218,17 +206,15 @@ private extension CalendarSelectionResolver {
         return try validDay(modelContext.fetch(descriptor).first?.chineseLunarDay)
     }
 
-    /// 取得目标月中日号最小的有效农历日，作为该月的默认选中日。
-    ///
-    /// 先按连续月序找到月份，再通过 days 关系按日号排序，校验第一条记录的民用日期及年月关系。
-    /// 完整数据下通常返回初一；月份不存在、没有日记录或首条记录关系不完整时返回 nil，不继续尝试后续日期。
-    func firstLunarDay(inMonth monthIndex: Int) throws -> ChineseLunarDay? {
+    /// 月份必须存在且关联真实年份；没有日记录不影响月精度浏览。
+    func lunarMonth(for monthIndex: Int) throws -> ChineseLunarMonth? {
         var monthDescriptor = FetchDescriptor<ChineseLunarMonth>(
             predicate: #Predicate { $0.lunarMonthIndex == monthIndex }
         )
         monthDescriptor.fetchLimit = 1
-        guard let month = try modelContext.fetch(monthDescriptor).first else { return nil }
-        return validDay(ChineseCalendarRelationshipQueries.days(inMonth: month).first)
+        guard let month = try modelContext.fetch(monthDescriptor).first,
+              month.chineseLunarYear != nil else { return nil }
+        return month
     }
 
     /// 校验选中日是否具备页面展示和年月推导所需的完整关系。
@@ -250,12 +236,16 @@ private extension CalendarSelectionResolver {
         inYear yearNumber: Int,
         order: SortOrder
     ) throws -> ChineseLunarMonth? {
+        guard let year = try lunarYear(for: yearNumber) else { return nil }
+        let months = ChineseCalendarRelationshipQueries.months(inYear: year)
+        return order == .forward ? months.first : months.last
+    }
+
+    func lunarYear(for yearNumber: Int) throws -> ChineseLunarYear? {
         var yearDescriptor = FetchDescriptor<ChineseLunarYear>(
             predicate: #Predicate { $0.lunarYearNumber == yearNumber }
         )
         yearDescriptor.fetchLimit = 1
-        guard let year = try modelContext.fetch(yearDescriptor).first else { return nil }
-        let months = ChineseCalendarRelationshipQueries.months(inYear: year)
-        return order == .forward ? months.first : months.last
+        return try modelContext.fetch(yearDescriptor).first
     }
 }

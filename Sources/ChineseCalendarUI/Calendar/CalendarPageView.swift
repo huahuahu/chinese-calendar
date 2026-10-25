@@ -4,7 +4,7 @@ import SFSafeSymbols
 import SwiftData
 import SwiftUI
 
-/// 根据唯一选中日推导当前农历月和农历年，并组合日历页面的四个区域。
+/// 根据唯一的月或日选择推导当前年月；只有真实选中日才展示日详情。
 struct CalendarPageView: View {
     // swiftformat:disable:next enumNamespaces
     private struct Constants {
@@ -15,20 +15,30 @@ struct CalendarPageView: View {
 
     @Environment(\.calendarStoreContentLevel) private var storeContentLevel
     @Query private var selectedDays: [ChineseLunarDay]
+    @Query private var selectedMonths: [ChineseLunarMonth]
 
-    init(selectedDayIndex: Int?) {
-        let queryDayIndex = selectedDayIndex ?? Int.min
-        _selectedDays = Query(
-            filter: #Predicate<ChineseLunarDay> { day in
-                day.dayIndex == queryDayIndex
-            }
-        )
+    init(selection: CalendarSelectionValue?) {
+        _selectedDays = Query(filter: #Predicate<ChineseLunarDay> { _ in false })
+        _selectedMonths = Query(filter: #Predicate<ChineseLunarMonth> { _ in false })
+
+        switch selection {
+        case let .month(index):
+            _selectedMonths = Query(filter: #Predicate<ChineseLunarMonth> { month in
+                month.lunarMonthIndex == index
+            })
+        case let .day(index):
+            _selectedDays = Query(filter: #Predicate<ChineseLunarDay> { day in
+                day.dayIndex == index
+            })
+        case nil:
+            break
+        }
     }
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: Constants.sectionSpacing) {
-                if let selectedDay, let selectedMonth = selectedDay.chineseLunarMonth {
+                if let selectedMonth {
                     YearMonthHeader(month: selectedMonth)
                         .padding()
                         .background(
@@ -38,7 +48,9 @@ struct CalendarPageView: View {
 
                     LunarDayGrid(month: selectedMonth)
 
-                    SelectedLunarDayDetail(day: selectedDay)
+                    if let selectedDay {
+                        SelectedLunarDayDetail(day: selectedDay)
+                    }
                 } else {
                     unavailableContent
                 }
@@ -52,6 +64,10 @@ struct CalendarPageView: View {
 
     private var selectedDay: ChineseLunarDay? {
         selectedDays.first
+    }
+
+    private var selectedMonth: ChineseLunarMonth? {
+        selectedMonths.first ?? selectedDay?.chineseLunarMonth
     }
 
     private var unavailableContent: some View {
@@ -95,7 +111,7 @@ private struct CalendarPagePreviewContent: View {
     @Environment(CalendarSelection.self) private var selection
 
     var body: some View {
-        CalendarPageView(selectedDayIndex: selection.selectedDayIndex)
+        CalendarPageView(selection: selection.value)
     }
 }
 
@@ -112,20 +128,19 @@ private struct CalendarPagePreviewContent: View {
 
 #Preview("有可能空白", traits: .emptySampleData) {
     NavigationStack {
-        CalendarPageView(selectedDayIndex: nil)
+        CalendarPageView(selection: nil)
     }
 }
 
-#Preview("有可能空白 · 未下载完整日期", traits: .sampleData) {
+#Preview("基础数据 · 年月可浏览", traits: .baseSampleData) {
     NavigationStack {
-        CalendarPageView(selectedDayIndex: nil)
-            .environment(\.calendarStoreContentLevel, .base)
+        CalendarPagePreviewContent()
     }
 }
 
 #Preview("有可能空白 · 日期不存在", traits: .sampleData) {
     NavigationStack {
-        CalendarPageView(selectedDayIndex: -1)
+        CalendarPageView(selection: .day(index: -1))
     }
 }
 
@@ -183,8 +198,14 @@ private struct CalendarPagePreviewContent: View {
 
 #Preview("窄屏空状态 · 辅助功能 5", traits: .fixedLayout(width: 375, height: 812), .emptySampleData) {
     NavigationStack {
-        CalendarPageView(selectedDayIndex: nil)
+        CalendarPageView(selection: nil)
             .environment(\.calendarStoreContentLevel, .base)
     }
     .environment(\.dynamicTypeSize, .accessibility5)
+}
+
+#Preview("基础数据 · 窄屏", traits: .fixedLayout(width: 375, height: 812), .baseSampleData) {
+    NavigationStack {
+        CalendarPagePreviewContent()
+    }
 }

@@ -1,3 +1,4 @@
+import ChineseCalendarCore
 import ChineseCalendarPersistence
 @testable import ChineseCalendarUI
 import Foundation
@@ -5,17 +6,17 @@ import SwiftData
 import Testing
 
 @MainActor
-@Suite("Calendar selected-day resolver")
+@Suite("Calendar month-or-day selection resolver")
 struct CalendarSelectionResolverTests {
     @Test func dayLandingSelectsExactDayInsteadOfToday() throws {
         let fixture = try Fixture()
 
-        let selectedDayIndex = try fixture.resolver.selectedDayIndex(
+        let selection = try fixture.resolver.selection(
             for: .day(index: 2_600_101),
             todayJulianDayNumber: fixture.todayJulianDayNumber
         )
 
-        #expect(selectedDayIndex == 2_600_101)
+        #expect(selection == .day(index: 2_600_101))
     }
 
     @Test(arguments: [
@@ -26,74 +27,74 @@ struct CalendarSelectionResolverTests {
     func missingLandingTargetCannotProduceASelection(landing: LunarCalendarLanding) throws {
         let fixture = try Fixture()
 
-        let selectedDayIndex = try fixture.resolver.selectedDayIndex(
+        let selection = try fixture.resolver.selection(
             for: landing,
             todayJulianDayNumber: fixture.todayJulianDayNumber
         )
 
-        #expect(selectedDayIndex == nil)
+        #expect(selection == nil)
     }
 
     @Test func monthLandingSelectsTodayWhenTodayBelongsToThatMonth() throws {
         let fixture = try Fixture()
 
-        let selectedDayIndex = try fixture.resolver.selectedDayIndex(
+        let selection = try fixture.resolver.selection(
             for: .month(index: 26001),
             todayJulianDayNumber: fixture.todayJulianDayNumber
         )
 
-        #expect(selectedDayIndex == 2_600_102)
+        #expect(selection == .day(index: 2_600_102))
     }
 
     @Test func monthLandingSelectsFirstDayWhenTodayIsElsewhere() throws {
         let fixture = try Fixture()
 
-        let selectedDayIndex = try fixture.resolver.selectedDayIndex(
+        let selection = try fixture.resolver.selection(
             for: .month(index: 26002),
             todayJulianDayNumber: fixture.todayJulianDayNumber
         )
 
-        #expect(selectedDayIndex == 2_600_201)
+        #expect(selection == .day(index: 2_600_201))
     }
 
     @Test func yearLandingSelectsTodayWhenTodayBelongsToThatYear() throws {
         let fixture = try Fixture()
 
-        let selectedDayIndex = try fixture.resolver.selectedDayIndex(
+        let selection = try fixture.resolver.selection(
             for: .year(number: 2026),
             todayJulianDayNumber: fixture.todayJulianDayNumber
         )
 
-        #expect(selectedDayIndex == 2_600_102)
+        #expect(selection == .day(index: 2_600_102))
     }
 
     @Test func yearLandingSelectsFirstDayOnTheContinuousMonthTimeline() throws {
         let fixture = try Fixture()
 
-        let selectedDayIndex = try fixture.resolver.selectedDayIndex(
+        let selection = try fixture.resolver.selection(
             for: .year(number: 2025),
             todayJulianDayNumber: fixture.todayJulianDayNumber
         )
 
-        #expect(selectedDayIndex == 2_500_101)
+        #expect(selection == .day(index: 2_500_101))
     }
 
     @Test func yearTransitionSelectsTheDestinationBoundaryMonth() throws {
         let fixture = try Fixture()
 
-        let earlierDayIndex = try fixture.resolver.selectedDayIndex(
+        let earlierSelection = try fixture.resolver.selection(
             inBoundaryMonthOf: 2025,
             direction: .earlier,
             todayJulianDayNumber: fixture.todayJulianDayNumber
         )
-        let laterDayIndex = try fixture.resolver.selectedDayIndex(
+        let laterSelection = try fixture.resolver.selection(
             inBoundaryMonthOf: 2025,
             direction: .later,
             todayJulianDayNumber: fixture.todayJulianDayNumber
         )
 
-        #expect(earlierDayIndex == 2_500_201)
-        #expect(laterDayIndex == 2_500_101)
+        #expect(earlierSelection == .day(index: 2_500_201))
+        #expect(laterSelection == .day(index: 2_500_101))
     }
 
     @Test func adjacentMonthsUseTheGlobalContinuousMonthIndex() throws {
@@ -114,40 +115,136 @@ struct CalendarSelectionResolverTests {
         ).first)
         day.chineseLunarMonth = nil
         try fixture.container.mainContext.save()
-        #expect(try !fixture.resolver.contains(dayIndex: dayIndex))
-        #expect(try fixture.resolver.selectedDayIndex(
+        #expect(try !fixture.resolver.contains(selection: .day(index: dayIndex)))
+        #expect(try fixture.resolver.selection(
             for: .day(index: dayIndex),
             todayJulianDayNumber: fixture.todayJulianDayNumber
         ) == nil)
-        #expect(try fixture.resolver.yearNumber(forDayIndex: dayIndex) == nil)
-        #expect(try fixture.resolver.todayDayIndex(julianDayNumber: fixture.todayJulianDayNumber) == nil)
+        #expect(try fixture.resolver.yearNumber(for: .day(index: dayIndex)) == nil)
+        #expect(try fixture.resolver.todaySelection(julianDayNumber: fixture.todayJulianDayNumber)?.dayIndex == nil)
     }
 
-    @Test func yearWithoutDaysCannotProduceASelection() throws {
+    @Test func yearWithoutDaysPreservesTheFirstMonth() throws {
         let fixture = try Fixture()
 
-        let selectedDayIndex = try fixture.resolver.selectedDayIndex(
+        let selection = try fixture.resolver.selection(
             for: .year(number: 2027),
             todayJulianDayNumber: fixture.todayJulianDayNumber
         )
 
-        #expect(selectedDayIndex == nil)
+        #expect(selection == .month(index: 27001))
     }
 
-    @Test func monthWithoutDaysCannotProduceASelection() throws {
+    @Test func monthWithoutDaysPreservesMonthPrecision() throws {
         let fixture = try Fixture()
 
-        let selectedDayIndex = try fixture.resolver.selectedDayIndex(
+        let selection = try #require(try fixture.resolver.selection(
             for: .month(index: 27001),
             todayJulianDayNumber: fixture.todayJulianDayNumber
-        )
+        ))
 
-        #expect(selectedDayIndex == nil)
+        #expect(selection == .month(index: 27001))
+        #expect(try fixture.resolver.month(for: selection)?.lunarMonthIndex == 27001)
+        #expect(try fixture.resolver.yearNumber(for: selection) == 2027)
+        #expect(try fixture.resolver.contains(selection: .month(index: 27001)))
+    }
+
+    @Test func selectionKeepsOnlyOnePrecisionAtATime() {
+        let selection = CalendarSelection(value: .month(index: 27001))
+        #expect(selection.selectedDayIndex == nil)
+        selection.select(dayIndex: 2_600_101)
+        #expect(selection.value == .day(index: 2_600_101))
+        selection.select(.month(index: 26002))
+        #expect(selection.selectedDayIndex == nil)
+        selection.select(dayIndex: nil)
+        #expect(selection.value == nil)
+    }
+
+    @Test(arguments: [
+        (0, 0), (29, 0), (30, 1), (57, 1), (58, 2), (80, 2), (81, 3), (109, 3)
+    ])
+    func baseTodayUsesAccumulatedActualMonthLengths(offset: Int, monthIndex: Int) throws {
+        let fixture = try BaseFixture()
+        let today = LunarMonthDateIndex.firstMonthStartJulianDayNumber + offset
+        #expect(try fixture.container.mainContext.fetchCount(FetchDescriptor<CalendarDay>()) == 0)
+        #expect(try fixture.resolver.todaySelection(julianDayNumber: today) == .month(index: monthIndex))
+        #expect(try fixture.resolver.selection(for: .today, todayJulianDayNumber: today) == .month(index: monthIndex))
+    }
+
+    @Test func baseYearLandingUsesTheYearAndRepeatedMonthFromTheTimeline() throws {
+        let fixture = try BaseFixture()
+        let today = LunarMonthDateIndex.firstMonthStartJulianDayNumber + 81
+        #expect(try fixture.resolver
+            .selection(for: .year(number: 237), todayJulianDayNumber: today) == .month(index: 3))
+        #expect(try fixture.resolver.yearNumber(for: .month(index: 3)) == 237)
+        #expect(try fixture.resolver.adjacentMonth(to: 1, direction: .later)?.lunarMonthIndex == 2)
+        #expect(try fixture.resolver.selection(for: .day(index: 81), todayJulianDayNumber: today) == nil)
+    }
+
+    @Test func changingMonthNamesDoesNotChangeAbsoluteDatePosition() throws {
+        let fixture = try BaseFixture()
+        let month = try #require(try fixture.resolver.month(for: .month(index: 3)))
+        month.isLeapMonth = true
+        month.intercalaryMonthNameStyle = .post
+        try fixture.container.mainContext.save()
+        let today = LunarMonthDateIndex.firstMonthStartJulianDayNumber + 81
+        #expect(try fixture.resolver.todaySelection(julianDayNumber: today) == .month(index: 3))
+    }
+
+    @Test(arguments: [0, 1])
+    func missingPrefixOrInteriorMonthCannotGuessToday(missingIndex: Int) throws {
+        let fixture = try BaseFixture()
+        let missing = try #require(try fixture.resolver.month(for: .month(index: missingIndex)))
+        fixture.container.mainContext.delete(missing)
+        try fixture.container.mainContext.save()
+        let today = LunarMonthDateIndex.firstMonthStartJulianDayNumber + 81
+        #expect(try fixture.resolver.selection(for: .today, todayJulianDayNumber: today) == nil)
+    }
+
+    @Test(arguments: [-1, 110])
+    func baseTodayOutsideItsMonthDataRemainsUnavailable(offset: Int) throws {
+        let fixture = try BaseFixture()
+        let today = LunarMonthDateIndex.firstMonthStartJulianDayNumber + offset
+        #expect(try fixture.resolver.todaySelection(julianDayNumber: today) == nil)
     }
 }
 
 @MainActor
 private extension CalendarSelectionResolverTests {
+    /// 人工区间夹具用于短月、跨年与重复月名测试，不表示这几个历史月份的实际起点。
+    struct BaseFixture {
+        let container: ModelContainer
+
+        var resolver: CalendarSelectionResolver {
+            CalendarSelectionResolver(modelContext: container.mainContext)
+        }
+
+        init() throws {
+            let schema = Schema(ChineseCalendarModelSchema.models, version: ChineseCalendarModelSchema.version)
+            container = try ModelContainer(for: schema, configurations: [
+                ModelConfiguration("CalendarBaseSelectionTests", schema: schema, isStoredInMemoryOnly: true)
+            ])
+            let previousYear = ChineseLunarYear(lunarYearNumber: 236, yearStemIndex: 2, yearBranchIndex: 4)
+            let year = ChineseLunarYear(lunarYearNumber: 237, yearStemIndex: 3, yearBranchIndex: 5)
+            let specifications = [
+                (0, 11, 30, previousYear),
+                (1, 12, 28, previousYear),
+                (2, 1, 23, year),
+                (3, 1, 29, year)
+            ]
+            for (index, number, dayCount, parent) in specifications {
+                let month = ChineseLunarMonth(
+                    lunarMonthIndex: index, monthNumberInYear: number, isLeapMonth: false, dayCount: dayCount,
+                    monthStemIndex: 0, monthBranchIndex: 0, chineseLunarYear: parent
+                )
+                parent.months.append(month)
+            }
+            container.mainContext.insert(previousYear)
+            container.mainContext.insert(year)
+            try container.mainContext.save()
+        }
+    }
+
     struct Fixture {
         let container: ModelContainer
         let todayJulianDayNumber = 2_461_042

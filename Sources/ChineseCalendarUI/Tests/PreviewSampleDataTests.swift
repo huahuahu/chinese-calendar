@@ -54,18 +54,18 @@ struct PreviewSampleDataTests {
         let lastJulianDay = try #require(previousJulianDays.max())
         let firstJulianDay = try #require(nextJulianDays.min())
         #expect(firstJulianDay == lastJulianDay + 1)
-        #expect(try resolver.selectedDayIndex(
+        #expect(try resolver.selection(
             inBoundaryMonthOf: 1,
             direction: .later,
             todayJulianDayNumber: 0
-        ) == PreviewCalendarScenario.commonEra
+        )?.dayIndex == PreviewCalendarScenario.commonEra
             .selectedDayIndex)
-        let reverseDay = try resolver.selectedDayIndex(
+        let reverseSelection = try #require(try resolver.selection(
             inBoundaryMonthOf: 0,
             direction: .earlier,
             todayJulianDayNumber: 0
-        )
-        #expect(try monthIndex(forDayIndex: reverseDay, in: container.mainContext) == beforeIndex)
+        ))
+        #expect(try resolver.month(for: reverseSelection)?.lunarMonthIndex == beforeIndex)
     }
 
     @Test func postNinthMonthRetainsNameIdentityAndAncientYearBoundary() throws {
@@ -119,8 +119,8 @@ struct PreviewSampleDataTests {
         let sample = try PreviewSampleData.makeContext(includesSampleData: true)
         let resolver = CalendarSelectionResolver(modelContext: sample.modelContainer.mainContext)
         #expect(sample.selectedDayIndex == PreviewCalendarScenario.modern.selectedDayIndex)
-        #expect(try resolver.yearNumber(forDayIndex: sample.selectedDayIndex) == 2026)
-        #expect(try resolver.contains(dayIndex: -1) == false)
+        #expect(try resolver.yearNumber(for: #require(sample.selection)) == 2026)
+        #expect(try resolver.contains(selection: .day(index: -1)) == false)
     }
 }
 

@@ -1,0 +1,35 @@
+{
+  "type": "runtime-snapshot",
+  "rs": "1",
+  "screenHash": "0yn03o5",
+  "seq": 16,
+  "count": 102,
+  "targets": [
+    "e16|tap|button|今天||",
+    "e28|tap|button|上个月||chevron.left",
+    "e29|tap|button|乙巳年 十二月小、29天 · 己丑月||",
+    "e32|tap|button|下个月||chevron.right",
+    "e43|tap|button|八月小||",
+    "e44|tap|button|九月大||",
+    "e45|tap|button|十月大||",
+    "e46|tap|button|十一月大||",
+    "e47|tap|button|十二月小||",
+    "e63|tap|button|下载||",
+    "e71|tap|tab|日历|1|calendar",
+    "e73|tap|tab|朝代|0|timeline.selection",
+    "e75|tap|tab|设置|0|gearshape"
+  ],
+  "scroll": [
+    "e22|swipe|scroll-view|||",
+    "e33|swipe|scroll-view|||"
+  ],
+  "text": [
+    "e30|text|text|乙巳年 十二月小||",
+    "e31|text|text|29天 · 己丑月||",
+    "e48|text|text|完整日期数据尚未下载||",
+    "e49|text|text|下载完整日期数据后，可查看本月的每日信息。||",
+    "e64|text|text|下载||",
+    "e62|text|text|可下载完整日期数据||"
+  ],
+  "udid": "BB854709-1C84-4E45-A6EB-63A6DD0EFF18"
+}

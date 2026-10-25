@@ -16,7 +16,7 @@ struct SampleDataPreviewHost: View {
     ) {
         self.content = content
         self.context = context
-        let selection = CalendarSelection(selectedDayIndex: context.selectedDayIndex)
+        let selection = CalendarSelection(value: context.selection)
         let today = CalendarToday(date: context.today)
         _selection = State(initialValue: selection)
         _today = State(initialValue: today)
@@ -31,6 +31,6 @@ struct SampleDataPreviewHost: View {
             .environment(today)
             .environment(feature)
             .onAppear { feature.connect(modelContext: context.modelContainer.mainContext, storeCoordinator: nil) }
-            .environment(\.calendarStoreContentLevel, .full)
+            .environment(\.calendarStoreContentLevel, context.contentLevel)
     }
 }

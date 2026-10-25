@@ -18,8 +18,13 @@ struct SnapshotSampleHost: View {
     @State private var storeCoordinator: ChineseCalendarStoreCoordinator?
 
     init(scene: SnapshotScene) throws {
-        let context = try PreviewSampleData.makeContext(includesSampleData: !scene.isEmptyData)
-        let selection = CalendarSelection(selectedDayIndex: scene.isEmptyData ? nil : scene.scenario.selectedDayIndex)
+        let context = try scene == .baseCalendar
+            ? PreviewBaseCalendarData.makeContext()
+            : PreviewSampleData.makeContext(includesSampleData: !scene.isEmptyData)
+        let initialSelection: CalendarSelectionValue? = scene == .baseCalendar || scene.isEmptyData
+            ? context.selection
+            : .day(index: scene.scenario.selectedDayIndex)
+        let selection = CalendarSelection(value: initialSelection)
         let today = CalendarToday(date: context.today)
         let feature = CalendarYearFeature(selection: selection, today: today)
         let coordinator = CalendarHomeCoordinator(router: CalendarRouter(selectedTab: scene.tab))

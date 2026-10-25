@@ -33,7 +33,7 @@ Data/Processed/calendar_days/manifest.json
 ```
 
 每行是一条 absolute day record，字段遵循 `Docs/data-model-calendar.md` 的 Processed Artifact 建议。
-其中 `lunarMonth.dayCount` 保存农历月大小：`29` 为小月，`30` 为大月。
+其中 `lunarMonth.dayCount` 保存完整月份实际长度：正数且小于 `30` 为小月，`30` 为大月。优先取相邻月初的跨度，保留丙辰年十二月的 28 天；不能把所有小月都还原为 29 天。
 重新生成时，`lunarMonth.intercalaryMonthNameStyle` 保存闰月显示名规则：`leap` 表示“闰 X 月”，`post` 表示秦至汉初颛顼历语境下的“后 X 月”。
 
 ## 校验已生成数据
@@ -51,9 +51,9 @@ Scripts/ImportChineseCalendar/generate_calendar_days.swift --validate-only --sta
 - `lunarMonthIndex` 连续
 - 干支 index 范围合法
 - 农历日为 `1...30`
-- `lunarMonth.dayCount` 为 29 或 30，且农历日不超过该月 `dayCount`
+- `lunarMonth.dayCount` 为 `1...30` 的整数，且农历日不超过该月 `dayCount`
 - `lunarMonth.intercalaryMonthNameStyle` 为 `leap` 或 `post`，普通月份只能使用 `leap`
-- 农历月实际日记录数与 `dayCount` 一致，已知例外写入 manifest
+- 除数据首尾截断月份外，实际日记录数与 `dayCount` 严格一致；历史特殊短月在 manifest 中保留来源说明
 - 农历年月份数量在 v1 预期范围内
 
 ## 生成 SwiftData 导入文件

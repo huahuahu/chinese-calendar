@@ -23,6 +23,14 @@ final class CalendarYearFeature {
     @ObservationIgnored private var storeObservation: Task<Void, Never>?
     private var storeIdentity: String?
     private var storeGeneration = 0
+    private var hasResolvedInitialSelection = false
+    private var storeSelectionToRestore: StoreSelectionRestoration?
+
+    /// 仅在切库期间传递稳定索引，恢复完成后立即释放。
+    private struct StoreSelectionRestoration {
+        let value: CalendarSelectionValue
+        let monthIndex: Int?
+    }
 
     init(selection: CalendarSelection = CalendarSelection(), today: CalendarToday = CalendarToday()) {
         self.selection = selection
@@ -41,6 +49,7 @@ final class CalendarYearFeature {
             else { return }
         }
         if let currentContext = self.modelContext, currentContext !== modelContext {
+            prepareSelectionForStoreReplacement()
             invalidateStoreResources()
         }
         self.modelContext = modelContext
@@ -57,6 +66,32 @@ final class CalendarYearFeature {
                 guard !Task.isCancelled, let self else { return }
                 storeIdentityDidChange(identity)
             }
+        }
+    }
+
+    /// 首次解析导航意图；换库时恢复已经浏览到的位置，不重放最初落点。
+    func resolveSelectionIfNeeded(for landing: LunarCalendarLanding) {
+        synchronizeStoreIdentity()
+        guard let resolver else { return }
+        do {
+            if let restoration = storeSelectionToRestore {
+                try restoreSelection(restoration, using: resolver)
+                storeSelectionToRestore = nil
+                hasResolvedInitialSelection = true
+                return
+            }
+            if let value = selection.value, try resolver.contains(selection: value) {
+                hasResolvedInitialSelection = true
+                return
+            }
+            guard !hasResolvedInitialSelection else { return }
+            let value = try resolver.selection(for: landing, todayJulianDayNumber: today.julianDayNumber)
+            selection.select(value)
+            // 未找到的精确日仍是未完成的请求，完整库到位后可以重试。
+            hasResolvedInitialSelection = value != nil
+        } catch {
+            ChineseCalendarLog.ui.error("无法解析日历选择：\(error.localizedDescription)")
+            selection.select(nil)
         }
     }
 
@@ -81,8 +116,9 @@ final class CalendarYearFeature {
         yearPickerID = id
         acceptsYearPickerResult = true
         let binding = Binding<Int?>(
-            get: { try? CalendarSelectionResolver(modelContext: modelContext)
-                .yearNumber(forDayIndex: self.selection.selectedDayIndex)
+            get: {
+                guard let value = self.selection.value else { return nil }
+                return try? CalendarSelectionResolver(modelContext: modelContext).yearNumber(for: value)
             },
             set: { yearNumber in
                 self.synchronizeStoreIdentity()
@@ -115,7 +151,7 @@ final class CalendarYearFeature {
             from: sourceMonth.lunarMonthIndex, to: destinationMonth.lunarMonthIndex, crossesYear: crossesYear
         )
         pendingYearTransition = nil
-        selectDay(inMonth: destinationMonth.lunarMonthIndex)
+        selectDate(inMonth: destinationMonth.lunarMonthIndex)
     }
 
     func selectToday() {
@@ -124,37 +160,41 @@ final class CalendarYearFeature {
         pendingYearTransition = nil
         today.refresh()
         do {
-            let destinationDayIndex = try resolver.todayDayIndex(julianDayNumber: today.julianDayNumber)
-            let destinationYearNumber = try resolver.yearNumber(forDayIndex: destinationDayIndex)
-            let sourceYearNumber = try resolver.yearNumber(forDayIndex: selection.selectedDayIndex)
+            let destination = try resolver.todaySelection(julianDayNumber: today.julianDayNumber)
+            let destinationYearNumber = try destination.flatMap { try resolver.yearNumber(for: $0) }
+            let sourceYearNumber = try selection.value.flatMap { try resolver.yearNumber(for: $0) }
             if let destinationYearNumber, let sourceYearNumber {
                 updateTransitionDirection(from: sourceYearNumber, to: destinationYearNumber)
             }
-            selection.select(dayIndex: destinationDayIndex)
+            selection.select(destination)
+            hasResolvedInitialSelection = true
         } catch {
             ChineseCalendarLog.ui.error("无法选择今天：\(error.localizedDescription)")
-            selection.select(dayIndex: nil)
+            selection.select(nil)
         }
     }
 
     func completeYearTransitionPreparation(_ sourceMonthIndex: Int) {
         synchronizeStoreIdentity()
-        guard let resolver, let request = pendingYearTransition,
+        guard let resolver, let request = pendingYearTransition, let value = selection.value,
               request.sourceMonthIndex == sourceMonthIndex,
-              request.sourceYearNumber == (try? resolver.yearNumber(forDayIndex: selection.selectedDayIndex))
+              request.sourceYearNumber == (try? resolver.yearNumber(for: value))
         else { return }
         pendingYearTransition = nil
         if let destinationMonthIndex = request.destinationMonthIndex {
-            selectDay(inMonth: destinationMonthIndex)
+            selectDate(inMonth: destinationMonthIndex)
         } else {
-            selection.select(dayIndex: nil)
+            selection.select(nil)
         }
     }
+}
 
-    private func prepareYearSelection(_ yearNumber: Int) {
+private extension CalendarYearFeature {
+    func prepareYearSelection(_ yearNumber: Int) {
         guard let resolver else { return }
         do {
-            guard let sourceYearNumber = try resolver.yearNumber(forDayIndex: selection.selectedDayIndex),
+            guard let value = selection.value,
+                  let sourceYearNumber = try resolver.yearNumber(for: value),
                   let direction = LunarYearTransitionDirection(from: sourceYearNumber, to: yearNumber)
             else { return }
             yearTransitionContext.direction = direction
@@ -165,7 +205,7 @@ final class CalendarYearFeature {
                 inYear: sourceYearNumber, direction: direction, isSource: true
             ) else {
                 pendingYearTransition = nil
-                try selection.select(dayIndex: resolver.selectedDayIndex(
+                try selection.select(resolver.selection(
                     inBoundaryMonthOf: yearNumber, direction: direction,
                     todayJulianDayNumber: today.julianDayNumber
                 ))
@@ -178,7 +218,7 @@ final class CalendarYearFeature {
         } catch {
             ChineseCalendarLog.ui.error("无法准备农历年份切换：\(error.localizedDescription)")
             pendingYearTransition = nil
-            selection.select(dayIndex: nil)
+            selection.select(nil)
         }
     }
 
@@ -188,15 +228,16 @@ final class CalendarYearFeature {
         }
     }
 
-    private func selectDay(inMonth monthIndex: Int) {
+    private func selectDate(inMonth monthIndex: Int) {
         guard let resolver else { return }
         do {
-            try selection.select(dayIndex: resolver.selectedDayIndex(
+            try selection.select(resolver.selection(
                 for: .month(index: monthIndex), todayJulianDayNumber: today.julianDayNumber
             ))
+            hasResolvedInitialSelection = true
         } catch {
             ChineseCalendarLog.ui.error("无法选择目标月份的日期：\(error.localizedDescription)")
-            selection.select(dayIndex: nil)
+            selection.select(nil)
         }
     }
 
@@ -212,8 +253,36 @@ final class CalendarYearFeature {
     private func storeIdentityDidChange(_ identity: String?) {
         guard storeIdentity != identity else { return }
         storeIdentity = identity
+        prepareSelectionForStoreReplacement()
         invalidateStoreResources()
         modelContext = nil
+    }
+
+    private func prepareSelectionForStoreReplacement() {
+        guard storeSelectionToRestore == nil, let value = selection.value, let resolver else { return }
+        do {
+            storeSelectionToRestore = try StoreSelectionRestoration(
+                value: value, monthIndex: resolver.month(for: value)?.lunarMonthIndex
+            )
+        } catch {
+            ChineseCalendarLog.ui.error("无法保存换库前的日历月份：\(error.localizedDescription)")
+            storeSelectionToRestore = StoreSelectionRestoration(value: value, monthIndex: nil)
+        }
+    }
+
+    private func restoreSelection(
+        _ restoration: StoreSelectionRestoration,
+        using resolver: CalendarSelectionResolver
+    ) throws {
+        if case .day = restoration.value, try resolver.contains(selection: restoration.value) {
+            selection.select(restoration.value)
+        } else if let monthIndex = restoration.monthIndex {
+            try selection.select(resolver.selection(
+                for: .month(index: monthIndex), todayJulianDayNumber: today.julianDayNumber
+            ))
+        } else {
+            selection.select(nil)
+        }
     }
 
     private func invalidateStoreResources() {

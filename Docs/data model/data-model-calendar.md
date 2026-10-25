@@ -91,11 +91,15 @@ Julian calendar 是儒略历，由 Julius Caesar 推行，规则中每 4 年置�
 
 农历的大月、小月也是农历月本身的事实，应放在 `ChineseLunarMonth` 上：
 
-- `dayCount: Int`：当前农历月的天数，只能是 `29` 或 `30`。
+- `dayCount: Int`：完整农历月的实际天数，范围为 `1...30`；包括历史改历产生的特殊短月。
 - `dayCount = 30` 表示大月。
-- `dayCount = 29` 表示小月。
+- `0 < dayCount < 30` 表示小月，例如 23、28、29 天。
 
 `dayCount` 不放在 `ChineseLunarDay` 上，因为同一个月内所有日共享同一个月大小。显示层如果需要“大月”“小月”标签，应从 `dayCount` 派生。
+
+### 按月长定位绝对日期
+
+按连续 `lunarMonthIndex` 从月序 0 的初一 JDN `1640700` 累计 `dayCount`，形成半开日期区间。数据集首日 JDN `1640703` 对应初四，所以不可把首日当作月初。累计定位返回月序和月内日号，年月标签通过月份关系取得，不使用 Foundation 中国农历换算。缺失月序或非法月长使区间无效，不能猜测补齐。丙辰年十二月（月序 5653）按本项目采用的上游口径为 28 天，必须计入真实长度。
 
 ### 干支字段
 
@@ -119,7 +123,7 @@ JSONL / DTO 仍保留这些逻辑关联键。Builder 用它们查找父对象并
 
 领域约束保持不变：SwiftData 保留 `ChineseLunarDay.dayIndex` 的独立唯一约束，并用“月份关系 + 月内日号”的复合唯一约束实现同一个 `lunarMonthIndex` 下日号唯一。关系属性虽然是可选类型，合法数据仍必须具备对应的父对象；构建和下载制品时由 `ChineseCalendarRelationshipValidation` 检查关系完整性。
 
-SwiftData seed store 的数据覆盖范围需要单独考虑：base 不包含日级记录，full 在数据集首尾的跨界月份可能只有部分日。因此 `dayCount` 仍保存上游月大小事实，不能用存储中现有的 `days.count` 替代。制品结构和校验流程见 [SwiftData Seed Store](./swiftdata-seed-store.md)。
+SwiftData seed store 的数据覆盖范围需要单独考虑：base 不包含日级记录，full 在数据集首尾的跨界月份可能只有部分日。因此 `dayCount` 仍保存完整月份实际长度，不能用存储中现有的 `days.count` 替代。制品结构和校验流程见 [SwiftData Seed Store](./swiftdata-seed-store.md)。
 
 ## 关系图
 
@@ -277,7 +281,7 @@ erDiagram
 - `lunarYearNumber` 必须指向一条真实存在的 `ChineseLunarYear`。
 - `monthNumberInYear` 只能是 `1...12`。
 - `intercalaryMonthNameStyle` 只能是 `leap` 或 `post`；普通月份必须为 `leap`。
-- `dayCount` 只能是 `29` 或 `30`，其中 `29` 表示小月，`30` 表示大月。
+- `dayCount` 为 `1...30` 的整数，小于 30 为小月，30 为大月。
 - `monthNumberInYear` 是月名序号，不保证在同一个 `lunarYearNumber` 下唯一。
 - 同一个 `lunarYearNumber + monthNumberInYear + isLeapMonth` 组合在历史特殊年份中可能对应多个真实月份。
 - 同一个 `lunarMonthIndex` 下的 `ChineseLunarDay.dayNumberInMonth` 不能超过该月的 `dayCount`。
@@ -285,7 +289,7 @@ erDiagram
 说明：
 
 - 月份的起止 `dayIndex` 可以从该月下所有 `ChineseLunarDay` 派生，不属于最基本的 raw data。
-- `dayCount` 是上游历算数据给出的月大小事实，应随月份保存；导入校验时再确认实际日记录数与 `dayCount` 一致。
+- `dayCount` 是上游历算数据的实际月份跨度，应随月份保存；导入校验时再确认实际日记录数与 `dayCount` 一致。
 - 历史改正朔会造成重复同名月，例如 `lunarYearNumber = -103` 中有两个十月、两个十一月、两个十二月，`lunarYearNumber = 762` 中有两个四月、两个五月。更多核对结论见 [干支与生肖循环结论](./sexagenary-cycle-and-zodiac.md) 的“历史特殊年与数据库建模”章节。
 
 ## ChineseLunarYear
@@ -450,8 +454,8 @@ erDiagram
 - `lunarMonthIndex` 连续无断裂。
 - 每个 `CalendarDay` 恰好有一条 civil date 和一条 lunar day。
 - 每个 `ChineseLunarDay` 都能向上找到 month 和 year。
-- 每个农历月的 `dayCount` 只能是 29 或 30。
-- 每个农历月实际拥有的日记录数应与 `dayCount` 一致；数据集首尾的跨界月份和 source data 明确记录的特殊例外除外。
+- 每个农历月的 `dayCount` 必须为 `1...30` 的整数。
+- 每个农历月实际拥有的日记录数应与 `dayCount` 一致；数据集首尾因覆盖范围而截断的跨界月份除外；历史短月也必须保存真实天数。
 - 每个农历年的 month count 通常是 12 或 13；历史改正朔造成的 10、11、14、15 个月年份应由 source data 或核对文档说明。
 - 同一年中闰月不能超过一个，除非 source data 明确支持特殊情况并记录原因。
 - `ChineseLunarMonth` 只能用 `lunarMonthIndex` 校验唯一性，不能要求 `lunarYearNumber + monthNumberInYear + isLeapMonth` 唯一。

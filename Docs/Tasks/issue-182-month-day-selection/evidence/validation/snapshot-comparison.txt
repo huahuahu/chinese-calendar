@@ -1,0 +1,59 @@
+================================================================================
+TEST RESULTS SUMMARY
+================================================================================
+Generated: 2026-10-24T14:45:02Z
+Total Results: 4
+================================================================================
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 1/4
+TEST_TARGET: ChineseCalendarSnapshotTests
+TEST_IDENTIFIER: CalendarSnapshotTests/testPhonePages()
+TEST_DISPLAY_NAME: testPhonePages()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Tests/Snapshots/CalendarSnapshotTests.swift
+TEST_LINE_NUMBER: 7
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 2/4
+TEST_TARGET: ChineseCalendarSnapshotTests
+TEST_IDENTIFIER: CalendarSnapshotTests/testTabletPages()
+TEST_DISPLAY_NAME: testTabletPages()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Tests/Snapshots/CalendarSnapshotTests.swift
+TEST_LINE_NUMBER: 14
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 3/4
+TEST_TARGET: ChineseCalendarSnapshotTests
+TEST_IDENTIFIER: CalendarSnapshotTests/testDarkPages()
+TEST_DISPLAY_NAME: testDarkPages()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Tests/Snapshots/CalendarSnapshotTests.swift
+TEST_LINE_NUMBER: 21
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+--------------------------------------------------------------------------------
+TEST_RESULT_INDEX: 4/4
+TEST_TARGET: ChineseCalendarSnapshotTests
+TEST_IDENTIFIER: CalendarSnapshotTests/testAccessibilityCalendar()
+TEST_DISPLAY_NAME: testAccessibilityCalendar()
+TEST_STATE: Passed
+TEST_FILE_PATH: ChineseCalendar/Tests/Snapshots/CalendarSnapshotTests.swift
+TEST_LINE_NUMBER: 28
+TEST_TAGS: (none)
+
+TEST_ISSUE_COUNT: 0
+
+
+================================================================================
+END OF TEST RESULTS SUMMARY
+================================================================================

@@ -340,7 +340,11 @@ function resolveLunarMonth(calVars, civilYear, dayOffset, julianDayNumber, state
   const startJulianDayNumber = calVars.jd0 + startDayOffset + 1;
   const rawMonthNumber = calVars.cmonthNum[monthPosition];
   const rawJian = calVars.cmonthJian[monthPosition];
-  const sourceMonthLength = calVars.cmonthLong[monthPosition] === 1 ? 30 : 29;
+  // 优先用相邻月初的实际跨度，保留景初改历等特殊短月；年末数组没有下一月时使用上游完整月长。
+  const nextMonthStart = calVars.cmonthDate[monthPosition + 1];
+  const sourceMonthLength = Number.isInteger(nextMonthStart)
+    ? nextMonthStart - startDayOffset
+    : (calVars.cmonthLong[monthPosition] === 1 ? 30 : 29);
   const yearNumber = civilYear + calVars.cmonthYear[monthPosition] - 1;
   const monthNumberInYear = Math.abs(rawMonthNumber);
   const isLeapMonth = rawMonthNumber < 0;
@@ -470,7 +474,7 @@ function validateRecord(record) {
   if (record.lunarDay.dayNumberInMonth < 1 || record.lunarDay.dayNumberInMonth > 30) {
     throw new Error(`Invalid lunar day number at dayIndex ${record.dayIndex}.`);
   }
-  if (record.lunarMonth.dayCount !== 29 && record.lunarMonth.dayCount !== 30) {
+  if (!Number.isInteger(record.lunarMonth.dayCount) || record.lunarMonth.dayCount < 1 || record.lunarMonth.dayCount > 30) {
     throw new Error(`Invalid lunar month dayCount at dayIndex ${record.dayIndex}.`);
   }
   if (record.lunarDay.dayNumberInMonth > record.lunarMonth.dayCount) {
@@ -523,29 +527,17 @@ function validateGeneratedState(state) {
   const firstMonthIndex = monthIndexes[0];
   const lastMonthIndex = monthIndexes[monthIndexes.length - 1];
   for (const month of state.lunarMonthsByIndex.values()) {
-    const exception = LUNAR_MONTH_LENGTH_EXCEPTIONS.get(month.startJulianDayNumber);
     const hasSourceMonthLength = Number.isInteger(month.sourceMonthLength);
     const isPartialBoundaryMonth =
       month.lunarMonthIndex === firstMonthIndex || month.lunarMonthIndex === lastMonthIndex;
 
-    if (hasSourceMonthLength && month.sourceMonthLength !== 29 && month.sourceMonthLength !== 30) {
+    if (hasSourceMonthLength && (month.sourceMonthLength < 1 || month.sourceMonthLength > 30)) {
       throw new Error(`Source lunar month length is invalid at index ${month.lunarMonthIndex}.`);
     }
     if (hasSourceMonthLength && !isPartialBoundaryMonth && month.generatedDayCount !== month.sourceMonthLength) {
-      if (exception?.expectedGeneratedDayCount !== month.generatedDayCount) {
-        throw new Error(
-          `Generated day count ${month.generatedDayCount} does not match source length ${month.sourceMonthLength} at lunarMonthIndex ${month.lunarMonthIndex}.`
-        );
-      }
-    }
-    if (
-      !hasSourceMonthLength &&
-      !isPartialBoundaryMonth &&
-      month.generatedDayCount !== 29 &&
-      month.generatedDayCount !== 30 &&
-      exception?.expectedGeneratedDayCount !== month.generatedDayCount
-    ) {
-      throw new Error(`Generated lunar month length is invalid at lunarMonthIndex ${month.lunarMonthIndex}.`);
+      throw new Error(
+        `Generated day count ${month.generatedDayCount} does not match source length ${month.sourceMonthLength} at lunarMonthIndex ${month.lunarMonthIndex}.`
+      );
     }
     if (month.generatedDayCount < 1 || month.generatedDayCount > 30) {
       throw new Error(`Generated day count is invalid at lunarMonthIndex ${month.lunarMonthIndex}.`);

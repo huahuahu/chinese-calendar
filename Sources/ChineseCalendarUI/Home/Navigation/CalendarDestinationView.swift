@@ -16,7 +16,7 @@ struct CalendarDestinationView: View {
             case .mainTabs:
                 CalendarHomeTabView()
             case .calendarHome:
-                LunarYearDestinationView(landing: .year(number: ChineseLunarCalendar.yearNumber()))
+                LunarYearDestinationView(landing: .today)
             case .historyHome:
                 CalendarHistoryHomeView()
             case .historyEmpty:

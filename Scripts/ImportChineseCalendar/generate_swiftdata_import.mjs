@@ -325,7 +325,7 @@ function validateSourceRecord(record, filePath, state) {
   if (record.lunarMonth.monthNumberInYear < 1 || record.lunarMonth.monthNumberInYear > 12) {
     throw new Error(`Invalid lunarMonth.monthNumberInYear at dayIndex ${record.dayIndex}.`);
   }
-  if (record.lunarMonth.dayCount !== 29 && record.lunarMonth.dayCount !== 30) {
+  if (!Number.isInteger(record.lunarMonth.dayCount) || record.lunarMonth.dayCount < 1 || record.lunarMonth.dayCount > 30) {
     throw new Error(`Invalid lunarMonth.dayCount at dayIndex ${record.dayIndex}.`);
   }
   if (record.lunarDay.dayNumberInMonth < 1 || record.lunarDay.dayNumberInMonth > 30) {
