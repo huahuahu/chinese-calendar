@@ -20,16 +20,26 @@ struct CalendarHistorySidebarView: View {
                 List(selection: $selection) {
                     Section {
                         ForEach(periods, id: \.id) { period in
-                            DynastyCard(model: DynastyCardModel(period: period), showsDisclosureIndicator: false)
-                                .tag(period.id)
-                                .selectionDisabled(period.dynasty == nil)
-                                .listRowSeparator(.hidden)
+                            DynastyCard(
+                                model: DynastyCardModel(period: period),
+                                showsDisclosureIndicator: true,
+                                connectsToPrevious: period.id != periods.first?.id,
+                                connectsToNext: period.id != periods.last?.id
+                            )
+                            .tag(period.id)
+                            .selectionDisabled(period.dynasty == nil)
+                            .listRowSeparator(.hidden)
+                            .listRowInsets(EdgeInsets())
+                            .listRowBackground(Color.clear)
                         }
                     } header: {
                         Text(CalendarStringKey.History.Timeline.subtitle)
+                            .textCase(nil)
+                            .frame(maxWidth: .infinity, alignment: .leading)
                     }
                 }
                 .listStyle(.sidebar)
+                .listRowSpacing(0)
             }
         }
         .navigationTitle(CalendarStringKey.History.Timeline.title)

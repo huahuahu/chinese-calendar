@@ -18,7 +18,7 @@ public extension CalendarStringKey.History.Timeline {
     static var subtitle: LocalizedStringResource {
         CalendarStringKey.resource(
             "history.timeline.subtitle",
-            defaultValue: "沿正统时间线，进入一个朝代的纪年体系",
+            defaultValue: "沿正统时间线，查阅朝代与纪年",
             comment: "历史首页导航说明，引导用户沿正统时间线进入朝代纪年资料。"
         )
     }
