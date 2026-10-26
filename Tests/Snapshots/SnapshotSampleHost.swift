@@ -1,3 +1,4 @@
+import ChineseCalendarPersistence
 @testable import ChineseCalendarUI
 import Foundation
 import NavigationCore
@@ -21,6 +22,9 @@ struct SnapshotSampleHost: View {
         let context = try scene == .baseCalendar
             ? PreviewBaseCalendarData.makeContext()
             : PreviewSampleData.makeContext(includesSampleData: !scene.isEmptyData)
+        if scene == .history {
+            try Self.insertTimelinePeriods(into: context.modelContainer.mainContext)
+        }
         let initialSelection: CalendarSelectionValue? = scene == .baseCalendar || scene.isEmptyData
             ? context.selection
             : .day(index: scene.scenario.selectedDayIndex)
@@ -65,6 +69,41 @@ struct SnapshotSampleHost: View {
     private enum FixtureError: Error {
         case rejectedHistoryRoot
         case unavailablePreferences
+        case missingHistoryTradition
+    }
+
+    /// 在明代示例后补充连续节点，覆盖首尾连线、长名称和缺少详情的行。
+    private static func insertTimelinePeriods(into context: ModelContext) throws {
+        let periods = try context.fetch(FetchDescriptor<OrthodoxPeriod>())
+        guard let tradition = periods.first?.tradition else {
+            throw FixtureError.missingHistoryTradition
+        }
+        let fixtures = [
+            (id: "qing", name: "清", start: 1644, end: 1912, hasDetails: true),
+            (id: "republic", name: "中华民国", start: 1912, end: 1949, hasDetails: false),
+            (id: "people-republic", name: "中华人民共和国", start: 1949, end: 2026, hasDetails: false)
+        ]
+        for (index, fixture) in fixtures.enumerated() {
+            let id = "snapshot-\(fixture.id)"
+            let start = ChineseDateExpression(
+                id: "\(id)-start", precision: .year, index: fixture.start, sourceText: "\(fixture.start)年"
+            )
+            let end = ChineseDateExpression(
+                id: "\(id)-end", precision: .year, index: fixture.end, sourceText: "\(fixture.end)年"
+            )
+            let dynasty = Dynasty(id: id, name: fixture.name, claimedStartDate: start, claimedEndDate: end)
+            let period = OrthodoxPeriod(
+                id: "\(id)-period", sequenceIndex: index + 1, segmentIndex: 0, segmentName: fixture.name,
+                tradition: tradition, dynasty: dynasty,
+                startBoundary: OrthodoxBoundary(id: "\(id)-start-boundary", tradition: tradition, date: start),
+                endBoundary: OrthodoxBoundary(id: "\(id)-end-boundary", tradition: tradition, date: end)
+            )
+            if !fixture.hasDetails {
+                period.dynasty = nil
+            }
+            context.insert(period)
+        }
+        try context.save()
     }
 
     /// 设置页的 AppStorage 只读写本次截图的独立域，宿主释放后删除。
