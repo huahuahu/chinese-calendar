@@ -2,10 +2,10 @@
   "xcode": "27.2 RC (27B48)",
   "sdk": "27.2",
   "runtime": "27.2 (24B114)",
-  "oldReference": "HEAD before migration: Xcode 27.1 / iOS 27.0",
-  "total": 23,
-  "changed": 12,
-  "comparisonTests": 4,
+  "oldReference": "90594d0e: Xcode 27.1 / iOS 27.0",
+  "total": 25,
+  "changed": 14,
+  "comparisonTests": 6,
   "comparisonFailed": 0,
   "images": [
     {
@@ -63,7 +63,10 @@
     {
       "name": "calendar-empty.phone.png",
       "oldSHA256": "8540394a1653ed38022bcd45f7ac2be202bd211cd8d40ecdbd3d40376775a2fc",
-      "newSHA256": "8540394a1653ed38022bcd45f7ac2be202bd211cd8d40ecdbd3d40376775a2fc"
+      "newSHA256": "8540394a1653ed38022bcd45f7ac2be202bd211cd8d40ecdbd3d40376775a2fc",
+      "bbox": null,
+      "changedPixels": 0,
+      "totalPixels": 329160
     },
     {
       "name": "calendar-modern.accessibility.png",
@@ -146,65 +149,121 @@
     {
       "name": "history-dynasty-span.phone.png",
       "oldSHA256": "5499f812a53443ed1512abefcd2d695aaf2c47daac30cabf168e1d856c6af37f",
-      "newSHA256": "5499f812a53443ed1512abefcd2d695aaf2c47daac30cabf168e1d856c6af37f"
+      "newSHA256": "5499f812a53443ed1512abefcd2d695aaf2c47daac30cabf168e1d856c6af37f",
+      "bbox": null,
+      "changedPixels": 0,
+      "totalPixels": 329160
     },
     {
       "name": "history-dynasty.phone.png",
       "oldSHA256": "7ccc72d689e2d48aa8bdde2cd166460c7689785a185bde57b25b29a2f5ce8eaa",
-      "newSHA256": "7ccc72d689e2d48aa8bdde2cd166460c7689785a185bde57b25b29a2f5ce8eaa"
+      "newSHA256": "7ccc72d689e2d48aa8bdde2cd166460c7689785a185bde57b25b29a2f5ce8eaa",
+      "bbox": null,
+      "changedPixels": 0,
+      "totalPixels": 329160
     },
     {
       "name": "history-dynasty.tablet.png",
       "oldSHA256": "34a1dbeeafc0730d5d1bcc3dad811d1d5fadbe42e9843816803b1f534e94d73e",
-      "newSHA256": "34a1dbeeafc0730d5d1bcc3dad811d1d5fadbe42e9843816803b1f534e94d73e"
+      "newSHA256": "34a1dbeeafc0730d5d1bcc3dad811d1d5fadbe42e9843816803b1f534e94d73e",
+      "bbox": null,
+      "changedPixels": 0,
+      "totalPixels": 1398784
     },
     {
       "name": "history-emperor.dark.png",
       "oldSHA256": "3ec3248fc719d3951414477e2e012ac121a70db22677e798681d3b119942ae7e",
-      "newSHA256": "3ec3248fc719d3951414477e2e012ac121a70db22677e798681d3b119942ae7e"
+      "newSHA256": "3ec3248fc719d3951414477e2e012ac121a70db22677e798681d3b119942ae7e",
+      "bbox": null,
+      "changedPixels": 0,
+      "totalPixels": 329160
     },
     {
       "name": "history-emperor.phone.png",
       "oldSHA256": "60ccb4a8b7065ecaa1876098dd616a30268b186100fe1b5f14afb873d6807c01",
-      "newSHA256": "60ccb4a8b7065ecaa1876098dd616a30268b186100fe1b5f14afb873d6807c01"
+      "newSHA256": "60ccb4a8b7065ecaa1876098dd616a30268b186100fe1b5f14afb873d6807c01",
+      "bbox": null,
+      "changedPixels": 0,
+      "totalPixels": 329160
     },
     {
       "name": "history-empty.phone.png",
       "oldSHA256": "aab2d331e6c4e53f936be2f9b8ddcbf9e0c0ce4534f0e573f631019e262314be",
-      "newSHA256": "aab2d331e6c4e53f936be2f9b8ddcbf9e0c0ce4534f0e573f631019e262314be"
+      "newSHA256": "aab2d331e6c4e53f936be2f9b8ddcbf9e0c0ce4534f0e573f631019e262314be",
+      "bbox": null,
+      "changedPixels": 0,
+      "totalPixels": 329160
     },
     {
       "name": "history-reign-era.phone.png",
       "oldSHA256": "0f651d37708af824f16b38068e662268be31ef9eb6aa3c9233b16f612e3d1d85",
-      "newSHA256": "0f651d37708af824f16b38068e662268be31ef9eb6aa3c9233b16f612e3d1d85"
+      "newSHA256": "0f651d37708af824f16b38068e662268be31ef9eb6aa3c9233b16f612e3d1d85",
+      "bbox": null,
+      "changedPixels": 0,
+      "totalPixels": 329160
     },
     {
       "name": "history-selected.phone.png",
       "oldSHA256": "b34129918639f279723763ba3cd1258ff39b75de7daf9a46389cb53fa09cf5a9",
-      "newSHA256": "b34129918639f279723763ba3cd1258ff39b75de7daf9a46389cb53fa09cf5a9"
+      "newSHA256": "b34129918639f279723763ba3cd1258ff39b75de7daf9a46389cb53fa09cf5a9",
+      "bbox": null,
+      "changedPixels": 0,
+      "totalPixels": 329160
     },
     {
       "name": "history-selected.tablet.png",
-      "oldSHA256": "e94efdc77b3ad822c566d243cbb859f766659b07c0604cdfdc45b90259584eca",
-      "newSHA256": "e94efdc77b3ad822c566d243cbb859f766659b07c0604cdfdc45b90259584eca"
+      "oldSHA256": "a184f0133152095ea3add6e5f382ac0b74dac88ff4386ea554033b0fb54b530a",
+      "newSHA256": "a184f0133152095ea3add6e5f382ac0b74dac88ff4386ea554033b0fb54b530a",
+      "bbox": null,
+      "changedPixels": 0,
+      "totalPixels": 1398784
     },
     {
-      "name": "history-timeline.phone.png",
-      "oldSHA256": "ce4aa31c61ca88c8ff9182e129401cd16d837a42509c4137452ede1f7537f713",
-      "newSHA256": "312dcf450a688ca1ab24667633eba0559232bfb5909a324d093069daa8d3a683",
+      "name": "history-timeline.accessibility.png",
+      "oldSHA256": "d4fbccca545aacc207420b19186227d9d2077230868fd7f59b1f0e2223386bff",
+      "newSHA256": "d0417a6ce718903113bbd4fb2730ab0e35043cf26059ac514600230cefa537ab",
+      "bbox": [
+        34,
+        199,
+        335,
+        371
+      ],
+      "changedPixels": 17370,
+      "totalPixels": 329160
+    },
+    {
+      "name": "history-timeline.dark.png",
+      "oldSHA256": "ca24057cc50485bafdf8d4ed6c913dc8574ecad21168f7071a8b463e3a6082b9",
+      "newSHA256": "d86025fc5b5908672167b0f5d89dc7bec6f36954d3ab66d7f3230601dccc9866",
       "bbox": [
         32,
         172,
-        358,
-        308
+        271,
+        189
       ],
-      "changedPixels": 6349,
+      "changedPixels": 2981,
+      "totalPixels": 329160
+    },
+    {
+      "name": "history-timeline.phone.png",
+      "oldSHA256": "5f068900cc4f5e98aa629271d8d5a07af991b0b4f5f5ce94c4d8b3834ccc9a1f",
+      "newSHA256": "a01aa817c6f303f56eef969ca14b40324fb701eae9220dfbd1f0e635e654f089",
+      "bbox": [
+        32,
+        172,
+        271,
+        189
+      ],
+      "changedPixels": 2978,
       "totalPixels": 329160
     },
     {
       "name": "history-timeline.tablet.png",
-      "oldSHA256": "d017e7779f83121b3014aab1a0b6f244f8f2d321b70f4e147b10796720fee2d9",
-      "newSHA256": "d017e7779f83121b3014aab1a0b6f244f8f2d321b70f4e147b10796720fee2d9"
+      "oldSHA256": "b03eefce00297a5f1dc7d73685e40a54b63c0decb8f0d42d13eb1eaec71783cf",
+      "newSHA256": "b03eefce00297a5f1dc7d73685e40a54b63c0decb8f0d42d13eb1eaec71783cf",
+      "bbox": null,
+      "changedPixels": 0,
+      "totalPixels": 1398784
     },
     {
       "name": "settings-starting.phone.png",

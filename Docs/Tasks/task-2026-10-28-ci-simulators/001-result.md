@@ -2,7 +2,7 @@
 
 - 方案：[000-plan.md](000-plan.md)
 - 记录日期：2026-10-28
-- 代码状态：本 PR 的实现及 23 张基准散列记录，基于 `8ab9cbe383b6510a5c351dbe9ff59dd796597d22`；本地检查针对带本次改动的工作区。
+- 代码状态：本 PR 的实现及 25 张基准散列记录，已同步主分支 `90594d0e`（PR #193），对应合并提交 `f5332a21`；本地检查针对带本次改动的工作区。
 
 ## 实际结果与方案调整
 
@@ -15,9 +15,9 @@
 
 ## 截图迁移
 
-先用 Xcode 27.2 RC build 27B48、SDK 27.2、iOS 27.2 build 24B114 和专属 arm64 iPhone 比较旧基准。23 张中 12 张出现差异，已逐张查看旧图与新图：9 张日历图的“今天”按钮从强调色变为浅色下黑色／深色下白色；年份选择器、历史时间线、设置页的系统列表缩进变化。页面内容和业务数据保持不变。
+先用 Xcode 27.2 RC build 27B48、SDK 27.2、iOS 27.2 build 24B114 和专属 arm64 iPhone 比较旧基准。25 张中 14 张出现差异，已逐张查看旧图与新图：9 张日历图的“今天”按钮从强调色变为浅色下黑色／深色下白色；年份选择器和设置页的系统列表缩进变化，历史时间线三个外观场景的说明文字缩进变化。页面内容和业务数据保持不变。
 
-显式录制后，独立执行比较，4 个测试分组全部通过，覆盖全部 23 张 PNG；12 张更新、11 张散列未变。`precision: 1` 和 `perceptualPrecision: 0.99` 保持不变。录制阶段的 4 个分组因 `Record mode is on` 失败属于预期记录行为，不计作比较通过。每张图片的新旧 SHA-256 和变动边界见 [baseline-migration.json](evidence/baseline-migration.json)。
+显式录制后，独立执行比较，6 个测试分组全部通过，覆盖全部 25 张 PNG；14 张更新、11 张散列未变。`precision: 1` 和 `perceptualPrecision: 0.99` 保持不变。录制阶段的 6 个分组因 `Record mode is on` 失败属于预期记录行为，不计作比较通过。每张图片的新旧 SHA-256 和变动边界见 [baseline-migration.json](evidence/baseline-migration.json)。
 
 ## 验收证据
 
@@ -27,10 +27,10 @@
 | AC-02 | 本地已验证 | iPhone 和 iPad 同任务重复 start 返回相同 UUID；隔离测试验证不同任务获得不同设备、不借用原有设备 |
 | AC-03 | 本地已验证 | 三组本任务设备均按状态文件删除；iPhone 的比较前后及录制 xcresult、540 项测试 xcresult 和构建日志已先复制到实验目录，再执行 finish；测试覆盖诊断失败、归属变化、创建中断恢复、重复清理。workflow 使用 always 清理和上传；真实 GitHub 取消场景未触发 |
 | AC-04 | 本地部分验证，远程待完成 | 原生 Xcode MCP 在专属 iPhone 上运行 ChineseCalendar-iOS：540 passed / 0 failed；BuildProject 成功。测试／构建 shell 使用同一显式 UUID 已有回归覆盖。iPad / Duo 本轮只实测创建与清理，完整 app 测试由 PR 矩阵执行 |
-| AC-05 | 已验证 | 原生 Xcode MCP 的 ChineseCalendarSnapshots：4 passed / 0 failed，覆盖 23 张 PNG；逐张核查差异，11 张基准散列保持不变 |
+| AC-05 | 已验证 | 原生 Xcode MCP 的 ChineseCalendarSnapshots：6 passed / 0 failed，覆盖 25 张 PNG；逐张核查差异，11 张基准散列保持不变 |
 | AC-06 | 本地已验证，远程待完成 | 43 项 Python 测试、3 项 Node 测试通过；SwiftFormat 363 文件无修改、SwiftLint 350 文件零违规；335 项本地化资源和 919377 条 JSONL schema 检查通过；actionlint、Bash 语法、diff 检查通过 |
 
-本机归档目录为 `~/Library/Logs/ChineseCalendar/experiments/ci-27-2-migration/`，包含原生 MCP 的 xcresult、日志、像素差异统计和清理归属；它是补充排查材料。可长期核查的基准图片、散列和验收结论随 PR 保存。
+本机归档目录为 `~/Library/Logs/ChineseCalendar/experiments/ci-27-2-main-sync/`（主分支同步后验证）及 `ci-27-2-migration/`（初次验证），包含原生 MCP 的 xcresult、日志、像素差异统计和清理归属；它是补充排查材料。可长期核查的基准图片、散列和验收结论随 PR 保存。
 
 ## 剩余边界
 

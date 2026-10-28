@@ -74,7 +74,7 @@ CI 缺少任务 UUID 时明确失败，不借用已有设备，也不在截图�
 
 [CI workflow](../.github/workflows/ci.yml) 在 iPhone job 的普通测试之后执行截图比较，复用该 job 的专属设备。三组普通测试分别是 iPhone / 27.2、iPad / 27.2 和 Duo / 27.1；截图只由 iPhone 18 Pro Max / 27.2 承载。工具链统一为 Xcode / SDK 27.2，允许当前 RC；缺少环境会明确失败，不跳过。成功、失败或取消时都先保存证据，再按 UUID 清理；上传任务目录中的 xcresult、日志、截图和 SHA-256 清单，保留 14 天。CI 中截图输出位于 `$CHINESE_CALENDAR_CI_OUTPUT_DIR/snapshots/`，本地默认仍为 `.output/snapshots/`。
 
-27.0 → 27.2 的迁移先比较原图，12 张出现系统按钮颜色和列表缩进变化，检查后更新；其余 11 张保持不变。比较阈值未放宽。迁移与验收详见[任务记录](../Docs/Tasks/task-2026-10-28-ci-simulators/000-plan.md)。
+27.0 → 27.2 的迁移先比较原图，14 张出现系统按钮颜色、列表及说明文字缩进变化，检查后更新；其余 11 张保持不变。比较阈值未放宽。迁移与验收详见[任务记录](../Docs/Tasks/task-2026-10-28-ci-simulators/000-plan.md)。
 
 升级 Xcode、SDK、runtime、SnapshotTesting 或基准设备时，需要明确评估并审查基准变化；不能用新环境静默覆盖旧环境的图。截图验证固定视口中的视觉结果，交互、导航、系统弹窗、下载流程和真机行为仍需各自验证。
 
