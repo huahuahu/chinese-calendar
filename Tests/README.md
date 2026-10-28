@@ -19,16 +19,18 @@
 | 比较 scheme | `ChineseCalendarSnapshots` |
 | 录制 scheme | `ChineseCalendarSnapshots-Record`，设置 `SNAPSHOT_RECORD=1` |
 
-### 首批覆盖范围
+### 当前覆盖范围
 
-共 23 张 PNG，由 4 个 XCTest 测试分组执行：
+共 25 张 PNG，由 6 个 XCTest 测试分组执行：
 
 | 组 | 数量 | 场景 |
 | --- | --- | --- |
 | iPhone 浅色 | 16 | 现代日历、公元前、公元后、月内纪元边界、后九月、无日期、未下载完整日期、年份选择器、历史时间线、选中皇帝列表、空历史、朝代详情、朝代起讫、皇帝详情、年号详情、设置启动状态 |
 | iPad 横屏 | 4 | 现代日历、历史默认三栏、历史已选中三栏、朝代详情 |
-| 深色 | 2 | 现代日历、皇帝详情 |
-| 辅助功能最大字号 | 1 | 现代日历 |
+| 深色 | 3 | 现代日历、皇帝详情、历史时间线 |
+| 辅助功能最大字号 | 2 | 现代日历、历史时间线 |
+
+历史默认时间线使用测试独占的四节点内存样本，覆盖朝代之间的浅分隔线、首、中、尾连线，以及长名称和缺少朝代详情的行；不修改生产或 Preview 数据。iPhone 和 iPad 既有场景检查普通字号的连续布局，两个独立测试补充深色与 `.accessibility5` 初始视口。样本的现代时期终点仅用于固定测试范围，不代表来源资料的正式边界。
 
 库负责创建 SwiftUI hosting controller 和独立窗口、配对执行 appearance 生命周期、布局，并通过 `view.layer.render(in:)` 绘制和清理宿主。测试代码不再自行管理 controller/window，不进行连续帧轮询或手工 PNG 解码归一化；截图时机和图像比较采用库原生策略。比较阈值保持 `precision: 1`、`perceptualPrecision: 0.99`：每个像素都参与比较，只允许很小的感知色差，不忽略指定区域，也不容忍一定比例的任意错图。原生策略迁移及基准验证记录见 [后续任务记录](../Docs/Tasks/task-2026-10-24-ui-snapshots/002-native-swiftui-strategy.md)。
 

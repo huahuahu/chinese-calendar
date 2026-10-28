@@ -4,29 +4,28 @@ import SwiftUI
 struct DynastyCard: View {
     // swiftformat:disable:next enumNamespaces
     private struct Constants {
-        static let rowSpacing: CGFloat = 10
-        static let timelineMarkerSize: CGFloat = 10
-        static let timelineMarkerBorderWidth: CGFloat = 2
-        static let monogramCharacterCount = 2
-        static let monogramMinimumScaleFactor: CGFloat = 0.7
-        static let monogramSize: CGFloat = 42
-        static let monogramCornerRadius: CGFloat = 15
-        static let contentSpacing: CGFloat = 5
+        static let rowSpacing: CGFloat = 12
+        static let timelineWidth: CGFloat = 12
+        static let timelineMarkerSize: CGFloat = 8
+        static let timelineLineWidth: CGFloat = 1
+        static let dateCenterOffset: CGFloat = 8
+        static let contentSpacing: CGFloat = 4
         static let disclosureMinimumSpacing: CGFloat = 8
-        static let minimumRowHeight: CGFloat = 72
-        static let horizontalPadding: CGFloat = 10
-        static let verticalPadding: CGFloat = 10
-        static let separatorHeight: CGFloat = 1
-        static let separatorLeadingInset: CGFloat = 21
+        static let minimumRowHeight: CGFloat = 86
+        static let trailingPadding: CGFloat = 8
+        static let verticalPadding: CGFloat = 12
+        static let separatorPixelWidth: CGFloat = 1
     }
 
     let model: DynastyCardModel
     let showsDisclosureIndicator: Bool
+    var connectsToPrevious = false
+    var connectsToNext = false
+    @ScaledMetric(relativeTo: .caption) private var dateCenterOffset: CGFloat = Constants.dateCenterOffset
+    @Environment(\.displayScale) private var displayScale
 
     var body: some View {
         HStack(alignment: .center, spacing: Constants.rowSpacing) {
-            timelineMarker
-            dynastyMonogram
             dynastyDetails
 
             Spacer(minLength: Constants.disclosureMinimumSpacing)
@@ -35,59 +34,60 @@ struct DynastyCard: View {
                 disclosureIndicator
             }
         }
-        .frame(maxWidth: .infinity, minHeight: Constants.minimumRowHeight, alignment: .leading)
-        .padding(.horizontal, Constants.horizontalPadding)
+        .padding(.leading, Constants.timelineWidth + Constants.rowSpacing)
+        .padding(.trailing, Constants.trailingPadding)
         .padding(.vertical, Constants.verticalPadding)
+        .frame(maxWidth: .infinity, minHeight: Constants.minimumRowHeight, alignment: .topLeading)
+        .background(alignment: .leading) {
+            timelineTrack
+        }
         .overlay(alignment: .bottom) {
-            rowSeparator
+            if connectsToNext {
+                Rectangle()
+                    .fill(.quaternary)
+                    .frame(height: Constants.separatorPixelWidth / displayScale)
+                    .padding(.leading, Constants.timelineWidth + Constants.rowSpacing)
+                    .padding(.trailing, Constants.trailingPadding)
+                    .allowsHitTesting(false)
+                    .accessibilityHidden(true)
+            }
         }
         .contentShape(.rect)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(model.accessibilityLabel)
     }
 
-    private var timelineMarker: some View {
-        Circle()
-            .fill(.secondary)
-            .frame(
-                width: Constants.timelineMarkerSize,
-                height: Constants.timelineMarkerSize
-            )
-            .overlay {
-                Circle()
-                    .stroke(
-                        .background,
-                        lineWidth: Constants.timelineMarkerBorderWidth
-                    )
-            }
-            .accessibilityHidden(true)
-    }
+    private var timelineTrack: some View {
+        GeometryReader { geometry in
+            let markerY = Constants.verticalPadding + dateCenterOffset
+            let markerX = Constants.timelineWidth / 2
 
-    private var dynastyMonogram: some View {
-        Text(String(model.dynastyName.prefix(Constants.monogramCharacterCount)))
-            .font(.title3)
-            .fontDesign(.serif)
-            .bold()
-            .minimumScaleFactor(Constants.monogramMinimumScaleFactor)
-            .lineLimit(1)
-            .frame(width: Constants.monogramSize, height: Constants.monogramSize)
-            .background(
-                .background.secondary,
-                in: RoundedRectangle(cornerRadius: Constants.monogramCornerRadius)
-            )
+            Path { path in
+                path.move(to: CGPoint(x: markerX, y: connectsToPrevious ? 0 : markerY))
+                path.addLine(to: CGPoint(x: markerX, y: connectsToNext ? geometry.size.height : markerY))
+            }
+            .stroke(.quaternary, lineWidth: Constants.timelineLineWidth)
+
+            Circle()
+                .fill(.tint)
+                .frame(width: Constants.timelineMarkerSize, height: Constants.timelineMarkerSize)
+                .position(x: markerX, y: markerY)
+        }
+        .frame(width: Constants.timelineWidth)
+        .allowsHitTesting(false)
+        .accessibilityHidden(true)
     }
 
     private var dynastyDetails: some View {
         VStack(alignment: .leading, spacing: Constants.contentSpacing) {
-            if model.dynastyName.count > Constants.monogramCharacterCount {
-                Text(model.dynastyName)
-                    .font(.headline)
-                    .lineLimit(1)
-            }
-
             Text(model.boundaryText)
-                .font(.headline)
+                .font(.caption)
+                .foregroundStyle(.secondary)
                 .monospacedDigit()
+
+            Text(model.dynastyName)
+                .font(.title3)
+                .fontWeight(.semibold)
 
             if let statisticsText = model.statisticsText {
                 Text(statisticsText)
@@ -109,16 +109,9 @@ struct DynastyCard: View {
             .foregroundStyle(.secondary)
             .accessibilityHidden(true)
     }
-
-    private var rowSeparator: some View {
-        Rectangle()
-            .fill(.quaternary)
-            .frame(height: Constants.separatorHeight)
-            .padding(.leading, Constants.separatorLeadingInset)
-    }
 }
 
-#Preview {
+#Preview("朝代单行") {
     DynastyCard(
         model: DynastyCardModel(
             id: "ming",
@@ -128,5 +121,42 @@ struct DynastyCard: View {
         ),
         showsDisclosureIndicator: true
     )
+    .padding()
+}
+
+#Preview("首尾与连续节点") {
+    VStack(spacing: 0) {
+        DynastyCard(
+            model: DynastyCardModel(
+                id: "qin",
+                dynastyName: "秦",
+                boundaryText: "前221—前206",
+                statisticsText: "3 位皇帝 · 0 个年号"
+            ),
+            showsDisclosureIndicator: true,
+            connectsToNext: true
+        )
+        DynastyCard(
+            model: DynastyCardModel(
+                id: "western-han",
+                dynastyName: "西汉",
+                boundaryText: "前206—8",
+                statisticsText: "13 位皇帝 · 43 个年号"
+            ),
+            showsDisclosureIndicator: true,
+            connectsToPrevious: true,
+            connectsToNext: true
+        )
+        DynastyCard(
+            model: DynastyCardModel(
+                id: "xin",
+                dynastyName: "新",
+                boundaryText: "8—23",
+                statisticsText: "1 位皇帝 · 3 个年号"
+            ),
+            showsDisclosureIndicator: true,
+            connectsToPrevious: true
+        )
+    }
     .padding()
 }

@@ -32,6 +32,16 @@ nonisolated final class CalendarSnapshotTests: XCTestCase {
     }
 
     @MainActor
+    func testHistoryTimelineDark() async throws {
+        try await check(.history, appearance: .dark)
+    }
+
+    @MainActor
+    func testHistoryTimelineAccessibility() async throws {
+        try await check(.history, appearance: .accessibility)
+    }
+
+    @MainActor
     private func check(
         _ scene: SnapshotScene, appearance: SnapshotAppearance,
         file: StaticString = #filePath, line: UInt = #line
