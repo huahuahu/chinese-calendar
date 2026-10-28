@@ -1,0 +1,31 @@
+# CI 任务专属模拟器与 27.2 环境：方案
+
+- 状态：可执行
+- 更新日期：2026-10-28
+- 依据：用户确认的实验规则、[Xcode 工作流](../../agent-workflows.md)、[通用规范](../../Conventions/Common.md)
+- 关联：[原工作区分配方案](../task-2026-10-24-worktree-simulator/000-plan.md)、[截图基准](../../../Tests/README.md)
+
+## 目标与范围
+
+为 Chinese-date CI 的每个设备 job 创建独占 Simulator，在该 job 的测试、截图和构建之间复用；结束、失败或取消时先保存证据，再只删除归属记录中的 UUID。归属和证据保存在 checkout 外，进程被强制终止时可依据记录恢复清理。runtime、SwiftPM 和构建缓存继续复用。
+
+工具链统一为 Xcode 27.2；当前本机安装的是 Release Candidate，允许使用并记录实际路径和 build，不将其描述为正式版。普通 iPhone 和 iPad 使用 iOS 27.2，Duo 使用 iOS 27.1。创建前验证 runtime 的 supportedDeviceTypes；禁止降级或借用 runner 的现有设备。
+
+## 方案与决策
+
+- CI 使用 iPhone 18 Pro Max / 27.2、iPad Pro 13-inch (M5) / 27.2、iPhone Duo / 27.1 的串行矩阵，减少同一本机 runner 的资源竞争。
+- 拟新增 `Scripts/ci_simulator.py`：创建／任务内复用、验证归属、收集设备日志和截图、按 UUID 清理。持久化任务状态和 SHA-256 证据清单；异常残留通过显式指定其状态文件清理，不扫描删除其他任务设备。
+- 普通测试和构建强制使用 CI 分配的 UUID，禁用测试 Simulator 克隆；单元测试和截图分别保留 xcresult，截图只在固定的 iPhone job 执行。
+- 将截图工具链、SDK、runtime 校验和本地工作区分配版本同步迁至 27.2。先比较旧基准，检查有差异的图，仅在可解释的系统渲染变化下更新并重新比较。保留截图阈值。
+- 本次主要交付 CI 生命周期；现有 worktree 配置检查仍用于本地 MCP 上下文协调。显式实验可使用新增生命周期入口；不批量清理既有设备或修改其他项目。
+
+## 验收标准
+
+| ID | 预期行为 | 验证方式 |
+| --- | --- | --- |
+| AC-01 | 三组设备分别校验工具链与 runtime 兼容性，缺失或不兼容时在创建前失败 | 隔离测试、本机库存检查及创建实测 |
+| AC-02 | 每任务独占 UUID，任务内复用；不同任务互不借用 | 隔离测试、真实创建／重复调用 |
+| AC-03 | 成功、失败、取消均先保留证据再清理；只删除记录的 UUID，保留异常恢复入口 | 隔离测试、workflow always 步骤、真实清理回读 |
+| AC-04 | 普通测试、快照和构建使用同一 job 的设备；结果与日志可追踪 | shell 入口回归、xcresult 和 CI job |
+| AC-05 | 27.2 下检查 23 张快照，必要更新后独立比较通过 | 固定环境快照比较、图片检查 |
+| AC-06 | 脚本、格式、lint、workflow 检查通过，并创建 PR | 本地检查、GitHub PR 和最新 CI 状态 |

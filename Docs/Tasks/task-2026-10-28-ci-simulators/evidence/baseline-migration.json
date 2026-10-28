@@ -1,0 +1,223 @@
+{
+  "xcode": "27.2 RC (27B48)",
+  "sdk": "27.2",
+  "runtime": "27.2 (24B114)",
+  "oldReference": "HEAD before migration: Xcode 27.1 / iOS 27.0",
+  "total": 23,
+  "changed": 12,
+  "comparisonTests": 4,
+  "comparisonFailed": 0,
+  "images": [
+    {
+      "name": "calendar-base-data.phone.png",
+      "oldSHA256": "d6903ee87f6a764dad6901f72581fcc2745c2e915831275ab0558d6714af51db",
+      "newSHA256": "6d94304bfae5f151305fe80f5297942ad1e0bd97daa238786e5de619c93b2275",
+      "bbox": [
+        324,
+        67,
+        357,
+        83
+      ],
+      "changedPixels": 265,
+      "totalPixels": 329160
+    },
+    {
+      "name": "calendar-before-common-era.phone.png",
+      "oldSHA256": "9c1079bd41ddc2b5de9442f0cd781e6792581267261dfe3d5b3d0c9a65ad1a61",
+      "newSHA256": "98bf8c4e40465d7ee50a0f3a9cde017a8ccf7a954dcaed8b04f3464d76af15b4",
+      "bbox": [
+        324,
+        67,
+        357,
+        83
+      ],
+      "changedPixels": 265,
+      "totalPixels": 329160
+    },
+    {
+      "name": "calendar-civil-era-boundary.phone.png",
+      "oldSHA256": "5a90bb2097d8e89919264a384e032f98454675b68b5a330744263aef4329c090",
+      "newSHA256": "fab4457ce1d23886ef850c53db99dcc7c31922554c46cea370dd45dc8a1bd3e0",
+      "bbox": [
+        324,
+        67,
+        357,
+        83
+      ],
+      "changedPixels": 265,
+      "totalPixels": 329160
+    },
+    {
+      "name": "calendar-common-era.phone.png",
+      "oldSHA256": "d425a6552b854f428d11848b0c2e9a05f70031252fb549e0e68cd9dc98962ea4",
+      "newSHA256": "1a01934a200c86208bd83c0f30998dbff76badc07eb9815c38732267f9fa53a3",
+      "bbox": [
+        324,
+        67,
+        357,
+        83
+      ],
+      "changedPixels": 265,
+      "totalPixels": 329160
+    },
+    {
+      "name": "calendar-empty.phone.png",
+      "oldSHA256": "8540394a1653ed38022bcd45f7ac2be202bd211cd8d40ecdbd3d40376775a2fc",
+      "newSHA256": "8540394a1653ed38022bcd45f7ac2be202bd211cd8d40ecdbd3d40376775a2fc"
+    },
+    {
+      "name": "calendar-modern.accessibility.png",
+      "oldSHA256": "d12fcf84d0a5a13e941883c808bd06092ecbfe95c70446b33168e08c2e03bb20",
+      "newSHA256": "aa619d34d5ac743b55f139e7b839da27a8b6567af12511ae32a8c3711ac189c7",
+      "bbox": [
+        318,
+        66,
+        357,
+        85
+      ],
+      "changedPixels": 359,
+      "totalPixels": 329160
+    },
+    {
+      "name": "calendar-modern.dark.png",
+      "oldSHA256": "5dd48d29bb7dbc391f4d3d448e1f38566511265c2cf2c20e446dcf0d735b0276",
+      "newSHA256": "0ac6149008d76f0041995351c35481c2d17090148381b6b90432575703827f4d",
+      "bbox": [
+        324,
+        67,
+        357,
+        83
+      ],
+      "changedPixels": 265,
+      "totalPixels": 329160
+    },
+    {
+      "name": "calendar-modern.phone.png",
+      "oldSHA256": "0794a4a0bdb506b6a8507dce4fbfbdd7be02b1f8971c2ef13047ee87eaae4b5b",
+      "newSHA256": "29e80f0fc8771865bac1cd9bb02cdce70304fcf6cb0e61eff01bfb91704afa69",
+      "bbox": [
+        324,
+        67,
+        357,
+        83
+      ],
+      "changedPixels": 265,
+      "totalPixels": 329160
+    },
+    {
+      "name": "calendar-modern.tablet.png",
+      "oldSHA256": "f44de8694fadad794cfc574985a01cab8be1d18db586b04a1e4b23daf87c7ca5",
+      "newSHA256": "bbac60d9fe7b4015030c38749492472ee0abf9de3c1b41e86b4b428cee67ae39",
+      "bbox": [
+        1306,
+        67,
+        1339,
+        83
+      ],
+      "changedPixels": 265,
+      "totalPixels": 1398784
+    },
+    {
+      "name": "calendar-post-ninth-month.phone.png",
+      "oldSHA256": "29493d304fddd1912212c2384c3afd9d57243d22287f6243604c3e71b84932a1",
+      "newSHA256": "2666e398ca7c55f96c8bb526c9a767b4fa1f54d99399ccdd170571e3148ce809",
+      "bbox": [
+        324,
+        67,
+        357,
+        83
+      ],
+      "changedPixels": 265,
+      "totalPixels": 329160
+    },
+    {
+      "name": "calendar-year-picker.phone.png",
+      "oldSHA256": "66c0454db96e3a14cdcc4eb784d696257985aadd66553a31f0b71bb2649f88b6",
+      "newSHA256": "be47fb655f90a6b068b165de060da0855ba198330484aa62b9958432c2b40f19",
+      "bbox": [
+        32,
+        172,
+        349,
+        844
+      ],
+      "changedPixels": 14079,
+      "totalPixels": 329160
+    },
+    {
+      "name": "history-dynasty-span.phone.png",
+      "oldSHA256": "5499f812a53443ed1512abefcd2d695aaf2c47daac30cabf168e1d856c6af37f",
+      "newSHA256": "5499f812a53443ed1512abefcd2d695aaf2c47daac30cabf168e1d856c6af37f"
+    },
+    {
+      "name": "history-dynasty.phone.png",
+      "oldSHA256": "7ccc72d689e2d48aa8bdde2cd166460c7689785a185bde57b25b29a2f5ce8eaa",
+      "newSHA256": "7ccc72d689e2d48aa8bdde2cd166460c7689785a185bde57b25b29a2f5ce8eaa"
+    },
+    {
+      "name": "history-dynasty.tablet.png",
+      "oldSHA256": "34a1dbeeafc0730d5d1bcc3dad811d1d5fadbe42e9843816803b1f534e94d73e",
+      "newSHA256": "34a1dbeeafc0730d5d1bcc3dad811d1d5fadbe42e9843816803b1f534e94d73e"
+    },
+    {
+      "name": "history-emperor.dark.png",
+      "oldSHA256": "3ec3248fc719d3951414477e2e012ac121a70db22677e798681d3b119942ae7e",
+      "newSHA256": "3ec3248fc719d3951414477e2e012ac121a70db22677e798681d3b119942ae7e"
+    },
+    {
+      "name": "history-emperor.phone.png",
+      "oldSHA256": "60ccb4a8b7065ecaa1876098dd616a30268b186100fe1b5f14afb873d6807c01",
+      "newSHA256": "60ccb4a8b7065ecaa1876098dd616a30268b186100fe1b5f14afb873d6807c01"
+    },
+    {
+      "name": "history-empty.phone.png",
+      "oldSHA256": "aab2d331e6c4e53f936be2f9b8ddcbf9e0c0ce4534f0e573f631019e262314be",
+      "newSHA256": "aab2d331e6c4e53f936be2f9b8ddcbf9e0c0ce4534f0e573f631019e262314be"
+    },
+    {
+      "name": "history-reign-era.phone.png",
+      "oldSHA256": "0f651d37708af824f16b38068e662268be31ef9eb6aa3c9233b16f612e3d1d85",
+      "newSHA256": "0f651d37708af824f16b38068e662268be31ef9eb6aa3c9233b16f612e3d1d85"
+    },
+    {
+      "name": "history-selected.phone.png",
+      "oldSHA256": "b34129918639f279723763ba3cd1258ff39b75de7daf9a46389cb53fa09cf5a9",
+      "newSHA256": "b34129918639f279723763ba3cd1258ff39b75de7daf9a46389cb53fa09cf5a9"
+    },
+    {
+      "name": "history-selected.tablet.png",
+      "oldSHA256": "e94efdc77b3ad822c566d243cbb859f766659b07c0604cdfdc45b90259584eca",
+      "newSHA256": "e94efdc77b3ad822c566d243cbb859f766659b07c0604cdfdc45b90259584eca"
+    },
+    {
+      "name": "history-timeline.phone.png",
+      "oldSHA256": "ce4aa31c61ca88c8ff9182e129401cd16d837a42509c4137452ede1f7537f713",
+      "newSHA256": "312dcf450a688ca1ab24667633eba0559232bfb5909a324d093069daa8d3a683",
+      "bbox": [
+        32,
+        172,
+        358,
+        308
+      ],
+      "changedPixels": 6349,
+      "totalPixels": 329160
+    },
+    {
+      "name": "history-timeline.tablet.png",
+      "oldSHA256": "d017e7779f83121b3014aab1a0b6f244f8f2d321b70f4e147b10796720fee2d9",
+      "newSHA256": "d017e7779f83121b3014aab1a0b6f244f8f2d321b70f4e147b10796720fee2d9"
+    },
+    {
+      "name": "settings-starting.phone.png",
+      "oldSHA256": "5f3a7bd00fca7d6989bc9bd0bba11e77f4a56358ea15d5c3456a2f89881c900d",
+      "newSHA256": "7038d6e8cfd3531a86f66c08083fae0b78b29e14174960ca7a251a7972d6cf9d",
+      "bbox": [
+        32,
+        172,
+        358,
+        609
+      ],
+      "changedPixels": 15803,
+      "totalPixels": 329160
+    }
+  ]
+}

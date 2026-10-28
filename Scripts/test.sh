@@ -6,6 +6,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "${SCRIPT_DIR}/ios_simulator.sh"
 
 python3 "$SCRIPT_DIR/tests/test_ensure_worktree_simulator.py"
+python3 -B "$SCRIPT_DIR/tests/test_ci_simulator.py"
 node --test Scripts/BuildChineseCalendarSeedStore/Tests/*.test.mjs
 
 if [[ ! -d "ChineseCalendar.xcodeproj" ]]; then
@@ -14,6 +15,8 @@ fi
 
 IOS_DESTINATION="$(resolve_ios_simulator_destination)"
 IOS_SIMULATOR_ARCH="$(resolve_ios_simulator_architecture)"
+RESULT_DIR="${CHINESE_CALENDAR_CI_OUTPUT_DIR:-.output/tests/$(date '+%Y%m%d-%H%M%S')-$$}"
+mkdir -p "$RESULT_DIR"
 
 # Simulator 测试需要 ad-hoc 签名保留 App Groups 权限，无需开发者证书。
 xcodebuild \
@@ -22,6 +25,8 @@ xcodebuild \
     -sdk iphonesimulator \
     -configuration Debug \
     -destination "$IOS_DESTINATION,arch=$IOS_SIMULATOR_ARCH" \
+    -parallel-testing-enabled NO \
+    -resultBundlePath "$RESULT_DIR/tests.xcresult" \
     ARCHS="$IOS_SIMULATOR_ARCH" \
     ONLY_ACTIVE_ARCH=YES \
     CODE_SIGN_IDENTITY=- \

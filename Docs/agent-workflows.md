@@ -4,6 +4,8 @@ Read the relevant section when [AGENTS.md](../AGENTS.md) routes a task here. The
 
 ## Xcode Project Context
 
+独立实验的设备遵循[任务 Simulator 生命周期](../Scripts/README.md#task-simulator-lifecycle)：任务开始时创建，任务内复用，保存证据后清理，失败和取消同样收尾。CI 已自动执行；本地实验使用 `ci_simulator.py start/finish`，并将本任务的 UUID 和设备名称写入下述本机 MCP 上下文后再操作。工具链为 Xcode 27.2（当前允许 RC），普通 iPhone / iPad runtime 为 27.2，Duo 为 27.1。工作区分配器仍固定验证截图机型 iPhone 18 Pro Max / 27.2；Duo / iPad 实验使用显式任务上下文，不运行会改选截图机型的分配步骤。切换前后都核对 UUID，不将实验设备当作长期默认设备保留。
+
 Prefer the native `xcode` MCP whenever it exposes the required operation, including inspection, builds, tests, Preview, diagnostics, and device interaction. Use the third-party `xcodebuildmcp` MCP when that operation is missing, unavailable, or fails. Use direct `xcodebuild` or `xcrun simctl` only when neither MCP can perform the operation, including branch-scoped Simulator lifecycle operations handled by the worktree skills.
 
 Before selecting either MCP's context, run `python3 Scripts/ensure_worktree_simulator.py` using Python 3.9+ with `Scripts/requirements.txt` installed; see the [local environment setup](../Scripts/README.md#worktree-simulator-allocation). It checks the current configuration against other worktrees registered in the same Git repository. If another worktree references the device, it creates an empty Simulator of the same type and runtime, then atomically updates only this worktree's local configuration. It leaves existing devices running and does not boot the new device. Simulator allocation uses `simctl` inside the script because the MCPs do not expose device creation.

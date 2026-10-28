@@ -28,12 +28,12 @@ if [[ $# -gt 1 ]]; then
     echo "只接受一个可选参数：--record。" >&2
     exit 2
 fi
-if [[ "${CI:-}" == "true" && "$MODE" == "record" ]]; then
+if [[ ( "${CI:-}" == "true" || "${GITHUB_ACTIONS:-}" == "true" ) && "$MODE" == "record" ]]; then
     echo "CI 只允许比较基准；请在本地显式录制并审查图片。" >&2
     exit 2
 fi
 
-OUTPUT_DIR="${REPO_ROOT}/.output/snapshots/$(date '+%Y%m%d-%H%M%S')-$$"
+OUTPUT_DIR="${CHINESE_CALENDAR_CI_OUTPUT_DIR:-${REPO_ROOT}/.output}/snapshots/$(date '+%Y%m%d-%H%M%S')-$$"
 mkdir -p "$OUTPUT_DIR"
 echo "截图测试输出：$OUTPUT_DIR"
 
@@ -45,39 +45,41 @@ fail() {
 # 字体和系统控件的像素结果依赖工具链、运行时和架构，不能自动降级。
 [[ "$(uname -m)" == "arm64" ]] || fail "截图基准要求 arm64 Mac；当前架构为 $(uname -m)。"
 xcodebuild -version > "$OUTPUT_DIR/xcode-version.txt"
-[[ "$(head -n 1 "$OUTPUT_DIR/xcode-version.txt")" == "Xcode 27.1" ]] \
-    || fail "截图基准要求 Xcode 27.1，请检查 xcode-select / DEVELOPER_DIR。"
+[[ "$(head -n 1 "$OUTPUT_DIR/xcode-version.txt")" == "Xcode 27.2" ]] \
+    || fail "截图基准要求 Xcode 27.2，请检查 xcode-select / DEVELOPER_DIR。"
 xcodebuild -sdk iphonesimulator -version SDKVersion > "$OUTPUT_DIR/sdk-version.txt"
-[[ "$(cat "$OUTPUT_DIR/sdk-version.txt")" == "27.1" ]] \
-    || fail "截图基准要求 iPhoneSimulator SDK 27.1。"
+[[ "$(cat "$OUTPUT_DIR/sdk-version.txt")" == "27.2" ]] \
+    || fail "截图基准要求 iPhoneSimulator SDK 27.2。"
 # 显式指定设备时沿用调用者选择；其余本地运行先分配，再读取最新设备清单。
-if [[ "${CI:-}" != "true" && "${GITHUB_ACTIONS:-}" != "true" && -z "${SNAPSHOT_SIMULATOR_ID:-}" ]]; then
+if [[ "${CI:-}" != "true" && "${GITHUB_ACTIONS:-}" != "true" \
+    && -z "${SNAPSHOT_SIMULATOR_ID:-${CHINESE_CALENDAR_SIMULATOR_ID:-}}" ]]; then
     SNAPSHOT_SIMULATOR_ID="$(python3 "$SCRIPT_DIR/ensure_worktree_simulator.py" --worktree "$REPO_ROOT")" \
         || fail "无法分配工作区专属 Simulator。"
     export SNAPSHOT_SIMULATOR_ID
 fi
 xcrun simctl list --json > "$OUTPUT_DIR/simulators.json"
 
-# CI 使用 runner 自身的设备；本地优先使用共享上下文中的 Simulator。
+# CI 必须显式传入任务设备；本地设备已由分配器确定。
 SIMULATOR_ID="$(python3 - "$OUTPUT_DIR/simulators.json" <<'PY'
 import json
 import os
 from pathlib import Path
-import subprocess
 import sys
 
 inventory = json.loads(Path(sys.argv[1]).read_text())
-runtime = next((item for item in inventory["runtimes"]
-                if item.get("isAvailable")
-                and item.get("version") == "27.0"
-                and item["identifier"].startswith("com.apple.CoreSimulator.SimRuntime.iOS-")), None)
-if runtime is None:
-    sys.exit("截图基准要求可用的 iOS 27.0 Simulator runtime；请先在 Xcode 安装。")
-
 device_type = next((item for item in inventory["devicetypes"]
                    if item["name"] == "iPhone 18 Pro Max"), None)
 if device_type is None:
     sys.exit("当前 Xcode 缺少 iPhone 18 Pro Max Simulator device type。")
+
+runtimes = [item for item in inventory["runtimes"]
+            if item.get("isAvailable") and item.get("version") == "27.2"
+            and item["identifier"].startswith("com.apple.CoreSimulator.SimRuntime.iOS-")
+            and any(supported["identifier"] == device_type["identifier"]
+                    for supported in item.get("supportedDeviceTypes", []))]
+if len(runtimes) != 1:
+    sys.exit("截图基准要求唯一且兼容 iPhone 18 Pro Max 的 iOS 27.2 runtime；请检查 Xcode 安装。")
+runtime = runtimes[0]
 
 devices = inventory["devices"].get(runtime["identifier"], [])
 
@@ -88,26 +90,19 @@ def matches(device):
 def validate(identifier, source):
     device = next((item for item in devices if item["udid"] == identifier), None)
     if device is None or not matches(device):
-        sys.exit(f"{source} 的 {identifier} 不符合基准：需要可用的 iPhone 18 Pro Max / iOS 27.0。")
+        sys.exit(f"{source} 的 {identifier} 不符合基准：需要可用的 iPhone 18 Pro Max / iOS 27.2。")
     return device["udid"]
 
-identifier = os.environ.get("SNAPSHOT_SIMULATOR_ID")
+identifier = os.environ.get("SNAPSHOT_SIMULATOR_ID") or os.environ.get("CHINESE_CALENDAR_SIMULATOR_ID")
 if identifier:
     print(validate(identifier, "SNAPSHOT_SIMULATOR_ID"))
     sys.exit(0)
 
-device = next((item for item in devices if matches(item)), None)
-if device:
-    print(device["udid"])
-else:
-    print(subprocess.check_output([
-        "xcrun", "simctl", "create", "ChineseCalendar Snapshots iPhone 18 Pro Max",
-        device_type["identifier"], runtime["identifier"]
-    ], text=True).strip())
+sys.exit("必须传入本任务的 SNAPSHOT_SIMULATOR_ID 或 CHINESE_CALENDAR_SIMULATOR_ID；不会借用其他设备。")
 PY
 )" || fail "无法选择截图测试的 Simulator；详见上方环境诊断。"
 
-printf 'scheme=%s\nsimulatorId=%s\nruntime=iOS 27.0\narchitecture=arm64\nmode=%s\n' \
+printf 'scheme=%s\nsimulatorId=%s\nruntime=iOS 27.2\narchitecture=arm64\nmode=%s\n' \
     "$SCHEME" "$SIMULATOR_ID" "$MODE" > "$OUTPUT_DIR/environment.txt"
 cat "$OUTPUT_DIR/environment.txt"
 
