@@ -106,6 +106,51 @@ class SimulatorTests(unittest.TestCase):
         self.assertNotEqual(first["simulatorId"], other["simulatorId"])
         self.assertEqual(len([c for c in self.calls if c[:3] == ("xcrun", "simctl", "create")]), 2)
 
+    def test_preparation_reuses_compatible_runtime_without_downloading(self):
+        with patch.object(ci.subprocess, "run") as download:
+            ci.prepare_runtime(self.arguments(), self.path)
+        download.assert_not_called()
+        self.assertTrue((self.root / "simulators-before-prepare.json").exists())
+        self.assertFalse(self.path.exists())
+
+    def test_preparation_downloads_missing_version_then_rechecks_compatibility(self):
+        runtime = self.data["runtimes"].pop(0)
+
+        def install(*args, **kwargs):
+            self.data["runtimes"].append(runtime)
+
+        with patch.object(ci.subprocess, "run", side_effect=install) as download:
+            ci.prepare_runtime(self.arguments(), self.path)
+        download.assert_called_once_with([
+            "xcodebuild", "-downloadPlatform", "iOS", "-buildVersion", "27.2",
+            "-architectureVariant", "arm64",
+        ], check=True, timeout=1800)
+        before = json.loads((self.root / "simulators-before-prepare.json").read_text())
+        after = json.loads((self.root / "simulators-after-prepare.json").read_text())
+        self.assertNotEqual(before["runtimes"], after["runtimes"])
+        self.assertFalse(any(c[:3] == ("xcrun", "simctl", "create") for c in self.calls))
+
+    def test_preparation_rejects_download_that_does_not_add_compatible_runtime(self):
+        self.data["runtimes"].pop(0)
+        with patch.object(ci.subprocess, "run"):
+            with self.assertRaisesRegex(RuntimeError, "found 0"):
+                ci.prepare_runtime(self.arguments(), self.path)
+        self.assertFalse(self.path.exists())
+
+    def test_preparation_rejects_ambiguous_runtime_without_downloading(self):
+        self.data["runtimes"].append(copy.deepcopy(self.data["runtimes"][0]))
+        with patch.object(ci.subprocess, "run") as download:
+            with self.assertRaisesRegex(RuntimeError, "found 2"):
+                ci.prepare_runtime(self.arguments(), self.path)
+        download.assert_not_called()
+
+    def test_preparation_download_failure_creates_no_task_device(self):
+        self.data["runtimes"].pop(0)
+        with patch.object(ci.subprocess, "run", side_effect=subprocess.CalledProcessError(1, "xcodebuild")):
+            with self.assertRaises(subprocess.CalledProcessError):
+                ci.prepare_runtime(self.arguments(), self.path)
+        self.assertFalse(self.path.exists())
+
     def test_wrong_version_missing_or_incompatible_runtime_never_creates(self):
         baseline = copy.deepcopy(self.data)
         for failure in ("wrong-version", "missing", "incompatible", "ambiguous"):

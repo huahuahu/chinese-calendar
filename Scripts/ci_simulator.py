@@ -45,6 +45,40 @@ def owned_device(state, data):
     return None
 
 
+def compatible_runtimes(arguments, data):
+    expected_runtime = "27.1" if arguments.device == "iPhone Duo" else "27.2"
+    if arguments.runtime != expected_runtime:
+        raise RuntimeError(f"{arguments.device} requires iOS {expected_runtime}.")
+    device_type = next((item for item in data["devicetypes"] if item["name"] == arguments.device), None)
+    if not device_type:
+        raise RuntimeError(f"Missing device type: {arguments.device}")
+    runtimes = [item for item in data["runtimes"]
+                if item.get("isAvailable") and item.get("version") == arguments.runtime
+                and item["identifier"].startswith("com.apple.CoreSimulator.SimRuntime.iOS-")
+                and any(supported["identifier"] == device_type["identifier"]
+                        for supported in item.get("supportedDeviceTypes", []))]
+    return device_type, runtimes
+
+
+def prepare_runtime(arguments, path):
+    data = inventory()
+    save(path.parent / "simulators-before-prepare.json", data)
+    _, runtimes = compatible_runtimes(arguments, data)
+    if not runtimes:
+        # 托管镜像的 Xcode 与 runtime 独立安装；只补齐指定版本，不降级设备矩阵。
+        subprocess.run([
+            "xcodebuild", "-downloadPlatform", "iOS", "-buildVersion", arguments.runtime,
+            "-architectureVariant", "arm64",
+        ], check=True, timeout=1800)
+        data = inventory()
+        _, runtimes = compatible_runtimes(arguments, data)
+    save(path.parent / "simulators-after-prepare.json", data)
+    if len(runtimes) != 1:
+        raise RuntimeError(f"Runtime preparation did not produce exactly one compatible iOS "
+                           f"{arguments.runtime} runtime for {arguments.device}; found {len(runtimes)}.")
+    print(f"Runtime ready: {runtimes[0]['identifier']} ({runtimes[0].get('buildversion', 'unknown build')})")
+
+
 def start(arguments, path):
     version = command("xcodebuild", "-version")
     if version.splitlines()[0] != "Xcode 27.2":
@@ -62,18 +96,8 @@ def start(arguments, path):
             raise RuntimeError("The experiment's Simulator is missing or unavailable; finish it explicitly.")
         return state
 
-    expected_runtime = "27.1" if arguments.device == "iPhone Duo" else "27.2"
-    if arguments.runtime != expected_runtime:
-        raise RuntimeError(f"{arguments.device} requires iOS {expected_runtime}.")
     data = inventory()
-    device_type = next((item for item in data["devicetypes"] if item["name"] == arguments.device), None)
-    if not device_type:
-        raise RuntimeError(f"Missing device type: {arguments.device}")
-    runtimes = [item for item in data["runtimes"]
-                if item.get("isAvailable") and item.get("version") == arguments.runtime
-                and item["identifier"].startswith("com.apple.CoreSimulator.SimRuntime.iOS-")
-                and any(supported["identifier"] == device_type["identifier"]
-                        for supported in item.get("supportedDeviceTypes", []))]
+    device_type, runtimes = compatible_runtimes(arguments, data)
     if len(runtimes) != 1:
         raise RuntimeError(f"Expected one compatible iOS {arguments.runtime} runtime for {arguments.device}; "
                            f"found {len(runtimes)}. Install/check the requested runtime in Xcode.")
@@ -154,7 +178,7 @@ def seal(directory):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("action", choices=("start", "finish"))
+    parser.add_argument("action", choices=("prepare-runtime", "start", "finish"))
     parser.add_argument("--state", required=True, type=Path)
     parser.add_argument("--task")
     parser.add_argument("--device", choices=("iPhone 18 Pro Max", "iPad Pro 13-inch (M5)", "iPhone Duo"))
@@ -162,13 +186,17 @@ def main():
     args = parser.parse_args()
     if args.action == "start" and not all((args.task, args.device, args.runtime)):
         parser.error("start requires --task, --device, and --runtime")
+    if args.action == "prepare-runtime" and not all((args.device, args.runtime)):
+        parser.error("prepare-runtime requires --device and --runtime")
     path = args.state.expanduser().resolve()
     path.parent.mkdir(parents=True, exist_ok=True)
     # 同一任务目录串行处理；不同任务不共享设备或锁。
     with path.with_suffix(".lock").open("a") as lock:
         fcntl.flock(lock, fcntl.LOCK_EX)
         try:
-            if args.action == "start":
+            if args.action == "prepare-runtime":
+                prepare_runtime(args, path)
+            elif args.action == "start":
                 state = start(args, path)
                 print(state["simulatorId"])
             else:
@@ -176,7 +204,7 @@ def main():
                     finish(path)
                 finally:
                     seal(path.parent)
-        except (OSError, ValueError, KeyError, RuntimeError, subprocess.TimeoutExpired) as error:
+        except (OSError, ValueError, KeyError, RuntimeError, subprocess.SubprocessError) as error:
             print(f"error: {error}", file=sys.stderr)
             return 1
     return 0

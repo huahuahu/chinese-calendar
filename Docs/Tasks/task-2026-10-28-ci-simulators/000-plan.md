@@ -2,6 +2,7 @@
 
 - 状态：可执行
 - 更新日期：2026-10-28
+- 关联：[PR #194](https://github.com/huahuahu/chinese-calendar/pull/194)
 - 依据：用户确认的实验规则、[Xcode 工作流](../../agent-workflows.md)、[通用规范](../../Conventions/Common.md)
 - 关联：[原工作区分配方案](../task-2026-10-24-worktree-simulator/000-plan.md)、[截图基准](../../../Tests/README.md)
 
@@ -31,3 +32,5 @@
 | AC-06 | 脚本、格式、lint、workflow 检查通过，并创建 PR | 本地检查、GitHub PR 和最新 CI 状态 |
 
 2026-10-28：交付前同步主分支 `90594d0e`（PR #193），其历史时间线增加深色与辅助功能场景，基准范围从 23 张调整为当前 25 张，仍先检查差异再录制，不改变比较阈值。
+
+2026-10-29：首次远程矩阵中 Duo 通过，普通 iPhone / iPad 因托管镜像未预装兼容 iOS 27.2 runtime 而失败。补充 CI 环境准备：先保存库存，缺少兼容 runtime 时安装指定版本，再核验库存后创建设备；保持版本和矩阵不变。明确使用 Bash 的 pipefail，让带 tee 的测试和构建步骤保留真实失败状态。

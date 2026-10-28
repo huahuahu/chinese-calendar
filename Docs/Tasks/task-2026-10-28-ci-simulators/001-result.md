@@ -1,6 +1,7 @@
 # CI 任务专属模拟器与 27.2 环境：结果
 
 - 方案：[000-plan.md](000-plan.md)
+- 关联：[PR #194](https://github.com/huahuahu/chinese-calendar/pull/194)
 - 记录日期：2026-10-28
 - 代码状态：本 PR 的实现及 25 张基准散列记录，已同步主分支 `90594d0e`（PR #193），对应合并提交 `f5332a21`；本地检查针对带本次改动的工作区。
 
@@ -35,3 +36,12 @@
 ## 剩余边界
 
 本轮未运行独立的 `review-changes` 审查任务、真机交互或发布。原生 MCP 的测试与构建不能替代 PR 最新提交的远程矩阵，远程状态以 PR 检查为准。runner 硬杀可能无法执行 always；状态记录支持持久宿主上的后续恢复，不保证托管 VM 销毁后还能访问本地文件。
+
+## 2026-10-29：远程环境准备修复
+
+首次远程 [run 40714384081](https://github.com/huahuahu/chinese-calendar/actions/runs/40714384081) 在 `12ba750a` 上完成：Lint 和 Duo job 通过；iPhone、iPad 均因缺少兼容 iOS 27.2 runtime，在创建设备前明确失败。托管镜像安装 Xcode 27.2 RC 不代表已经安装通用 iOS 27.2 runtime。
+
+- 新增 `prepare-runtime`：保存安装前后库存，已有唯一兼容 runtime 时复用，否则通过 Xcode 安装指定版本，再按 `supportedDeviceTypes` 校验；安装失败、未产生兼容 runtime、出现歧义时都保留失败，不降级版本或跳过设备。
+- CI 显式选择 Bash，启用其 `-eo pipefail`，测试／构建经 tee 保存日志时仍传播原始退出码。runtime 安装前就记录 commit，未创建设备时收尾也能保存环境诊断，不再因缺少 simulator.json 产生第二个错误。
+- 本地生命周期测试由 13 项扩至 18 项，新增复用、缺失时安装、安装后仍不兼容、歧义和下载失败场景；测试全部通过。actionlint、Python 3.9 语法和 diff 检查通过。本次未修改 App 代码或快照。
+- 后续远程验收以 PR 最新提交的完整矩阵为准；首次失败的 run 不作为新提交的验收证据。

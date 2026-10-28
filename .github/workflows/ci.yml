@@ -11,6 +11,10 @@ concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
   lint-and-format:
     name: Lint and Format
@@ -118,7 +122,7 @@ jobs:
         with:
           xcode-version: ${{ vars.CI_XCODE_VERSION || '27.2' }}
 
-      - name: Create task Simulator
+      - name: Prepare runtime and create task Simulator
         env:
           EXPERIMENT_DEVICE: ${{ matrix.device }}
           EXPERIMENT_RUNTIME: ${{ matrix.runtime }}
@@ -128,13 +132,17 @@ jobs:
           CI_OUTPUT_DIR="$HOME/Library/Logs/ChineseCalendar/ci/$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT-$EXPERIMENT_ID"
           mkdir -p "$CI_OUTPUT_DIR"
           echo "CHINESE_CALENDAR_CI_OUTPUT_DIR=$CI_OUTPUT_DIR" >> "$GITHUB_ENV"
+          git rev-parse HEAD > "$CI_OUTPUT_DIR/commit.txt"
+          python3 Scripts/ci_simulator.py prepare-runtime \
+            --state "$CI_OUTPUT_DIR/simulator.json" \
+            --device "$EXPERIMENT_DEVICE" --runtime "$EXPERIMENT_RUNTIME" \
+            2>&1 | tee "$CI_OUTPUT_DIR/runtime-preparation.log"
           SIMULATOR_ID="$(python3 Scripts/ci_simulator.py start \
             --state "$CI_OUTPUT_DIR/simulator.json" \
             --task "$GITHUB_REPOSITORY-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT-$EXPERIMENT_ID" \
             --device "$EXPERIMENT_DEVICE" --runtime "$EXPERIMENT_RUNTIME")"
           echo "CHINESE_CALENDAR_SIMULATOR_ID=$SIMULATOR_ID" >> "$GITHUB_ENV"
           echo "SNAPSHOT_SIMULATOR_ID=$SIMULATOR_ID" >> "$GITHUB_ENV"
-          git rev-parse HEAD > "$CI_OUTPUT_DIR/commit.txt"
 
       - name: Install XcodeGen
         run: |
@@ -174,7 +182,11 @@ jobs:
             echo "### Simulator evidence"
             echo "Task: $GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT-${{ matrix.id }}"
             echo "Archive: $CHINESE_CALENDAR_CI_OUTPUT_DIR"
-            cat "$CHINESE_CALENDAR_CI_OUTPUT_DIR/simulator.json"
+            if [[ -f "$CHINESE_CALENDAR_CI_OUTPUT_DIR/simulator.json" ]]; then
+              cat "$CHINESE_CALENDAR_CI_OUTPUT_DIR/simulator.json"
+            else
+              echo 'No task Simulator was created; runtime preparation diagnostics were preserved.'
+            fi
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload test and snapshot evidence
