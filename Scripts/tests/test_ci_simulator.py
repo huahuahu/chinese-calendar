@@ -122,7 +122,7 @@ class SimulatorTests(unittest.TestCase):
         with patch.object(ci.subprocess, "run", side_effect=install) as download:
             ci.prepare_runtime(self.arguments(), self.path)
         download.assert_called_once_with([
-            "xcodebuild", "-downloadPlatform", "iOS", "-buildVersion", "27.2",
+            "xcodebuild", "-downloadPlatform", "iOS", "-buildVersion", "24B114",
             "-architectureVariant", "arm64",
         ], check=True, timeout=1800)
         before = json.loads((self.root / "simulators-before-prepare.json").read_text())

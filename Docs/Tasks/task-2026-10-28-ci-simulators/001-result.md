@@ -45,3 +45,5 @@
 - CI 显式选择 Bash，启用其 `-eo pipefail`，测试／构建经 tee 保存日志时仍传播原始退出码。runtime 安装前就记录 commit，未创建设备时收尾也能保存环境诊断，不再因缺少 simulator.json 产生第二个错误。
 - 本地生命周期测试由 13 项扩至 18 项，新增复用、缺失时安装、安装后仍不兼容、歧义和下载失败场景；测试全部通过。actionlint、Python 3.9 语法和 diff 检查通过。本次未修改 App 代码或快照。
 - 后续远程验收以 PR 最新提交的完整矩阵为准；首次失败的 run 不作为新提交的验收证据。
+
+随后 [run 40784028547](https://github.com/huahuahu/chinese-calendar/actions/runs/40784028547) 的安装库存确认：`-buildVersion 27.2` 选中 build `24B91014`，其 supportedDeviceTypes 仅包含 Duo；安装本身成功，后置兼容性校验正确拒绝继续。已改为 `-buildVersion 24B114` 明确选择通用 iOS 27.2，与已迁移的快照基准一致；本机 Xcode 的实际命令已验证可选择并安装该 build，18 项生命周期回归测试通过。仍保留安装后的型号兼容性校验。

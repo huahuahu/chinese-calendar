@@ -65,9 +65,10 @@ def prepare_runtime(arguments, path):
     save(path.parent / "simulators-before-prepare.json", data)
     _, runtimes = compatible_runtimes(arguments, data)
     if not runtimes:
-        # 托管镜像的 Xcode 与 runtime 独立安装；只补齐指定版本，不降级设备矩阵。
+        # 仅用 27.2 会选中 Duo 专用包；指定截图基准的通用 runtime build。
+        build_version = "24B114" if arguments.runtime == "27.2" else arguments.runtime
         subprocess.run([
-            "xcodebuild", "-downloadPlatform", "iOS", "-buildVersion", arguments.runtime,
+            "xcodebuild", "-downloadPlatform", "iOS", "-buildVersion", build_version,
             "-architectureVariant", "arm64",
         ], check=True, timeout=1800)
         data = inventory()

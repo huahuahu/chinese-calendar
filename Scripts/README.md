@@ -4,7 +4,7 @@ Utility scripts for fetching, normalizing, generating app-ready data, and valida
 
 ## Task Simulator Lifecycle
 
-CI 每个设备 job 使用独立实验目录和 Simulator，同一 job 的测试、快照和构建复用实际 UUID，结束后删除设备实例。工具链统一为 Xcode / SDK **27.2**，允许当前安装的 RC；iPhone 18 Pro Max 和 iPad Pro 13-inch (M5) 使用 runtime **27.2**，iPhone Duo 使用 **27.1**。`ci_simulator.py` 在创建前检查 `supportedDeviceTypes`，也能区分只支持 Duo 的特殊 27.2 runtime。CI 的 `prepare-runtime` 在缺少兼容 runtime 时，通过 `xcodebuild -downloadPlatform iOS -buildVersion <版本> -architectureVariant arm64` 补齐，再检查实际安装结果；已有兼容环境时直接复用，安装失败或仍然不兼容时明确失败，不降低版本。
+CI 每个设备 job 使用独立实验目录和 Simulator，同一 job 的测试、快照和构建复用实际 UUID，结束后删除设备实例。工具链统一为 Xcode / SDK **27.2**，允许当前安装的 RC；iPhone 18 Pro Max 和 iPad Pro 13-inch (M5) 使用 runtime **27.2**，iPhone Duo 使用 **27.1**。`ci_simulator.py` 在创建前检查 `supportedDeviceTypes`，也能区分只支持 Duo 的特殊 27.2 runtime。CI 的 `prepare-runtime` 在缺少兼容 runtime 时，通过 `xcodebuild -downloadPlatform iOS -buildVersion <版本或 build> -architectureVariant arm64` 补齐，再检查实际安装结果。通用 iOS 27.2 显式使用截图基准 build **24B114**，仅指定 27.2 会下载 Duo 专用包；Duo 缺失时指定 27.1。已有兼容环境时直接复用，安装失败或仍然不兼容时明确失败，不降低版本。
 
 本地独立实验也可使用同一入口，`TASK_DIR` 应是 checkout 外、带本次任务标识的专属目录。不同任务使用不同目录；同一个任务重复 `start` 会复用 UUID，已结束目录不能再次使用：
 
