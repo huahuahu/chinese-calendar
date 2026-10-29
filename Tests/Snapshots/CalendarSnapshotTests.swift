@@ -76,10 +76,10 @@ nonisolated final class CalendarSnapshotTests: XCTestCase {
     private func requireBaselineEnvironment() throws {
         let version = ProcessInfo.processInfo.operatingSystemVersion
         #if targetEnvironment(simulator) && arch(arm64)
-            if version.majorVersion == 27, version.minorVersion == 0, version.patchVersion == 0 { return }
+            if version.majorVersion == 27, version.minorVersion == 2, version.patchVersion == 0 { return }
         #endif
         throw NSError(domain: "CalendarSnapshotEnvironment", code: 1, userInfo: [
-            NSLocalizedDescriptionKey: "截图基准要求 arm64 iOS 27.0 Simulator，当前为 \(version)。"
+            NSLocalizedDescriptionKey: "截图基准要求 arm64 iOS 27.2 Simulator，当前为 \(version)。"
         ])
     }
 }

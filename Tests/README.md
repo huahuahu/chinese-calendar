@@ -10,9 +10,9 @@
 
 | 项目 | 基准环境 |
 | --- | --- |
-| Xcode | 27.1 |
-| iPhoneSimulator SDK | 27.1 |
-| Simulator runtime | iOS 27.0 |
+| Xcode | 27.2，当前迁移验证使用 RC build 27B48 |
+| iPhoneSimulator SDK | 27.2 |
+| Simulator runtime | iOS 27.2 |
 | Simulator 机型 | iPhone 18 Pro Max，允许自定义设备名称 |
 | Mac / 测试架构 | arm64 |
 | 测试 target | `ChineseCalendarSnapshotTests` |
@@ -46,9 +46,10 @@
 
 脚本会严格检查工具链、SDK、runtime、机型和架构。设备选择按以下顺序进行：
 
-1. 显式的 `SNAPSHOT_SIMULATOR_ID`。
-2. 本地 `.xcodebuildmcp/config.yaml` 中的 `sessionDefaults.simulatorId`；CI 不读取个人设备 ID。
-3. 找到可用的 iPhone 18 Pro Max / iOS 27.0，或在该 runtime 已安装时创建同型号设备。
+1. 显式的 `SNAPSHOT_SIMULATOR_ID`；CI 传入本任务创建的 UUID，也接受 `CHINESE_CALENDAR_SIMULATOR_ID`。
+2. 没有显式 ID 的本地运行使用分配器返回的 `.xcodebuildmcp/config.yaml` 中的 `sessionDefaults.simulatorId`；CI 不读取个人配置。
+
+CI 缺少任务 UUID 时明确失败，不借用已有设备，也不在截图步骤内创建另一台。独立实验按[任务设备生命周期](../Scripts/README.md#task-simulator-lifecycle)创建、复用和清理设备。
 
 显式 ID 或共享配置里的 ID 不符合要求时会失败，避免悄悄换到其他运行时生成不同像素。要使用另一台符合要求的设备，可以运行 `SNAPSHOT_SIMULATOR_ID=<UDID> ./Scripts/test_snapshots.sh`。不要复用普通测试脚本的自动 destination 选择逻辑。
 
@@ -71,7 +72,9 @@
 
 ### CI 与验证边界
 
-[CI workflow](../.github/workflows/ci.yml) 在现有普通测试之后执行截图比较。`xcode-27` runner 必须具备 Xcode 27.1、arm64 和 iOS 27.0 runtime；缺少环境会明确失败，不跳过。失败时上传 `.output/snapshots/`，包含 xcresult、日志及已导出的附件，保留 14 天。
+[CI workflow](../.github/workflows/ci.yml) 在 iPhone job 的普通测试之后执行截图比较，复用该 job 的专属设备。三组普通测试分别是 iPhone / 27.2、iPad / 27.2 和 Duo / 27.1；截图只由 iPhone 18 Pro Max / 27.2 承载。工具链统一为 Xcode / SDK 27.2，允许当前 RC；缺少环境会明确失败，不跳过。成功、失败或取消时都先保存证据，再按 UUID 清理；上传任务目录中的 xcresult、日志、截图和 SHA-256 清单，保留 14 天。CI 中截图输出位于 `$CHINESE_CALENDAR_CI_OUTPUT_DIR/snapshots/`，本地默认仍为 `.output/snapshots/`。
+
+27.0 → 27.2 的迁移先比较原图，14 张出现系统按钮颜色、列表及说明文字缩进变化，检查后更新；其余 11 张保持不变。比较阈值未放宽。迁移与验收详见[任务记录](../Docs/Tasks/task-2026-10-28-ci-simulators/000-plan.md)。
 
 升级 Xcode、SDK、runtime、SnapshotTesting 或基准设备时，需要明确评估并审查基准变化；不能用新环境静默覆盖旧环境的图。截图验证固定视口中的视觉结果，交互、导航、系统弹窗、下载流程和真机行为仍需各自验证。
 

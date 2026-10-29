@@ -22,9 +22,9 @@ ORIGINAL_ID = "AAAAAAAA-1111-2222-3333-444444444444"
 OTHER_ID = "BBBBBBBB-1111-2222-3333-444444444444"
 DEVICE_NAME = "Calendar simulator"
 DEVICE_TYPE = "com.apple.CoreSimulator.SimDeviceType.iPhone-18-Pro-Max"
-RUNTIME = "com.apple.CoreSimulator.SimRuntime.iOS-27-0"
-NEWER_RUNTIME = "com.apple.CoreSimulator.SimRuntime.iOS-27-1"
-SNAPSHOT_RUNTIME = "com.apple.CoreSimulator.SimRuntime.iOS-27-0"
+RUNTIME = "com.apple.CoreSimulator.SimRuntime.iOS-27-2"
+NEWER_RUNTIME = "com.apple.CoreSimulator.SimRuntime.iOS-27-3"
+SNAPSHOT_RUNTIME = "com.apple.CoreSimulator.SimRuntime.iOS-27-2"
 
 
 # fake xcrun 自己使用文件锁，防止测试库存损坏；分配脚本仍须保护读取配置到写回的整个事务。
@@ -89,9 +89,9 @@ arguments = sys.argv[1:]
 with Path(os.environ["SNAPSHOT_TEST_XCODEBUILD_LOG"]).open("a") as log:
     log.write(json.dumps(arguments) + "\n")
 if arguments == ["-version"]:
-    print("Xcode 27.1\nBuild version 18B00")
+    print("Xcode 27.2\nBuild version 18B00")
 elif arguments == ["-sdk", "iphonesimulator", "-version", "SDKVersion"]:
-    print("27.1")
+    print("27.2")
 elif arguments and arguments[-1] == "test" and "-destination" in arguments:
     print("Fake snapshot tests passed")
 else:
@@ -144,7 +144,7 @@ class WorktreeSimulatorTests(unittest.TestCase):
         }
         self.save_state({
             "devices": {RUNTIME: [self.device(ORIGINAL_ID, DEVICE_NAME)]},
-            "runtimes": [self.runtime(RUNTIME, "27.0"), self.runtime(NEWER_RUNTIME, "27.1")],
+            "runtimes": [self.runtime(RUNTIME, "27.2"), self.runtime(NEWER_RUNTIME, "27.3")],
             "devicetypes": [{"identifier": DEVICE_TYPE, "name": "iPhone 18 Pro Max"}],
             "create_attempts": 0,
             "calls": [],
@@ -255,7 +255,8 @@ class WorktreeSimulatorTests(unittest.TestCase):
 
     def run_snapshot_entrypoint(self, overrides=None):
         env = self.env.copy()
-        for key in ("CI", "GITHUB_ACTIONS", "SNAPSHOT_SIMULATOR_ID", "SNAPSHOT_RECORD"):
+        for key in ("CI", "GITHUB_ACTIONS", "SNAPSHOT_SIMULATOR_ID", "SNAPSHOT_RECORD",
+                    "CHINESE_CALENDAR_SIMULATOR_ID", "CHINESE_CALENDAR_CI_OUTPUT_DIR"):
             env.pop(key, None)
         env.update(overrides or {})
         log = self.base / "snapshot xcodebuild calls.jsonl"
@@ -303,12 +304,24 @@ class WorktreeSimulatorTests(unittest.TestCase):
         self.assertEqual(path.read_text(), source)
         self.assertEqual(self.state()["calls"], [["simctl", "list", "--json"]])
 
-    def test_snapshot_ci_uses_runner_inventory_without_reading_local_config(self):
+    def test_snapshot_ignores_duo_only_runtime_with_same_version(self):
+        self.prepare_snapshot_entrypoint()
+        state = self.state()
+        runtime = self.runtime(SNAPSHOT_RUNTIME + "-iPhone19-4", "27.2")
+        runtime["supportedDeviceTypes"] = [{"identifier": "duo-only"}]
+        state["runtimes"].insert(0, runtime)
+        self.save_state(state)
+        destination = self.run_snapshot_entrypoint({"SNAPSHOT_SIMULATOR_ID": OTHER_ID})
+        self.assertEqual(destination, f"platform=iOS Simulator,id={OTHER_ID},arch=arm64")
+
+    def test_snapshot_ci_uses_task_uuid_without_reading_local_config(self):
         self.prepare_snapshot_entrypoint()
         path = self.write_config()
         source = "sessionDefaults: [无效配置\n"
         path.write_text(source)
-        destination = self.run_snapshot_entrypoint({"CI": "true", "GITHUB_ACTIONS": "true"})
+        destination = self.run_snapshot_entrypoint({
+            "CI": "true", "GITHUB_ACTIONS": "true", "SNAPSHOT_SIMULATOR_ID": ORIGINAL_ID,
+        })
         self.assertEqual(destination, f"platform=iOS Simulator,id={ORIGINAL_ID},arch=arm64")
         self.assertEqual(path.read_text(), source)
         self.assertEqual(self.state()["calls"], [["simctl", "list", "--json"]])
@@ -512,7 +525,7 @@ class WorktreeSimulatorTests(unittest.TestCase):
                     )
                 self.save_state(state)
                 result = self.run_allocator(success=False)
-                self.assertIn("iPhone 18 Pro Max / iOS 27.0", result.stderr)
+                self.assertIn("iPhone 18 Pro Max / iOS 27.2", result.stderr)
                 self.assertEqual(path.read_bytes(), before)
                 self.assertEqual(self.state()["create_attempts"], 0)
 
@@ -536,11 +549,11 @@ class WorktreeSimulatorTests(unittest.TestCase):
         config["sessionDefaults"]["simulatorName"] = "iPhone 18 Pro Max"
         self.write_config(config=config, template=True)
         state = self.state()
-        state["runtimes"] = [self.runtime(NEWER_RUNTIME, "27.1")]
+        state["runtimes"] = [self.runtime(NEWER_RUNTIME, "27.3")]
         state["devices"] = {NEWER_RUNTIME: [self.device(OTHER_ID, "iPhone 18 Pro Max")]}
         self.save_state(state)
         result = self.run_allocator(success=False)
-        self.assertIn("iOS 27.0", result.stderr)
+        self.assertIn("iOS 27.2", result.stderr)
         self.assertFalse((self.root / CONFIG).exists())
         self.assertEqual(self.state()["create_attempts"], 0)
 

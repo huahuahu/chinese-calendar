@@ -27,7 +27,7 @@ class WorktreeSimulator:
     # 与截图基准固定为同一机型和系统版本，安装新 runtime 后也不自动升级。
     DEVICE_TYPE_NAME = "iPhone 18 Pro Max"
     DEVICE_TYPE_ID = "com.apple.CoreSimulator.SimDeviceType.iPhone-18-Pro-Max"
-    RUNTIME_ID = "com.apple.CoreSimulator.SimRuntime.iOS-27-0"
+    RUNTIME_ID = "com.apple.CoreSimulator.SimRuntime.iOS-27-2"
     UUID_PATTERN = re.compile(r"[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}", re.IGNORECASE)
 
     def __init__(self, root, dry_run=False):
@@ -121,7 +121,7 @@ class WorktreeSimulator:
                 )
             if not self.matches_target(device):
                 raise RuntimeError(
-                    f"Configured simulator {identifier} must use {self.DEVICE_TYPE_NAME} / iOS 27.0 "
+                    f"Configured simulator {identifier} must use {self.DEVICE_TYPE_NAME} / iOS 27.2 "
                     f"for the snapshot baseline. Fix {self.CONFIG_PATH}; no device was changed."
                 )
             return device
@@ -141,7 +141,7 @@ class WorktreeSimulator:
         if defaults.get("simulatorName") != self.DEVICE_TYPE_NAME:
             raise RuntimeError(
                 f"No matching simulator named {defaults.get('simulatorName')!r}. "
-                f"Set simulatorName to {self.DEVICE_TYPE_NAME!r} for the iOS 27.0 snapshot baseline."
+                f"Set simulatorName to {self.DEVICE_TYPE_NAME!r} for the iOS 27.2 snapshot baseline."
             )
         device_type = next((item for item in self.types if item["identifier"] == self.DEVICE_TYPE_ID), None)
         if device_type is None:
@@ -155,7 +155,7 @@ class WorktreeSimulator:
         ), None)
         if runtime is None:
             raise RuntimeError(
-                f"No available iOS 27.0 runtime supports {self.DEVICE_TYPE_NAME}. Install it in Xcode."
+                f"No available iOS 27.2 runtime supports {self.DEVICE_TYPE_NAME}. Install it in Xcode."
             )
         return device_type["identifier"], runtime["identifier"]
 

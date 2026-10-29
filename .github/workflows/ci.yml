@@ -11,6 +11,10 @@ concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
   lint-and-format:
     name: Lint and Format
@@ -25,10 +29,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
 
-      - name: Select Xcode 27.1
+      - name: Select Xcode 27.2 (RC allowed)
         uses: maxim-lobanov/setup-xcode@v1.7.0
         with:
-          xcode-version: '27.1'
+          # 当前迁移允许 RC；正式版可通过仓库变量显式切换。
+          xcode-version: ${{ vars.CI_XCODE_VERSION || '27.2' }}
+
+      - name: Verify Xcode 27.2
+        run: |
+          xcodebuild -version
+          test "$(xcodebuild -version | head -n 1)" = 'Xcode 27.2'
 
       - name: Install tooling
         run: |
@@ -37,7 +47,7 @@ jobs:
           XCODEGEN_TEMP_DIR="$(mktemp -d)"
           curl -fsSL -o "$XCODEGEN_TEMP_DIR/xcodegen.zip" "https://github.com/yonaskolb/XcodeGen/releases/download/${XCODEGEN_VERSION}/xcodegen.zip"
           unzip -qo "$XCODEGEN_TEMP_DIR/xcodegen.zip" -d "$XCODEGEN_TEMP_DIR"
-          # The release zip may add a top-level directory, so resolve the binary dynamically.
+          # 发布压缩包可能增加顶层目录，动态定位可执行文件。
           XCODEGEN_PATH="$(find "$XCODEGEN_TEMP_DIR" -type f -path '*/bin/xcodegen' -print -quit)"
           install -m 0755 "$XCODEGEN_PATH" "$RUNNER_TEMP/bin/xcodegen"
           # XcodeGen 从可执行文件旁的 share 目录读取平台、Debug 和测试预设。
@@ -69,8 +79,26 @@ jobs:
         run: python3 ./Scripts/validate_localized_copy.py
 
   test:
-    name: Test
+    name: Test (${{ matrix.id }})
     runs-on: xcode-27
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      max-parallel: 1
+      matrix:
+        include:
+          - id: iphone
+            device: iPhone 18 Pro Max
+            runtime: '27.2'
+            snapshots: true
+          - id: ipad
+            device: iPad Pro 13-inch (M5)
+            runtime: '27.2'
+            snapshots: false
+          - id: duo
+            device: iPhone Duo
+            runtime: '27.1'
+            snapshots: false
 
     env:
       XCODEGEN_VERSION: "2.45.3"
@@ -89,10 +117,32 @@ jobs:
       - name: Install Python script dependencies
         run: python3 -m pip install -r Scripts/requirements.txt
 
-      - name: Select Xcode 27.1
+      - name: Select Xcode 27.2 (RC allowed)
         uses: maxim-lobanov/setup-xcode@v1.7.0
         with:
-          xcode-version: '27.1'
+          xcode-version: ${{ vars.CI_XCODE_VERSION || '27.2' }}
+
+      - name: Prepare runtime and create task Simulator
+        env:
+          EXPERIMENT_DEVICE: ${{ matrix.device }}
+          EXPERIMENT_RUNTIME: ${{ matrix.runtime }}
+          EXPERIMENT_ID: ${{ matrix.id }}
+        run: |
+          # 持久化在 checkout 外，取消或 runner 异常退出后仍可按归属恢复清理。
+          CI_OUTPUT_DIR="$HOME/Library/Logs/ChineseCalendar/ci/$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT-$EXPERIMENT_ID"
+          mkdir -p "$CI_OUTPUT_DIR"
+          echo "CHINESE_CALENDAR_CI_OUTPUT_DIR=$CI_OUTPUT_DIR" >> "$GITHUB_ENV"
+          git rev-parse HEAD > "$CI_OUTPUT_DIR/commit.txt"
+          python3 Scripts/ci_simulator.py prepare-runtime \
+            --state "$CI_OUTPUT_DIR/simulator.json" \
+            --device "$EXPERIMENT_DEVICE" --runtime "$EXPERIMENT_RUNTIME" \
+            2>&1 | tee "$CI_OUTPUT_DIR/runtime-preparation.log"
+          SIMULATOR_ID="$(python3 Scripts/ci_simulator.py start \
+            --state "$CI_OUTPUT_DIR/simulator.json" \
+            --task "$GITHUB_REPOSITORY-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT-$EXPERIMENT_ID" \
+            --device "$EXPERIMENT_DEVICE" --runtime "$EXPERIMENT_RUNTIME")"
+          echo "CHINESE_CALENDAR_SIMULATOR_ID=$SIMULATOR_ID" >> "$GITHUB_ENV"
+          echo "SNAPSHOT_SIMULATOR_ID=$SIMULATOR_ID" >> "$GITHUB_ENV"
 
       - name: Install XcodeGen
         run: |
@@ -101,7 +151,7 @@ jobs:
           XCODEGEN_TEMP_DIR="$(mktemp -d)"
           curl -fsSL -o "$XCODEGEN_TEMP_DIR/xcodegen.zip" "https://github.com/yonaskolb/XcodeGen/releases/download/${XCODEGEN_VERSION}/xcodegen.zip"
           unzip -qo "$XCODEGEN_TEMP_DIR/xcodegen.zip" -d "$XCODEGEN_TEMP_DIR"
-          # The release zip may add a top-level directory, so resolve the binary dynamically.
+          # 发布压缩包可能增加顶层目录，动态定位可执行文件。
           XCODEGEN_PATH="$(find "$XCODEGEN_TEMP_DIR" -type f -path '*/bin/xcodegen' -print -quit)"
           install -m 0755 "$XCODEGEN_PATH" "$RUNNER_TEMP/bin/xcodegen"
           # XcodeGen 从可执行文件旁的 share 目录读取平台、Debug 和测试预设。
@@ -113,21 +163,38 @@ jobs:
       - name: Run tests
         run: |
           ./Scripts/validate_data_schemas.sh
-          ./Scripts/generate_xcodeproj.sh
-          ./Scripts/test.sh
+          GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=safe.bareRepository GIT_CONFIG_VALUE_0=all ./Scripts/generate_xcodeproj.sh
+          ./Scripts/test.sh 2>&1 | tee "$CHINESE_CALENDAR_CI_OUTPUT_DIR/tests.log"
 
       - name: Compare UI snapshots
+        if: matrix.snapshots
         run: ./Scripts/test_snapshots.sh
 
-      - name: Upload snapshot failure diagnostics
-        if: failure()
+      - name: Build iOS app
+        run: ./Scripts/build_apps.sh 2>&1 | tee "$CHINESE_CALENDAR_CI_OUTPUT_DIR/build.log"
+
+      - name: Save device evidence and delete task Simulator
+        if: always() && env.CHINESE_CALENDAR_CI_OUTPUT_DIR != ''
+        timeout-minutes: 5
+        run: |
+          python3 Scripts/ci_simulator.py finish --state "$CHINESE_CALENDAR_CI_OUTPUT_DIR/simulator.json"
+          {
+            echo "### Simulator evidence"
+            echo "Task: $GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT-${{ matrix.id }}"
+            echo "Archive: $CHINESE_CALENDAR_CI_OUTPUT_DIR"
+            if [[ -f "$CHINESE_CALENDAR_CI_OUTPUT_DIR/simulator.json" ]]; then
+              cat "$CHINESE_CALENDAR_CI_OUTPUT_DIR/simulator.json"
+            else
+              echo 'No task Simulator was created; runtime preparation diagnostics were preserved.'
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload test and snapshot evidence
+        if: always() && env.CHINESE_CALENDAR_CI_OUTPUT_DIR != ''
         uses: actions/upload-artifact@v4
         with:
-          name: snapshot-diagnostics-${{ github.run_id }}-${{ github.run_attempt }}
-          path: .output/snapshots/
+          name: ci-${{ matrix.id }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ env.CHINESE_CALENDAR_CI_OUTPUT_DIR }}/
           include-hidden-files: true
           if-no-files-found: ignore
           retention-days: 14
-
-      - name: Build iOS app
-        run: ./Scripts/build_apps.sh
